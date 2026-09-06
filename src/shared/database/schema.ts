@@ -12,3 +12,4 @@
 export * from '../auth/schema';
 export * from '../../modules/student/infrastructure/schema';
 export * from '../../modules/assessment/infrastructure/schema';
+export * from '../../modules/career/infrastructure/schema';

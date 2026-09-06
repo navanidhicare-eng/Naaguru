@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { withAuth } from '@/shared/auth/middleware';
-import { AssessmentModule } from '@/modules/assessment/public';
+import { AssessmentModule } from '@/modules/assessment';
 import { AppError } from '@/shared/errors';
 import { z } from 'zod';
 
