@@ -8,13 +8,18 @@ import { RecommendationDto } from '../dtos';
 export class CareerUseCases {
   constructor(private readonly careerRepository: ICareerRepository) {}
 
-  async generateRecommendation(studentId: string): Promise<void> {
+  async generateRecommendation(studentId: string): Promise<RecommendationDto> {
     const latestResult = await AssessmentModule.getMyLatestResult(studentId);
     
     // Check if recommendation already exists for this attempt
-    const existing = await this.careerRepository.getRecommendationByAttemptId(latestResult.attemptId);
+    let existing = await this.careerRepository.getRecommendationByAttemptId(latestResult.attemptId);
     if (existing) {
-      throw new AppError('Recommendation already generated for this attempt', 409);
+      return {
+        attemptId: existing.attemptId,
+        rankedResults: existing.rankedResults,
+        appliedRules: existing.appliedRules,
+        createdAt: existing.createdAt,
+      };
     }
 
     const streams = await this.careerRepository.getAllStreams();
@@ -27,10 +32,24 @@ export class CareerUseCases {
       studentId,
       attemptId: latestResult.attemptId,
       rankedResults,
+      appliedRules: { rules, streams }, // Snapshot of configuration used
       createdAt: new Date().toISOString(),
     });
 
     await this.careerRepository.saveRecommendation(recommendation);
+
+    // Fetch it back to ensure we return the DB truth (in case of concurrent insert)
+    existing = await this.careerRepository.getRecommendationByAttemptId(latestResult.attemptId);
+    if (!existing) {
+      throw new AppError('Failed to generate recommendation', 500);
+    }
+
+    return {
+      attemptId: existing.attemptId,
+      rankedResults: existing.rankedResults,
+      appliedRules: existing.appliedRules,
+      createdAt: existing.createdAt,
+    };
   }
 
   async getCurrentRecommendation(studentId: string): Promise<RecommendationDto> {
@@ -44,6 +63,7 @@ export class CareerUseCases {
     return {
       attemptId: recommendation.attemptId,
       rankedResults: recommendation.rankedResults,
+      appliedRules: recommendation.appliedRules,
       createdAt: recommendation.createdAt,
     };
   }

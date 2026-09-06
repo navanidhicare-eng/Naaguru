@@ -5,13 +5,15 @@ import { streamsTable, careerRulesTable, recommendationsTable } from './schema';
 import { eq } from 'drizzle-orm';
 import 'server-only';
 
+import { StreamCode } from '@/shared/domain/StreamCode';
+
 export class DrizzleCareerRepository implements ICareerRepository {
 
   async getAllStreams(): Promise<Stream[]> {
     const rows = await db.select().from(streamsTable);
     return rows.map(r => Stream.create({
       id: r.id,
-      name: r.name,
+      streamCode: r.name as StreamCode,
       description: r.description,
     }));
   }
@@ -33,12 +35,10 @@ export class DrizzleCareerRepository implements ICareerRepository {
       studentId: recommendation.studentId,
       attemptId: recommendation.attemptId,
       rankedResultsJsonb: recommendation.rankedResults,
+      appliedRulesJsonb: recommendation.appliedRules,
       createdAt: recommendation.createdAt,
-    }).onConflictDoUpdate({
+    }).onConflictDoNothing({
       target: recommendationsTable.attemptId,
-      set: {
-        rankedResultsJsonb: recommendation.rankedResults,
-      }
     });
   }
 
@@ -55,6 +55,7 @@ export class DrizzleCareerRepository implements ICareerRepository {
       studentId: r.studentId,
       attemptId: r.attemptId,
       rankedResults: r.rankedResultsJsonb as RankedResult[],
+      appliedRules: r.appliedRulesJsonb as Record<string, unknown>,
       createdAt: r.createdAt,
     });
   }

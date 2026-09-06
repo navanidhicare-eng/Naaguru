@@ -5,8 +5,8 @@ import { AppError } from '@/shared/errors';
 
 export const POST = withAuth(async (request, context, auth) => {
   try {
-    await CareerModule.generateRecommendation(auth.userId);
-    return NextResponse.json({ success: true }, { status: 201 });
+    const recommendation = await CareerModule.generateRecommendation(auth.userId);
+    return NextResponse.json(recommendation, { status: 201 });
   } catch (error) {
     if (error instanceof AppError) {
       return NextResponse.json({ error: error.message }, { status: error.statusCode });

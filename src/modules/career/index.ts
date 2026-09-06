@@ -6,7 +6,7 @@ const careerRepository = new DrizzleCareerRepository();
 const internalUseCases = new CareerUseCases(careerRepository);
 
 export const CareerModule = {
-  generateRecommendation: (studentId: string): Promise<void> => {
+  generateRecommendation: (studentId: string): Promise<RecommendationDto> => {
     return internalUseCases.generateRecommendation(studentId);
   },
 

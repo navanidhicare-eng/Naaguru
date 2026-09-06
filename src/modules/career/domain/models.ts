@@ -1,6 +1,8 @@
+import { StreamCode } from '@/shared/domain/StreamCode';
+
 export interface StreamProps {
   id: string;
-  name: string;
+  streamCode: StreamCode;
   description: string | null;
 }
 
@@ -12,7 +14,7 @@ export class Stream {
   }
 
   get id() { return this.props.id; }
-  get name() { return this.props.name; }
+  get streamCode() { return this.props.streamCode; }
   get description() { return this.props.description; }
 }
 
@@ -40,7 +42,7 @@ export class CareerRule {
 
 export interface RankedResult {
   streamId: string;
-  streamName: string;
+  streamCode: StreamCode;
   matchScore: number;
   explanation: string;
 }
@@ -50,6 +52,7 @@ export interface RecommendationProps {
   studentId: string;
   attemptId: string;
   rankedResults: RankedResult[];
+  appliedRules: Record<string, unknown>; // Snapshot of rules
   createdAt: string;
 }
 
@@ -64,5 +67,6 @@ export class Recommendation {
   get studentId() { return this.props.studentId; }
   get attemptId() { return this.props.attemptId; }
   get rankedResults() { return this.props.rankedResults; }
+  get appliedRules() { return this.props.appliedRules; }
   get createdAt() { return this.props.createdAt; }
 }

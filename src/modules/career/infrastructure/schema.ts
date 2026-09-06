@@ -19,7 +19,8 @@ export const careerRulesTable = pgTable('career_rules', {
 export const recommendationsTable = pgTable('recommendations', {
   id: uuid('id').primaryKey().defaultRandom(),
   studentId: uuid('student_id').notNull().references(() => usersTable.id, { onDelete: 'cascade' }),
-  attemptId: uuid('attempt_id').notNull().references(() => assessmentAttemptsTable.id, { onDelete: 'cascade' }).unique(),
+  attemptId: uuid('attempt_id').notNull().references(() => assessmentAttemptsTable.id, { onDelete: 'restrict' }).unique(),
   rankedResultsJsonb: jsonb('ranked_results_jsonb').notNull(), // Array of { streamId, score, explanation }
+  appliedRulesJsonb: jsonb('applied_rules_jsonb').notNull(), // Snapshot of rules used
   createdAt: timestamp('created_at', { withTimezone: true, mode: 'string' }).defaultNow().notNull(),
 });

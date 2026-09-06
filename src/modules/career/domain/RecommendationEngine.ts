@@ -33,17 +33,22 @@ export class RecommendationEngine {
       }
 
       if (qualifies) {
-        const explanation = `Your scores in ${matchedDimensions.join(', ')} align with the ${stream.name} pathway.`;
+        const explanation = `Your scores in ${matchedDimensions.join(', ')} align with the ${stream.streamCode} pathway.`;
         results.push({
           streamId: stream.id,
-          streamName: stream.name,
+          streamCode: stream.streamCode,
           matchScore,
           explanation,
         });
       }
     }
 
-    // Sort descending by matchScore
-    return results.sort((a, b) => b.matchScore - a.matchScore);
+    // Sort descending by matchScore. For ties, sort alphabetically by streamCode to ensure determinism.
+    return results.sort((a, b) => {
+      if (b.matchScore !== a.matchScore) {
+        return b.matchScore - a.matchScore;
+      }
+      return a.streamCode.localeCompare(b.streamCode);
+    });
   }
 }
