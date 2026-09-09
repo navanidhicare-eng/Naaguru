@@ -1,0 +1,287 @@
+<!DOCTYPE html><html lang="en"><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=390, height=844, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Naaguru - Explore My Paths (MPC)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Noto+Sans+Telugu:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              teal: '#087F6C',
+              dark: '#056052',
+              light: '#E6F5F1',
+              amber: '#F4B942',
+              bg: '#F8FAF9',
+              text: '#172321',
+              muted: '#647572',
+              border: '#E2EBE8'
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            telugu: ['Noto Sans Telugu', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      background-color: #F8FAF9;
+      color: #172321;
+      font-family: 'Inter', sans-serif;
+      -webkit-font-smoothing: antialiased;
+      user-select: none;
+      margin: 0;
+      padding: 0;
+    }
+    .lang-te [data-en] {
+      display: none !important;
+    }
+    .lang-en [data-te] {
+      display: none !important;
+    }
+    .lang-te {
+      font-family: 'Noto Sans Telugu', 'Inter', sans-serif;
+    }
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+  </style>
+</head>
+<body class="lang-en bg-[#F8FAF9] flex justify-center items-start min-h-screen">
+  <!-- Mobile Container: 390x844 px portrait -->
+  <div class="w-[390px] min-h-[844px] bg-[#F8FAF9] flex flex-col relative shadow-sm overflow-x-hidden border-x border-[#EAEFEF]">
+    
+    <!-- Lightweight Mobile Header -->
+    <header class="sticky top-0 z-20 bg-[#F8FAF9]/95 backdrop-blur-sm px-5 pt-4 pb-3 flex items-center justify-between border-b border-[#EAEFEF]/80">
+      <div class="flex items-center gap-2.5">
+        <button type="button" onclick="history.back()" aria-label="Go back" class="w-9 h-9 rounded-full bg-white border border-brand-border flex items-center justify-center text-brand-text active:scale-95 transition-transform hover:bg-[#F2F7F5]">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"></path>
+          </svg>
+        </button>
+        <span class="text-[15px] font-semibold text-brand-text tracking-tight" data-en="">Explore My Paths</span>
+        <span class="text-[15px] font-semibold text-brand-text tracking-tight" data-te="">నా మార్గాలను చూడండి</span>
+      </div>
+
+      <!-- Segmented Bilingual Toggle (EN | తెలుగు) -->
+      <div class="inline-flex p-0.5 rounded-full bg-[#EAEFEF] border border-[#DEE7E4]">
+        <button id="btn-en" type="button" onclick="setLanguage('en')" class="px-2.5 py-1 text-[11px] font-bold rounded-full transition-all bg-brand-teal text-white shadow-xs">
+          EN
+        </button>
+        <button id="btn-te" type="button" onclick="setLanguage('te')" class="px-2.5 py-1 text-[11px] font-medium rounded-full transition-all text-brand-muted hover:text-brand-text">
+          తెలుగు
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="flex-1 px-5 pt-3 pb-6 flex flex-col">
+      
+      <!-- Top Small Friendly Illustration -->
+      <div class="w-full flex justify-center mb-3">
+        <div class="w-full max-w-[340px] h-[140px] rounded-2xl bg-white border border-[#E4ECE9] overflow-hidden flex items-center justify-center p-1 relative shadow-xs">
+          <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuCq5nv6qUG8SYB_UEY584Fi27YS0CP0BYGH4WZWyh9p1Y4c9zvKBuxtYT0O1BoYPi2eTEQ4lXndByCU0YNQdfr20roibmzFGwkDVUcuS3TEbTKShqwz75QOWfiFouNgpfmRtXXsHJHV237sIpCTXvRvdgvvy53jGzpc_FNim6xUmURefvn9LF1x4GUU0ovAjJs8CCFRq6fMm6mve8wBL12x52QHFDSt06u0IjnwvpyRPyLLgS1vDRV0Rg" alt="Student exploring pathways" class="w-full h-full object-cover object-center rounded-xl">
+        </div>
+      </div>
+
+      <!-- Primary Stream Focus: One Clear Idea (MPC) -->
+      <section class="mb-4">
+        <div class="flex items-center justify-between mb-1">
+          <span class="text-[12px] font-semibold tracking-wide uppercase text-brand-muted" data-en="">One path worth exploring</span>
+          <span class="text-[12px] font-semibold tracking-wide text-brand-muted" data-te="">పరిశీలించగల ఒక మార్గం</span>
+
+          <!-- Affinity Badge -->
+          <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-brand-light text-brand-dark border border-[#D2ECE5]">
+            <span class="w-1.5 h-1.5 rounded-full bg-brand-teal"></span>
+            <span data-en="">Strong affinity</span>
+            <span data-te="">మంచి అనుబంధం</span>
+          </span>
+        </div>
+
+        <div class="bg-white rounded-2xl p-4 border border-[#DFE8E5] shadow-xs">
+          <div class="flex items-baseline gap-2.5">
+            <h1 class="text-[32px] font-extrabold text-brand-text leading-none tracking-tight">MPC</h1>
+            <span class="text-[15px] font-medium text-brand-teal" data-en="">Maths, Physics, Chemistry</span>
+            <span class="text-[15px] font-medium text-brand-teal" data-te="">మ్యాథ్స్, ఫిజిక్స్, కెమిస్ట్రీ</span>
+          </div>
+          <p class="text-[13px] text-brand-muted mt-1 leading-relaxed" data-en="">
+            A flexible pathway focused on solving complex challenges through reasoning, technology, and systematic exploration.
+          </p>
+          <p class="text-[13px] text-brand-muted mt-1 leading-relaxed" data-te="">
+            ఆలోచన, సాంకేతికత మరియు క్రమబద్ధమైన అన్వేషణ ద్వారా సంక్లిష్ట సమస్యలను పరిష్కరించడానికి అనువైన మార్గం.
+          </p>
+        </div>
+      </section>
+
+      <!-- Section: Why explore MPC? -->
+      <section class="mb-4">
+        <div class="mb-2">
+          <h2 class="text-[14px] font-bold text-brand-text tracking-tight" data-en="">Why explore MPC?</h2>
+          <h2 class="text-[14px] font-bold text-brand-text tracking-tight" data-te="">MPCని ఎందుకు పరిశీలించాలి?</h2>
+          <p class="text-[12px] text-brand-muted mt-0.5 leading-relaxed" data-en="">
+            Your responses show a strong interest in investigating how things work and working with numbers, logic, and structured problems.
+          </p>
+          <p class="text-[12px] text-brand-muted mt-0.5 leading-relaxed" data-te="">
+            విషయాలు ఎలా పనిచేస్తాయో తెలుసుకోవడం, సంఖ్యలు, లాజిక్ మరియు క్రమబద్ధమైన సమస్యలను పరిష్కరించడంలో మీకు ఆసక్తి ఉన్నట్లు మీ సమాధానాలు సూచిస్తున్నాయి.
+          </p>
+        </div>
+
+        <!-- 2 Simple Clean Rows (No heavy charts or fake percentages) -->
+        <div class="space-y-1.5">
+          <!-- Area 1 -->
+          <div class="flex items-center gap-3 p-2.5 rounded-xl bg-white border border-[#E6EFE9] transition-colors">
+            <div class="w-8 h-8 rounded-lg bg-[#E6F5F1] text-brand-teal flex items-center justify-center shrink-0">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path>
+              </svg>
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="text-[13px] font-semibold text-brand-text" data-en="">Investigative &amp; Scientific Inquiry</div>
+              <div class="text-[13px] font-semibold text-brand-text" data-te="">పరిశోధన &amp; సైన్స్</div>
+              <div class="text-[11px] text-brand-muted truncate" data-en="">Enjoys analyzing causes and natural mechanics</div>
+              <div class="text-[11px] text-brand-muted truncate" data-te="">కారణాలను విశ్లేషించడం, విషయాల పనితీరు తెలుసుకోవడం</div>
+            </div>
+          </div>
+
+          <!-- Area 2 -->
+          <div class="flex items-center gap-3 p-2.5 rounded-xl bg-white border border-[#E6EFE9] transition-colors">
+            <div class="w-8 h-8 rounded-lg bg-[#FEF4E3] text-[#D98208] flex items-center justify-center shrink-0">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+              </svg>
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="text-[13px] font-semibold text-brand-text" data-en="">Quantitative &amp; Computational Reasoning</div>
+              <div class="text-[13px] font-semibold text-brand-text" data-te="">లెక్కలు &amp; కంప్యూటేషనల్ ఆలోచన</div>
+              <div class="text-[11px] text-brand-muted truncate" data-en="">Comfort with mathematical logic and patterns</div>
+              <div class="text-[11px] text-brand-muted truncate" data-te="">లాజిక్, సంఖ్యల సంబంధాలు, క్రమబద్ధమైన పద్ధతులు</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section: Where can it lead? -->
+      <section class="mb-5">
+        <div class="flex items-center justify-between mb-2">
+          <h2 class="text-[14px] font-bold text-brand-text tracking-tight" data-en="">Where can it lead?</h2>
+          <h2 class="text-[14px] font-bold text-brand-text tracking-tight" data-te="">ఇది ఎలాంటి అవకాశాలకు దారితీయవచ్చు?</h2>
+          
+          <a href="#" class="text-[12px] font-semibold text-brand-teal flex items-center gap-0.5 hover:underline" onclick="event.preventDefault()">
+            <span data-en="">See more possibilities →</span>
+            <span data-te="">మరిన్ని అవకాశాలు చూడండి →</span>
+          </a>
+        </div>
+
+        <!-- 3 Simple List Rows -->
+        <div class="space-y-1.5">
+          <!-- Row 1 -->
+          <div class="flex items-center justify-between p-2.5 rounded-xl bg-white border border-[#E6EFE9]">
+            <div class="flex items-center gap-3">
+              <div class="w-7 h-7 rounded-lg bg-[#EBF7F4] text-brand-teal flex items-center justify-center">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                </svg>
+              </div>
+              <span class="text-[13px] font-medium text-brand-text" data-en="">Engineering &amp; Technology</span>
+              <span class="text-[13px] font-medium text-brand-text" data-te="">ఇంజినీరింగ్ &amp; టెక్నాలజీ</span>
+            </div>
+            <span class="text-brand-muted text-xs">›</span>
+          </div>
+
+          <!-- Row 2 -->
+          <div class="flex items-center justify-between p-2.5 rounded-xl bg-white border border-[#E6EFE9]">
+            <div class="flex items-center gap-3">
+              <div class="w-7 h-7 rounded-lg bg-[#EBF7F4] text-brand-teal flex items-center justify-center">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M4 7v10c0 2 1.5 3 3.5 3h9c2 0 3.5-1 3.5-3V7c0-2-1.5-3-3.5-3h-9C5.5 4 4 5 4 7zm0 4h16M9 16h6"></path>
+                </svg>
+              </div>
+              <span class="text-[13px] font-medium text-brand-text" data-en="">Computing &amp; Data</span>
+              <span class="text-[13px] font-medium text-brand-text" data-te="">కంప్యూటింగ్ &amp; డేటా</span>
+            </div>
+            <span class="text-brand-muted text-xs">›</span>
+          </div>
+
+          <!-- Row 3 -->
+          <div class="flex items-center justify-between p-2.5 rounded-xl bg-white border border-[#E6EFE9]">
+            <div class="flex items-center gap-3">
+              <div class="w-7 h-7 rounded-lg bg-[#EBF7F4] text-brand-teal flex items-center justify-center">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                </svg>
+              </div>
+              <span class="text-[13px] font-medium text-brand-text" data-en="">Architecture &amp; Design</span>
+              <span class="text-[13px] font-medium text-brand-text" data-te="">ఆర్కిటెక్చర్ &amp; డిజైన్</span>
+            </div>
+            <span class="text-brand-muted text-xs">›</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Action Area -->
+      <div class="mt-auto space-y-2.5 pt-2">
+        <!-- Primary Action Button -->
+        <button type="button" class="w-full h-12 bg-brand-teal hover:bg-brand-dark active:scale-[0.99] text-white font-semibold text-[15px] rounded-xl flex items-center justify-center gap-2 shadow-sm transition-all">
+          <span data-en="">Explore MPC Colleges →</span>
+          <span data-te="">MPC కాలేజీలను చూడండి →</span>
+        </button>
+
+        <!-- Secondary Action Link -->
+        <button type="button" class="w-full py-1.5 text-center text-[13px] font-medium text-brand-teal hover:text-brand-dark active:opacity-75 transition-colors">
+          <span data-en="">Explore other streams</span>
+          <span data-te="">ఇతర స్ట్రీమ్‌లను పరిశీలించండి</span>
+        </button>
+
+        <!-- Reassuring Disclaimer Microcopy -->
+        <p class="text-[11px] text-center text-brand-muted leading-normal px-2 pt-1">
+          <span data-en="">Your interests can change over time. This is a starting point for exploration, not a fixed career decision.</span>
+          <span data-te="">మీ ఆసక్తులు కాలక్రమేణా మారవచ్చు. ఇది మీకు ఉన్న అవకాశాలను తెలుసుకోవడానికి ఒక ప్రారంభం మాత్రమే; ఖచ్చితమైన కెరీర్ నిర్ణయం కాదు.</span>
+        </p>
+      </div>
+
+    </main>
+
+  </div>
+
+  <script>
+    function setLanguage(lang) {
+      const body = document.body;
+      const btnEn = document.getElementById('btn-en');
+      const btnTe = document.getElementById('btn-te');
+
+      if (lang === 'te') {
+        body.classList.remove('lang-en');
+        body.classList.add('lang-te');
+        
+        btnTe.classList.add('bg-brand-teal', 'text-white', 'shadow-xs');
+        btnTe.classList.remove('text-brand-muted');
+        
+        btnEn.classList.remove('bg-brand-teal', 'text-white', 'shadow-xs');
+        btnEn.classList.add('text-brand-muted');
+      } else {
+        body.classList.remove('lang-te');
+        body.classList.add('lang-en');
+
+        btnEn.classList.add('bg-brand-teal', 'text-white', 'shadow-xs');
+        btnEn.classList.remove('text-brand-muted');
+
+        btnTe.classList.remove('bg-brand-teal', 'text-white', 'shadow-xs');
+        btnTe.classList.add('text-brand-muted');
+      }
+    }
+  </script>
+
+
+</body></html>

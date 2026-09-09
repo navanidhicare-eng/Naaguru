@@ -1,0 +1,248 @@
+<!DOCTYPE html><html class="h-full" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Naaguru - Assessment Complete</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;family=Noto+Sans+Telugu:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              teal: '#087F6C',
+              dark: '#056052',
+              light: '#E6F5F1',
+              amber: '#F4B942',
+              bg: '#F8FAF9',
+              surface: '#FFFFFF',
+              text: '#172321',
+              muted: '#647572',
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            telugu: ['"Noto Sans Telugu"', 'Inter', 'sans-serif'],
+          },
+          animation: {
+            'fade-in': 'fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+            'scale-up': 'scaleUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+            'sparkle-float': 'sparkleFloat 3s ease-in-out infinite',
+            'pulse-subtle': 'pulseSubtle 2.5s ease-in-out infinite',
+          },
+          keyframes: {
+            fadeIn: {
+              '0%': { opacity: '0', transform: 'translateY(8px)' },
+              '100%': { opacity: '1', transform: 'translateY(0)' },
+            },
+            scaleUp: {
+              '0%': { opacity: '0', transform: 'scale(0.96)' },
+              '100%': { opacity: '1', transform: 'scale(1)' },
+            },
+            sparkleFloat: {
+              '0%, 100%': { transform: 'translateY(0px) rotate(0deg)' },
+              '50%': { transform: 'translateY(-4px) rotate(6deg)' },
+            },
+            pulseSubtle: {
+              '0%, 100%': { transform: 'scale(1)', opacity: '1' },
+              '50%': { transform: 'scale(1.02)', opacity: '0.92' },
+            }
+          }
+        }
+      }
+    };
+  </script>
+<style>
+    body {
+      background-color: #F8FAF9;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    .telugu-font {
+      font-family: 'Noto Sans Telugu', 'Inter', sans-serif;
+      line-height: 1.55;
+    }
+    /* Hide scrollbar */
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+  </style>
+</head>
+<body class="bg-brand-bg text-brand-text h-full flex flex-col justify-between p-0 select-none overflow-x-hidden">
+<!-- Mobile Screen Frame Container (390 x 844 px target) -->
+<main class="w-full max-w-[390px] min-h-screen sm:min-h-[844px] flex flex-col justify-between bg-brand-bg relative px-5 py-4 overflow-hidden h-full">
+<!-- Decorative subtle ambient backdrop glow -->
+<div class="absolute -top-16 -right-16 w-56 h-56 bg-brand-light rounded-full blur-3xl pointer-events-none opacity-60"></div>
+<div class="absolute top-1/2 -left-20 w-48 h-48 bg-[#FFF4DC] rounded-full blur-2xl pointer-events-none opacity-50"></div>
+<!-- 1. TOP HEADER & BILINGUAL TOGGLE -->
+<header class="w-full flex items-center justify-between pt-1 pb-2 z-20">
+<!-- Naaguru Brand Wordmark -->
+<a aria-label="Naaguru Home" class="flex items-center space-x-1.5 focus:outline-none" href="#">
+<img alt="Naaguru" class="h-7 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1WhAE4NJVTRkA2IRPSfBgJ7pwp8KyEza7EAX0Hfz7yLKA-IENZlee_FWt4PYip-BZQdvsRsUGr12ax3Wq4zxyQljSj1eazmNYYfo1Fe1hfrSTssthuEj0QkU6kp6Axrzh1OAnMEg0mCUyIyipo7PyNdq-SdxwrGU9aAhps1QQAZL_Pb3fvVWnrIqtxe7pSVxtJJFhhc5vuiiDiD01GU9HWmfUD72JFgF7XGeifi5Xxq7MjxOlpSanQ8LuQ">
+</a>
+<!-- Compact Segmented Language Toggle (EN | తెలుగు) -->
+<div aria-label="Language Selector" class="inline-flex items-center p-0.5 rounded-full bg-slate-200/70 border border-slate-200" role="tablist">
+<button aria-selected="true" class="px-2.5 py-1 text-xs font-semibold rounded-full transition-all duration-200 bg-brand-teal text-white shadow-sm" id="btn-en" onclick="setLanguage('en')" role="tab">
+          EN
+        </button>
+<button aria-selected="false" class="px-2.5 py-1 text-xs font-medium rounded-full transition-all duration-200 text-brand-muted hover:text-brand-text telugu-font" id="btn-te" onclick="setLanguage('te')" role="tab">
+          తెలుగు
+        </button>
+</div>
+</header>
+<!-- 2. CENTER CONTENT SECTION (Illustration + Status + Messages) -->
+<section class="w-full flex-1 flex flex-col items-center justify-center text-center my-auto py-2 z-10 animate-scale-up">
+<!-- HERO ILLUSTRATION CARD -->
+<div class="w-full max-w-[340px] relative mb-4">
+<!-- Rounded container for the artwork -->
+<div class="w-full bg-white rounded-2xl p-2.5 border border-slate-100 shadow-[0_4px_20px_-4px_rgba(8,127,108,0.06)] overflow-hidden">
+<img alt="Student discovering open career pathways" class="w-full h-auto aspect-[4/3] object-cover rounded-xl" src="https://lh3.googleusercontent.com/aida/AEtjO1VgCXyeFR5vMuLAITo3tU0k2XzDKpkwsnOGjSjg9WxK8dgkAkoyX7vGRBOGoRfEDiC35aVnrELEE3NsbXkX69wLob7uCCXQ-VaPC7mFDNHcK2hdqpPoiLQi0L7TxKjHOLRRU6jwHUVmoSldCovfHRgAhw7nDo9GYiwdMTVZftZCtgSMjUmJ7sBPN8GsFC_jt65ir42mdTwjGP9pm6dvceBJzhm2rU0FgO_OLQMBH2PvR6ItzfvrdSMF50M">
+</div>
+<!-- Floating Achievement Tag Badge -->
+<div class="absolute -bottom-3 left-1/2 -translate-x-1/2 bg-white px-3.5 py-1 rounded-full border border-emerald-100 shadow-sm flex items-center space-x-1.5 whitespace-nowrap">
+<span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+<span class="text-[12px] font-semibold text-brand-teal tracking-tight" id="badge-text">
+            40 of 40 completed
+          </span>
+</div>
+</div>
+<!-- TEXT AND MESSAGING CONTAINER -->
+<div class="w-full max-w-[335px] flex flex-col items-center mt-3">
+<!-- Small progress tag pill -->
+<div class="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-brand-light border border-teal-100 text-brand-dark mb-2.5">
+<svg class="w-3.5 h-3.5 text-brand-teal" fill="currentColor" viewBox="0 0 16 16">
+<path clip-rule="evenodd" d="M12.416 3.376a.75.75 0 0 1 .208 1.04l-5 7.5a.75.75 0 0 1-1.154.114l-3-3a.75.75 0 0 1 1.06-1.06l2.353 2.353 4.493-6.74a.75.75 0 0 1 1.04-.207Z" fill-rule="evenodd"></path>
+</svg>
+<span class="text-xs font-semibold tracking-wide" id="progress-label">
+            Assessment complete
+          </span>
+</div>
+<!-- Main Heading -->
+<h1 class="text-[28px] font-extrabold text-brand-text tracking-tight mb-2 flex items-center justify-center gap-1.5" id="main-heading">
+<span>You did it!</span>
+<span class="text-2xl animate-sparkle-float inline-block">🎉</span>
+</h1>
+<!-- Supporting text (Bold & positive) -->
+<p class="text-[15px] font-semibold text-brand-teal mb-2 leading-snug" id="supporting-text">
+          You've finished exploring your interests.
+        </p>
+<!-- Secondary explanation (Warm guidance & objective) -->
+<p class="text-[13.5px] leading-relaxed text-brand-muted px-1 font-normal" id="secondary-text">
+          Let's see what your answers reveal about the subjects, streams, and career directions that may fit your interests.
+        </p>
+</div>
+</section>
+<!-- 3. BOTTOM CTA & REASSURANCE FOOTER -->
+<footer class="w-full flex flex-col items-center pt-2 pb-3 z-20">
+<!-- Primary Action Button -->
+<button class="w-full py-3.5 px-6 rounded-xl bg-brand-teal hover:bg-brand-dark active:scale-[0.98] text-white font-semibold text-[15px] shadow-sm transition-all duration-200 flex items-center justify-center space-x-2 cursor-pointer focus:outline-none focus:ring-2 focus:ring-brand-teal focus:ring-offset-2" id="cta-button" onclick="handleViewResults()">
+<span id="cta-text">See My Results</span>
+<svg class="w-4 h-4 transition-transform group-hover:translate-x-0.5" fill="currentColor" viewBox="0 0 20 20">
+<path clip-rule="evenodd" d="M3 10a.75.75 0 0 1 .75-.75h10.638L10.23 5.29a.75.75 0 1 1 1.04-1.08l5.5 5.25a.75.75 0 0 1 0 1.08l-5.5 5.25a.75.75 0 1 1-1.04-1.08l4.158-3.96H3.75A.75.75 0 0 1 3 10Z" fill-rule="evenodd"></path>
+</svg>
+</button>
+<!-- Reassurance Microcopy -->
+<div class="mt-2.5 px-2 flex items-start space-x-1.5 text-center">
+<span class="text-brand-amber text-xs leading-4">✦</span>
+<p class="text-[11.5px] text-brand-muted leading-tight" id="reassurance-text">
+          There are no right or wrong paths — this is a starting point for exploring what feels right for you.
+        </p>
+</div>
+</footer>
+</main>
+<!-- INTERACTIVE BILINGUAL LOGIC -->
+<script>
+    const content = {
+      en: {
+        badgeText: "40 of 40 completed",
+        progressLabel: "Assessment complete",
+        mainHeading: "You did it! 🎉",
+        supportingText: "You've finished exploring your interests.",
+        secondaryText: "Let's see what your answers reveal about the subjects, streams, and career directions that may fit your interests.",
+        ctaText: "See My Results",
+        reassuranceText: "There are no right or wrong paths — this is a starting point for exploring what feels right for you.",
+        fontClass: ""
+      },
+      te: {
+        badgeText: "40కి 40 పూర్తయ్యాయి",
+        progressLabel: "అసెస్‌మెంట్ పూర్తైంది",
+        mainHeading: "చేసేశారు! 🎉",
+        supportingText: "మీ ఆసక్తులను తెలుసుకునే ప్రశ్నలన్నింటినీ పూర్తి చేశారు.",
+        secondaryText: "మీ సమాధానాలు మీకు సరిపోయే సబ్జెక్టులు, స్ట్రీమ్‌లు మరియు కెరీర్ దిశలను తెలుసుకోవడంలో ఎలా సహాయపడతాయో ఇప్పుడు చూద్దాం.",
+        ctaText: "నా ఫలితాలను చూడండి",
+        reassuranceText: "సరైన లేదా తప్పు మార్గం అంటూ ఏదీ లేదు — మీకు ఏది సరిపోతుందో తెలుసుకునే ఇది ఒక ప్రారంభం మాత్రమే.",
+        fontClass: "telugu-font"
+      }
+    };
+
+    let currentLang = 'en';
+
+    function setLanguage(lang) {
+      currentLang = lang;
+      const data = content[lang];
+      
+      // Update DOM elements
+      document.getElementById('badge-text').textContent = data.badgeText;
+      document.getElementById('progress-label').textContent = data.progressLabel;
+      document.getElementById('main-heading').innerHTML = lang === 'en' 
+        ? `<span>You did it!</span> <span class="text-2xl animate-sparkle-float inline-block">🎉</span>`
+        : `<span>చేసేశారు!</span> <span class="text-2xl animate-sparkle-float inline-block">🎉</span>`;
+      document.getElementById('supporting-text').textContent = data.supportingText;
+      document.getElementById('secondary-text').textContent = data.secondaryText;
+      document.getElementById('cta-text').textContent = data.ctaText;
+      document.getElementById('reassurance-text').textContent = data.reassuranceText;
+
+      // Apply font classes for Telugu line-height & readability
+      const textContainers = [
+        document.getElementById('badge-text'),
+        document.getElementById('progress-label'),
+        document.getElementById('main-heading'),
+        document.getElementById('supporting-text'),
+        document.getElementById('secondary-text'),
+        document.getElementById('cta-text'),
+        document.getElementById('reassurance-text')
+      ];
+
+      textContainers.forEach(el => {
+        if (lang === 'te') {
+          el.classList.add('telugu-font');
+        } else {
+          el.classList.remove('telugu-font');
+        }
+      });
+
+      // Update toggle buttons styling
+      const btnEn = document.getElementById('btn-en');
+      const btnTe = document.getElementById('btn-te');
+
+      if (lang === 'en') {
+        btnEn.className = "px-2.5 py-1 text-xs font-semibold rounded-full transition-all duration-200 bg-brand-teal text-white shadow-sm";
+        btnEn.setAttribute('aria-selected', 'true');
+        btnTe.className = "px-2.5 py-1 text-xs font-medium rounded-full transition-all duration-200 text-brand-muted hover:text-brand-text telugu-font";
+        btnTe.setAttribute('aria-selected', 'false');
+      } else {
+        btnTe.className = "px-2.5 py-1 text-xs font-semibold rounded-full transition-all duration-200 bg-brand-teal text-white shadow-sm telugu-font";
+        btnTe.setAttribute('aria-selected', 'true');
+        btnEn.className = "px-2.5 py-1 text-xs font-medium rounded-full transition-all duration-200 text-brand-muted hover:text-brand-text";
+        btnEn.setAttribute('aria-selected', 'false');
+      }
+    }
+
+    function handleViewResults() {
+      const btn = document.getElementById('cta-button');
+      const originalHtml = btn.innerHTML;
+      btn.innerHTML = `<svg class="animate-spin h-5 w-5 text-white mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>`;
+      setTimeout(() => {
+        btn.innerHTML = originalHtml;
+      }, 1000);
+    }
+  </script>
+
+</body></html>

@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { authUseCases } from './index';
+import { AppError } from '../errors';
 
 // Assuming we expose tokenService via authUseCases or export it directly.
 // Let's import TokenService to decode manually for now, or export it from index.
@@ -36,7 +37,7 @@ export function withAuth(handler: RouteHandler, allowedRoles?: AuthContext['role
       }
 
       if (!token) {
-        return NextResponse.json({ error: 'Unauthorized: No token provided' }, { status: 401 });
+        throw new AppError('Unauthorized: No token provided', 401, 'UNAUTHORIZED');
       }
 
       // 3. Verify token
@@ -44,13 +45,16 @@ export function withAuth(handler: RouteHandler, allowedRoles?: AuthContext['role
 
       // 4. Role-Based Access Control (RBAC) check
       if (allowedRoles && allowedRoles.length > 0 && !allowedRoles.includes(decoded.role)) {
-        return NextResponse.json({ error: 'Forbidden: Insufficient permissions' }, { status: 403 });
+        throw new AppError('Forbidden: Insufficient permissions', 403, 'FORBIDDEN');
       }
 
       // 5. Proceed to handler with injected context
       return await handler(request, context, decoded);
     } catch (error) {
-      return NextResponse.json({ error: 'Unauthorized: Invalid or expired token' }, { status: 401 });
+      if (error instanceof AppError) {
+        throw error; // Let withRouteContext catch it
+      }
+      throw new AppError('Unauthorized: Invalid or expired token', 401, 'UNAUTHORIZED');
     }
   };
 }

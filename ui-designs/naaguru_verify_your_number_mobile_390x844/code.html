@@ -1,0 +1,627 @@
+<!DOCTYPE html><html lang="en"><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=390, height=844, initial-scale=1.0, user-scalable=no">
+  <title>Naaguru - Verify Your Number (Mobile 390x844)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Noto+Sans+Telugu:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              teal: '#087F6C',
+              'teal-dark': '#056052',
+              'teal-light': '#E6F5F1',
+              amber: '#F4B942',
+              bg: '#F8FAF9',
+              text: '#172321',
+              muted: '#647572',
+              border: '#DCE6E3',
+              error: '#D9383A',
+              'error-bg': '#FDF2F2',
+              whatsapp: '#25D366',
+              'whatsapp-light': '#E8F8EE'
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            telugu: ['Noto Sans Telugu', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #0b1317; /* Canvas background preview frame */
+      font-family: 'Inter', sans-serif;
+      -webkit-font-smoothing: antialiased;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    /* Strict Mobile Viewport Container 390 x 844 */
+    .mobile-frame {
+      width: 390px;
+      height: 844px;
+      max-height: 844px;
+      background-color: #F8FAF9;
+      position: relative;
+      overflow-y: auto;
+      overflow-x: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.45);
+      border-radius: 40px;
+      border: 6px solid #1f2937;
+    }
+
+    /* Hide standard scrollbars for native app feel */
+    .mobile-frame::-webkit-scrollbar {
+      display: none;
+    }
+    .mobile-frame {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    /* Native OTP Box Focus and caret effects */
+    .otp-box {
+      width: 46px;
+      height: 54px;
+      text-align: center;
+      font-size: 22px;
+      font-weight: 700;
+      color: #172321;
+      background: #FFFFFF;
+      border: 1.5px solid #DCE6E3;
+      border-radius: 12px;
+      outline: none;
+      transition: all 0.2s ease;
+    }
+    .otp-box:focus {
+      border-color: #087F6C;
+      box-shadow: 0 0 0 3px rgba(8, 127, 108, 0.15);
+      transform: translateY(-1px);
+    }
+    .otp-box.filled {
+      border-color: #087F6C;
+      background-color: #FAFFFD;
+    }
+    .otp-box.error-state {
+      border-color: #D9383A;
+      background-color: #FDF2F2;
+      color: #D9383A;
+      animation: shake 0.35s ease-in-out;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-4px); }
+      40%, 80% { transform: translateX(4px); }
+    }
+
+    /* Telugu font typography fine-tuning */
+    body.lang-te {
+      font-family: 'Noto Sans Telugu', 'Inter', sans-serif;
+    }
+    body.lang-te .telugu-font {
+      font-family: 'Noto Sans Telugu', sans-serif;
+      line-height: 1.45;
+    }
+  </style>
+</head>
+<body class="lang-en bg-[#0d171b]">
+
+  <!-- Main 390x844 Smartphone Container -->
+  <main class="mobile-frame flex flex-col justify-between" id="app-root">
+
+    <!-- Top Status Bar & Navigation Header -->
+    <div>
+      <!-- iOS / Android simulated status bar -->
+      <div class="px-6 pt-3 pb-1 flex items-center justify-between text-xs text-brand-muted font-medium select-none">
+        <span id="current-time">9:41</span>
+        <div class="flex items-center space-x-1.5">
+          <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24"><path d="M12 3c-4.97 0-9 4.03-9 9 0 2.12.74 4.07 1.97 5.61L4.35 21l3.54-.93C9.36 20.65 10.64 21 12 21c4.97 0 9-4.03 9-9s-4.03-9-9-9z"></path></svg>
+          <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24"><path d="M12 4C7.31 4 3.07 5.9 0 8.98L12 21 24 8.98A16.88 16.88 0 0012 4z"></path></svg>
+          <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24"><path d="M15.67 4H14V2h-4v2H8.33C7.6 4 7 4.6 7 5.33v15.33C7 21.4 7.6 22 8.33 22h7.33c.74 0 1.34-.6 1.34-1.33V5.33C17 4.6 16.4 4 15.67 4z"></path></svg>
+        </div>
+      </div>
+
+      <!-- App Header Bar -->
+      <header class="px-5 py-2.5 flex items-center justify-between border-b border-[#F0F4F2] bg-[#F8FAF9]">
+        <button type="button" onclick="handleBackAction()" class="w-10 h-10 flex items-center justify-center rounded-full bg-white text-brand-text border border-brand-border active:scale-95 transition-transform" aria-label="Back">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M19 12H5M12 19l-7-7 7-7"></path>
+          </svg>
+        </button>
+
+        <div class="flex items-center space-x-1.5">
+          <div class="w-2 h-2 rounded-full bg-brand-teal"></div>
+          <span class="text-xs font-semibold text-brand-teal tracking-wide uppercase" id="header-brand-title">Naaguru</span>
+        </div>
+
+        <!-- Language Switcher EN | తెలుగు -->
+        <div class="bg-white p-0.5 rounded-full border border-brand-border flex items-center shadow-xs">
+          <button type="button" id="btn-lang-en" onclick="setLanguage('en')" class="px-2.5 py-1 text-xs font-semibold rounded-full bg-brand-teal text-white transition-all">
+            EN
+          </button>
+          <button type="button" id="btn-lang-te" onclick="setLanguage('te')" class="px-2.5 py-1 text-xs font-medium rounded-full text-brand-muted hover:text-brand-text transition-all">
+            తెలుగు
+          </button>
+        </div>
+      </header>
+
+      <!-- Testing / State Switcher for Review -->
+      <div class="px-5 pt-2 pb-1">
+        <div class="flex items-center justify-between bg-brand-teal-light/50 border border-brand-teal/20 px-3 py-1.5 rounded-xl">
+          <span class="text-[11px] font-medium text-brand-teal-dark">Preview State:</span>
+          <div class="flex space-x-1">
+            <button type="button" onclick="setDemoState('default')" id="pill-default" class="text-[10px] px-2 py-0.5 rounded-md font-medium bg-white text-brand-teal shadow-xs border border-brand-teal/30">Active</button>
+            <button type="button" onclick="setDemoState('invalid')" id="pill-invalid" class="text-[10px] px-2 py-0.5 rounded-md font-medium bg-transparent text-brand-muted hover:bg-white/60">Invalid</button>
+            <button type="button" onclick="setDemoState('expired')" id="pill-expired" class="text-[10px] px-2 py-0.5 rounded-md font-medium bg-transparent text-brand-muted hover:bg-white/60">Expired</button>
+            <button type="button" onclick="setDemoState('locked')" id="pill-locked" class="text-[10px] px-2 py-0.5 rounded-md font-medium bg-transparent text-brand-muted hover:bg-white/60">Locked</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Visual & Welcome Message -->
+      <section class="px-5 pt-2 flex flex-col items-center text-center">
+        <!-- Friendly Vector Illustration -->
+        <div class="relative w-32 h-32 mb-2">
+          <div class="absolute inset-0 bg-gradient-to-tr from-brand-teal-light via-white to-amber-50 rounded-2xl border border-brand-border/60 shadow-xs flex items-center justify-center overflow-hidden">
+            <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuBBw1I1NfPeD6dY0wNMVlfO6GqG4V5bhhYvwT5-VN3946XwYpFDGYuZHnBPV7i4eQWb2xu0kjXd34e3X0_AH6HYRDUkd5qmjikeIRVPgAM-H-rQQz7E2KMV8-TfA_Ciq3DcpPlGbHXBIpXrJfCfcNPVRe5xw_6GWxGwsYGbIY-i41L5ZEaOM2qCfG69DdvKRGW1ec-RIbGKkx7vl2r7bziK0iKWuZqe-Xn8uiZGhSx4uNrtWDBymEsSww" alt="Verification Illustration" class="w-full h-full object-contain p-1">
+          </div>
+          <!-- WhatsApp Floating Icon Indicator -->
+          <div class="absolute -bottom-1 -right-1 bg-white p-1 rounded-full shadow-md border border-brand-border">
+            <div class="w-6 h-6 rounded-full bg-brand-whatsapp flex items-center justify-center text-white">
+              <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
+                <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.974.532 1.942.812 3.149.813h.001c3.182 0 5.768-2.586 5.768-5.766 0-1.54-.599-2.989-1.688-4.078-1.09-1.089-2.539-1.677-4.081-1.677zm0 10.384h-.001c-1.055 0-1.921-.301-2.77-.775l-.2-.119-1.288.338.344-1.254-.131-.208a4.606 4.606 0 01-.708-2.493c.001-2.544 2.07-4.613 4.614-4.613 1.233 0 2.392.481 3.264 1.353.872.873 1.352 2.032 1.351 3.264 0 2.544-2.07 4.614-4.615 4.614zm2.53-3.454c-.139-.07-.822-.406-.949-.452-.127-.046-.22-.07-.312.07-.093.139-.359.452-.44.545-.081.093-.162.104-.301.035-.139-.07-.588-.217-1.12-.692-.414-.37-.693-.827-.774-.966-.081-.139-.009-.214.061-.283.063-.062.139-.162.208-.243.07-.081.093-.139.139-.232.046-.093.023-.174-.012-.243-.035-.07-.312-.752-.428-1.031-.113-.271-.228-.234-.312-.238l-.266-.005c-.093 0-.243.035-.37.174-.127.139-.486.475-.486 1.158 0 .683.498 1.344.567 1.437.07.093.98 1.497 2.374 2.1 1.395.603 1.395.402 1.65.379.255-.023.822-.336.938-.661.116-.324.116-.603.081-.661-.035-.058-.128-.093-.267-.163z"></path>
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <h1 id="screen-heading" class="text-xl font-bold text-brand-text tracking-tight mb-1">
+          Check your WhatsApp
+        </h1>
+
+        <!-- Context Explanation & Masked Number -->
+        <p id="screen-subtitle" class="text-xs text-brand-muted max-w-[280px] leading-relaxed">
+          We sent a 6-digit verification code to
+        </p>
+
+        <div class="mt-1 flex items-center justify-center space-x-1.5 bg-white px-3 py-1 rounded-full border border-brand-border shadow-2xs">
+          <span class="w-2 h-2 rounded-full bg-brand-whatsapp"></span>
+          <span id="masked-phone-display" class="font-semibold text-xs tracking-wider text-brand-text">
+            +91 ••••• ••1234
+          </span>
+          <button type="button" onclick="handleChangeNumber()" class="text-[11px] text-brand-teal font-medium hover:underline ml-1" id="btn-edit-num">
+            Edit
+          </button>
+        </div>
+
+        <p id="screen-instruction" class="text-[11px] text-brand-muted mt-2">
+          Enter the code to continue.
+        </p>
+      </section>
+
+      <!-- 6-Digit OTP Input Form Section -->
+      <section class="px-5 mt-4">
+        <form id="otp-form" onsubmit="event.preventDefault(); handleVerify();">
+          <div class="flex items-center justify-between gap-1.5 px-1" id="otp-container">
+            <input type="text" inputmode="numeric" maxlength="1" pattern="[0-9]*" class="otp-box" id="otp-1" autofocus="" autocomplete="one-time-code" aria-label="Digit 1">
+            <input type="text" inputmode="numeric" maxlength="1" pattern="[0-9]*" class="otp-box" id="otp-2" aria-label="Digit 2">
+            <input type="text" inputmode="numeric" maxlength="1" pattern="[0-9]*" class="otp-box" id="otp-3" aria-label="Digit 3">
+            <input type="text" inputmode="numeric" maxlength="1" pattern="[0-9]*" class="otp-box" id="otp-4" aria-label="Digit 4">
+            <input type="text" inputmode="numeric" maxlength="1" pattern="[0-9]*" class="otp-box" id="otp-5" aria-label="Digit 5">
+            <input type="text" inputmode="numeric" maxlength="1" pattern="[0-9]*" class="otp-box" id="otp-6" aria-label="Digit 6">
+          </div>
+
+          <!-- Dynamic Status / Error Message Banner -->
+          <div id="status-banner" class="min-h-[38px] mt-3 flex items-center justify-center text-center px-3">
+            <div id="status-content" class="hidden text-xs py-1.5 px-3 rounded-lg flex items-center space-x-1.5 font-medium transition-all">
+              <span id="status-icon"></span>
+              <span id="status-text"></span>
+            </div>
+          </div>
+        </form>
+
+        <!-- Resend & Timer Area -->
+        <div class="mt-2 text-center flex flex-col items-center">
+          <div class="flex items-center justify-center space-x-1 text-xs">
+            <span id="txt-didnt-receive" class="text-brand-muted">Didn't receive the code?</span>
+            <span id="resend-countdown" class="text-brand-teal font-medium">Resend in 28s</span>
+            <button type="button" id="btn-resend-action" onclick="handleResendCode()" class="hidden text-brand-teal font-semibold hover:underline active:opacity-75">
+              Resend code
+            </button>
+          </div>
+          
+          <!-- Alternative Change Number Link -->
+          <button type="button" onclick="handleChangeNumber()" id="btn-change-number" class="mt-3 text-xs text-brand-muted hover:text-brand-teal transition-colors py-1">
+            Change mobile number
+          </button>
+        </div>
+      </section>
+    </div>
+
+    <!-- Bottom Sticky Verification Action & Privacy Reassurance -->
+    <div class="px-5 pb-7 pt-3 bg-gradient-to-t from-[#F8FAF9] via-[#F8FAF9] to-transparent">
+      <!-- Primary CTA Button -->
+      <button type="button" id="btn-verify-cta" onclick="handleVerify()" class="w-full h-12 rounded-[12px] bg-brand-teal hover:bg-brand-teal-dark active:scale-[0.99] disabled:opacity-40 disabled:cursor-not-allowed disabled:pointer-events-none text-white font-semibold text-sm flex items-center justify-center space-x-2 shadow-sm transition-all duration-150" disabled="">
+        <span id="cta-label">Verify &amp; Continue →</span>
+        <svg id="cta-spinner" class="hidden animate-spin w-4 h-4 text-white" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+      </button>
+
+      <!-- Soft Security & Trust Note -->
+      <div class="mt-3.5 flex items-center justify-center space-x-1.5 text-[11px] text-brand-muted text-center">
+        <svg class="w-3.5 h-3.5 text-brand-teal/80 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+        </svg>
+        <span id="footer-trust-note">Quick 1-step verification • Naaguru protects your privacy</span>
+      </div>
+    </div>
+
+    <!-- Success Modal Overlay Simulation -->
+    <div id="success-modal" class="hidden absolute inset-0 bg-black/40 backdrop-blur-[2px] z-50 flex items-center justify-center p-6">
+      <div class="bg-white rounded-2xl p-6 w-full max-w-[320px] shadow-2xl text-center flex flex-col items-center animate-fade-in">
+        <div class="w-14 h-14 rounded-full bg-brand-teal-light text-brand-teal flex items-center justify-center mb-3">
+          <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path>
+          </svg>
+        </div>
+        <h3 id="modal-success-title" class="text-base font-bold text-brand-text mb-1">Number Verified!</h3>
+        <p id="modal-success-sub" class="text-xs text-brand-muted mb-5 leading-relaxed">
+          Redirecting to Create Your Profile...
+        </p>
+        <button type="button" onclick="closeSuccessModal()" class="w-full py-2.5 rounded-xl bg-brand-teal text-white text-xs font-semibold">
+          Continue to Profile →
+        </button>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Interactive Logic & Bilingual Strings -->
+  <script>
+    // Bilingual Text Dictionary
+    const i18n = {
+      en: {
+        brandTitle: "Naaguru",
+        heading: "Check your WhatsApp",
+        subtitle: "We sent a 6-digit verification code to",
+        instruction: "Enter the code to continue.",
+        edit: "Edit",
+        didntReceive: "Didn't receive the code?",
+        resendPrefix: "Resend in ",
+        resendAction: "Resend code",
+        changeNumber: "Change mobile number",
+        cta: "Verify & Continue →",
+        trustNote: "Quick 1-step verification • Naaguru protects your privacy",
+        errorInvalid: "The code doesn't match. Check the code and try again.",
+        errorExpired: "This code has expired. Please request a new one.",
+        errorLocked: "Too many attempts. Please try again later.",
+        successMsg: "Code verified successfully!",
+        modalTitle: "Number Verified!",
+        modalSub: "Redirecting to Create Your Profile...",
+        modalCta: "Continue to Profile →"
+      },
+      te: {
+        brandTitle: "నాగురు",
+        heading: "మీ WhatsApp చూడండి",
+        subtitle: "మీ WhatsAppకు 6 అంకెల వెరిఫికేషన్ కోడ్ పంపించాము.",
+        instruction: "కొనసాగడానికి ఆ కోడ్‌ను నమోదు చేయండి.",
+        edit: "మార్చండి",
+        didntReceive: "కోడ్ రాలేదా?",
+        resendPrefix: "",
+        resendSuffix: " సెకన్లలో మళ్లీ పంపవచ్చు",
+        resendAction: "కోడ్‌ను మళ్లీ పంపండి",
+        changeNumber: "మొబైల్ నంబర్ మార్చండి",
+        cta: "ధృవీకరించి కొనసాగండి →",
+        trustNote: "సులభమైన వెరిఫికేషన్ • Naaguru మీ గోప్యతను కాపాడుతుంది",
+        errorInvalid: "కోడ్ సరిపోలడం లేదు. కోడ్‌ను మళ్లీ చెక్ చేయండి.",
+        errorExpired: "ఈ కోడ్ గడువు ముగిసింది. కొత్త కోడ్‌ను పొందండి.",
+        errorLocked: "చాలా సార్లు ప్రయత్నించారు. కొంత సమయం తర్వాత మళ్లీ ప్రయత్నించండి.",
+        successMsg: "కోడ్ విజయవంతంగా ధృవీకరించబడింది!",
+        modalTitle: "నంబర్ ధృవీకరించబడింది!",
+        modalSub: "మీ ప్రొఫైల్ సృష్టికి తరలిస్తున్నాము...",
+        modalCta: "ప్రొఫైల్‌కు కొనసాగండి →"
+      }
+    };
+
+    let currentLang = 'en';
+    let countdownSec = 28;
+    let timerInterval = null;
+    let currentState = 'default';
+
+    // Elements
+    const otpInputs = [
+      document.getElementById('otp-1'),
+      document.getElementById('otp-2'),
+      document.getElementById('otp-3'),
+      document.getElementById('otp-4'),
+      document.getElementById('otp-5'),
+      document.getElementById('otp-6')
+    ];
+    const btnVerifyCta = document.getElementById('btn-verify-cta');
+    const ctaLabel = document.getElementById('cta-label');
+    const ctaSpinner = document.getElementById('cta-spinner');
+    const statusBanner = document.getElementById('status-banner');
+    const statusContent = document.getElementById('status-content');
+    const statusIcon = document.getElementById('status-icon');
+    const statusText = document.getElementById('status-text');
+    const resendCountdown = document.getElementById('resend-countdown');
+    const btnResendAction = document.getElementById('btn-resend-action');
+
+    // Language Switching
+    function setLanguage(lang) {
+      currentLang = lang;
+      const dict = i18n[lang];
+
+      if (lang === 'te') {
+        document.body.classList.add('lang-te');
+        document.getElementById('btn-lang-te').className = "px-2.5 py-1 text-xs font-semibold rounded-full bg-brand-teal text-white transition-all";
+        document.getElementById('btn-lang-en').className = "px-2.5 py-1 text-xs font-medium rounded-full text-brand-muted hover:text-brand-text transition-all";
+      } else {
+        document.body.classList.remove('lang-te');
+        document.getElementById('btn-lang-en').className = "px-2.5 py-1 text-xs font-semibold rounded-full bg-brand-teal text-white transition-all";
+        document.getElementById('btn-lang-te').className = "px-2.5 py-1 text-xs font-medium rounded-full text-brand-muted hover:text-brand-text transition-all";
+      }
+
+      document.getElementById('header-brand-title').textContent = dict.brandTitle;
+      document.getElementById('screen-heading').textContent = dict.heading;
+      document.getElementById('screen-subtitle').textContent = dict.subtitle;
+      document.getElementById('screen-instruction').textContent = dict.instruction;
+      document.getElementById('btn-edit-num').textContent = dict.edit;
+      document.getElementById('txt-didnt-receive').textContent = dict.didntReceive;
+      document.getElementById('btn-resend-action').textContent = dict.resendAction;
+      document.getElementById('btn-change-number').textContent = dict.changeNumber;
+      document.getElementById('cta-label').textContent = dict.cta;
+      document.getElementById('footer-trust-note').textContent = dict.trustNote;
+      document.getElementById('modal-success-title').textContent = dict.modalTitle;
+      document.getElementById('modal-success-sub').textContent = dict.modalSub;
+
+      updateCountdownDisplay();
+      
+      // Update any active error banners
+      if (currentState === 'invalid') {
+        showStatus('error', dict.errorInvalid);
+      } else if (currentState === 'expired') {
+        showStatus('error', dict.errorExpired);
+      } else if (currentState === 'locked') {
+        showStatus('error', dict.errorLocked);
+      }
+    }
+
+    // OTP Input Autoadvance & Paste Handling
+    otpInputs.forEach((input, idx) => {
+      input.addEventListener('input', (e) => {
+        const val = e.target.value.replace(/[^0-9]/g, '');
+        e.target.value = val ? val[0] : '';
+        
+        if (val) {
+          input.classList.add('filled');
+          input.classList.remove('error-state');
+          if (idx < 5) {
+            otpInputs[idx + 1].focus();
+          }
+        } else {
+          input.classList.remove('filled');
+        }
+
+        checkOtpCompletion();
+      });
+
+      input.addEventListener('keydown', (e) => {
+        if (e.key === 'Backspace' && !input.value && idx > 0) {
+          otpInputs[idx - 1].focus();
+          otpInputs[idx - 1].value = '';
+          otpInputs[idx - 1].classList.remove('filled');
+          checkOtpCompletion();
+        }
+      });
+
+      input.addEventListener('paste', (e) => {
+        e.preventDefault();
+        const pasteData = (e.clipboardData || window.clipboardData).getData('text').trim().replace(/[^0-9]/g, '');
+        if (pasteData) {
+          for (let i = 0; i < 6; i++) {
+            if (pasteData[i]) {
+              otpInputs[i].value = pasteData[i];
+              otpInputs[i].classList.add('filled');
+              otpInputs[i].classList.remove('error-state');
+            }
+          }
+          const focusIndex = Math.min(pasteData.length, 5);
+          otpInputs[focusIndex].focus();
+          checkOtpCompletion();
+        }
+      });
+    });
+
+    function getOtpValue() {
+      return otpInputs.map(input => input.value).join('');
+    }
+
+    function checkOtpCompletion() {
+      const otp = getOtpValue();
+      if (otp.length === 6 && currentState !== 'locked') {
+        btnVerifyCta.disabled = false;
+        clearStatus();
+      } else {
+        btnVerifyCta.disabled = true;
+      }
+    }
+
+    // Status Banner Helpers
+    function showStatus(type, message) {
+      statusContent.classList.remove('hidden', 'bg-red-50', 'text-brand-error', 'border', 'border-red-200', 'bg-green-50', 'text-brand-teal', 'border-green-200');
+      
+      if (type === 'error') {
+        statusContent.classList.add('bg-red-50', 'text-brand-error', 'border', 'border-red-200');
+        statusIcon.innerHTML = `<svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>`;
+      } else if (type === 'success') {
+        statusContent.classList.add('bg-green-50', 'text-brand-teal', 'border', 'border-green-200');
+        statusIcon.innerHTML = `<svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>`;
+      }
+      statusText.textContent = message;
+    }
+
+    function clearStatus() {
+      statusContent.classList.add('hidden');
+    }
+
+    // Countdown Timer logic
+    function startCountdown() {
+      countdownSec = 28;
+      resendCountdown.classList.remove('hidden');
+      btnResendAction.classList.add('hidden');
+      updateCountdownDisplay();
+
+      if (timerInterval) clearInterval(timerInterval);
+      timerInterval = setInterval(() => {
+        countdownSec--;
+        if (countdownSec <= 0) {
+          clearInterval(timerInterval);
+          resendCountdown.classList.add('hidden');
+          btnResendAction.classList.remove('hidden');
+        } else {
+          updateCountdownDisplay();
+        }
+      }, 1000);
+    }
+
+    function updateCountdownDisplay() {
+      if (currentLang === 'te') {
+        resendCountdown.textContent = `${countdownSec}${i18n.te.resendSuffix}`;
+      } else {
+        resendCountdown.textContent = `${i18n.en.resendPrefix}${countdownSec}s`;
+      }
+    }
+
+    function handleResendCode() {
+      startCountdown();
+      showStatus('success', currentLang === 'te' ? "కొత్త కోడ్ WhatsAppలో పంపబడింది." : "New verification code sent on WhatsApp.");
+      setTimeout(clearStatus, 3500);
+    }
+
+    // Verification Submission
+    function handleVerify() {
+      if (btnVerifyCta.disabled) return;
+
+      const otp = getOtpValue();
+      ctaLabel.textContent = currentLang === 'te' ? "ధృవీకరిస్తోంది..." : "Verifying...";
+      ctaSpinner.classList.remove('hidden');
+      btnVerifyCta.disabled = true;
+
+      setTimeout(() => {
+        ctaSpinner.classList.add('hidden');
+        ctaLabel.textContent = i18n[currentLang].cta;
+
+        if (currentState === 'invalid' || otp === '000000') {
+          otpInputs.forEach(i => i.classList.add('error-state'));
+          showStatus('error', i18n[currentLang].errorInvalid);
+          btnVerifyCta.disabled = false;
+        } else if (currentState === 'expired') {
+          otpInputs.forEach(i => i.classList.add('error-state'));
+          showStatus('error', i18n[currentLang].errorExpired);
+          resendCountdown.classList.add('hidden');
+          btnResendAction.classList.remove('hidden');
+          btnVerifyCta.disabled = false;
+        } else if (currentState === 'locked') {
+          showStatus('error', i18n[currentLang].errorLocked);
+          btnVerifyCta.disabled = true;
+        } else {
+          // Success Flow
+          document.getElementById('success-modal').classList.remove('hidden');
+        }
+      }, 700);
+    }
+
+    function closeSuccessModal() {
+      document.getElementById('success-modal').classList.add('hidden');
+      alert("Transitioning to: 'Naaguru - Create Your Profile'");
+    }
+
+    function handleBackAction() {
+      alert("Returning to: 'Enter Your Mobile Number'");
+    }
+
+    function handleChangeNumber() {
+      handleBackAction();
+    }
+
+    // State Demo Previews (Active, Invalid, Expired, Locked)
+    function setDemoState(state) {
+      currentState = state;
+      ['default', 'invalid', 'expired', 'locked'].forEach(s => {
+        const pill = document.getElementById(`pill-${s}`);
+        if (s === state) {
+          pill.className = "text-[10px] px-2 py-0.5 rounded-md font-medium bg-white text-brand-teal shadow-xs border border-brand-teal/30";
+        } else {
+          pill.className = "text-[10px] px-2 py-0.5 rounded-md font-medium bg-transparent text-brand-muted hover:bg-white/60";
+        }
+      });
+
+      otpInputs.forEach(i => {
+        i.disabled = false;
+        i.classList.remove('error-state');
+      });
+
+      if (state === 'default') {
+        // Pre-fill valid 6-digit OTP for active demo state
+        const sampleOtp = ['4', '8', '2', '9', '1', '5'];
+        otpInputs.forEach((input, i) => {
+          input.value = sampleOtp[i];
+          input.classList.add('filled');
+        });
+        clearStatus();
+        btnVerifyCta.disabled = false;
+        startCountdown();
+      } else if (state === 'invalid') {
+        const sampleOtp = ['1', '2', '3', '4', '5', '6'];
+        otpInputs.forEach((input, i) => {
+          input.value = sampleOtp[i];
+          input.classList.add('filled', 'error-state');
+        });
+        showStatus('error', i18n[currentLang].errorInvalid);
+        btnVerifyCta.disabled = false;
+      } else if (state === 'expired') {
+        const sampleOtp = ['9', '0', '1', '2', '3', '4'];
+        otpInputs.forEach((input, i) => {
+          input.value = sampleOtp[i];
+          input.classList.add('filled', 'error-state');
+        });
+        showStatus('error', i18n[currentLang].errorExpired);
+        resendCountdown.classList.add('hidden');
+        btnResendAction.classList.remove('hidden');
+        btnVerifyCta.disabled = false;
+      } else if (state === 'locked') {
+        otpInputs.forEach(input => {
+          input.value = '•';
+          input.disabled = true;
+          input.classList.remove('filled');
+        });
+        showStatus('error', i18n[currentLang].errorLocked);
+        btnVerifyCta.disabled = true;
+      }
+    }
+
+    // Initialize Default State on Load
+    window.addEventListener('DOMContentLoaded', () => {
+      setDemoState('default');
+    });
+  </script>
+
+
+</body></html>

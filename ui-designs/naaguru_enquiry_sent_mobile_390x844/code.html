@@ -1,0 +1,384 @@
+<!DOCTYPE html><html lang="en"><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=390, height=844, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Naaguru - Enquiry Sent (Mobile 390x844)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Noto+Sans+Telugu:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              teal: '#087F6C',
+              dark: '#056052',
+              light: '#E6F5F1',
+              amber: '#F4B942',
+              bg: '#F8FAF9',
+              text: '#172321',
+              muted: '#647572',
+              border: '#E2E8E6',
+              card: '#FFFFFF'
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            telugu: ['Noto Sans Telugu', 'sans-serif']
+          },
+          borderRadius: {
+            'custom': '12px'
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    /* Safe frame styling for exact 390x844 portrait rendering */
+    body {
+      background-color: #0b1312;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      padding: 16px;
+      font-family: 'Inter', sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .mobile-frame {
+      width: 390px;
+      height: 844px;
+      background-color: #F8FAF9;
+      position: relative;
+      overflow-y: auto;
+      overflow-x: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.08);
+      border-radius: 40px;
+      box-sizing: border-box;
+      scrollbar-width: none;
+    }
+    .mobile-frame::-webkit-scrollbar {
+      display: none;
+    }
+
+    /* Subtle entrance animations */
+    @keyframes gentlePop {
+      0% {
+        opacity: 0;
+        transform: scale(0.94) translateY(10px);
+      }
+      100% {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+      }
+    }
+
+    @keyframes pulseSoft {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.04); }
+    }
+
+    .animate-gentle-pop {
+      animation: gentlePop 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    .animate-pulse-soft {
+      animation: pulseSoft 3s ease-in-out infinite;
+    }
+
+    .font-te {
+      font-family: 'Noto Sans Telugu', 'Inter', sans-serif;
+      line-height: 1.5;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 390x844 Mobile Device Viewport -->
+  <main class="mobile-frame text-brand-text select-none">
+    
+    <!-- Phone Status Bar -->
+    <div class="w-full pt-3 px-7 flex justify-between items-center text-xs font-semibold text-brand-text/80 z-20 shrink-0">
+      <span>9:41</span>
+      <!-- Dynamic Island shape simulation -->
+      <div class="w-24 h-4 bg-black/10 rounded-full mx-auto"></div>
+      <div class="flex items-center gap-1.5">
+        <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24"><path d="M12 3c-4.97 0-9 4.03-9 9 0 2.12.74 4.07 1.97 5.61L4.35 19.4c-.39.39-.39 1.02 0 1.41.39.39 1.02.39 1.41 0l1.9-1.9C9.28 19.67 10.59 20 12 20c4.97 0 9-4.03 9-9s-4.03-9-9-9z"></path></svg>
+        <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24"><path d="M12 4C7.31 4 3.07 5.9 0 8.98L12 21 24 8.98C20.93 5.9 16.69 4 12 4z"></path></svg>
+        <div class="w-5 h-2.5 border border-current rounded-sm p-0.5 flex items-center">
+          <div class="w-full h-full bg-current rounded-2xs"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Minimal Header (Small Brand Logo + Bilingual Toggle) -->
+    <header class="px-5 py-3 flex items-center justify-between z-20 shrink-0">
+      <!-- Naaguru Brand Mark -->
+      <div class="flex items-center gap-1.5">
+        <div class="w-7 h-7 rounded-lg bg-brand-teal flex items-center justify-center text-white shadow-sm">
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"></path>
+            <path d="M6 6h10"></path>
+            <path d="M6 10h10"></path>
+          </svg>
+        </div>
+        <span class="font-bold text-base tracking-tight text-brand-dark">Naaguru</span>
+      </div>
+
+      <!-- Compact Segmented Language Switcher -->
+      <div class="bg-brand-light p-0.5 rounded-full flex items-center border border-brand-teal/20 text-xs font-semibold">
+        <button id="btn-en" onclick="setLanguage('en')" class="px-2.5 py-1 rounded-full bg-brand-teal text-white shadow-xs transition-all duration-200">EN</button>
+        <button id="btn-te" onclick="setLanguage('te')" class="px-2.5 py-1 rounded-full text-brand-muted hover:text-brand-text transition-all duration-200">తెలుగు</button>
+      </div>
+    </header>
+
+    <!-- Scrollable Content Area -->
+    <div class="flex-1 px-5 pt-1 pb-6 flex flex-col justify-between overflow-y-auto">
+      
+      <div class="flex flex-col items-center text-center">
+        
+        <!-- Success Illustration & Floating Badge -->
+        <div class="relative w-full max-w-[280px] h-[190px] mx-auto mt-1 mb-3 flex items-center justify-center animate-gentle-pop">
+          <!-- Soft Background Aura -->
+          <div class="absolute inset-2 bg-gradient-to-b from-brand-light to-transparent rounded-full filter blur-xl opacity-70"></div>
+          
+          <!-- Custom Vector Illustration -->
+          <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuCaMB70hQ1-Efv2kYqE94DcL5U-M4ESruohQ-TJ_RJIKzgadbs9VQYtCSXX9faFb5SzB13-CdrIP9ubtxH4Swu6kuVrkSnqdImjIjW9AILZkKguAxKfBJ97PuutMDpgYIeveQp6DmbMSngESg4VZfY0LmFSg3QeMGMeX_dq8HlwU0f5oW1Xc8nxanzuqYrbxk_NHyY9ClhAhiX9frPFbdNUgwC5xUyVolI48AEsv2Jz0lV3EdV7QA-3dA" alt="Enquiry sent successfully illustration" class="relative z-10 w-full h-full object-contain rounded-2xl drop-shadow-sm">
+
+          <!-- Verified Success Badge Stamp -->
+          <div class="absolute -bottom-1 right-6 z-20 bg-white border border-brand-teal/25 rounded-full px-2.5 py-1 flex items-center gap-1.5 shadow-md animate-pulse-soft">
+            <span class="w-4 h-4 rounded-full bg-brand-teal text-white flex items-center justify-center text-[10px]">✓</span>
+            <span id="txt-badge-status" class="text-[11px] font-semibold text-brand-dark">Delivered</span>
+          </div>
+        </div>
+
+        <!-- Pill Status Label -->
+        <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand-light text-brand-dark text-xs font-semibold mb-2">
+          <span class="w-1.5 h-1.5 rounded-full bg-brand-teal"></span>
+          <span id="txt-label">Enquiry sent</span>
+        </div>
+
+        <!-- Main Confirmation Headings -->
+        <h1 id="txt-heading" class="text-2xl font-bold tracking-tight text-brand-text mb-2">
+          You're all set!
+        </h1>
+        
+        <p id="txt-supporting" class="text-sm text-brand-text font-medium leading-relaxed px-1 mb-1">
+          Your enquiry has been sent to <span class="font-semibold text-brand-dark">Sri Chaitanya Junior College</span>.
+        </p>
+
+        <p id="txt-additional" class="text-xs text-brand-muted leading-relaxed px-2 mb-4">
+          The college can contact you with more information about MPC, fees, hostel, and other details.
+        </p>
+
+        <!-- What Happens Next? Timeline Card -->
+        <div class="w-full bg-brand-card border border-brand-border rounded-custom p-4 text-left shadow-xs mb-3">
+          
+          <div class="flex items-center justify-between mb-3.5 pb-2 border-b border-brand-border/60">
+            <h2 id="txt-section-title" class="text-xs font-bold uppercase tracking-wider text-brand-muted">
+              What happens next?
+            </h2>
+            <span class="text-[10px] text-brand-muted/80 bg-brand-bg px-2 py-0.5 rounded-md font-mono">
+              Ref: NG-8421
+            </span>
+          </div>
+
+          <!-- 3-Step Clean Vertical Timeline -->
+          <div class="relative pl-6 space-y-4">
+            <!-- Continuous Timeline Line -->
+            <div class="absolute left-[9px] top-2 bottom-2 w-[1.5px] bg-brand-teal/20"></div>
+
+            <!-- Step 1 -->
+            <div class="relative flex items-start">
+              <div class="absolute -left-6 top-0.5 w-5 h-5 rounded-full bg-brand-teal text-white flex items-center justify-center text-[10px] font-bold shadow-xs">
+                ✓
+              </div>
+              <div class="pr-1">
+                <p id="txt-step-1" class="text-xs font-semibold text-brand-text leading-tight">
+                  College receives your enquiry
+                </p>
+                <p id="txt-step-1-sub" class="text-[11px] text-brand-muted mt-0.5">
+                  Your basic contact &amp; stream preference are securely shared.
+                </p>
+              </div>
+            </div>
+
+            <!-- Step 2 -->
+            <div class="relative flex items-start">
+              <div class="absolute -left-6 top-0.5 w-5 h-5 rounded-full bg-brand-light border border-brand-teal text-brand-dark flex items-center justify-center text-[10px] font-bold">
+                2
+              </div>
+              <div class="pr-1">
+                <p id="txt-step-2" class="text-xs font-semibold text-brand-text leading-tight">
+                  They may contact you for more details
+                </p>
+                <p id="txt-step-2-sub" class="text-[11px] text-brand-muted mt-0.5">
+                  Admissions counselors can answer your hostel &amp; fee questions.
+                </p>
+              </div>
+            </div>
+
+            <!-- Step 3 -->
+            <div class="relative flex items-start">
+              <div class="absolute -left-6 top-0.5 w-5 h-5 rounded-full bg-brand-bg border border-brand-border text-brand-muted flex items-center justify-center text-[10px] font-bold">
+                3
+              </div>
+              <div class="pr-1">
+                <p id="txt-step-3" class="text-xs font-semibold text-brand-text leading-tight">
+                  You can decide what to explore next
+                </p>
+                <p id="txt-step-3-sub" class="text-[11px] text-brand-muted mt-0.5">
+                  Non-binding inquiry. Keep browsing without any pressure.
+                </p>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- Action Buttons Container (Thumb Ergonomics) -->
+      <div class="w-full pt-1 pb-1 flex flex-col gap-2.5">
+        
+        <!-- Primary CTA: Continue Exploring -->
+        <button id="btn-primary" onclick="handlePrimaryAction()" class="w-full h-12 rounded-custom bg-brand-teal hover:bg-brand-dark active:scale-[0.98] text-white font-semibold text-sm flex items-center justify-center gap-2 shadow-sm transition-all duration-150">
+          <span id="txt-btn-primary">Continue Exploring</span>
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M5 12h14"></path>
+            <path d="m12 5 7 7-7 7"></path>
+          </svg>
+        </button>
+
+        <!-- Secondary Action: View College (Return to profile) -->
+        <button id="btn-secondary" onclick="handleSecondaryAction()" class="w-full h-10 rounded-custom bg-transparent hover:bg-brand-light/60 active:scale-[0.98] text-brand-muted hover:text-brand-dark font-medium text-xs flex items-center justify-center gap-1.5 transition-colors duration-150">
+          <svg class="w-3.5 h-3.5 text-brand-muted" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+            <polyline points="9 22 9 12 15 12 15 22"></polyline>
+          </svg>
+          <span id="txt-btn-secondary">View College Details</span>
+        </button>
+
+        <!-- Micro Reassurance Footnote -->
+        <p id="txt-footnote" class="text-[10px] text-brand-muted/70 text-center mt-0.5">
+          No obligation • Your inquiry does not commit you to admission
+        </p>
+
+      </div>
+
+    </div>
+
+    <!-- Phone Home Indicator bar -->
+    <div class="w-full pb-2 flex justify-center z-20 shrink-0">
+      <div class="w-32 h-1 bg-brand-text/20 rounded-full"></div>
+    </div>
+
+  </main>
+
+  <script>
+    // Bilingual Text Dictionary
+    const i18n = {
+      en: {
+        badgeStatus: "Delivered",
+        label: "Enquiry sent",
+        heading: "You're all set!",
+        supporting: "Your enquiry has been sent to <span class='font-semibold text-brand-dark'>Sri Chaitanya Junior College</span>.",
+        additional: "The college can contact you with more information about MPC, fees, hostel, and other details.",
+        sectionTitle: "What happens next?",
+        step1: "College receives your enquiry",
+        step1Sub: "Your basic contact & stream preference are securely shared.",
+        step2: "They may contact you for more details",
+        step2Sub: "Admissions counselors can answer your hostel & fee questions.",
+        step3: "You can decide what to explore next",
+        step3Sub: "Non-binding inquiry. Keep browsing without any pressure.",
+        btnPrimary: "Continue Exploring",
+        btnSecondary: "View College Details",
+        footnote: "No obligation • Your inquiry does not commit you to admission",
+        isTelugu: false
+      },
+      te: {
+        badgeStatus: "చేరింది",
+        label: "ఎంక్వైరీ పంపబడింది",
+        heading: "అంతా సిద్ధంగా ఉంది!",
+        supporting: "మీ ఎంక్వైరీ <span class='font-semibold text-brand-dark'>శ్రీ చైతన్య జూనియర్ కాలేజీ</span>కి పంపబడింది.",
+        additional: "MPC, ఫీజులు, హాస్టల్ మరియు ఇతర వివరాల గురించి కాలేజీ మిమ్మల్ని సంప్రదించవచ్చు.",
+        sectionTitle: "తర్వాత ఏమి జరుగుతుంది?",
+        step1: "కాలేజీ మీ ఎంక్వైరీని అందుకుంటుంది",
+        step1Sub: "మీ వివరాలు మరియు స్ట్రీమ్ ఆసక్తి భద్రంగా చేరవేయబడ్డాయి.",
+        step2: "మరిన్ని వివరాల కోసం వారు మిమ్మల్ని సంప్రదించవచ్చు",
+        step2Sub: "హాస్టల్, ఫీజుల సందేహాలకు వారు సమాధానం ఇవ్వగలరు.",
+        step3: "తర్వాత మీరు మీకు నచ్చిన మార్గాన్ని పరిశీలించవచ్చు",
+        step3Sub: "ఎలాంటి ఒత్తిడి లేదు. మీ ఇష్టానుసారం మరిన్ని కాలేజీలు చూడండి.",
+        btnPrimary: "మరిన్ని కాలేజీలను పరిశీలించండి",
+        btnSecondary: "కాలేజీ వివరాలు చూడండి",
+        footnote: "ఎలాంటి నిర్బంధం లేదు • ఇది అడ్మిషన్ నమోదు కాదు",
+        isTelugu: true
+      }
+    };
+
+    let currentLang = 'en';
+
+    function setLanguage(lang) {
+      currentLang = lang;
+      const data = i18n[lang];
+
+      // Update switcher button styles
+      const btnEn = document.getElementById('btn-en');
+      const btnTe = document.getElementById('btn-te');
+
+      if (lang === 'en') {
+        btnEn.className = "px-2.5 py-1 rounded-full bg-brand-teal text-white shadow-xs transition-all duration-200";
+        btnTe.className = "px-2.5 py-1 rounded-full text-brand-muted hover:text-brand-text transition-all duration-200";
+      } else {
+        btnTe.className = "px-2.5 py-1 rounded-full bg-brand-teal text-white shadow-xs transition-all duration-200";
+        btnEn.className = "px-2.5 py-1 rounded-full text-brand-muted hover:text-brand-text transition-all duration-200";
+      }
+
+      // Update text nodes
+      document.getElementById('txt-badge-status').textContent = data.badgeStatus;
+      document.getElementById('txt-label').textContent = data.label;
+      document.getElementById('txt-heading').textContent = data.heading;
+      document.getElementById('txt-supporting').innerHTML = data.supporting;
+      document.getElementById('txt-additional').textContent = data.additional;
+      document.getElementById('txt-section-title').textContent = data.sectionTitle;
+      document.getElementById('txt-step-1').textContent = data.step1;
+      document.getElementById('txt-step-1-sub').textContent = data.step1Sub;
+      document.getElementById('txt-step-2').textContent = data.step2;
+      document.getElementById('txt-step-2-sub').textContent = data.step2Sub;
+      document.getElementById('txt-step-3').textContent = data.step3;
+      document.getElementById('txt-step-3-sub').textContent = data.step3Sub;
+      document.getElementById('txt-btn-primary').textContent = data.btnPrimary;
+      document.getElementById('txt-btn-secondary').textContent = data.btnSecondary;
+      document.getElementById('txt-footnote').textContent = data.footnote;
+
+      // Font style adjustment for Telugu
+      const mainElement = document.querySelector('.mobile-frame');
+      if (data.isTelugu) {
+        mainElement.classList.add('font-te');
+      } else {
+        mainElement.classList.remove('font-te');
+      }
+    }
+
+    function handlePrimaryAction() {
+      // Gentle feedback
+      const btn = document.getElementById('btn-primary');
+      btn.classList.add('scale-95');
+      setTimeout(() => {
+        btn.classList.remove('scale-95');
+        alert(currentLang === 'en' ? "Returning to Explore Colleges..." : "కాలేజీల అన్వేషణకు మళ్లుతున్నాము...");
+      }, 150);
+    }
+
+    function handleSecondaryAction() {
+      alert(currentLang === 'en' ? "Returning to College Details..." : "కాలేజీ వివరాలకు మళ్లుతున్నాము...");
+    }
+  </script>
+
+</body></html>

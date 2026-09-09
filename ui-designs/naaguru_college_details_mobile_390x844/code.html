@@ -1,0 +1,511 @@
+<!DOCTYPE html><html lang="en"><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Naaguru - College Details</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Noto+Sans+Telugu:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: {
+              DEFAULT: '#087F6C',
+              dark: '#056052',
+              light: '#E6F5F1',
+              subtle: '#F0F9F7',
+            },
+            amber: {
+              warm: '#F4B942',
+              light: '#FEF8EB',
+            },
+            ink: {
+              DEFAULT: '#172321',
+              muted: '#647572',
+              light: '#94A3B8',
+              border: '#E2E8F0',
+            },
+            surface: {
+              DEFAULT: '#FFFFFF',
+              bg: '#F8FAF9',
+              alt: '#F1F5F4',
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'Noto Sans Telugu', 'sans-serif'],
+            telugu: ['Noto Sans Telugu', 'sans-serif'],
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    body {
+      background-color: #0f172a;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', 'Noto Sans Telugu', sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Strict Mobile Viewport container (390 x 844 px portrait) */
+    .mobile-frame {
+      width: 390px;
+      height: 844px;
+      max-width: 390px;
+      max-height: 844px;
+      background-color: #F8FAF9;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.45);
+      border-radius: 40px;
+      border: 8px solid #1E293B;
+    }
+
+    /* Native iPhone Dynamic Island / Speaker Pill */
+    .mobile-notch {
+      position: absolute;
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 120px;
+      height: 28px;
+      background-color: #1E293B;
+      border-radius: 20px;
+      z-index: 50;
+      pointer-events: none;
+    }
+
+    .scroll-content {
+      flex: 1;
+      overflow-y: auto;
+      overflow-x: hidden;
+      padding-bottom: 100px; /* Space for sticky bottom action */
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .scroll-content::-webkit-scrollbar {
+      display: none;
+    }
+
+    /* Telugu specific typographic rhythm */
+    [lang="te"] {
+      font-family: 'Noto Sans Telugu', 'Inter', sans-serif;
+      line-height: 1.55;
+    }
+  </style>
+</head>
+<body class="p-0 sm:p-4">
+
+  <!-- Mobile Frame (390 x 844) -->
+  <div class="mobile-frame text-ink">
+    <div class="mobile-notch"></div>
+
+    <!-- Status Bar spacing -->
+    <div class="h-10 w-full bg-surface shrink-0 flex items-center justify-between px-7 pt-2 text-xs font-semibold text-ink-muted">
+      <span>9:41</span>
+      <div class="flex items-center space-x-1.5">
+        <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24"><path d="M12 3c-4.97 0-9 4.03-9 9 0 2.12.74 4.07 1.97 5.61L4.35 18.25C2.92 16.51 2 14.36 2 12c0-5.52 4.48-10 10-10s10 4.48 10 10c0 2.36-.92 4.51-2.35 6.25l-.62-.64C20.26 16.07 21 14.12 21 12c0-4.97-4.03-9-9-9zm0 4c-2.76 0-5 2.24-5 5 0 1.29.49 2.47 1.3 3.36l.7-.72C8.38 14.07 8 13.08 8 12c0-2.21 1.79-4 4-4s4 1.79 4 4c0 1.08-.38 2.07-1 2.64l.7.72c.81-.89 1.3-2.07 1.3-3.36 0-2.76-2.24-5-5-5zm0 4c-.55 0-1 .45-1 1s.45 1 1 1 1-.45 1-1-.45-1-1-1z"></path></svg>
+        <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24"><path d="M2 17h20v2H2v-2zm1.15-4.05L4 11.92V7.5C4 5.57 5.57 4 7.5 4h9C18.43 4 20 5.57 20 7.5v4.42l.85 1.03c.53.64.15 1.62-.69 1.62H3.84c-.84 0-1.22-.98-.69-1.62z"></path></svg>
+        <div class="w-5 h-2.5 border border-ink-muted rounded-sm p-0.5 flex items-center">
+          <div class="h-full w-3 bg-ink-muted rounded-2xs"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sticky Mobile Header -->
+    <header class="h-14 bg-surface border-b border-ink-border px-4 flex items-center justify-between shrink-0 z-30">
+      <div class="flex items-center space-x-2">
+        <a href="javascript:void(0)" class="w-9 h-9 rounded-full flex items-center justify-center text-ink hover:bg-surface-alt active:scale-95 transition-transform" aria-label="Go back">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M15 19l-7-7 7-7"></path>
+          </svg>
+        </a>
+        <h1 class="text-base font-bold text-ink" data-en="College Details" data-te="కాలేజీ వివరాలు">College Details</h1>
+      </div>
+
+      <div class="flex items-center space-x-2">
+        <!-- Language Switcher EN | తెలుగు -->
+        <div class="inline-flex bg-surface-alt p-0.5 rounded-full border border-ink-border text-xs font-medium">
+          <button id="btn-en" onclick="setLang('en')" class="px-2.5 py-1 rounded-full text-xs font-semibold bg-primary text-white shadow-xs transition-all">EN</button>
+          <button id="btn-te" onclick="setLang('te')" class="px-2.5 py-1 rounded-full text-xs font-semibold text-ink-muted hover:text-ink transition-all">తెలుగు</button>
+        </div>
+
+        <!-- Optional Bookmark Icon -->
+        <button class="w-8 h-8 rounded-full flex items-center justify-center text-ink-muted hover:text-primary transition-colors" aria-label="Save college">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- Scrollable Content Area -->
+    <main class="scroll-content">
+
+      <!-- Context banner (exploring MPC) -->
+      <div class="bg-primary-subtle border-b border-primary/10 px-4 py-2 flex items-center justify-between">
+        <div class="flex items-center space-x-1.5 text-xs text-primary font-medium">
+          <span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
+          <span data-en="You're exploring MPC" data-te="మీరు MPCని పరిశీలిస్తున్నారు">You're exploring MPC</span>
+        </div>
+        <span class="text-[11px] font-semibold text-primary/80 bg-white/70 px-2 py-0.5 rounded border border-primary/15" data-en="Class 11 &amp; 12" data-te="ఇంటర్మీడియట్">Class 11 &amp; 12</span>
+      </div>
+
+      <!-- College Campus Image (Moderate height, realistic photo) -->
+      <div class="relative w-full h-48 bg-slate-200 overflow-hidden">
+        <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuBClhXtxG5hfSh4pXOktZL4ob-20rDvsH8s5o9EpnwhMIUbkESIYePBZMjqOEiiR_3GyiNXY3clAb3hOZ_e7GyCilPF9S7GJhaQB0TSpXsL4v3n0cHDW6Qa0mNAfraqFOtIHcFyr9CY0RF7gLmcU2SSZtKUTOaveIZo_jOyPhv_O_IR3ggBX0FGSvirLl_JgnRS1LCUwUkVBdxiIlTevqS3vF0ma-ntbV6l1uXwYEnaDFGA-i2cta2kCQ" alt="Junior College Campus" class="w-full h-full object-cover">
+        <div class="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent"></div>
+        <div class="absolute bottom-2.5 left-4 flex items-center space-x-2">
+          <span class="px-2.5 py-1 rounded-md text-[11px] font-semibold bg-white/95 text-ink shadow-sm flex items-center space-x-1 backdrop-blur-xs">
+            <svg class="w-3.5 h-3.5 text-primary" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+            </svg>
+            <span data-en="Verified by Naaguru" data-te="Naaguru ద్వారా వెరిఫై చేయబడింది">Verified by Naaguru</span>
+          </span>
+          <span class="px-2 py-1 rounded-md text-[11px] font-medium bg-black/60 text-white backdrop-blur-xs">
+            Visakhapatnam
+          </span>
+        </div>
+      </div>
+
+      <!-- College Hero & Identity -->
+      <div class="px-4 pt-3.5 pb-3 bg-surface border-b border-ink-border">
+        <div class="flex items-start justify-between">
+          <div>
+            <h2 class="text-xl font-bold text-ink leading-tight">Sri Chaitanya Junior College</h2>
+            <div class="flex items-center text-xs text-ink-muted mt-1 space-x-1.5">
+              <svg class="w-3.5 h-3.5 text-primary shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+              </svg>
+              <span>MVP Colony, Visakhapatnam, Andhra Pradesh</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Summary Tags -->
+        <div class="flex flex-wrap gap-1.5 mt-3 pt-3 border-t border-slate-100">
+          <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-primary-light text-primary border border-primary/20">MPC</span>
+          <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-surface-alt text-ink-muted border border-ink-border">BiPC</span>
+          <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-surface-alt text-ink-muted border border-ink-border">MEC</span>
+          <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-surface-alt text-ink-muted border border-ink-border">CEC</span>
+          <span class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-light text-amber-800 border border-amber-warm/30 flex items-center space-x-1">
+            <svg class="w-3 h-3 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+            </svg>
+            <span data-en="Hostel Available" data-te="హాస్టల్ అందుబాటులో ఉంది">Hostel Available</span>
+          </span>
+        </div>
+      </div>
+
+      <!-- Content Sections (Clean typography hierarchy, avoiding card clutter) -->
+      <div class="px-4 py-4 space-y-5">
+
+        <!-- 1. About This College -->
+        <div>
+          <h3 class="text-xs font-bold uppercase tracking-wider text-ink-muted mb-1.5" data-en="About this college" data-te="ఈ కాలేజీ గురించి">About this college</h3>
+          <p class="text-sm text-ink/90 leading-relaxed" data-en="Sri Chaitanya Junior College offers Intermediate Board education with specialized coaching support for MPC, BiPC, and Commerce streams. The campus features integrated science laboratories, digital classrooms, and separate hostel facilities for boys and girls." data-te="శ్రీ చైతన్య జూనియర్ కాలేజ్ MPC, BiPC మరియు కామర్స్ స్ట్రీమ్‌లలో ఇంటర్మీడియట్ విద్యను అందిస్తుంది. ఈ క్యాంపస్‌లో సైన్స్ ల్యాబ్‌లు, డిజిటల్ తరగతి గదులు మరియు విద్యార్థులకు హాస్టల్ వసతులు అందుబాటులో ఉన్నాయి.">
+            Sri Chaitanya Junior College offers Intermediate Board education with specialized coaching support for MPC, BiPC, and Commerce streams. The campus features integrated science laboratories, digital classrooms, and separate hostel facilities for boys and girls.
+          </p>
+        </div>
+
+        <!-- 2. Streams & Fees (Clean rows with transparent pricing) -->
+        <div class="pt-2 border-t border-slate-200">
+          <div class="flex items-center justify-between mb-2">
+            <h3 class="text-xs font-bold uppercase tracking-wider text-ink-muted" data-en="Streams &amp; fees" data-te="స్ట్రీమ్‌లు &amp; ఫీజులు">Streams &amp; fees</h3>
+            <span class="text-[11px] text-ink-muted" data-en="Annual indicative" data-te="వార్షిక అంచనా">Annual indicative</span>
+          </div>
+
+          <div class="divide-y divide-slate-100 bg-surface rounded-xl border border-ink-border px-3.5 py-1">
+            
+            <!-- Stream 1: MPC (Highlighted with subtle tag) -->
+            <div class="py-2.5 flex items-center justify-between">
+              <div class="flex items-center space-x-2">
+                <span class="w-7 h-7 rounded-lg bg-primary-light text-primary font-bold text-xs flex items-center justify-center">M</span>
+                <div>
+                  <div class="flex items-center space-x-1.5">
+                    <span class="text-sm font-semibold text-ink">MPC</span>
+                    <span class="text-[10px] font-semibold text-primary bg-primary/10 px-1.5 py-0.2 rounded" data-en="Your Stream" data-te="మీ స్ట్రీమ్">Your Stream</span>
+                  </div>
+                  <p class="text-xs text-ink-muted" data-en="Maths, Physics, Chemistry" data-te="మ్యాథ్స్, ఫిజిక్స్, కెమిస్ట్రీ">Maths, Physics, Chemistry</p>
+                </div>
+              </div>
+              <div class="text-right">
+                <span class="text-sm font-bold text-ink">₹55,000–₹80,000</span>
+                <p class="text-[10px] text-ink-muted" data-en="/ year" data-te="/ సంవత్సరం">/ year</p>
+              </div>
+            </div>
+
+            <!-- Stream 2: BiPC -->
+            <div class="py-2.5 flex items-center justify-between">
+              <div class="flex items-center space-x-2">
+                <span class="w-7 h-7 rounded-lg bg-emerald-50 text-emerald-700 font-bold text-xs flex items-center justify-center">B</span>
+                <div>
+                  <span class="text-sm font-semibold text-ink">BiPC</span>
+                  <p class="text-xs text-ink-muted" data-en="Biology, Physics, Chemistry" data-te="బయాలజీ, ఫిజిక్స్, కెమిస్ట్రీ">Biology, Physics, Chemistry</p>
+                </div>
+              </div>
+              <div class="text-right">
+                <span class="text-sm font-semibold text-ink">₹60,000–₹85,000</span>
+                <p class="text-[10px] text-ink-muted" data-en="/ year" data-te="/ సంవత్సరం">/ year</p>
+              </div>
+            </div>
+
+            <!-- Stream 3: MEC -->
+            <div class="py-2.5 flex items-center justify-between">
+              <div class="flex items-center space-x-2">
+                <span class="w-7 h-7 rounded-lg bg-amber-50 text-amber-700 font-bold text-xs flex items-center justify-center">E</span>
+                <div>
+                  <span class="text-sm font-semibold text-ink">MEC</span>
+                  <p class="text-xs text-ink-muted" data-en="Maths, Economics, Commerce" data-te="మ్యాథ్స్, ఎకనామిక్స్, కామర్స్">Maths, Economics, Commerce</p>
+                </div>
+              </div>
+              <div class="text-right">
+                <span class="text-sm font-semibold text-ink">₹45,000–₹65,000</span>
+                <p class="text-[10px] text-ink-muted" data-en="/ year" data-te="/ సంవత్సరం">/ year</p>
+              </div>
+            </div>
+
+            <!-- Stream 4: CEC -->
+            <div class="py-2.5 flex items-center justify-between">
+              <div class="flex items-center space-x-2">
+                <span class="w-7 h-7 rounded-lg bg-purple-50 text-purple-700 font-bold text-xs flex items-center justify-center">C</span>
+                <div>
+                  <span class="text-sm font-semibold text-ink">CEC</span>
+                  <p class="text-xs text-ink-muted" data-en="Civics, Economics, Commerce" data-te="సివిక్స్, ఎకనామిక్స్, కామర్స్">Civics, Economics, Commerce</p>
+                </div>
+              </div>
+              <div class="text-right">
+                <span class="text-sm font-semibold text-ink">₹40,000–₹58,000</span>
+                <p class="text-[10px] text-ink-muted" data-en="/ year" data-te="/ సంవత్సరం">/ year</p>
+              </div>
+            </div>
+          </div>
+          <p class="text-[11px] text-ink-muted mt-1.5 italic" data-en="* Fees are indicative based on standard curriculum. Concessions or merit scholarships may apply upon enquiry." data-te="* ఫీజులు అంచనా మాత్రమే. విచారణ సమయంలో మెరిట్ లేదా ఇతర రాయితీలు వర్తించవచ్చు.">* Fees are indicative based on standard curriculum. Concessions or merit scholarships may apply upon enquiry.</p>
+        </div>
+
+        <!-- 3. Hostel & Accommodation -->
+        <div class="pt-2 border-t border-slate-200">
+          <h3 class="text-xs font-bold uppercase tracking-wider text-ink-muted mb-2" data-en="Hostel" data-te="హాస్టల్">Hostel</h3>
+          <div class="bg-surface rounded-xl border border-ink-border p-3 flex items-start space-x-3">
+            <div class="w-8 h-8 rounded-lg bg-amber-light text-amber-700 flex items-center justify-center shrink-0">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+              </svg>
+            </div>
+            <div class="flex-1">
+              <div class="flex items-center justify-between">
+                <span class="text-sm font-semibold text-ink" data-en="Hostel facilities available" data-te="హాస్టల్ వసతి అందుబాటులో ఉంది">Hostel facilities available</span>
+                <span class="text-xs font-bold text-ink">₹60,000 <span class="text-[10px] font-normal text-ink-muted" data-en="/ yr" data-te="/ సం.">/ yr</span></span>
+              </div>
+              <p class="text-xs text-ink-muted mt-0.5" data-en="Separate accommodation for boys and girls with clean dining and supervised study hours." data-te="బాలురు మరియు బాలికలకు ప్రత్యేక వసతి గృహాలు, డైనింగ్ మరియు స్టడీ అవర్స్ ఉంటాయి.">
+                Separate accommodation for boys and girls with clean dining and supervised study hours.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4. Location & Campus Preview -->
+        <div class="pt-2 border-t border-slate-200">
+          <div class="flex items-center justify-between mb-2">
+            <h3 class="text-xs font-bold uppercase tracking-wider text-ink-muted" data-en="Location" data-te="లొకేషన్">Location</h3>
+            <a href="javascript:void(0)" class="text-xs font-semibold text-primary flex items-center space-x-0.5" data-en="View on map →" data-te="మ్యాప్‌లో చూడండి →">
+              <span>View on map</span>
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+            </a>
+          </div>
+
+          <!-- Compact Map Simulation -->
+          <div class="bg-surface rounded-xl border border-ink-border overflow-hidden">
+            <div class="h-28 w-full bg-[#E2ECE9] relative flex items-center justify-center">
+              <!-- Stylized map grid patterns -->
+              <svg class="absolute inset-0 w-full h-full opacity-30" xmlns="http://www.w3.org/2000/svg">
+                <line x1="0" y1="40" x2="390" y2="40" stroke="#087F6C" stroke-width="2"></line>
+                <line x1="0" y1="80" x2="390" y2="80" stroke="#087F6C" stroke-width="1.5"></line>
+                <line x1="120" y1="0" x2="120" y2="120" stroke="#087F6C" stroke-width="2"></line>
+                <line x1="260" y1="0" x2="260" y2="120" stroke="#087F6C" stroke-width="1.5"></line>
+                <circle cx="190" cy="55" r="28" fill="#087F6C" fill-opacity="0.12"></circle>
+              </svg>
+              <!-- Location Pin -->
+              <div class="relative z-10 flex flex-col items-center">
+                <div class="w-8 h-8 rounded-full bg-primary text-white shadow-md flex items-center justify-center border-2 border-white animate-bounce">
+                  <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path>
+                  </svg>
+                </div>
+                <span class="mt-1 text-[11px] font-bold bg-white/95 px-2 py-0.5 rounded shadow text-ink">MVP Sector 4</span>
+              </div>
+            </div>
+            <div class="p-3 bg-surface text-xs text-ink flex items-center justify-between">
+              <div>
+                <span class="font-semibold block text-ink">Door No. 4-48/2, MVP Colony Sector 4</span>
+                <span class="text-ink-muted text-[11px]">Near Rythu Bazaar, Visakhapatnam • 2.4 km away</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 5. Direct Contact (Phone, Email, Website) -->
+        <div class="pt-2 border-t border-slate-200">
+          <h3 class="text-xs font-bold uppercase tracking-wider text-ink-muted mb-2" data-en="Contact" data-te="సంప్రదించండి">Contact</h3>
+          <div class="bg-surface rounded-xl border border-ink-border divide-y divide-slate-100">
+            <!-- Phone -->
+            <a href="tel:+918912554433" class="p-3 flex items-center justify-between hover:bg-surface-alt transition-colors">
+              <div class="flex items-center space-x-3">
+                <div class="w-7 h-7 rounded-lg bg-primary-light text-primary flex items-center justify-center shrink-0">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
+                  </svg>
+                </div>
+                <div>
+                  <span class="text-xs text-ink-muted block" data-en="Phone Support" data-te="ఫోన్ సపోర్ట్">Phone Support</span>
+                  <span class="text-sm font-semibold text-ink">+91 891 255 4433</span>
+                </div>
+              </div>
+              <svg class="w-4 h-4 text-ink-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+            </a>
+
+            <!-- Email -->
+            <a href="mailto:admissions.vsp@srichaitanya.net" class="p-3 flex items-center justify-between hover:bg-surface-alt transition-colors">
+              <div class="flex items-center space-x-3">
+                <div class="w-7 h-7 rounded-lg bg-primary-light text-primary flex items-center justify-center shrink-0">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                  </svg>
+                </div>
+                <div>
+                  <span class="text-xs text-ink-muted block" data-en="Enquiry Email" data-te="ఎంక్వైరీ ఈమెయిల్">Enquiry Email</span>
+                  <span class="text-xs font-semibold text-ink truncate max-w-[200px] block">info.vsp@srichaitanya.net</span>
+                </div>
+              </div>
+              <svg class="w-4 h-4 text-ink-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+            </a>
+
+            <!-- Website -->
+            <a href="https://example.com" target="_blank" class="p-3 flex items-center justify-between hover:bg-surface-alt transition-colors">
+              <div class="flex items-center space-x-3">
+                <div class="w-7 h-7 rounded-lg bg-primary-light text-primary flex items-center justify-center shrink-0">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path>
+                  </svg>
+                </div>
+                <div>
+                  <span class="text-xs text-ink-muted block" data-en="Official Website" data-te="అధికారిక వెబ్‌సైట్">Official Website</span>
+                  <span class="text-xs font-semibold text-ink">srichaitanya.net</span>
+                </div>
+              </div>
+              <svg class="w-4 h-4 text-ink-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+            </a>
+          </div>
+        </div>
+
+        <!-- Trust Note at bottom of scroll -->
+        <div class="p-3 bg-primary-subtle rounded-xl border border-primary/15 text-center">
+          <p class="text-[11px] text-primary leading-relaxed" data-en="Naaguru provides verified college facts without commission or sponsored listings. Connect directly to ask questions or verify fee details." data-te="Naaguru ఎలాంటి కమిషన్ లేదా స్పాన్సర్డ్ ర్యాంకింగ్స్ లేకుండా సమాచారాన్ని అందిస్తుంది. ఫీజులు, వివరాలు తెలుసుకోవడానికి నేరుగా సంప్రదించవచ్చు.">
+            Naaguru provides verified college facts without commission or sponsored listings. Connect directly to ask questions or verify fee details.
+          </p>
+        </div>
+
+      </div>
+
+    </main>
+
+    <!-- Sticky Bottom Action Area (Ergonomic for smartphone thumbs) -->
+    <footer class="absolute bottom-0 left-0 right-0 bg-surface/95 backdrop-blur-md border-t border-ink-border px-4 py-3 z-40">
+      <div class="flex items-center space-x-2.5">
+        <!-- Secondary Action: Call College -->
+        <a href="tel:+918912554433" class="h-12 px-3.5 rounded-xl border border-ink-border bg-surface text-ink text-xs font-semibold flex items-center justify-center space-x-1.5 active:bg-surface-alt transition-colors shrink-0 shadow-xs">
+          <svg class="w-4 h-4 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
+          </svg>
+          <span data-en="Call College" data-te="కాల్ చేయండి">Call College</span>
+        </a>
+
+        <!-- Primary Action: Send Enquiry (prominent, high contrast) -->
+        <button onclick="handleEnquiry()" class="flex-1 h-12 bg-primary hover:bg-primary-dark active:scale-[0.98] text-white rounded-xl font-semibold text-sm flex items-center justify-center space-x-2 shadow-sm transition-all">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+          </svg>
+          <span data-en="Send Enquiry" data-te="ఎంక్వైరీ పంపండి">Send Enquiry</span>
+        </button>
+      </div>
+
+      <!-- Home indicator bar -->
+      <div class="w-32 h-1 bg-slate-300 rounded-full mx-auto mt-2.5"></div>
+    </footer>
+
+    <!-- Enquiry Modal Dialog (Lightweight simulation) -->
+    <div id="enquiry-modal" class="hidden absolute inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-end">
+      <div class="w-full bg-surface rounded-t-3xl p-5 border-t border-ink-border shadow-2xl animate-in slide-in-from-bottom duration-200">
+        <div class="flex items-center justify-between mb-3">
+          <div>
+            <h4 class="text-base font-bold text-ink" data-en="Enquire with College" data-te="కాలేజీ ఎంక్వైరీ">Enquire with College</h4>
+            <p class="text-xs text-ink-muted" data-en="Regarding MPC Admissions &amp; Fees" data-te="MPC అడ్మిషన్లు &amp; ఫీజుల వివరాల కోసం">Regarding MPC Admissions &amp; Fees</p>
+          </div>
+          <button onclick="closeEnquiry()" class="w-8 h-8 rounded-full bg-surface-alt flex items-center justify-center text-ink-muted">✕</button>
+        </div>
+        <p class="text-xs text-ink-muted mb-4 leading-relaxed" data-en="Naaguru will connect your request with Sri Chaitanya Junior College office for admission queries without spam." data-te="మీ వివరాలు ఎలాంటి స్పామ్ లేకుండా నేరుగా కాలేజీ అడ్మిషన్ ఆఫీసుకు చేరవేయబడతాయి.">
+          Naaguru will connect your request with Sri Chaitanya Junior College office for admission queries without spam.
+        </p>
+        <button onclick="confirmEnquiry()" class="w-full h-11 bg-primary text-white font-semibold text-sm rounded-xl mb-2" data-en="Confirm &amp; Send Enquiry" data-te="ఎంక్వైరీ పంపడాన్ని నిర్ధారించండి">
+          Confirm &amp; Send Enquiry
+        </button>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    // Bilingual interactive engine
+    let currentLang = 'en';
+
+    function setLang(lang) {
+      currentLang = lang;
+      const btnEn = document.getElementById('btn-en');
+      const btnTe = document.getElementById('btn-te');
+
+      if (lang === 'te') {
+        btnTe.className = "px-2.5 py-1 rounded-full text-xs font-semibold bg-primary text-white shadow-xs transition-all";
+        btnEn.className = "px-2.5 py-1 rounded-full text-xs font-semibold text-ink-muted hover:text-ink transition-all";
+        document.body.setAttribute('lang', 'te');
+      } else {
+        btnEn.className = "px-2.5 py-1 rounded-full text-xs font-semibold bg-primary text-white shadow-xs transition-all";
+        btnTe.className = "px-2.5 py-1 rounded-full text-xs font-semibold text-ink-muted hover:text-ink transition-all";
+        document.body.setAttribute('lang', 'en');
+      }
+
+      // Translate all data-en / data-te nodes
+      const elements = document.querySelectorAll('[data-en]');
+      elements.forEach(el => {
+        const text = el.getAttribute(`data-${lang}`);
+        if (text) {
+          el.textContent = text;
+        }
+      });
+    }
+
+    function handleEnquiry() {
+      document.getElementById('enquiry-modal').classList.remove('hidden');
+    }
+
+    function closeEnquiry() {
+      document.getElementById('enquiry-modal').classList.add('hidden');
+    }
+
+    function confirmEnquiry() {
+      alert(currentLang === 'te' ? 'మీ ఎంక్వైరీ విజయవంతంగా పంపబడింది!' : 'Your enquiry has been successfully sent to the college!');
+      closeEnquiry();
+    }
+  </script>
+
+
+</body></html>

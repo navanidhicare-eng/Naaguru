@@ -1,0 +1,300 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport">
+<title>Naaguru - Ready to Explore?</title>
+<!-- Google Fonts: Inter & Noto Sans Telugu -->
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;family=Noto+Sans+Telugu:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<!-- Tailwind CSS v3 with forms & container queries -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              teal: '#087F6C',
+              darkTeal: '#056052',
+              lightTeal: '#E6F5F1',
+              amber: '#F4B942',
+              bg: '#F8FAF9',
+              surface: '#FFFFFF',
+              text: '#172321',
+              muted: '#647572',
+              border: '#E2EAE7',
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'Noto Sans Telugu', 'system-ui', 'sans-serif'],
+            telugu: ['Noto Sans Telugu', 'Inter', 'sans-serif']
+          },
+          boxShadow: {
+            'soft-bottom': '0 -4px 20px -2px rgba(8, 127, 108, 0.08)',
+            'card': '0 2px 8px -2px rgba(23, 35, 33, 0.04), 0 1px 3px 0 rgba(23, 35, 33, 0.02)'
+          }
+        }
+      }
+    }
+  </script>
+<!-- BEGIN: Custom Styles -->
+<style data-purpose="typography">
+    body {
+      font-family: 'Inter', 'Noto Sans Telugu', -apple-system, BlinkMacSystemFont, sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .font-telugu {
+      font-family: 'Noto Sans Telugu', sans-serif;
+      line-height: 1.65;
+    }
+    /* Smooth transition for language switch */
+    [data-lang] {
+      transition: opacity 0.15s ease-in-out;
+    }
+  </style>
+<style data-purpose="scrollbar-management">
+    /* Hide scrollbar for a clean native mobile feel while maintaining scrollability */
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+  </style>
+<!-- END: Custom Styles -->
+</head>
+<body class="bg-[#F0F3F2] flex items-center justify-center min-h-screen p-0 sm:py-6 text-brand-text antialiased selection:bg-brand-lightTeal selection:text-brand-darkTeal">
+<!-- BEGIN: Mobile Device Frame (iOS 390x844 layout) -->
+<div class="relative w-full max-w-[390px] h-[844px] bg-brand-bg flex flex-col overflow-hidden sm:rounded-[44px] sm:shadow-2xl sm:ring-1 sm:ring-black/10" data-purpose="device-viewport">
+<!-- BEGIN: Top Navigation Bar -->
+<header class="flex-shrink-0 z-20 px-4 pt-11 pb-3 bg-brand-bg/95 backdrop-blur-md border-b border-brand-border/60 flex items-center justify-between">
+<!-- Back Button -->
+<button aria-label="Go Back" class="w-10 h-10 flex items-center justify-center rounded-full bg-brand-surface border border-brand-border text-brand-text active:scale-95 transition-all shadow-sm focus:outline-none" data-purpose="navigation-back" type="button">
+<svg class="w-5 h-5 text-brand-text" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<polyline points="15 18 9 12 15 6"></polyline>
+</svg>
+</button>
+<!-- Center Logo -->
+<div class="flex items-center justify-center h-8" data-purpose="brand-logo-container">
+<img alt="Naaguru Brand Logo" class="h-7 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1WhAE4NJVTRkA2IRPSfBgJ7pwp8KyEza7EAX0Hfz7yLKA-IENZlee_FWt4PYip-BZQdvsRsUGr12ax3Wq4zxyQljSj1eazmNYYfo1Fe1hfrSTssthuEj0QkU6kp6Axrzh1OAnMEg0mCUyIyipo7PyNdq-SdxwrGU9aAhps1QQAZL_Pb3fvVWnrIqtxe7pSVxtJJFhhc5vuiiDiD01GU9HWmfUD72JFgF7XGeifi5Xxq7MjxOlpSanQ8LuQ">
+</div>
+<!-- Compact Segmented Language Toggle [ EN | తెలుగు ] -->
+<div aria-label="Language selection" class="inline-flex items-center bg-brand-surface p-1 rounded-full border border-brand-border shadow-sm h-11" data-purpose="language-toggle" role="group">
+<button aria-pressed="true" class="lang-btn h-9 px-3 rounded-full text-xs font-semibold transition-all duration-200 flex items-center justify-center bg-brand-teal text-white shadow-sm" data-target-lang="en" id="lang-btn-en" type="button">
+          EN
+        </button>
+<button aria-pressed="false" class="lang-btn h-9 px-3 rounded-full text-xs font-medium font-telugu text-brand-muted hover:text-brand-text active:scale-95 transition-all duration-200 flex items-center justify-center" data-target-lang="te" id="lang-btn-te" type="button">
+          తెలుగు
+        </button>
+</div>
+</header>
+<!-- END: Top Navigation Bar -->
+<!-- BEGIN: Main Scrollable Content Area -->
+<main class="flex-1 overflow-y-auto no-scrollbar px-5 pt-3 pb-8 space-y-4">
+<!-- Step Indicator Tag -->
+<div class="flex items-center justify-start" data-purpose="progress-badge">
+<div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand-lightTeal border border-brand-teal/15 text-[11px] font-bold text-brand-teal tracking-wider">
+<span class="w-1.5 h-1.5 rounded-full bg-brand-teal animate-pulse"></span>
+<!-- English Step Badge -->
+<span class="lang-block lang-en uppercase">STEP 1 OF 3 • Interest Discovery</span>
+<!-- Telugu Step Badge -->
+<span class="lang-block lang-te font-telugu font-semibold hidden">స్టెప్ 1 / 3 • ఆసక్తుల అన్వేషణ</span>
+</div>
+</div>
+<!-- Hero Visual Art Card -->
+<div class="relative w-full rounded-2xl overflow-hidden bg-gradient-to-b from-brand-lightTeal/40 via-white to-transparent p-2 border border-brand-border/80" data-purpose="hero-illustration-wrapper">
+<img alt="Modern vector illustration of an Indian student exploring passions with curiosity icons" class="w-full h-44 object-contain rounded-xl mx-auto drop-shadow-sm" src="https://lh3.googleusercontent.com/aida/AEtjO1VIuGfazhbsNMRBg7MxDkisejhIlY7Mfk9l3CSEAeRVm-ErDc4QJ7O9mtWRPsag9qhkWf1MAt7_DohvbyFVgKHaI_Q3NftiHcjCm5RGNrNXqHncXkJRPA3e5gfdhhlaSH_S3VEgyerDlBaDd8RjDCy7yRI0l_3EIWlNUPd8sJbpU9MeooQvgKrpha1A9Xt5Jfl03yyj6cMyUbBIYzqJfT0ftP7aCn0nHE_4ru-1XD6zqv7kVO4hQiHIjth8">
+</div>
+<!-- Title & Contextual Copy -->
+<div class="space-y-2.5 pt-1" data-purpose="hero-headings">
+<!-- Heading -->
+<div>
+<h1 class="lang-block lang-en text-[26px] leading-tight font-extrabold text-brand-text tracking-tight">
+            Ready to explore?
+          </h1>
+<h1 class="lang-block lang-te font-telugu text-[22px] leading-snug font-bold text-brand-text tracking-tight hidden">
+            మీ గురించి తెలుసుకోవడానికి సిద్ధంగా ఉన్నారా?
+          </h1>
+</div>
+<!-- Compass/Sparkle reassurance tag line -->
+<div class="inline-flex items-center gap-1.5 py-1 px-2.5 rounded-md bg-[#FAF4E4] border border-[#F4B942]/30 text-xs font-semibold text-[#8F6406]">
+<svg class="w-3.5 h-3.5 text-[#F4B942] fill-current flex-shrink-0" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M12 2l2.4 7.2L22 12l-7.6 2.8L12 22l-2.4-7.2L2 12l7.6-2.8z"></path>
+</svg>
+<span class="lang-block lang-en">✦ No right or wrong answers here</span>
+<span class="lang-block lang-te font-telugu text-[12px] hidden">✦ ఇక్కడ సరైన లేదా తప్పు సమాధానాలు ఏవీ లేవు</span>
+</div>
+<!-- Explanatory Narrative -->
+<div class="text-[13.5px] leading-relaxed text-brand-muted pt-0.5">
+<p class="lang-block lang-en leading-relaxed">
+            Explore different activities and tell us how much you enjoy them. Your answers will help you discover subjects, streams, and career directions that may fit your interests.
+          </p>
+<p class="lang-block lang-te font-telugu text-[13.5px] leading-[1.7] text-brand-text/80 hidden">
+            వివిధ రకాల కార్యకలాపాలను చూస్తారు. వాటిలో మీకు ఎంత ఆసక్తి ఉందో చెప్పండి. మీ సమాధానాలు మీకు సరిపోయే సబ్జెక్టులు, స్ట్రీమ్‌లు మరియు కెరీర్ దిశలను తెలుసుకోవడంలో సహాయపడతాయి.
+          </p>
+</div>
+</div>
+<!-- BEGIN: Quick Reassurance Stats Cards -->
+<section aria-label="Assessment Highlights" class="grid grid-cols-3 gap-2.5 pt-1" data-purpose="assessment-attributes">
+<!-- Card 1: Question Count -->
+<article class="bg-brand-surface rounded-xl p-2.5 border border-brand-border shadow-card flex flex-col justify-between items-start min-h-[96px]">
+<div class="w-7 h-7 rounded-lg bg-brand-lightTeal flex items-center justify-center mb-2 flex-shrink-0">
+<svg class="w-4 h-4 text-brand-teal" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<circle cx="12" cy="12" r="10"></circle>
+<polyline points="12 6 12 12 16 14"></polyline>
+</svg>
+</div>
+<div>
+<!-- EN -->
+<div class="lang-block lang-en">
+<p class="text-[12px] font-bold text-brand-text leading-snug">40 quick questions</p>
+<p class="text-[10px] text-brand-muted mt-0.5">~8–10 mins</p>
+</div>
+<!-- TE -->
+<div class="lang-block lang-te hidden">
+<p class="text-[11.5px] font-bold font-telugu text-brand-text leading-tight">40 చిన్న ప్రశ్నలు</p>
+<p class="text-[10px] font-telugu text-brand-muted mt-0.5">~8–10 నిమిషాలు</p>
+</div>
+</div>
+</article>
+<!-- Card 2: No Marks/Grading -->
+<article class="bg-brand-surface rounded-xl p-2.5 border border-brand-border shadow-card flex flex-col justify-between items-start min-h-[96px]">
+<div class="w-7 h-7 rounded-lg bg-brand-lightTeal flex items-center justify-center mb-2 flex-shrink-0">
+<svg class="w-4 h-4 text-brand-teal" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+<polyline points="22 4 12 14.01 9 11.01"></polyline>
+</svg>
+</div>
+<div>
+<!-- EN -->
+<div class="lang-block lang-en">
+<p class="text-[12px] font-bold text-brand-text leading-snug">No marks</p>
+<p class="text-[10px] text-brand-muted mt-0.5">Zero pressure</p>
+</div>
+<!-- TE -->
+<div class="lang-block lang-te hidden">
+<p class="text-[11.5px] font-bold font-telugu text-brand-text leading-tight">మార్కులు లేవు</p>
+<p class="text-[10px] font-telugu text-brand-muted mt-0.5">ఎలాంటి ఒత్తిడి లేదు</p>
+</div>
+</div>
+</article>
+<!-- Card 3: Free Pace -->
+<article class="bg-brand-surface rounded-xl p-2.5 border border-brand-border shadow-card flex flex-col justify-between items-start min-h-[96px]">
+<div class="w-7 h-7 rounded-lg bg-[#FAF3E0] flex items-center justify-center mb-2 flex-shrink-0">
+<svg class="w-4 h-4 text-brand-amber" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48l2.83-2.83"></path>
+</svg>
+</div>
+<div>
+<!-- EN -->
+<div class="lang-block lang-en">
+<p class="text-[12px] font-bold text-brand-text leading-snug">Self Paced</p>
+<p class="text-[10px] text-brand-muted mt-0.5">Pause anytime</p>
+</div>
+<!-- TE -->
+<div class="lang-block lang-te hidden">
+<p class="text-[11.5px] font-bold font-telugu text-brand-text leading-tight">మీ స్వంత వేగంతో</p>
+<p class="text-[10px] font-telugu text-brand-muted mt-0.5">ఎప్పుడైనా ఆపవచ్చు</p>
+</div>
+</div>
+</article>
+</section>
+<!-- END: Quick Reassurance Stats Cards -->
+<!-- BEGIN: Mentorship Counselor Banner -->
+<aside class="p-3 rounded-xl bg-gradient-to-r from-brand-surface to-[#F3F9F7] border border-brand-border flex items-center gap-3" data-purpose="counselor-reassurance">
+<div class="w-9 h-9 rounded-full bg-brand-lightTeal flex-shrink-0 flex items-center justify-center border border-brand-teal/20">
+<svg class="w-4 h-4 text-brand-teal" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+</svg>
+</div>
+<div class="text-[11.5px] leading-tight text-brand-text">
+<p class="lang-block lang-en font-medium">Built with experienced student counselors to help Telugu students choose with clarity.</p>
+<p class="lang-block lang-te font-telugu text-[11px] leading-[1.6] text-brand-text font-medium hidden">విద్యార్థి కౌన్సెలర్ల సహకారంతో నమ్మకంగా ఎంపిక చేసుకోవడానికి రూపొందించబడింది.</p>
+</div>
+</aside>
+<!-- END: Mentorship Counselor Banner -->
+</main>
+<!-- END: Main Scrollable Content Area -->
+<!-- BEGIN: Sticky Bottom Action Panel -->
+<footer class="flex-shrink-0 z-30 px-5 pt-3 pb-8 bg-brand-surface border-t border-brand-border shadow-soft-bottom">
+<div class="space-y-2">
+<!-- Primary Action Button -->
+<button class="w-full h-[52px] rounded-xl bg-brand-teal hover:bg-brand-darkTeal active:scale-[0.98] transition-all duration-150 flex items-center justify-center gap-2 text-white font-semibold text-[16px] shadow-md shadow-brand-teal/20 focus:outline-none focus:ring-2 focus:ring-brand-teal focus:ring-offset-2" data-purpose="primary-cta-begin" id="btn-start-assessment" type="button">
+<span class="lang-block lang-en">Let's Begin</span>
+<span class="lang-block lang-te font-telugu font-semibold hidden">ప్రారంభిద్దాం</span>
+<svg class="w-5 h-5 ml-1 text-white stroke-current" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<line x1="5" x2="19" y1="12" y2="12"></line>
+<polyline points="12 5 19 12 12 19"></polyline>
+</svg>
+</button>
+<!-- Sub-CTA Reassurance micro-text -->
+<p class="text-center text-[11.5px] text-brand-muted leading-tight font-medium">
+<span class="lang-block lang-en">You can take your time. Just answer what feels true for you.</span>
+<span class="lang-block lang-te font-telugu text-[11px] hidden">మీకు సమయం తీసుకోవచ్చు. మీకు నిజంగా ఎలా అనిపిస్తుందో దాని ప్రకారం సమాధానం ఇవ్వండి.</span>
+</p>
+</div>
+</footer>
+<!-- END: Sticky Bottom Action Panel -->
+</div>
+<!-- END: Mobile Device Frame -->
+<!-- BEGIN: Interactive Language Switcher & Feedback Script -->
+<script data-purpose="interaction-handlers">
+    document.addEventListener('DOMContentLoaded', () => {
+      const btnEn = document.getElementById('lang-btn-en');
+      const btnTe = document.getElementById('lang-btn-te');
+      const enBlocks = document.querySelectorAll('.lang-en');
+      const teBlocks = document.querySelectorAll('.lang-te');
+
+      const activeBtnClasses = ['bg-brand-teal', 'text-white', 'shadow-sm', 'font-semibold'];
+      const inactiveBtnClasses = ['text-brand-muted', 'hover:text-brand-text', 'font-medium'];
+
+      function setLanguage(lang) {
+        if (lang === 'te') {
+          // Switch active button styles
+          btnEn.classList.remove(...activeBtnClasses);
+          btnEn.classList.add(...inactiveBtnClasses);
+          btnEn.setAttribute('aria-pressed', 'false');
+
+          btnTe.classList.remove(...inactiveBtnClasses);
+          btnTe.classList.add(...activeBtnClasses);
+          btnTe.setAttribute('aria-pressed', 'true');
+
+          // Toggle content blocks
+          enBlocks.forEach(el => el.classList.add('hidden'));
+          teBlocks.forEach(el => el.classList.remove('hidden'));
+          document.documentElement.lang = 'te';
+        } else {
+          // Switch active button styles
+          btnTe.classList.remove(...activeBtnClasses);
+          btnTe.classList.add(...inactiveBtnClasses);
+          btnTe.setAttribute('aria-pressed', 'false');
+
+          btnEn.classList.remove(...inactiveBtnClasses);
+          btnEn.classList.add(...activeBtnClasses);
+          btnEn.setAttribute('aria-pressed', 'true');
+
+          // Toggle content blocks
+          teBlocks.forEach(el => el.classList.add('hidden'));
+          enBlocks.forEach(el => el.classList.remove('hidden'));
+          document.documentElement.lang = 'en';
+        }
+      }
+
+      btnEn.addEventListener('click', () => setLanguage('en'));
+      btnTe.addEventListener('click', () => setLanguage('te'));
+
+      // Action button feedback
+      const startButton = document.getElementById('btn-start-assessment');
+      if (startButton) {
+        startButton.addEventListener('click', () => {
+          startButton.classList.add('opacity-90');
+          setTimeout(() => {
+            startButton.classList.remove('opacity-90');
+          }, 150);
+        });
+      }
+    });
+  </script>
+<!-- END: Interactive Language Switcher & Feedback Script -->
+</body></html>

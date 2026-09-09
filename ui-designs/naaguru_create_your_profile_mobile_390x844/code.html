@@ -1,0 +1,559 @@
+<!DOCTYPE html><html lang="en"><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Naaguru - Create Your Profile</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Noto+Sans+Telugu:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              DEFAULT: '#087F6C',
+              dark: '#056052',
+              light: '#E6F5F1',
+              subtle: '#effcf9',
+              amber: '#F4B942'
+            },
+            text: {
+              main: '#172321',
+              muted: '#647572',
+              light: '#94A3B8'
+            },
+            bg: {
+              main: '#F8FAF9',
+              card: '#FFFFFF'
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'Noto Sans Telugu', 'sans-serif'],
+            telugu: ['Noto Sans Telugu', 'Inter', 'sans-serif']
+          },
+          borderRadius: {
+            custom: '12px'
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    * {
+      -webkit-tap-highlight-color: transparent;
+      box-sizing: border-box;
+    }
+    body {
+      background-color: #0f172a;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+    }
+    .app-frame {
+      width: 390px;
+      height: 844px;
+      max-height: 844px;
+      background-color: #F8FAF9;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.45);
+    }
+    .telugu-text {
+      font-family: 'Noto Sans Telugu', sans-serif;
+      line-height: 1.5;
+    }
+    .custom-scroll::-webkit-scrollbar {
+      display: none;
+    }
+    .custom-scroll {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+    input:focus, select:focus {
+      outline: none;
+      border-color: #087F6C;
+      box-shadow: 0 0 0 3px rgba(8, 127, 108, 0.15);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 390x844 Smartphone Container -->
+  <div class="app-frame" id="appRoot">
+
+    <!-- Top Status Bar (Native Smartphone Feel) -->
+    <div class="h-11 px-6 pt-2 pb-1 flex justify-between items-center bg-[#F8FAF9] z-30 shrink-0 text-[#172321]">
+      <span class="text-xs font-semibold tracking-tight" id="clock">9:41</span>
+      <div class="flex items-center space-x-2">
+        <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24"><path d="M12 3c-4.97 0-9 4.03-9 9 0 2.12.74 4.07 1.97 5.61L4.35 19.4c-.39.39-.39 1.02 0 1.41.39.39 1.02.39 1.41 0l1.9-1.9C9.28 19.64 10.59 20 12 20c4.97 0 9-4.03 9-9s-4.03-9-9-9zm0 14c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z"></path></svg>
+        <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24"><path d="M12 4C7.31 4 3.07 5.9 0 8.98L12 21 24 8.98A16.88 16.88 0 0012 4z"></path></svg>
+        <svg class="w-4 h-3 fill-current" viewBox="0 0 24 24"><path d="M17 4h-3V2h-4v2H7v18h10V4z"></path></svg>
+      </div>
+    </div>
+
+    <!-- Header (No Bottom Nav on Profile Creation) -->
+    <header class="h-14 px-5 flex items-center justify-between bg-[#F8FAF9] border-b border-slate-100 shrink-0 z-20">
+      <div class="flex items-center space-x-3">
+        <button type="button" aria-label="Go back" class="w-9 h-9 rounded-full bg-white border border-slate-200 flex items-center justify-center text-[#172321] active:scale-95 transition-transform">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"></path>
+          </svg>
+        </button>
+        <span class="font-semibold text-base text-[#172321]" id="navTitle">Create Your Profile</span>
+      </div>
+
+      <!-- Bilingual Toggle: EN | తెలుగు -->
+      <div class="flex items-center bg-white border border-slate-200 rounded-full p-0.5 shadow-sm">
+        <button id="langEN" onclick="setLanguage('en')" class="px-2.5 py-1 rounded-full text-xs font-semibold bg-brand text-white transition-all duration-200">
+          EN
+        </button>
+        <button id="langTE" onclick="setLanguage('te')" class="px-2.5 py-1 rounded-full text-xs font-medium text-[#647572] hover:text-[#172321] transition-all duration-200">
+          తెలుగు
+        </button>
+      </div>
+    </header>
+
+    <!-- Scrollable Form Body -->
+    <main class="flex-1 overflow-y-auto custom-scroll px-5 pt-4 pb-28">
+
+      <!-- Step Indicator & Introduction -->
+      <div class="mb-5">
+        <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-brand-light text-brand text-xs font-medium mb-2.5">
+          <span class="w-1.5 h-1.5 rounded-full bg-brand animate-pulse"></span>
+          <span id="stepBadge">Step 1 of 2 • Quick Setup</span>
+        </div>
+        <h1 id="headingMain" class="text-[22px] leading-tight font-bold text-[#172321]">
+          Let's create your profile
+        </h1>
+        <p id="subHeading" class="text-sm text-[#647572] mt-1.5">
+          We'll use these details to personalize your Naaguru journey.
+        </p>
+      </div>
+
+      <!-- Demo State Switcher for Review -->
+      <div class="mb-5 p-2 bg-slate-100 rounded-xl flex items-center justify-between text-xs">
+        <span class="text-slate-500 font-medium pl-1" id="demoStateLabel">Demo Form State:</span>
+        <div class="flex gap-1.5">
+          <button onclick="setFormState('filled')" id="btnStateFilled" class="px-2 py-1 rounded-md bg-white font-semibold text-brand shadow-sm text-[11px]">Filled</button>
+          <button onclick="setFormState('error')" id="btnStateError" class="px-2 py-1 rounded-md bg-slate-200 text-slate-600 text-[11px]">Error</button>
+          <button onclick="setFormState('empty')" id="btnStateEmpty" class="px-2 py-1 rounded-md bg-slate-200 text-slate-600 text-[11px]">Empty</button>
+        </div>
+      </div>
+
+      <!-- Clean Single-Column Form -->
+      <form id="profileForm" onsubmit="event.preventDefault(); handleSubmit();" class="space-y-4">
+
+        <!-- SECTION 1: Student Details -->
+        <div class="space-y-3.5">
+          <div class="flex items-center gap-2 pb-1 border-b border-slate-200/60">
+            <span class="w-2 h-2 rounded-full bg-brand"></span>
+            <span id="sectionStudent" class="text-xs font-bold uppercase tracking-wider text-slate-500">Student Details</span>
+          </div>
+
+          <!-- Field 1: Student Name -->
+          <div>
+            <label for="studentName" id="labelStudentName" class="block text-xs font-semibold text-[#172321] mb-1.5">
+              Your name <span class="text-rose-500">*</span>
+            </label>
+            <div class="relative">
+              <input type="text" id="studentName" value="Rahul Varma" placeholder="Enter your name" class="w-full h-12 px-3.5 text-sm rounded-custom bg-white border border-slate-200 text-[#172321] placeholder:text-slate-400 transition-all">
+              <div id="iconCheckName" class="absolute right-3.5 top-1/2 -translate-y-1/2 text-emerald-600">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>
+              </div>
+            </div>
+            <p id="errStudentName" class="text-[11px] text-rose-600 mt-1 hidden">Please enter your name.</p>
+          </div>
+
+          <!-- Field 2 & 3: Class & Board (Dual Row for Comfortable Ergonomics) -->
+          <div class="grid grid-cols-2 gap-3">
+            <!-- Class Selector -->
+            <div>
+              <label for="studentClass" id="labelClass" class="block text-xs font-semibold text-[#172321] mb-1.5">
+                Class <span class="text-rose-500">*</span>
+              </label>
+              <div class="relative">
+                <select id="studentClass" class="w-full h-12 px-3 text-sm rounded-custom bg-white border border-slate-200 text-[#172321] appearance-none cursor-pointer pr-8">
+                  <option value="10th" selected="">10th</option>
+                  <option value="9th">9th</option>
+                  <option value="11th">11th (Inter 1st)</option>
+                </select>
+                <div class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path></svg>
+                </div>
+              </div>
+            </div>
+
+            <!-- Board Selector -->
+            <div>
+              <label for="studentBoard" id="labelBoard" class="block text-xs font-semibold text-[#172321] mb-1.5">
+                Board <span class="text-rose-500">*</span>
+              </label>
+              <div class="relative">
+                <select id="studentBoard" class="w-full h-12 px-3 text-sm rounded-custom bg-white border border-slate-200 text-[#172321] appearance-none cursor-pointer pr-8">
+                  <option value="AP Board" selected="">AP Board</option>
+                  <option value="Telangana Board">Telangana Board</option>
+                  <option value="CBSE">CBSE / Other</option>
+                </select>
+                <div class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path></svg>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Field 4: District Dropdown -->
+          <div>
+            <label for="studentDistrict" id="labelDistrict" class="block text-xs font-semibold text-[#172321] mb-1.5">
+              District <span class="text-rose-500">*</span>
+            </label>
+            <div class="relative">
+              <select id="studentDistrict" class="w-full h-12 px-3.5 text-sm rounded-custom bg-white border border-slate-200 text-[#172321] appearance-none cursor-pointer pr-9">
+                <option value="" disabled="">Select your district</option>
+                <option value="Visakhapatnam" selected="">Visakhapatnam</option>
+                <option value="Vijayawada">Vijayawada (NTR)</option>
+                <option value="Guntur">Guntur</option>
+                <option value="Tirupati">Tirupati</option>
+                <option value="Hyderabad">Hyderabad</option>
+                <option value="Warangal">Warangal</option>
+                <option value="Kurnool">Kurnool</option>
+                <option value="Other">Other District</option>
+              </select>
+              <div class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path></svg>
+              </div>
+            </div>
+            <p id="errDistrict" class="text-[11px] text-rose-600 mt-1 hidden">Please select your district.</p>
+          </div>
+        </div>
+
+        <!-- SECTION 2: Guardian Details -->
+        <div class="pt-2 space-y-3.5">
+          <div class="flex items-center gap-2 pb-1 border-b border-slate-200/60">
+            <span class="w-2 h-2 rounded-full bg-brand-amber"></span>
+            <span id="sectionGuardian" class="text-xs font-bold uppercase tracking-wider text-slate-500">Parent / Guardian Details</span>
+          </div>
+
+          <!-- Field 5: Parent / Guardian Name -->
+          <div>
+            <label for="guardianName" id="labelGuardianName" class="block text-xs font-semibold text-[#172321] mb-1.5">
+              Parent / Guardian name <span class="text-rose-500">*</span>
+            </label>
+            <div class="relative">
+              <input type="text" id="guardianName" value="Srinivas Varma" placeholder="Enter their name" class="w-full h-12 px-3.5 text-sm rounded-custom bg-white border border-slate-200 text-[#172321] placeholder:text-slate-400 transition-all">
+              <div id="iconCheckGuardian" class="absolute right-3.5 top-1/2 -translate-y-1/2 text-emerald-600">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>
+              </div>
+            </div>
+            <p id="errGuardianName" class="text-[11px] text-rose-600 mt-1 hidden">Please enter parent or guardian name.</p>
+          </div>
+
+          <!-- Field 6: Parent / Guardian Mobile -->
+          <div>
+            <label for="guardianMobile" id="labelGuardianMobile" class="block text-xs font-semibold text-[#172321] mb-1.5">
+              Parent / Guardian mobile <span class="text-rose-500">*</span>
+            </label>
+            <div class="relative flex items-center">
+              <span class="absolute left-3.5 text-xs font-semibold text-slate-500 flex items-center gap-1">
+                🇮🇳 +91
+              </span>
+              <input type="tel" id="guardianMobile" maxlength="10" value="9848022338" placeholder="Enter mobile number" class="w-full h-12 pl-20 pr-10 text-sm font-mono tracking-wide rounded-custom bg-white border border-slate-200 text-[#172321] placeholder:font-sans placeholder:tracking-normal placeholder:text-slate-400 transition-all">
+              <div id="iconCheckMobile" class="absolute right-3.5 top-1/2 -translate-y-1/2 text-emerald-600">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>
+              </div>
+            </div>
+            <p id="errGuardianMobile" class="text-[11px] text-rose-600 mt-1 hidden">Please enter a valid 10-digit mobile number.</p>
+          </div>
+        </div>
+
+        <!-- Subtle Fast Benefit Note -->
+        <div class="p-3 bg-brand-subtle rounded-custom border border-brand-light flex items-center gap-2.5">
+          <svg class="w-5 h-5 text-brand shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+          </svg>
+          <p id="fastNote" class="text-xs text-brand-dark leading-snug">
+            Takes under 1 minute • Assessment starts immediately after.
+          </p>
+        </div>
+
+        <!-- Privacy Reassurance (Subtle, non-legal) -->
+        <div class="pt-2 flex items-start gap-2 text-[#647572]">
+          <svg class="w-4 h-4 mt-0.5 text-brand shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+          </svg>
+          <p id="privacyText" class="text-[11px] leading-relaxed">
+            Your information is used to personalize your journey and help connect you with relevant opportunities.
+          </p>
+        </div>
+      </form>
+
+    </main>
+
+    <!-- Sticky Bottom CTA Area (Mobile Safe Ergonomics) -->
+    <div class="absolute bottom-0 inset-x-0 bg-white/95 backdrop-blur-md border-t border-slate-200/80 px-5 pt-3 pb-6 z-30 shadow-[0_-4px_20px_rgba(0,0,0,0.04)]">
+      <button type="button" onclick="handleSubmit()" id="btnSubmit" class="w-full h-12 bg-brand hover:bg-brand-dark active:scale-[0.99] text-white font-semibold rounded-custom text-sm flex items-center justify-center gap-2 shadow-sm transition-all duration-150">
+        <span id="btnSubmitText">Continue →</span>
+      </button>
+      <p id="reassuranceNote" class="text-center text-[11px] text-slate-400 mt-2">
+        No documents or password required for V1
+      </p>
+    </div>
+
+    <!-- Success Toast Modal (Simulated Transition to Assessment) -->
+    <div id="toastSuccess" class="absolute inset-0 bg-black/40 backdrop-blur-xs z-50 flex items-center justify-center p-6 hidden">
+      <div class="bg-white rounded-2xl p-6 w-full max-w-[320px] text-center shadow-2xl animate-fade-in">
+        <div class="w-12 h-12 rounded-full bg-brand-light text-brand mx-auto flex items-center justify-center mb-3">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>
+        </div>
+        <h3 id="modalTitle" class="text-base font-bold text-[#172321]">Profile Created!</h3>
+        <p id="modalDesc" class="text-xs text-[#647572] mt-1.5 mb-4 leading-relaxed">
+          Welcome to Naaguru, Rahul. Next, let's explore your interests with a quick assessment.
+        </p>
+        <button onclick="closeModal()" class="w-full h-11 bg-brand text-white text-xs font-semibold rounded-xl">
+          Start Assessment →
+        </button>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    // Content dictionary for instant bilingual switching
+    const content = {
+      en: {
+        navTitle: "Create Your Profile",
+        stepBadge: "Step 1 of 2 • Quick Setup",
+        headingMain: "Let's create your profile",
+        subHeading: "We'll use these details to personalize your Naaguru journey.",
+        sectionStudent: "Student Details",
+        labelStudentName: "Your name",
+        placeholderStudentName: "Enter your name",
+        labelClass: "Class",
+        optionClass10: "10th",
+        optionClass9: "9th",
+        optionClass11: "11th (Inter 1st)",
+        labelBoard: "Board",
+        optionBoardAP: "AP Board",
+        optionBoardTS: "Telangana Board",
+        optionBoardOther: "CBSE / Other",
+        labelDistrict: "District",
+        selectDistrictDefault: "Select your district",
+        sectionGuardian: "Parent / Guardian Details",
+        labelGuardianName: "Parent / Guardian name",
+        placeholderGuardianName: "Enter their name",
+        labelGuardianMobile: "Parent / Guardian mobile",
+        placeholderGuardianMobile: "Enter mobile number",
+        fastNote: "Takes under 1 minute • Assessment starts immediately after.",
+        privacyText: "Your information is used to personalize your journey and help connect you with relevant opportunities.",
+        btnSubmitText: "Continue →",
+        reassuranceNote: "No documents or password required for V1",
+        errStudentName: "Please enter your name.",
+        errDistrict: "Please select your district.",
+        errGuardianName: "Please enter parent or guardian name.",
+        errGuardianMobile: "Please enter a valid 10-digit mobile number.",
+        demoStateLabel: "Demo Form State:",
+        modalTitle: "Profile Created!",
+        modalDesc: "Welcome to Naaguru. Next, let's explore your natural interests with a quick assessment."
+      },
+      te: {
+        navTitle: "మీ ప్రొఫైల్‌ను రూపొందించండి",
+        stepBadge: "స్టెప్ 1 / 2 • సులభమైన వివరాలు",
+        headingMain: "మీ ప్రొఫైల్‌ను రూపొందిద్దాం",
+        subHeading: "మీ Naaguru ప్రయాణాన్ని మీకు అనుగుణంగా రూపొందించడానికి ఈ వివరాలను ఉపయోగిస్తాము.",
+        sectionStudent: "విద్యార్థి వివరాలు",
+        labelStudentName: "మీ పేరు",
+        placeholderStudentName: "మీ పేరు నమోదు చేయండి",
+        labelClass: "తరగతి",
+        optionClass10: "10వ తరగతి",
+        optionClass9: "9వ తరగతి",
+        optionClass11: "11వ తరగతి (ఇంటర్ 1)",
+        labelBoard: "బోర్డు",
+        optionBoardAP: "AP బోర్డు",
+        optionBoardTS: "తెలంగాణ బోర్డు",
+        optionBoardOther: "ఇతర",
+        labelDistrict: "జిల్లా",
+        selectDistrictDefault: "మీ జిల్లాను ఎంచుకోండి",
+        sectionGuardian: "తల్లిదండ్రులు / గార్డియన్ వివరాలు",
+        labelGuardianName: "తల్లిదండ్రులు / గార్డియన్ పేరు",
+        placeholderGuardianName: "వారి పేరు నమోదు చేయండి",
+        labelGuardianMobile: "తల్లిదండ్రులు / గార్డియన్ మొబైల్",
+        placeholderGuardianMobile: "మొబైల్ నంబర్ నమోదు చేయండి",
+        fastNote: "కేవలం 1 నిమిషం లోపు పూర్తవుతుంది • వెంటనే అసెస్‌మెంట్ ప్రారంభమవుతుంది.",
+        privacyText: "మీ ప్రయాణాన్ని మీకు అనుగుణంగా రూపొందించడానికి మరియు మీకు సరైన అవకాశాలతో కనెక్ట్ చేయడంలో సహాయపడటానికి మీ సమాచారాన్ని ఉపయోగిస్తాము.",
+        btnSubmitText: "కొనసాగించండి →",
+        reassuranceNote: "డాక్యుమెంట్లు లేదా పాస్‌వర్డ్ ఏమీ అవసరం లేదు",
+        errStudentName: "దయచేసి మీ పేరును నమోదు చేయండి.",
+        errDistrict: "దయచేసి మీ జిల్లాను ఎంచుకోండి.",
+        errGuardianName: "దయచేసి తల్లిదండ్రులు / గార్డియన్ పేరును నమోదు చేయండి.",
+        errGuardianMobile: "సరైన 10 అంకెల మొబైల్ నంబర్ నమోదు చేయండి.",
+        demoStateLabel: "డెమో ఫారం స్థితి:",
+        modalTitle: "ప్రొఫైల్ సిద్ధమైంది!",
+        modalDesc: "Naaguru కు స్వాగతం. తదుపరి దశలో మీ సహజమైన ఆసక్తులను తెలుసుకోవడానికి చిన్న అసెస్‌మెంట్ చేద్దాం."
+      }
+    };
+
+    let currentLang = 'en';
+
+    function setLanguage(lang) {
+      currentLang = lang;
+      const dict = content[lang];
+
+      // Language buttons styling
+      const btnEN = document.getElementById('langEN');
+      const btnTE = document.getElementById('langTE');
+      if (lang === 'en') {
+        btnEN.className = "px-2.5 py-1 rounded-full text-xs font-semibold bg-brand text-white transition-all duration-200";
+        btnTE.className = "px-2.5 py-1 rounded-full text-xs font-medium text-[#647572] hover:text-[#172321] transition-all duration-200";
+        document.getElementById('appRoot').classList.remove('telugu-text');
+      } else {
+        btnTE.className = "px-2.5 py-1 rounded-full text-xs font-semibold bg-brand text-white transition-all duration-200";
+        btnEN.className = "px-2.5 py-1 rounded-full text-xs font-medium text-[#647572] hover:text-[#172321] transition-all duration-200";
+        document.getElementById('appRoot').classList.add('telugu-text');
+      }
+
+      // Update text nodes
+      document.getElementById('navTitle').innerText = dict.navTitle;
+      document.getElementById('stepBadge').innerText = dict.stepBadge;
+      document.getElementById('headingMain').innerText = dict.headingMain;
+      document.getElementById('subHeading').innerText = dict.subHeading;
+      document.getElementById('sectionStudent').innerText = dict.sectionStudent;
+      document.getElementById('sectionGuardian').innerText = dict.sectionGuardian;
+
+      document.getElementById('labelStudentName').innerHTML = dict.labelStudentName + ' <span class="text-rose-500">*</span>';
+      document.getElementById('studentName').placeholder = dict.placeholderStudentName;
+
+      document.getElementById('labelClass').innerHTML = dict.labelClass + ' <span class="text-rose-500">*</span>';
+      document.getElementById('labelBoard').innerHTML = dict.labelBoard + ' <span class="text-rose-500">*</span>';
+      document.getElementById('labelDistrict').innerHTML = dict.labelDistrict + ' <span class="text-rose-500">*</span>';
+
+      document.getElementById('labelGuardianName').innerHTML = dict.labelGuardianName + ' <span class="text-rose-500">*</span>';
+      document.getElementById('guardianName').placeholder = dict.placeholderGuardianName;
+
+      document.getElementById('labelGuardianMobile').innerHTML = dict.labelGuardianMobile + ' <span class="text-rose-500">*</span>';
+      document.getElementById('guardianMobile').placeholder = dict.placeholderGuardianMobile;
+
+      document.getElementById('fastNote').innerText = dict.fastNote;
+      document.getElementById('privacyText').innerText = dict.privacyText;
+      document.getElementById('btnSubmitText').innerText = dict.btnSubmitText;
+      document.getElementById('reassuranceNote').innerText = dict.reassuranceNote;
+      document.getElementById('demoStateLabel').innerText = dict.demoStateLabel;
+
+      document.getElementById('errStudentName').innerText = dict.errStudentName;
+      document.getElementById('errDistrict').innerText = dict.errDistrict;
+      document.getElementById('errGuardianName').innerText = dict.errGuardianName;
+      document.getElementById('errGuardianMobile').innerText = dict.errGuardianMobile;
+
+      document.getElementById('modalTitle').innerText = dict.modalTitle;
+      document.getElementById('modalDesc').innerText = dict.modalDesc;
+    }
+
+    // Demo state toggles
+    function setFormState(state) {
+      const studentName = document.getElementById('studentName');
+      const guardianName = document.getElementById('guardianName');
+      const guardianMobile = document.getElementById('guardianMobile');
+      const studentDistrict = document.getElementById('studentDistrict');
+      
+      const errName = document.getElementById('errStudentName');
+      const errDist = document.getElementById('errDistrict');
+      const errGName = document.getElementById('errGuardianName');
+      const errGMobile = document.getElementById('errGuardianMobile');
+
+      const iconName = document.getElementById('iconCheckName');
+      const iconGName = document.getElementById('iconCheckGuardian');
+      const iconGMobile = document.getElementById('iconCheckMobile');
+
+      // Update pills
+      ['Filled', 'Error', 'Empty'].forEach(s => {
+        const btn = document.getElementById('btnState' + s);
+        if (s.toLowerCase() === state) {
+          btn.className = "px-2 py-1 rounded-md bg-white font-semibold text-brand shadow-sm text-[11px]";
+        } else {
+          btn.className = "px-2 py-1 rounded-md bg-slate-200 text-slate-600 text-[11px]";
+        }
+      });
+
+      if (state === 'filled') {
+        studentName.value = currentLang === 'te' ? "రాహుల్ వర్మ" : "Rahul Varma";
+        guardianName.value = currentLang === 'te' ? "శ్రీనివాస్ వర్మ" : "Srinivas Varma";
+        guardianMobile.value = "9848022338";
+        studentDistrict.value = "Visakhapatnam";
+
+        studentName.classList.remove('border-rose-400', 'bg-rose-50/20');
+        guardianMobile.classList.remove('border-rose-400', 'bg-rose-50/20');
+        studentDistrict.classList.remove('border-rose-400', 'bg-rose-50/20');
+
+        errName.classList.add('hidden');
+        errDist.classList.add('hidden');
+        errGName.classList.add('hidden');
+        errGMobile.classList.add('hidden');
+
+        iconName.classList.remove('hidden');
+        iconGName.classList.remove('hidden');
+        iconGMobile.classList.remove('hidden');
+      } 
+      else if (state === 'error') {
+        studentName.value = "";
+        guardianName.value = "Srinivas Varma";
+        guardianMobile.value = "98480"; // invalid short number
+        studentDistrict.value = "";
+
+        studentName.classList.add('border-rose-400', 'bg-rose-50/20');
+        guardianMobile.classList.add('border-rose-400', 'bg-rose-50/20');
+        studentDistrict.classList.add('border-rose-400', 'bg-rose-50/20');
+
+        errName.classList.remove('hidden');
+        errDist.classList.remove('hidden');
+        errGName.classList.add('hidden');
+        errGMobile.classList.remove('hidden');
+
+        iconName.classList.add('hidden');
+        iconGName.classList.remove('hidden');
+        iconGMobile.classList.add('hidden');
+      } 
+      else if (state === 'empty') {
+        studentName.value = "";
+        guardianName.value = "";
+        guardianMobile.value = "";
+        studentDistrict.value = "";
+
+        studentName.classList.remove('border-rose-400', 'bg-rose-50/20');
+        guardianMobile.classList.remove('border-rose-400', 'bg-rose-50/20');
+        studentDistrict.classList.remove('border-rose-400', 'bg-rose-50/20');
+
+        errName.classList.add('hidden');
+        errDist.classList.add('hidden');
+        errGName.classList.add('hidden');
+        errGMobile.classList.add('hidden');
+
+        iconName.classList.add('hidden');
+        iconGName.classList.add('hidden');
+        iconGMobile.classList.add('hidden');
+      }
+    }
+
+    function handleSubmit() {
+      const studentName = document.getElementById('studentName').value.trim();
+      const guardianMobile = document.getElementById('guardianMobile').value.trim();
+      
+      if (!studentName || guardianMobile.length < 10) {
+        setFormState('error');
+        return;
+      }
+
+      // Show success modal
+      document.getElementById('toastSuccess').classList.remove('hidden');
+    }
+
+    function closeModal() {
+      document.getElementById('toastSuccess').classList.add('hidden');
+    }
+  </script>
+
+
+</body></html>

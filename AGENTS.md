@@ -65,45 +65,4 @@ This version has breaking changes — APIs, conventions, and file structure may 
 
 This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
 
-# Infrastructure Portability
-
-Supabase is an initial infrastructure/provider choice, not a permanent architectural dependency.
-
-The application must remain portable to an independently managed PostgreSQL database.
-
-## Database
-
-PostgreSQL is the database technology.
-
-Supabase currently provides the PostgreSQL infrastructure.
-
-The application must not assume that Supabase will always host the database.
-
-## Rules
-
-- Keep business logic independent of Supabase.
-- Keep database access behind repository/data-access boundaries.
-- Prefer standard PostgreSQL features over unnecessary Supabase-specific database features.
-- Do not scatter Supabase database calls throughout application/domain code.
-- Do not make Supabase-specific functionality part of the domain layer.
-- Database migrations should remain portable to standard PostgreSQL where reasonably possible.
-- Authentication must be isolated behind the application's authentication boundary.
-- Do not make Supabase RLS the sole authorization mechanism.
-- Application-level authentication, RBAC, permissions, and resource authorization are the primary security mechanisms.
-- PostgreSQL RLS may be used as additional defense-in-depth where appropriate.
-
-## Future Migration
-
-The intended migration path is:
-
-Current:
-
-Naaguru → Database Access Layer → Supabase PostgreSQL
-
-Future:
-
-Naaguru → Database Access Layer → Independently Managed PostgreSQL
-
-The goal is to make this infrastructure migration possible without rewriting the business modules, API contracts, Flutter application, or core business logic.
-
 <!-- END:nextjs-agent-rules -->

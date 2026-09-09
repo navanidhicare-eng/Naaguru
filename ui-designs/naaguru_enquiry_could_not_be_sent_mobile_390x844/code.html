@@ -1,0 +1,304 @@
+<!DOCTYPE html><html lang="en"><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=390, height=844, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Naaguru - Enquiry Could Not Be Sent (Mobile 390x844)</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Inter & Noto Sans Telugu -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Noto+Sans+Telugu:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: {
+              DEFAULT: '#087F6C',
+              dark: '#056052',
+              light: '#E6F5F1',
+              tint: '#F0F9F6'
+            },
+            accent: {
+              amber: '#F4B942',
+              amberLight: '#FEF8EB'
+            },
+            neutral: {
+              bg: '#F8FAF9',
+              surface: '#FFFFFF',
+              dark: '#172321',
+              muted: '#647572',
+              border: '#E2E8E6',
+              borderLight: '#EDF2F0'
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'Noto Sans Telugu', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+            telugu: ['Noto Sans Telugu', 'sans-serif']
+          },
+          borderRadius: {
+            'custom': '12px',
+            'card': '16px',
+            'pill': '9999px'
+          },
+          boxShadow: {
+            'soft': '0 4px 16px -2px rgba(8, 127, 108, 0.06)',
+            'btn': '0 4px 14px rgba(8, 127, 108, 0.22)'
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      background-color: #F8FAF9;
+      color: #172321;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+    .telugu-text {
+      font-family: 'Noto Sans Telugu', sans-serif;
+      line-height: 1.5;
+    }
+    /* Smooth transitions */
+    .fade-in {
+      animation: fadeIn 0.25s ease-in-out;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body class="bg-neutral-bg flex justify-center items-center min-h-screen">
+
+  <!-- Mobile Smartphone Frame (390px × 844px) -->
+  <main class="w-[390px] h-[844px] max-h-[844px] bg-neutral-bg flex flex-col justify-between overflow-hidden relative shadow-2xl border border-neutral-borderLight">
+
+    <!-- Top Status Bar + Header -->
+    <header class="w-full pt-3 px-5 pb-2 bg-white border-b border-neutral-borderLight z-20">
+      <!-- Status Bar Mock -->
+      <div class="flex justify-between items-center text-xs text-neutral-dark font-medium pb-2 select-none tracking-tight">
+        <span id="current-time">9:41</span>
+        <div class="flex items-center gap-1.5">
+          <!-- Signal -->
+          <svg class="w-3.5 h-3.5 text-neutral-dark" fill="currentColor" viewBox="0 0 20 20">
+            <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zm6-4a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zm6-3a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"></path>
+          </svg>
+          <!-- Wifi -->
+          <svg class="w-3.5 h-3.5 text-neutral-dark" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M5.05 4.05a10 10 0 0113.9 0 1 1 0 01-1.41 1.41 8 8 0 00-11.08 0 1 1 0 01-1.41-1.41zm2.83 2.83a6 6 0 018.24 0 1 1 0 01-1.41 1.41 4 4 0 00-5.42 0 1 1 0 01-1.41-1.41zm2.83 2.83a2 2 0 012.83 0 1 1 0 01-1.42 1.42 1 1 0 010-1.42z" clip-rule="evenodd"></path>
+          </svg>
+          <!-- Battery -->
+          <div class="w-5 h-2.5 border border-neutral-dark rounded-sm flex items-center p-0.5">
+            <div class="w-3 h-1.5 bg-neutral-dark rounded-2xs"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Header Navigation (Close/Back & Language Toggle) -->
+      <div class="flex justify-between items-center py-1">
+        <!-- Close / Back Button -->
+        <button onclick="handleBackAction()" class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-neutral-bg active:bg-neutral-100 transition-colors text-neutral-muted hover:text-neutral-dark" aria-label="Back to college">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+        </button>
+
+        <!-- Naaguru Minimal Wordmark -->
+        <div class="flex items-center gap-1.5">
+          <span class="w-2 h-2 rounded-full bg-primary"></span>
+          <span class="font-bold text-base tracking-tight text-neutral-dark">Naaguru</span>
+        </div>
+
+        <!-- Bilingual Switcher EN | తెలుగు -->
+        <div class="inline-flex p-0.5 bg-neutral-bg border border-neutral-border rounded-pill">
+          <button id="lang-en" onclick="setLanguage('en')" class="px-2.5 py-1 text-xs font-semibold rounded-pill bg-white text-primary shadow-xs transition-all">EN</button>
+          <button id="lang-te" onclick="setLanguage('te')" class="px-2.5 py-1 text-xs font-medium rounded-pill text-neutral-muted hover:text-neutral-dark transition-all">తెలుగు</button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Scrollable Content Area -->
+    <div class="flex-1 px-6 pt-3 pb-6 flex flex-col items-center justify-center text-center overflow-y-auto">
+
+      <!-- Friendly Illustration (Reassurance / Temporary Network State) -->
+      <div class="w-48 h-48 sm:w-52 sm:h-52 rounded-2xl bg-gradient-to-b from-primary-light/60 to-white p-3 mb-4 flex items-center justify-center relative shadow-soft border border-primary-light/80">
+        <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuACirwhlLc8Yv2PipQ41yk-wNF6yohsVcVUwGNCQnbX6NJdqr61y-YhR3NuteKwRw0oud5fbhGl7Ww9DdJCk5aHV8BbjshUVnm7JStHHV_BeR29Y-UveZM_oftuIYk-c_Va9wrBTLqpmw5k2VaM8jTZM-HhyxvuPp_XeinPzMV3Q8K5r5DowqOsdyZGWELz85F8psVfIXkw_lQolALpgF3qsyzgqQJQx3ZCqZpR0wDpF5THtQ7hSWOrEw" alt="Illustration showing a calm student with a smartphone ready to retry enquiry" class="w-full h-full object-contain rounded-xl">
+        <!-- Subtle Status Badge -->
+        <div class="absolute -bottom-2.5 bg-white border border-accent-amber/40 shadow-sm px-3 py-1 rounded-pill flex items-center gap-1.5">
+          <span class="w-2 h-2 rounded-full bg-accent-amber animate-pulse"></span>
+          <span id="label-temporary" class="text-[11px] font-medium text-neutral-dark">Temporary connection issue</span>
+        </div>
+      </div>
+
+      <!-- Main Headline -->
+      <h1 id="heading" class="text-2xl font-bold text-neutral-dark mt-3 mb-2 tracking-tight leading-snug">
+        Something went wrong
+      </h1>
+
+      <!-- Supporting Explanation -->
+      <p id="subheading" class="text-sm font-medium text-neutral-muted leading-relaxed max-w-[300px] mb-4">
+        We couldn't send your enquiry right now.
+      </p>
+
+      <!-- Reassurance Card (Safe Data Guarantee) -->
+      <div class="w-full bg-white border border-primary-light rounded-custom p-3.5 flex items-start text-left gap-3 shadow-soft mb-2">
+        <div class="w-8 h-8 rounded-full bg-primary-light flex-shrink-0 flex items-center justify-center mt-0.5 text-primary">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+          </svg>
+        </div>
+        <div>
+          <div id="card-title" class="text-xs font-semibold text-neutral-dark mb-0.5">Your details are safe</div>
+          <p id="reassurance" class="text-xs text-neutral-muted leading-normal">
+            Your enquiry details and assessment profile are securely preserved. Please tap below to retry.
+          </p>
+        </div>
+      </div>
+
+      <!-- College Destination Context (Clear Transparency) -->
+      <div class="w-full bg-neutral-bg border border-neutral-borderLight rounded-custom px-3.5 py-2.5 flex items-center justify-between text-left">
+        <div class="flex items-center gap-2.5">
+          <div class="w-6 h-6 rounded-md bg-white border border-neutral-borderLight flex items-center justify-center text-primary text-xs font-bold">
+            G
+          </div>
+          <div>
+            <div class="text-[11px] font-bold text-neutral-dark leading-tight">Gayatri Junior College</div>
+            <div class="text-[10px] text-neutral-muted">MPC Stream • MVP Colony, Vizag</div>
+          </div>
+        </div>
+        <span id="badge-unsent" class="text-[10px] font-semibold text-amber-800 bg-accent-amberLight border border-accent-amber/30 px-2 py-0.5 rounded-pill">
+          Unsent
+        </span>
+      </div>
+
+    </div>
+
+    <!-- Bottom Action Sheet / Buttons -->
+    <footer class="w-full p-6 pt-2 bg-white border-t border-neutral-borderLight space-y-3 z-20">
+
+      <!-- Primary Dominant CTA: Try Again -->
+      <button id="btn-retry" onclick="handleRetry()" class="w-full h-12 bg-primary hover:bg-primary-dark active:scale-[0.99] text-white font-semibold text-sm rounded-custom shadow-btn flex items-center justify-center gap-2 transition-all" style="min-height: 48px;">
+        <svg id="retry-icon" class="w-4 h-4 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+        </svg>
+        <span id="text-retry">Try Again</span>
+      </button>
+
+      <!-- Secondary Action: Back to College -->
+      <button id="btn-back" onclick="handleBackAction()" class="w-full h-11 text-neutral-muted hover:text-neutral-dark active:bg-neutral-bg font-medium text-xs rounded-custom transition-colors flex items-center justify-center gap-1.5" style="min-height: 44px;">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+        </svg>
+        <span id="text-back">Back to College</span>
+      </button>
+
+      <!-- Home Indicator bar (iOS style) -->
+      <div class="w-32 h-1 bg-neutral-300 rounded-full mx-auto mt-2"></div>
+    </footer>
+
+    <!-- Interactive Toast (Simulated Retry Response) -->
+    <div id="toast" class="hidden absolute top-16 left-5 right-5 bg-neutral-dark text-white p-3 rounded-custom text-xs shadow-lg z-50 flex items-center gap-2.5 fade-in">
+      <svg class="w-4 h-4 text-accent-amber animate-spin flex-shrink-0" fill="none" viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+      </svg>
+      <span id="toast-text">Retrying enquiry connection...</span>
+    </div>
+
+  </main>
+
+  <!-- Client-side Bilingual Switcher & Interactive Demonstration Logic -->
+  <script>
+    let currentLang = 'en';
+
+    const content = {
+      en: {
+        temporary: "Temporary connection issue",
+        heading: "Something went wrong",
+        subheading: "We couldn't send your enquiry right now.",
+        cardTitle: "Your details are safe",
+        reassurance: "Your enquiry details and assessment profile are securely preserved. Please tap below to retry.",
+        badgeUnsent: "Unsent",
+        retry: "Try Again",
+        back: "Back to College",
+        retrying: "Retrying enquiry connection..."
+      },
+      te: {
+        temporary: "తాత్కాలిక నెట్‌వర్క్ సమస్య",
+        heading: "ఏదో సమస్య వచ్చింది",
+        subheading: "ప్రస్తుతం మీ ఎంక్వైరీని పంపలేకపోయాం.",
+        cardTitle: "మీ వివరాలు సురక్షితంగా ఉన్నాయి",
+        reassurance: "మీ ఎంక్వైరీ వివరాలు మరియు అసెస్‌మెంట్ ప్రొఫైల్ సురక్షితంగా సేవ్ అయి ఉన్నాయి. దయచేసి మళ్లీ ప్రయత్నించండి.",
+        badgeUnsent: "పంపలేదు",
+        retry: "మళ్లీ ప్రయత్నించండి",
+        back: "కాలేజ్ వివరాలకు తిరిగి వెళ్లండి",
+        retrying: "ఎంక్వైరీని మళ్లీ పంపుతున్నాము..."
+      }
+    };
+
+    function setLanguage(lang) {
+      currentLang = lang;
+      const data = content[lang];
+
+      // Update classes & buttons
+      const btnEn = document.getElementById('lang-en');
+      const btnTe = document.getElementById('lang-te');
+
+      if (lang === 'en') {
+        btnEn.className = "px-2.5 py-1 text-xs font-semibold rounded-pill bg-white text-primary shadow-xs transition-all";
+        btnTe.className = "px-2.5 py-1 text-xs font-medium rounded-pill text-neutral-muted hover:text-neutral-dark transition-all";
+        document.body.classList.remove('telugu-text');
+      } else {
+        btnTe.className = "px-2.5 py-1 text-xs font-semibold rounded-pill bg-white text-primary shadow-xs transition-all";
+        btnEn.className = "px-2.5 py-1 text-xs font-medium rounded-pill text-neutral-muted hover:text-neutral-dark transition-all";
+        document.body.classList.add('telugu-text');
+      }
+
+      // Update text nodes
+      document.getElementById('label-temporary').innerText = data.temporary;
+      document.getElementById('heading').innerText = data.heading;
+      document.getElementById('subheading').innerText = data.subheading;
+      document.getElementById('card-title').innerText = data.cardTitle;
+      document.getElementById('reassurance').innerText = data.reassurance;
+      document.getElementById('badge-unsent').innerText = data.badgeUnsent;
+      document.getElementById('text-retry').innerText = data.retry;
+      document.getElementById('text-back').innerText = data.back;
+    }
+
+    function handleRetry() {
+      const toast = document.getElementById('toast');
+      const toastText = document.getElementById('toast-text');
+      const retryIcon = document.getElementById('retry-icon');
+      
+      toastText.innerText = content[currentLang].retrying;
+      toast.classList.remove('hidden');
+      retryIcon.classList.add('animate-spin');
+
+      setTimeout(() => {
+        retryIcon.classList.remove('animate-spin');
+        toastText.innerText = currentLang === 'en' 
+          ? "Connection checked. Ready to resend." 
+          : "కనెక్షన్ తనిఖీ చేయబడింది. మళ్లీ పంపవచ్చు.";
+        setTimeout(() => {
+          toast.classList.add('hidden');
+        }, 1800);
+      }, 1200);
+    }
+
+    function handleBackAction() {
+      const toast = document.getElementById('toast');
+      const toastText = document.getElementById('toast-text');
+      toastText.innerText = currentLang === 'en' ? "Returning to College Details..." : "కాలేజ్ వివరాలకు తిరిగి వెళ్తున్నాం...";
+      toast.classList.remove('hidden');
+      setTimeout(() => {
+        toast.classList.add('hidden');
+      }, 1400);
+    }
+  </script>
+
+</body></html>

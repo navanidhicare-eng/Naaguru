@@ -1,0 +1,502 @@
+<!DOCTYPE html><html lang="en" style=""><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Naaguru - Send Enquiry</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Noto+Sans+Telugu:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              DEFAULT: '#087F6C',
+              dark: '#056052',
+              light: '#E6F5F1',
+              amber: '#F4B942',
+              bg: '#F8FAF9',
+              surface: '#FFFFFF',
+              text: '#172321',
+              muted: '#647572',
+              border: '#E2E8E6',
+              inputBg: '#F3F7F6',
+              danger: '#D9383A',
+              dangerLight: '#FDF2F2'
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'Noto Sans Telugu', 'sans-serif'],
+            telugu: ['Noto Sans Telugu', 'sans-serif']
+          },
+          borderRadius: {
+            'custom': '12px'
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      background-color: #0b1318;
+      font-family: 'Inter', sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+    .mobile-frame {
+      width: 390px;
+      min-height: 844px;
+      max-width: 100%;
+      background-color: #F8FAF9;
+      position: relative;
+      overflow-x: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.4);
+    }
+    .lang-te [data-en] { display: none !important; }
+    .lang-en [data-te] { display: none !important; }
+    
+    input:focus, textarea:focus {
+      outline: none;
+      border-color: #087F6C;
+      box-shadow: 0 0 0 3px rgba(8, 127, 108, 0.15);
+      background-color: #FFFFFF;
+    }
+    /* Hide scrollbars cleanly */
+    ::-webkit-scrollbar {
+      width: 0px;
+      background: transparent;
+    }
+  </style>
+</head>
+<body class="lang-en p-0 md:py-6">
+
+  <!-- Main 390x844 Mobile Device Viewport -->
+  <div class="mobile-frame text-brand-text flex flex-col justify-between" id="app-root">
+
+    <!-- Top Status Bar Simulation & Mobile Header -->
+    <header class="sticky top-0 z-30 bg-[#F8FAF9]/95 backdrop-blur-md border-b border-brand-border/60 px-5 pt-3 pb-3">
+      <!-- Status bar elements -->
+      <div class="flex justify-between items-center text-xs font-semibold text-brand-muted mb-2 tracking-tight">
+        <span class="">9:41</span>
+        <div class="flex items-center space-x-1.5">
+          <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3c-4.97 0-9 4.03-9 9 0 2.12.74 4.07 1.97 5.61L4.35 19.4c-.39.39-.39 1.02 0 1.41.39.39 1.02.39 1.41 0l1.79-1.79C9.07 20.26 10.49 21 12 21c4.97 0 9-4.03 9-9s-4.03-9-9-9zm0 16c-3.86 0-7-3.14-7-7s3.14-7 7-7 7 3.14 7 7-3.14 7-7 7z"></path></svg>
+          <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14h2v2h-2v-2zm0-10h2v8h-2V6z"></path></svg>
+          <div class="w-5 h-2.5 border border-current rounded-sm flex items-center p-0.5">
+            <div class="w-full h-full bg-current rounded-2xs"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Header Navigation Bar -->
+      <div class="flex items-center justify-between">
+        <div class="flex items-center space-x-3">
+          <button type="button" onclick="history.back()" aria-label="Go back" class="w-10 h-10 -ml-2 rounded-full flex items-center justify-center text-brand-text active:bg-brand-border/50 transition">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"></path>
+            </svg>
+          </button>
+          <div>
+            <h1 class="text-lg font-bold tracking-tight text-brand-text leading-tight">
+              <span data-en="" class="">Send Enquiry</span>
+              <span data-te="" class="">ఎంక్వైరీ పంపండి</span>
+            </h1>
+          </div>
+        </div>
+
+        <!-- Language Pill Switcher -->
+        <div class="bg-white p-0.5 rounded-full border border-brand-border shadow-xs flex items-center">
+          <button type="button" id="btn-lang-en" onclick="setLanguage('en')" class="px-2.5 py-1 text-xs font-semibold rounded-full bg-brand text-white transition-all shadow-xs">
+            EN
+          </button>
+          <button type="button" id="btn-lang-te" onclick="setLanguage('te')" class="px-2.5 py-1 text-xs font-medium text-brand-muted hover:text-brand-text rounded-full transition-all">
+            తెలుగు
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Scrollable Form Body -->
+    <main class="flex-1 px-5 pt-4 pb-28">
+
+      <!-- College Reassurance Card / Context -->
+      <div class="bg-brand-light/60 border border-[#bfe7dc] rounded-custom p-3.5 mb-5 flex items-start space-x-3">
+        <div class="w-9 h-9 rounded-lg bg-brand/10 text-brand flex items-center justify-center shrink-0 mt-0.5">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+          </svg>
+        </div>
+        <div class="min-w-0 flex-1">
+          <div class="flex items-center space-x-2">
+            <span class="font-bold text-sm text-brand-text truncate">Sri Chaitanya Junior College</span>
+            <span class="inline-flex items-center text-[11px] font-semibold text-brand bg-white px-1.5 py-0.5 rounded border border-brand/20">
+              <svg class="w-3 h-3 mr-0.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
+              Verified
+            </span>
+          </div>
+          <p class="text-xs text-brand-muted mt-0.5">MVP Colony, Visakhapatnam</p>
+          <div class="mt-2 inline-flex items-center text-xs font-semibold text-brand-dark bg-white/90 px-2 py-0.5 rounded-full border border-brand/20">
+            <span class="w-1.5 h-1.5 rounded-full bg-brand mr-1.5 animate-pulse"></span>
+            <span data-en="" class="">You're enquiring about MPC</span>
+            <span data-te="" class="">మీరు MPC గురించి ఎంక్వైరీ చేస్తున్నారు</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Friendly Heading & Reassuring Intro -->
+      <div class="mb-5">
+        <h2 class="text-xl font-bold text-brand-text tracking-tight">
+          <span data-en="" class="">Interested in this college?</span>
+          <span data-te="" class="">ఈ కాలేజీ గురించి ఆసక్తి ఉందా?</span>
+        </h2>
+        <p class="text-sm text-brand-muted mt-1 leading-relaxed">
+          <span data-en="" class="">Share a few details and the college can contact you with more information.</span>
+          <span data-te="" class="">కొన్ని వివరాలు ఇవ్వండి. కాలేజీ మీకు మరింత సమాచారం కోసం సంప్రదిస్తుంది.</span>
+        </p>
+      </div>
+
+      <!-- Interactive Form Container -->
+      <form id="enquiry-form" class="space-y-4" onsubmit="event.preventDefault(); handleFormSubmit();">
+        
+        <!-- Field 1: Student Name -->
+        <div class="space-y-1.5">
+          <label for="studentName" class="block text-xs font-semibold text-brand-text uppercase tracking-wider">
+            <span data-en="" class="">Student name <span class="text-brand-danger">*</span></span>
+            <span data-te="" class="">విద్యార్థి పేరు <span class="text-brand-danger">*</span></span>
+          </label>
+          <input type="text" id="studentName" name="studentName" value="Rahul Varma" placeholder="Enter your name" data-placeholder-en="Enter your name" data-placeholder-te="మీ పేరు నమోదు చేయండి" class="w-full px-3.5 py-3 rounded-custom bg-white border border-brand-border text-sm text-brand-text transition font-medium focus:bg-white" required="" oninput="validateField('studentName')">
+          <p id="studentName-error" class="hidden text-xs text-brand-danger font-medium flex items-center pt-0.5">
+            <svg class="w-3.5 h-3.5 mr-1 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>
+            <span data-en="" class="">Please enter the student's name</span>
+            <span data-te="" class="">దయచేసి విద్యార్థి పేరు నమోదు చేయండి</span>
+          </p>
+        </div>
+
+        <!-- Field 2: Parent / Guardian Name -->
+        <div class="space-y-1.5">
+          <label for="parentName" class="block text-xs font-semibold text-brand-text uppercase tracking-wider">
+            <span data-en="" class="">Parent or guardian name <span class="text-brand-danger">*</span></span>
+            <span data-te="" class="">తల్లిదండ్రులు / గార్డియన్ పేరు <span class="text-brand-danger">*</span></span>
+          </label>
+          <input type="text" id="parentName" name="parentName" value="Srinivas Varma" placeholder="Enter parent or guardian name" data-placeholder-en="Enter parent or guardian name" data-placeholder-te="పేరు నమోదు చేయండి" class="w-full px-3.5 py-3 rounded-custom bg-white border border-brand-border text-sm text-brand-text transition font-medium focus:bg-white" required="" oninput="validateField('parentName')">
+          <p id="parentName-error" class="hidden text-xs text-brand-danger font-medium flex items-center pt-0.5">
+            <svg class="w-3.5 h-3.5 mr-1 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>
+            <span data-en="" class="">Please enter parent or guardian name</span>
+            <span data-te="" class="">దయచేసి పేరు నమోదు చేయండి</span>
+          </p>
+        </div>
+
+        <!-- Field 3: Mobile Number with Live Validation Preview -->
+        <div class="space-y-1.5">
+          <div class="flex justify-between items-center">
+            <label for="mobileNumber" class="block text-xs font-semibold text-brand-text uppercase tracking-wider">
+              <span data-en="" class="">Mobile number <span class="text-brand-danger">*</span></span>
+              <span data-te="" class="">మొబైల్ నంబర్ <span class="text-brand-danger">*</span></span>
+            </label>
+            <span class="text-[11px] text-brand font-medium">10 digits</span>
+          </div>
+          <div class="relative flex items-center">
+            <div class="absolute left-3 flex items-center space-x-1 pr-2 border-r border-brand-border text-xs font-semibold text-brand-muted">
+              <span class="">🇮🇳</span>
+              <span class="">+91</span>
+            </div>
+            <input type="tel" id="mobileNumber" name="mobileNumber" value="9848022338" maxlength="10" placeholder="Enter mobile number" data-placeholder-en="Enter mobile number" data-placeholder-te="మొబైల్ నంబర్ నమోదు చేయండి" class="w-full pl-20 pr-10 py-3 rounded-custom bg-white border border-brand-border text-sm text-brand-text font-medium transition focus:bg-white" required="" oninput="validatePhone()">
+            <div id="phone-valid-icon" class="absolute right-3.5 text-brand">
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+            </div>
+          </div>
+          <p id="phone-error" class="hidden text-xs text-brand-danger font-medium flex items-center pt-0.5">
+            <svg class="w-3.5 h-3.5 mr-1 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>
+            <span data-en="" class="">Please enter a valid 10-digit mobile number.</span>
+            <span data-te="" class="">దయచేసి సరైన 10 అంకెల మొబైల్ నంబర్ నమోదు చేయండి.</span>
+          </p>
+        </div>
+
+        <!-- Field 4: Selectable Interested Stream (MPC Pre-selected) -->
+        <div class="space-y-2 pt-1">
+          <div class="flex justify-between items-baseline">
+            <label class="block text-xs font-semibold text-brand-text uppercase tracking-wider">
+              <span data-en="" class="">Interested stream</span>
+              <span data-te="" class="">మీకు ఆసక్తి ఉన్న స్ట్రీమ్</span>
+            </label>
+            <span class="text-[11px] text-brand-muted">
+              <span data-en="" class="">Tap to switch</span>
+              <span data-te="" class="">మార్చడానికి నొక్కండి</span>
+            </span>
+          </div>
+          
+          <div class="grid grid-cols-4 gap-2">
+            <!-- MPC (Default Active) -->
+            <button type="button" onclick="selectStream('MPC')" id="stream-MPC" class="stream-btn py-2.5 px-2 rounded-custom border-2 border-brand bg-brand-light/70 text-brand font-bold text-sm flex flex-col items-center justify-center transition shadow-xs relative">
+              <span class="absolute -top-2 right-1 bg-brand text-white text-[9px] px-1 rounded-full font-medium">Auto</span>
+              <span class="">MPC</span>
+              <span class="text-[10px] font-normal text-brand-muted mt-0.5">Maths</span>
+            </button>
+
+            <!-- BiPC -->
+            <button type="button" onclick="selectStream('BiPC')" id="stream-BiPC" class="stream-btn py-2.5 px-2 rounded-custom border border-brand-border bg-white text-brand-text font-bold text-sm flex flex-col items-center justify-center transition hover:border-brand/40 active:bg-brand-light/30">
+              <span class="">BiPC</span>
+              <span class="text-[10px] font-normal text-brand-muted mt-0.5">Biology</span>
+            </button>
+
+            <!-- MEC -->
+            <button type="button" onclick="selectStream('MEC')" id="stream-MEC" class="stream-btn py-2.5 px-2 rounded-custom border border-brand-border bg-white text-brand-text font-bold text-sm flex flex-col items-center justify-center transition hover:border-brand/40 active:bg-brand-light/30">
+              <span class="">MEC</span>
+              <span class="text-[10px] font-normal text-brand-muted mt-0.5">Comm.</span>
+            </button>
+
+            <!-- CEC -->
+            <button type="button" onclick="selectStream('CEC')" id="stream-CEC" class="stream-btn py-2.5 px-2 rounded-custom border border-brand-border bg-white text-brand-text font-bold text-sm flex flex-col items-center justify-center transition hover:border-brand/40 active:bg-brand-light/30">
+              <span class="">CEC</span>
+              <span class="text-[10px] font-normal text-brand-muted mt-0.5">Civics</span>
+            </button>
+          </div>
+          <input type="hidden" id="selectedStream" name="selectedStream" value="MPC">
+        </div>
+
+        <!-- Field 5: Optional Question / Message -->
+        <div class="space-y-1.5 pt-1">
+          <div class="flex justify-between items-baseline">
+            <label for="studentQuestion" class="block text-xs font-semibold text-brand-text uppercase tracking-wider">
+              <span data-en="" class="">Anything you'd like to ask?</span>
+              <span data-te="" class="">ఏదైనా అడగాలనుకుంటున్నారా?</span>
+            </label>
+            <span class="text-[11px] font-semibold text-brand-muted bg-brand-border/60 px-2 py-0.5 rounded-full">
+              <span data-en="" class="">Optional</span>
+              <span data-te="" class="">ఐచ్ఛికం</span>
+            </span>
+          </div>
+          <textarea id="studentQuestion" name="studentQuestion" rows="2" placeholder="Example: hostel, fees, transport..." data-placeholder-en="Example: hostel, fees, transport..." data-placeholder-te="ఉదా: హాస్టల్, ఫీజులు, ట్రాన్స్‌పోర్ట్..." class="w-full px-3.5 py-2.5 rounded-custom bg-white border border-brand-border text-sm text-brand-text transition font-medium focus:bg-white resize-none">Are hostel admissions open for MPC students?</textarea>
+        </div>
+
+        <!-- Interactive Validation Testing State Helpers (UX preview pill bar) -->
+        <div class="pt-1 pb-1">
+          
+        </div>
+
+        <!-- Consent Checkbox & Transparency -->
+        <div class="pt-2">
+          <label class="flex items-start space-x-3 cursor-pointer group select-none">
+            <div class="relative flex items-center mt-0.5">
+              <input type="checkbox" id="consentCheck" checked="" onchange="toggleConsent(this.checked)" class="w-4 h-4 text-brand rounded border-brand-border focus:ring-brand focus:ring-offset-0 transition cursor-pointer">
+            </div>
+            <p class="text-xs text-brand-muted leading-relaxed">
+              <span data-en="" class="">By sending this enquiry, you agree that Naaguru may share your enquiry details with this college so they can respond to you.</span>
+              <span data-te="" class="">ఈ ఎంక్వైరీని పంపడం ద్వారా, మీకు స్పందించేందుకు మీ ఎంక్వైరీ వివరాలను ఈ కాలేజీతో పంచుకోవడానికి మీరు అంగీకరిస్తున్నారు.</span>
+            </p>
+          </label>
+        </div>
+
+        <!-- Privacy Reassurance Line -->
+        <div class="flex items-center space-x-2 py-1 text-xs text-brand-muted/90 justify-center">
+          <svg class="w-3.5 h-3.5 text-brand shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+          </svg>
+          <span class="">
+            <span data-en="" class="">Your details are used only to help you connect with this college.</span>
+            <span data-te="" class="">కాలేజీతో మిమ్మల్ని కనెక్ట్ చేయడానికి మీ వివరాలను ఉపయోగిస్తాము.</span>
+          </span>
+        </div>
+
+      </form>
+
+      <!-- Submission Success Toast Modal Simulation (Hidden initially) -->
+      <div id="successToast" class="hidden fixed inset-x-5 bottom-24 bg-brand-dark text-white p-4 rounded-custom shadow-xl border border-brand/40 z-50 animate-bounce">
+        <div class="flex items-center space-x-3">
+          <div class="w-8 h-8 rounded-full bg-brand flex items-center justify-center shrink-0">
+            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>
+          </div>
+          <div class="flex-1">
+            <p class="text-sm font-bold" data-en="">Enquiry Sent Successfully!</p>
+            <p class="text-sm font-bold" data-te="">ఎంక్వైరీ విజయవంతంగా పంపబడింది!</p>
+            <p class="text-xs text-brand-light" data-en="">The college admissions office will reach out soon.</p>
+            <p class="text-xs text-brand-light" data-te="">కాలేజీ ప్రతినిధులు త్వరలో మిమ్మల్ని సంప్రదిస్తారు.</p>
+          </div>
+        </div>
+      </div>
+
+    </main>
+
+    <!-- Sticky Bottom CTA Area (Mobile Safe Area Optimized) -->
+    <div class="sticky bottom-0 z-30 bg-[#F8FAF9]/95 backdrop-blur-md border-t border-brand-border/80 px-5 pt-3 pb-6">
+      <button type="button" id="submit-cta-btn" onclick="handleFormSubmit()" class="w-full h-12 rounded-custom bg-brand hover:bg-brand-dark active:scale-[0.99] text-white font-semibold text-sm flex items-center justify-center space-x-2 shadow-md hover:shadow-lg transition-all">
+        <span class="tracking-wide">
+          <span data-en="" class="">Send Enquiry</span>
+          <span data-te="" class="">ఎంక్వైరీ పంపండి</span>
+        </span>
+        <svg class="w-4 h-4 transition-transform group-hover:translate-x-0.5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+        </svg>
+      </button>
+      <div class="text-center mt-2">
+        <p class="text-[11px] text-brand-muted">
+          <span data-en="" class="">Non-binding inquiry • No registration fee required</span>
+          <span data-te="" class="">కేవలం సమాచారం కోసం మాత్రమే • ఎటువంటి ఫీజు చెల్లించాల్సిన పనిలేదు</span>
+        </p>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    let currentLang = 'en';
+
+    function setLanguage(lang) {
+      currentLang = lang;
+      const body = document.body;
+      const btnEn = document.getElementById('btn-lang-en');
+      const btnTe = document.getElementById('btn-lang-te');
+
+      if (lang === 'te') {
+        body.classList.remove('lang-en');
+        body.classList.add('lang-te');
+        btnTe.classList.remove('text-brand-muted');
+        btnTe.classList.add('bg-brand', 'text-white', 'shadow-xs');
+        btnEn.classList.remove('bg-brand', 'text-white', 'shadow-xs');
+        btnEn.classList.add('text-brand-muted');
+      } else {
+        body.classList.remove('lang-te');
+        body.classList.add('lang-en');
+        btnEn.classList.remove('text-brand-muted');
+        btnEn.classList.add('bg-brand', 'text-white', 'shadow-xs');
+        btnTe.classList.remove('bg-brand', 'text-white', 'shadow-xs');
+        btnTe.classList.add('text-brand-muted');
+      }
+
+      // Update input placeholders dynamically
+      document.querySelectorAll('input[data-placeholder-en], textarea[data-placeholder-en]').forEach(el => {
+        el.placeholder = (lang === 'te') ? el.getAttribute('data-placeholder-te') : el.getAttribute('data-placeholder-en');
+      });
+    }
+
+    function selectStream(stream) {
+      document.getElementById('selectedStream').value = stream;
+      const streams = ['MPC', 'BiPC', 'MEC', 'CEC'];
+      streams.forEach(s => {
+        const btn = document.getElementById('stream-' + s);
+        if (s === stream) {
+          btn.className = 'stream-btn py-2.5 px-2 rounded-custom border-2 border-brand bg-brand-light/70 text-brand font-bold text-sm flex flex-col items-center justify-center transition shadow-xs relative';
+        } else {
+          btn.className = 'stream-btn py-2.5 px-2 rounded-custom border border-brand-border bg-white text-brand-text font-bold text-sm flex flex-col items-center justify-center transition hover:border-brand/40 active:bg-brand-light/30';
+        }
+      });
+    }
+
+    function validatePhone() {
+      const phoneInput = document.getElementById('mobileNumber');
+      const errorMsg = document.getElementById('phone-error');
+      const validIcon = document.getElementById('phone-valid-icon');
+      const val = phoneInput.value.replace(/\\D/g, '');
+      phoneInput.value = val;
+
+      if (val.length === 10) {
+        errorMsg.classList.add('hidden');
+        validIcon.classList.remove('hidden');
+        phoneInput.classList.remove('border-brand-danger', 'bg-brand-dangerLight');
+        phoneInput.classList.add('border-brand-border');
+        return true;
+      } else {
+        validIcon.classList.add('hidden');
+        return false;
+      }
+    }
+
+    function validateField(id) {
+      const field = document.getElementById(id);
+      const error = document.getElementById(id + '-error');
+      if (field.value.trim() === '') {
+        error.classList.remove('hidden');
+        field.classList.add('border-brand-danger', 'bg-brand-dangerLight');
+        return false;
+      } else {
+        error.classList.add('hidden');
+        field.classList.remove('border-brand-danger', 'bg-brand-dangerLight');
+        return true;
+      }
+    }
+
+    function toggleConsent(isChecked) {
+      const ctaBtn = document.getElementById('submit-cta-btn');
+      if (!isChecked) {
+        ctaBtn.disabled = true;
+        ctaBtn.classList.add('opacity-50', 'cursor-not-allowed');
+      } else {
+        ctaBtn.disabled = false;
+        ctaBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+      }
+    }
+
+    function handleFormSubmit() {
+      const isStudentValid = validateField('studentName');
+      const isParentValid = validateField('parentName');
+      const phoneVal = document.getElementById('mobileNumber').value.trim();
+      const phoneError = document.getElementById('phone-error');
+      const phoneInput = document.getElementById('mobileNumber');
+      const consent = document.getElementById('consentCheck').checked;
+
+      let isPhoneValid = phoneVal.length === 10;
+      if (!isPhoneValid) {
+        phoneError.classList.remove('hidden');
+        phoneInput.classList.add('border-brand-danger', 'bg-brand-dangerLight');
+      } else {
+        phoneError.classList.add('hidden');
+        phoneInput.classList.remove('border-brand-danger', 'bg-brand-dangerLight');
+      }
+
+      if (isStudentValid && isParentValid && isPhoneValid && consent) {
+        const toast = document.getElementById('successToast');
+        toast.classList.remove('hidden');
+        setTimeout(() => {
+          toast.classList.add('hidden');
+        }, 3500);
+      }
+    }
+
+    function setDemoState(state) {
+      const sName = document.getElementById('studentName');
+      const pName = document.getElementById('parentName');
+      const phone = document.getElementById('mobileNumber');
+      const phoneError = document.getElementById('phone-error');
+      const validIcon = document.getElementById('phone-valid-icon');
+
+      if (state === 'valid') {
+        sName.value = 'Rahul Varma';
+        pName.value = 'Srinivas Varma';
+        phone.value = '9848022338';
+        phoneError.classList.add('hidden');
+        phone.classList.remove('border-brand-danger', 'bg-brand-dangerLight');
+        validIcon.classList.remove('hidden');
+        validateField('studentName');
+        validateField('parentName');
+        selectStream('MPC');
+      } else if (state === 'invalidPhone') {
+        sName.value = 'Rahul Varma';
+        pName.value = 'Srinivas Varma';
+        phone.value = '98480';
+        phoneError.classList.remove('hidden');
+        phone.classList.add('border-brand-danger', 'bg-brand-dangerLight');
+        validIcon.classList.add('hidden');
+      } else if (state === 'empty') {
+        sName.value = '';
+        pName.value = '';
+        phone.value = '';
+        phoneError.classList.add('hidden');
+        validIcon.classList.add('hidden');
+        document.getElementById('studentName-error').classList.add('hidden');
+        document.getElementById('parentName-error').classList.add('hidden');
+        sName.classList.remove('border-brand-danger', 'bg-brand-dangerLight');
+        pName.classList.remove('border-brand-danger', 'bg-brand-dangerLight');
+        phone.classList.remove('border-brand-danger', 'bg-brand-dangerLight');
+      }
+    }
+  </script>
+
+
+</body></html>

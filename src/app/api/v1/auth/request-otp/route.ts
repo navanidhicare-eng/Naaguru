@@ -20,6 +20,9 @@ export async function POST(request: Request) {
     if (error instanceof z.ZodError) {
       return NextResponse.json({ error: error.issues }, { status: 400 });
     }
+    if (error instanceof Error && error.message.includes('Please wait 60 seconds')) {
+      return NextResponse.json({ error: error.message }, { status: 429 });
+    }
     console.error('Request OTP Error:', error);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }

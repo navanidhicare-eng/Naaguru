@@ -1,0 +1,153 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=390, height=844, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport">
+<title>Naaguru - Assessment Results: Interest Profile Overview</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Noto+Sans+Telugu:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'deep-teal': '#087F6C',
+            'dark-teal': '#056052',
+            'light-teal': '#E6F5F1',
+            'warm-amber': '#F4B942',
+            'amber-soft': '#FEF7E6',
+            'surface-bg': '#F8FAF9',
+            'text-main': '#172321',
+            'text-muted': '#647572',
+            'surface-card': '#FFFFFF',
+            'border-subtle': '#E5ECE9'
+          },
+          fontFamily: {
+            sans: ['Inter', 'Noto Sans Telugu', 'sans-serif'],
+            telugu: ['Noto Sans Telugu', 'sans-serif']
+          },
+          borderRadius: {
+            'naaguru': '12px'
+          }
+        }
+      }
+    };
+  </script>
+<style>
+    body {
+      font-family: 'Inter', 'Noto Sans Telugu', sans-serif;
+      background-color: #F8FAF9;
+      color: #172321;
+      -webkit-tap-highlight-color: transparent;
+      margin: 0;
+      padding: 0;
+      width: 390px;
+      min-height: 844px;
+      overflow-x: hidden;
+    }
+    
+    .phone-container {
+      width: 390px;
+      min-height: 844px;
+      margin: 0 auto;
+      background: #F8FAF9;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      box-sizing: border-box;
+    }
+
+    .telugu-text {
+      font-family: 'Noto Sans Telugu', sans-serif;
+      line-height: 1.55;
+    }
+
+    /* Interactive state visibility */
+    .lang-te { display: none; }
+    .lang-en { display: block; }
+    
+    body.telugu-mode .lang-en { display: none !important; }
+    body.telugu-mode .lang-te { display: block !important; }
+
+    /* Inline elements */
+    span.lang-te, strong.lang-te { display: none; }
+    span.lang-en, strong.lang-en { display: inline; }
+    body.telugu-mode span.lang-en, body.telugu-mode strong.lang-en { display: none !important; }
+    body.telugu-mode span.lang-te, body.telugu-mode strong.lang-te { display: inline !important; }
+
+    /* Smooth entrance animation */
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    .animate-profile-card {
+      animation: fadeInUp 0.45s ease-out forwards;
+    }
+
+    /* Subtly animated strength bars */
+    .strength-bar-fill {
+      transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+  </style>
+</head>
+<body class="bg-[#F8FAF9]">
+<div class="phone-container">
+<!-- TOP APP BAR -->
+<header class="sticky top-0 z-30 bg-[#F8FAF9]/95 backdrop-blur-sm px-5 pt-3 pb-2.5 flex items-center justify-between border-b border-border-subtle/70">
+<!-- Left: Brand Logo & Back to recap -->
+<div class="flex items-center gap-2">
+<button aria-label="Go back" class="w-8 h-8 rounded-full flex items-center justify-center bg-white border border-border-subtle text-text-muted active:scale-95 transition">
+<svg class="w-4 h-4 text-text-main" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<path d="M15 19l-7-7 7-7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2"></path>
+</svg>
+</button>
+<div class="flex items-center gap-1.5 pl-0.5">
+<span class="text-xl font-bold tracking-tight text-deep-teal font-sans">Naaguru</span>
+<span class="w-1.5 h-1.5 rounded-full bg-warm-amber inline-block"></span>
+</div>
+</div>
+<!-- Right: Compact Segmented Language Switcher -->
+<div aria-label="Language selection" class="flex items-center bg-[#EBF3F0] p-0.5 rounded-full border border-border-subtle" role="group">
+<button class="px-3 py-1 rounded-full text-xs font-semibold tracking-wide transition-all bg-deep-teal text-white shadow-sm" id="btn-en" onclick="setLanguage('en')">
+          EN
+        </button>
+<button class="px-2.5 py-1 rounded-full text-xs font-medium tracking-wide text-text-muted hover:text-text-main transition-all font-telugu" id="btn-te" onclick="setLanguage('te')">
+          తెలుగు
+        </button>
+</div>
+</header>
+<!-- MAIN SCROLLABLE CONTENT -->
+<main class="flex-1 px-5 pt-3 pb-8 space-y-5"><div class="bg-white rounded-naaguru p-4 border border-border-subtle shadow-sm relative overflow-hidden"><div class="flex items-center gap-3.5"><div class="w-20 h-20 flex-shrink-0 bg-light-teal/50 rounded-xl overflow-hidden border border-border-subtle flex items-center justify-center"><img alt="Student interest profile illustration" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida/AEtjO1Xn9CSspl8-wv1JmKm4aG-Eazua7gIYLBr_uwxluz9bJbQYjt9E3iKSV9L9fhkmKKP714S5JG25S2LZKsgTL2Q7q9FgWLCr9jE3qgNhazA3Xu6vaLOWNJEjCXl78oY64Z7QGt0GepiYBMDGon7ahPF-7PQsH9vArDQalzgKbQyx1dP3zcDaVncLZYFu51CTTYIf-nOjMSQkUfUoqNBOC1UYSkjpxNfNaoE9BiJRQwMoaabjEyueR0t7sisq"></div><div class="flex-1 min-w-0"><div class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-light-teal text-deep-teal text-[10.5px] font-semibold tracking-wide mb-1.5 uppercase"><span class="w-1.5 h-1.5 rounded-full bg-deep-teal"></span><span class="lang-en">Your Interest Profile</span><span class="lang-te font-telugu text-[10.5px]">మీ ఆసక్తుల ప్రొఫైల్</span></div><h1 class="text-[15px] font-bold text-text-main leading-snug tracking-tight"><span class="lang-en">Here's what your answers suggest</span><span class="lang-te font-telugu text-[14px]">మీ సమాధానాలు ఏమి చెబుతున్నాయో చూద్దాం</span></h1><p class="text-[11.5px] text-text-muted mt-1 leading-relaxed"><span class="lang-en">Your responses show the kinds of activities and learning areas that you may enjoy exploring.</span><span class="lang-te font-telugu text-[11px]">మీ సమాధానాలు మీకు నచ్చే కార్యకలాపాలు, నేర్చుకోవడంలో ఆసక్తి ఉన్న విషయాల గురించి కొన్ని సూచనలు ఇస్తున్నాయి.</span></p></div></div><div class="mt-3 pt-2.5 border-t border-dashed border-border-subtle flex items-center gap-1.5 text-[11px] text-text-muted"><svg class="w-3.5 h-3.5 text-warm-amber flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg><span class="lang-en font-medium">Exploratory guide • No pass/fail • No rigid scores</span><span class="lang-te font-telugu text-[10.5px]">అన్వేషణ మార్గదర్శి • పాస్/ఫెయిల్ లేదు • మార్కులు కావు</span></div></div><section class="space-y-3"><div class="flex items-center justify-between"><div><h2 class="text-[12px] font-bold tracking-wider text-deep-teal uppercase"><span class="lang-en">Your top interest areas</span><span class="lang-te font-telugu text-[12.5px] capitalize">మీకు ఎక్కువగా ఆసక్తి ఉన్న ప్రాంతాలు</span></h2><p class="text-[11.5px] text-text-muted"><span class="lang-en">These are the areas that stood out most in your responses.</span><span class="lang-te font-telugu text-[11px]">మీ సమాధానాల్లో ఎక్కువగా కనిపించిన ఆసక్తి ప్రాంతాలు ఇవి.</span></p></div><span class="text-[10.5px] px-2 py-0.5 bg-[#EEF5F3] text-dark-teal font-medium rounded-full">Top 3</span></div><div class="space-y-2.5"><div class="bg-white rounded-naaguru p-3.5 border border-border-subtle shadow-sm hover:border-deep-teal/40 transition"><div class="flex items-start justify-between gap-2 mb-1.5"><div class="flex items-center gap-2.5"><div class="w-8 h-8 rounded-lg bg-light-teal text-deep-teal flex items-center justify-center font-bold text-sm flex-shrink-0">🔬</div><div><h3 class="text-[13px] font-bold text-text-main leading-snug"><span class="lang-en">Investigative &amp; Scientific Inquiry</span><span class="lang-te font-telugu text-[13px]">పరిశోధన &amp; సైన్స్</span></h3><span class="text-[10.5px] font-semibold text-deep-teal bg-[#D8F3EC] px-2 py-0.5 rounded-full inline-block mt-0.5"><span class="lang-en">Very High Curiosity</span><span class="lang-te font-telugu text-[10px]">చాలా ఎక్కువ ఆసక్తి</span></span></div></div></div><p class="text-[11.5px] text-text-muted mt-1.5 leading-relaxed"><span class="lang-en">Exploring how things work, analyzing causes, and finding answers to interesting questions.</span><span class="lang-te font-telugu text-[11px]">విషయాలు ఎలా పనిచేస్తాయో తెలుసుకోవడం, కారణాలను అర్థం చేసుకోవడం, ఆసక్తికరమైన ప్రశ్నలకు సమాధానాలు వెతకడం.</span></p><div class="mt-2.5 flex items-center gap-2"><div class="flex-1 h-2 bg-[#EFF4F2] rounded-full overflow-hidden"><div class="h-full bg-deep-teal rounded-full strength-bar-fill" style="width: 88%;"></div></div><span class="text-[10.5px] font-semibold text-deep-teal flex-shrink-0"><span class="lang-en">Strong affinity</span><span class="lang-te font-telugu text-[10px]">మంచి అనుబంధం</span></span></div></div><div class="bg-white rounded-naaguru p-3.5 border border-border-subtle shadow-sm hover:border-deep-teal/40 transition"><div class="flex items-start justify-between gap-2 mb-1.5"><div class="flex items-center gap-2.5"><div class="w-8 h-8 rounded-lg bg-amber-soft text-[#B87A00] flex items-center justify-center font-bold text-sm flex-shrink-0">📐</div><div><h3 class="text-[13px] font-bold text-text-main leading-snug"><span class="lang-en">Quantitative &amp; Computational Reasoning</span><span class="lang-te font-telugu text-[13px]">లెక్కలు &amp; కంప్యూటేషనల్ ఆలోచన</span></h3><span class="text-[10.5px] font-semibold text-[#8C5D00] bg-amber-soft px-2 py-0.5 rounded-full inline-block mt-0.5"><span class="lang-en">High Curiosity</span><span class="lang-te font-telugu text-[10px]">ఎక్కువ ఆసక్తి</span></span></div></div></div><p class="text-[11.5px] text-text-muted mt-1.5 leading-relaxed"><span class="lang-en">Working with numbers, patterns, logic, and structured problem-solving.</span><span class="lang-te font-telugu text-[11px]">సంఖ్యలు, నమూనాలు, లాజిక్ మరియు క్రమబద్ధమైన సమస్యలను పరిష్కరించడం.</span></p><div class="mt-2.5 flex items-center gap-2"><div class="flex-1 h-2 bg-[#EFF4F2] rounded-full overflow-hidden"><div class="h-full bg-warm-amber rounded-full strength-bar-fill" style="width: 76%;"></div></div><span class="text-[10.5px] font-semibold text-[#8C5D00] flex-shrink-0"><span class="lang-en">Solid affinity</span><span class="lang-te font-telugu text-[10px]">మంచి ఆసక్తి</span></span></div></div><div class="bg-white rounded-naaguru p-3.5 border border-border-subtle shadow-sm hover:border-deep-teal/40 transition"><div class="flex items-start justify-between gap-2 mb-1.5"><div class="flex items-center gap-2.5"><div class="w-8 h-8 rounded-lg bg-[#F2F4F8] text-[#3B5998] flex items-center justify-center font-bold text-sm flex-shrink-0">🎨</div><div><h3 class="text-[13px] font-bold text-text-main leading-snug"><span class="lang-en">Creative &amp; Expressive Arts</span><span class="lang-te font-telugu text-[13px]">సృజనాత్మక &amp; వ్యక్తీకరణ కళలు</span></h3><span class="text-[10.5px] font-semibold text-[#3B5998] bg-[#EEF2F9] px-2 py-0.5 rounded-full inline-block mt-0.5"><span class="lang-en">Active Interest</span><span class="lang-te font-telugu text-[10px]">ఆసక్తి ఉంది</span></span></div></div></div><p class="text-[11.5px] text-text-muted mt-1.5 leading-relaxed"><span class="lang-en">Creating, expressing ideas, and finding different ways to communicate.</span><span class="lang-te font-telugu text-[11px]">కొత్తగా సృష్టించడం, ఆలోచనలను వ్యక్తపరచడం మరియు వివిధ మార్గాల్లో చెప్పడం.</span></p><div class="mt-2.5 flex items-center gap-2"><div class="flex-1 h-2 bg-[#EFF4F2] rounded-full overflow-hidden"><div class="h-full bg-[#52779B] rounded-full strength-bar-fill" style="width: 64%;"></div></div><span class="text-[10.5px] font-semibold text-[#52779B] flex-shrink-0"><span class="lang-en">Worth exploring</span><span class="lang-te font-telugu text-[10px]">పరిశీలించవచ్చు</span></span></div></div></div></section><section class="pt-3 space-y-3"><div class="bg-white rounded-naaguru p-4 border border-border-subtle text-center space-y-2"><h3 class="text-sm font-bold text-text-main leading-snug"><span class="lang-en">Ready to explore where these interests could lead?</span><span class="lang-te font-telugu text-[13px]">ఈ ఆసక్తులు ఎలాంటి మార్గాలకు దారితీయవచ్చో తెలుసుకోవాలా?</span></h3><p class="text-[11.5px] text-text-muted leading-relaxed"><span class="lang-en">See how your interests connect with different academic paths.</span><span class="lang-te font-telugu text-[11px]">మీ ఆసక్తులు వివిధ అకాడమిక్ మార్గాలతో ఎలా అనుసంధానమవుతాయో చూడండి.</span></p><button class="w-full mt-2 bg-deep-teal hover:bg-dark-teal active:scale-[0.98] text-white font-semibold py-3 px-5 rounded-naaguru shadow-sm transition flex items-center justify-center gap-2 group min-h-[50px]"><span class="lang-en text-sm font-bold tracking-wide">Explore My Paths</span><span class="lang-te text-sm font-bold font-telugu tracking-wide">నా మార్గాలను పరిశీలించండి</span><svg class="w-4 h-4 text-white transform group-hover:translate-x-0.5 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M14 5l7 7m0 0l-7 7m7-7H3" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"></path></svg></button></div><div class="px-2 text-center"><p class="text-[11px] text-text-muted leading-relaxed font-normal"><span class="lang-en">This assessment reflects your current interests and learning preferences. Your interests can grow and change over time.</span><span class="lang-te font-telugu text-[10.5px]">ఈ అసెస్‌మెంట్ మీ ప్రస్తుత ఆసక్తులు మరియు నేర్చుకునే అభిరుచులను ప్రతిబింబిస్తుంది. మీ ఆసక్తులు కాలక్రమేణా మారవచ్చు, పెరగవచ్చు.</span></p></div></section></main>
+<!-- BOTTOM MOBILE NAVIGATION (MATCHING NAAGURU SHELL) -->
+<nav class="sticky bottom-0 z-20 bg-white/95 backdrop-blur-sm border-t border-border-subtle px-6 py-2 flex items-center justify-between"><button class="flex flex-col items-center gap-0.5 text-text-muted hover:text-deep-teal transition"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path></svg><span class="text-[10px] font-medium font-sans">Home</span></button><button class="flex flex-col items-center gap-0.5 text-text-muted hover:text-deep-teal transition"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path></svg><span class="text-[10px] font-medium font-sans">Explore</span></button><button class="flex flex-col items-center gap-0.5 text-deep-teal"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2"></path></svg><span class="text-[10px] font-bold font-sans">Journey</span></button><button class="flex flex-col items-center gap-0.5 text-text-muted hover:text-deep-teal transition"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path></svg><span class="text-[10px] font-medium font-sans">Profile</span></button></nav>
+</div>
+<!-- INTERACTIVE CLIENT-SIDE BILINGUAL SCRIPT -->
+<script>
+    function setLanguage(lang) {
+      const btnEn = document.getElementById('btn-en');
+      const btnTe = document.getElementById('btn-te');
+      
+      if (lang === 'te') {
+        document.body.classList.add('telugu-mode');
+        // Update toggle styles
+        btnTe.classList.remove('text-text-muted');
+        btnTe.classList.add('bg-deep-teal', 'text-white', 'shadow-sm', 'font-semibold');
+        btnEn.classList.remove('bg-deep-teal', 'text-white', 'shadow-sm');
+        btnEn.classList.add('text-text-muted');
+      } else {
+        document.body.classList.remove('telugu-mode');
+        // Update toggle styles
+        btnEn.classList.remove('text-text-muted');
+        btnEn.classList.add('bg-deep-teal', 'text-white', 'shadow-sm');
+        btnTe.classList.remove('bg-deep-teal', 'text-white', 'shadow-sm', 'font-semibold');
+        btnTe.classList.add('text-text-muted');
+      }
+    }
+  </script>
+</body></html>
