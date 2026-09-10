@@ -39,3 +39,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# tailwind cli build artifacts (Next.js compiles via PostCSS, not CLI)
+out.css
