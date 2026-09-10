@@ -17,7 +17,7 @@ class LanguageToggle extends StatelessWidget {
       decoration: BoxDecoration(
         color: NaaguruTheme.surface,
         borderRadius: NaaguruTheme.borderRadius,
-        border: Border.all(color: NaaguruTheme.muted.withValues(alpha: 0.3)),
+        border: Border.all(color: NaaguruTheme.muted.withAlpha(77)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -30,7 +30,7 @@ class LanguageToggle extends StatelessWidget {
           Container(
             width: 1,
             height: 24,
-            color: NaaguruTheme.muted.withValues(alpha: 0.3),
+            color: NaaguruTheme.muted.withAlpha(77),
           ),
           _LanguageButton(
             text: 'తెలుగు',
