@@ -130,7 +130,7 @@ class _HomeScreenState extends State<HomeScreen> {
               decoration: BoxDecoration(
                 color: NaaguruTheme.surface,
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: NaaguruTheme.muted.withValues(alpha: 0.3)),
+                border: Border.all(color: NaaguruTheme.muted.withAlpha(77)),
               ),
               child: Row(
                 children: const [
@@ -161,23 +161,23 @@ class _HomeScreenState extends State<HomeScreen> {
     return Container(
       decoration: BoxDecoration(
         color: NaaguruTheme.surface,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
+        border: Border.all(color: NaaguruTheme.muted.withAlpha(51)),
+        boxShadow: const [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.03),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
+            color: Colors.black12,
+            blurRadius: 4,
+            offset: Offset(0, 2),
           ),
         ],
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+      child: Stack(
+        alignment: Alignment.center,
         children: [
-          // Illustration Box
           Container(
-            height: 160,
+            width: 24,
+            height: 24,
             decoration: BoxDecoration(
-              color: NaaguruTheme.primaryLight.withValues(alpha: 0.3),
+              color: NaaguruTheme.accent.withAlpha(51),
               borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
             ),
             child: SvgPicture.asset(
@@ -279,7 +279,7 @@ class _HomeScreenState extends State<HomeScreen> {
             borderRadius: BorderRadius.circular(16),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.02),
+                color: Colors.black.withAlpha(5),
                 blurRadius: 8,
                 offset: const Offset(0, 2),
               ),
@@ -344,7 +344,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 decoration: BoxDecoration(
                   color: isActive ? NaaguruTheme.primaryDark : NaaguruTheme.background,
                   shape: BoxShape.circle,
-                  border: isActive ? null : Border.all(color: NaaguruTheme.muted.withValues(alpha: 0.3)),
+                  border: isActive ? null : Border.all(color: NaaguruTheme.muted.withAlpha(77)),
                 ),
                 alignment: Alignment.center,
                 child: isActive
@@ -431,14 +431,14 @@ class _HomeScreenState extends State<HomeScreen> {
       decoration: BoxDecoration(
         color: NaaguruTheme.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: NaaguruTheme.muted.withValues(alpha: 0.2)),
+        border: Border.all(color: NaaguruTheme.muted.withAlpha(51)),
       ),
       child: Row(
         children: [
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: NaaguruTheme.accent.withValues(alpha: 0.2),
+              color: NaaguruTheme.accent.withAlpha(51),
               borderRadius: BorderRadius.circular(12),
             ),
             child: const Icon(Icons.account_balance, color: NaaguruTheme.primaryDark),
@@ -492,7 +492,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: NaaguruTheme.spacing16, vertical: NaaguruTheme.spacing12),
       decoration: BoxDecoration(
-        color: NaaguruTheme.primaryLight.withValues(alpha: 0.5),
+        color: NaaguruTheme.primaryLight.withAlpha(128),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
