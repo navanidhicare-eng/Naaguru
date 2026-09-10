@@ -20,7 +20,7 @@ class PrimaryButton extends StatelessWidget {
       style: ElevatedButton.styleFrom(
         backgroundColor: NaaguruTheme.primary,
         foregroundColor: Colors.white,
-        disabledBackgroundColor: NaaguruTheme.muted.withValues(alpha: 0.5),
+        disabledBackgroundColor: NaaguruTheme.muted.withAlpha(128),
         disabledForegroundColor: Colors.white,
         minimumSize: const Size.fromHeight(48),
         shape: RoundedRectangleBorder(
