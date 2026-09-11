@@ -2,9 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:naaguru_student/core/theme.dart';
 import 'package:naaguru_student/core/ui/buttons.dart';
+import 'package:naaguru_student/features/auth/auth_service.dart';
+import 'package:naaguru_student/features/student/data/student_api_client.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  final AuthService? authService;
+  final StudentApiClient? studentApiClient;
+
+  const HomeScreen({super.key, this.authService, this.studentApiClient});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -95,16 +100,76 @@ class _HomeScreenState extends State<HomeScreen> {
           const Icon(Icons.notifications_none, color: NaaguruTheme.text, size: 24),
           const SizedBox(width: NaaguruTheme.spacing16),
           // User Avatar
-          Container(
-            width: 32,
-            height: 32,
-            decoration: const BoxDecoration(
-              color: NaaguruTheme.primaryDark,
-              shape: BoxShape.circle,
+          GestureDetector(
+            onTap: () => _handleAvatarTap(context),
+            child: Container(
+              width: 32,
+              height: 32,
+              decoration: const BoxDecoration(
+                color: NaaguruTheme.primaryDark,
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(Icons.person, color: NaaguruTheme.surface, size: 20),
             ),
-            child: const Icon(Icons.person, color: NaaguruTheme.surface, size: 20),
           ),
         ],
+      ),
+    );
+  }
+
+  void _handleAvatarTap(BuildContext context) {
+    final isAuth = widget.authService?.isAuthenticated ?? false;
+    if (!isAuth) {
+      Navigator.pushNamed(context, '/login');
+      return;
+    }
+
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (ctx) => SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const Text(
+                'My Account',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w700,
+                  color: NaaguruTheme.primaryDark,
+                ),
+              ),
+              const SizedBox(height: 16),
+              ListTile(
+                leading: const Icon(Icons.person_outline, color: NaaguruTheme.primary),
+                title: const Text('My Profile'),
+                onTap: () {
+                  Navigator.pop(ctx);
+                  Navigator.pushNamed(context, '/profile');
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.logout, color: NaaguruTheme.error),
+                title: const Text('Log Out', style: TextStyle(color: NaaguruTheme.error)),
+                onTap: () async {
+                  Navigator.pop(ctx);
+                  await widget.authService?.logout();
+                  if (context.mounted) {
+                    setState(() {});
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Logged out successfully.')),
+                    );
+                  }
+                },
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -212,7 +277,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 const SizedBox(height: NaaguruTheme.spacing20),
                 PrimaryButton(
                   text: 'Start Your Journey \u2192',
-                  onPressed: () => Navigator.pushNamed(context, '/login'),
+                  onPressed: () {
+                    final isAuth = widget.authService?.isAuthenticated ?? false;
+                    Navigator.pushNamed(context, isAuth ? '/profile' : '/login');
+                  },
                 ),
                 const SizedBox(height: NaaguruTheme.spacing12),
                 Row(

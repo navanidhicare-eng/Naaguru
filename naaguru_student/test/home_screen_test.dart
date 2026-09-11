@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:naaguru_student/core/api_client.dart';
 import 'package:naaguru_student/features/auth/auth_service.dart';
@@ -11,6 +12,7 @@ void main() {
   late StudentApiClient studentApiClient;
 
   setUp(() {
+    FlutterSecureStorage.setMockInitialValues({});
     apiClient = ApiClient();
     authService = AuthService(apiClient: apiClient);
     studentApiClient = StudentApiClient(apiClient: apiClient);
@@ -24,16 +26,19 @@ void main() {
   group('HomeScreen', () {
     testWidgets('renders Naaguru branding', (tester) async {
       await tester.pumpWidget(buildApp());
+      await tester.pumpAndSettle();
       expect(find.text('Naaguru'), findsWidgets); // Can be found multiple times
     });
 
     testWidgets('renders the main headline', (tester) async {
       await tester.pumpWidget(buildApp());
+      await tester.pumpAndSettle();
       expect(find.text("Let's find a path that feels right for you."), findsOneWidget);
     });
 
     testWidgets('renders the supporting text', (tester) async {
       await tester.pumpWidget(buildApp());
+      await tester.pumpAndSettle();
       expect(
         find.text("Ready to explore what's next after Class 10?"),
         findsOneWidget,
@@ -42,12 +47,14 @@ void main() {
 
     testWidgets('"Start Your Journey" button is visible', (tester) async {
       await tester.pumpWidget(buildApp());
+      await tester.pumpAndSettle();
       expect(find.text('Start Your Journey \u2192'), findsOneWidget);
     });
 
     testWidgets('tapping "Start Your Journey" navigates to login screen',
         (tester) async {
       await tester.pumpWidget(buildApp());
+      await tester.pumpAndSettle();
 
       // Scroll to button if needed
       await tester.ensureVisible(find.text('Start Your Journey \u2192'));
@@ -63,6 +70,7 @@ void main() {
   group('LoginScreen', () {
     testWidgets('renders phone input and send OTP button', (tester) async {
       await tester.pumpWidget(buildApp());
+      await tester.pumpAndSettle();
 
       await tester.ensureVisible(find.text('Start Your Journey \u2192'));
       await tester.tap(find.text('Start Your Journey \u2192'));
@@ -75,6 +83,7 @@ void main() {
     testWidgets('shows error when phone is empty and Send OTP tapped',
         (tester) async {
       await tester.pumpWidget(buildApp());
+      await tester.pumpAndSettle();
 
       await tester.ensureVisible(find.text('Start Your Journey \u2192'));
       await tester.tap(find.text('Start Your Journey \u2192'));
