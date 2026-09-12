@@ -155,4 +155,16 @@ export class AuthUseCases {
     const refreshTokenHash = hashValue(refreshToken);
     await db.delete(sessionsTable).where(eq(sessionsTable.refreshTokenHash, refreshTokenHash));
   }
+
+  async getMe(userId: string): Promise<{ id: string; phoneNumber: string; role: string }> {
+    const [user] = await db.select().from(usersTable).where(eq(usersTable.id, userId));
+    if (!user) {
+      throw new Error('User not found');
+    }
+    return {
+      id: user.id,
+      phoneNumber: user.phoneNumber ?? '',
+      role: user.role,
+    };
+  }
 }

@@ -37,32 +37,48 @@ export class AssessmentUseCases {
   }
 
   async startOrResumeAttempt(studentId: string): Promise<AssessmentAttemptDto> {
-    let attempt = await this.assessmentRepository.getActiveAttempt(studentId);
-    
-    if (!attempt) {
-      const activeVersion = await this.assessmentRepository.getActiveVersion();
-      if (!activeVersion) {
-        throw new AppError('No active assessment version available', 404);
-      }
+    try {
+      let attempt = await this.assessmentRepository.getActiveAttempt(studentId);
       
-      attempt = AssessmentAttempt.create({
-        id: crypto.randomUUID(),
-        versionId: activeVersion.id,
-        studentId,
-        state: 'IN_PROGRESS',
-        createdAt: new Date().toISOString(),
-        completedAt: null,
-        answers: [],
-        scoringVersionId: null,
-        rawResponsesJsonb: null,
-        constructRawScoresJsonb: null,
-        dimensionScores: null,
-      });
+      if (!attempt) {
+        const completedAttempt = await this.assessmentRepository.getLatestCompletedAttempt(studentId);
+        if (completedAttempt) {
+          return this.toAttemptDto(completedAttempt);
+        }
 
-      await this.assessmentRepository.saveAttempt(attempt);
+        const activeVersion = await this.assessmentRepository.getActiveVersion();
+        if (!activeVersion) {
+          throw new AppError('No active assessment version available', 404);
+        }
+        
+        attempt = AssessmentAttempt.create({
+          id: crypto.randomUUID(),
+          versionId: activeVersion.id,
+          studentId,
+          state: 'IN_PROGRESS',
+          createdAt: new Date().toISOString(),
+          completedAt: null,
+          answers: [],
+          scoringVersionId: null,
+          rawResponsesJsonb: null,
+          constructRawScoresJsonb: null,
+          dimensionScores: null,
+        });
+
+        await this.assessmentRepository.saveAttempt(attempt);
+      }
+
+      return this.toAttemptDto(attempt);
+    } catch (e: any) {
+      // Handle concurrent creation where unique index prevents duplicate IN_PROGRESS attempts
+      if (e.code === '23505' && e.constraint === 'in_progress_student_idx') {
+        const concurrentAttempt = await this.assessmentRepository.getActiveAttempt(studentId);
+        if (concurrentAttempt) {
+          return this.toAttemptDto(concurrentAttempt);
+        }
+      }
+      throw e;
     }
-
-    return this.toAttemptDto(attempt);
   }
 
   async saveAnswer(studentId: string, questionId: string, optionId: string): Promise<AssessmentAttemptDto> {

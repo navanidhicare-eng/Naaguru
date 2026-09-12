@@ -22,6 +22,11 @@ class StudentApiClient {
     }
   }
 
+  /// Fetches the authenticated user's base info (including phone number).
+  Future<Map<String, dynamic>> getMe() async {
+    return await _apiClient.get('/auth/me');
+  }
+
   /// Creates a new student profile.
   Future<Map<String, dynamic>> createProfile({
     required String fullName,

@@ -103,19 +103,27 @@ void main() {
         }
         throw Exception('Not found');
       },
-      onPost: (p, {body}) => {},
-      onPatch: (p, {body}) => {},
+      onPost: (path, {body}) {
+        if (path == '/career/recommendations/generate') {
+          return {
+            'rankedResults': [
+              {'streamCode': 'MPC', 'matchScore': 90},
+              {'streamCode': 'MEC', 'matchScore': 80},
+            ]
+          };
+        }
+        return {};
+      },
+      onPatch: (path, {body}) => {},
     );
 
     final apiClient = AssessmentApiClient(apiClient: mockApi);
 
     await tester.pumpWidget(buildTestWidget(apiClient: apiClient));
     await tester.pumpAndSettle();
+    expect(find.text("YOUR TOP INTEREST AREAS"), findsOneWidget);
+    expect(find.text("MATH"), findsWidgets); // Can be title or fallback
+    expect(find.text("Strong affinity"), findsWidgets);
 
-    expect(find.text("Assessment Completed"), findsOneWidget);
-    expect(find.text("Math"), findsOneWidget);
-    expect(find.text("95.0/100"), findsOneWidget);
-    expect(find.text("Science"), findsOneWidget);
-    expect(find.text("88.0/100"), findsOneWidget);
   });
 }

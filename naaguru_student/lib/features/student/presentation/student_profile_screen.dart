@@ -24,6 +24,7 @@ class _StudentProfileScreenState extends State<StudentProfileScreen> {
   String? _selectedClass = '10TH_PURSUING';
   String? _selectedBoard = 'AP Board';
   String? _selectedDistrict;
+  String? _authPhone;
 
   bool _isTelugu = false;
   bool _isLoading = true;
@@ -69,6 +70,17 @@ class _StudentProfileScreenState extends State<StudentProfileScreen> {
   Future<void> _loadProfile() async {
     setState(() => _isLoading = true);
     try {
+      // 1. Fetch auth details (phone number)
+      try {
+        final me = await widget.studentApiClient.getMe();
+        if (mounted && me['phoneNumber'] != null) {
+          _authPhone = me['phoneNumber'] as String;
+        }
+      } catch (_) {
+        // Ignored if auth fetch fails
+      }
+
+      // 2. Fetch profile
       final profile = await widget.studentApiClient.getProfile();
       if (profile != null && mounted) {
         _profileExists = true;
@@ -243,6 +255,15 @@ class _StudentProfileScreenState extends State<StudentProfileScreen> {
                       const SizedBox(height: 8),
                       const Divider(color: NaaguruTheme.muted, thickness: 0.2, height: 1),
                       const SizedBox(height: 16),
+
+                      if (_authPhone != null) ...[
+                        NaaguruTextField(
+                          controller: TextEditingController(text: _authPhone),
+                          label: _isTelugu ? "మీ వాట్సాప్ నంబర్" : "Your WhatsApp Number",
+                          enabled: false,
+                        ),
+                        const SizedBox(height: 12),
+                      ],
 
                       NaaguruTextField(
                         controller: _nameController,

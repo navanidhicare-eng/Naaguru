@@ -6,6 +6,7 @@ export interface CollegeSearchCriteria {
   state?: string;
   district?: string;
   city?: string;
+  requiresHostel?: boolean;
   requiresBoysHostel?: boolean;
   requiresGirlsHostel?: boolean;
   maxFee?: number;

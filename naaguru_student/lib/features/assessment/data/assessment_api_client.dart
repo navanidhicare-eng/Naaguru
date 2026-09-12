@@ -45,4 +45,9 @@ class AssessmentApiClient {
   Future<Map<String, dynamic>> getResult() async {
     return await _apiClient.get('/assessments/results/current');
   }
+
+  /// Generates and fetches the career recommendation based on the current result.
+  Future<Map<String, dynamic>> getRecommendation() async {
+    return await _apiClient.post('/career/recommendations/generate');
+  }
 }

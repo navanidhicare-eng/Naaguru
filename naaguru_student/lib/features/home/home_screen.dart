@@ -4,6 +4,7 @@ import 'package:naaguru_student/core/theme.dart';
 import 'package:naaguru_student/core/ui/buttons.dart';
 import 'package:naaguru_student/features/auth/auth_service.dart';
 import 'package:naaguru_student/features/student/data/student_api_client.dart';
+import 'package:naaguru_student/features/explore/presentation/explore_paths_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   final AuthService? authService;
@@ -27,26 +28,24 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
             _buildAppBar(),
             Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: NaaguruTheme.spacing20,
-                  vertical: NaaguruTheme.spacing24,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    _buildGreeting(),
-                    const SizedBox(height: NaaguruTheme.spacing24),
-                    _buildMainCard(context),
-                    const SizedBox(height: NaaguruTheme.spacing32),
-                    _buildJourneySection(),
-                    const SizedBox(height: NaaguruTheme.spacing32),
-                    _buildSecondaryCard(),
-                    const SizedBox(height: NaaguruTheme.spacing16),
-                    _buildTertiaryCard(),
-                    const SizedBox(height: NaaguruTheme.spacing24),
-                  ],
-                ),
+              child: IndexedStack(
+                index: _currentIndex,
+                children: [
+                  _buildHomeView(context),
+                  const ExplorePathsScreen(),
+                  const Center(
+                    child: Text(
+                      'Journey - Coming Soon',
+                      style: TextStyle(color: NaaguruTheme.muted),
+                    ),
+                  ),
+                  const Center(
+                    child: Text(
+                      'Profile Settings - Use top right icon',
+                      style: TextStyle(color: NaaguruTheme.muted),
+                    ),
+                  ),
+                ],
               ),
             ),
           ],
@@ -60,10 +59,22 @@ class _HomeScreenState extends State<HomeScreen> {
         showUnselectedLabels: true,
         type: BottomNavigationBarType.fixed,
         items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home_outlined), activeIcon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(Icons.explore_outlined), activeIcon: Icon(Icons.explore), label: 'Explore'),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home_outlined),
+            activeIcon: Icon(Icons.home),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.explore_outlined),
+            activeIcon: Icon(Icons.explore),
+            label: 'Explore',
+          ),
           BottomNavigationBarItem(icon: Icon(Icons.timeline), label: 'Journey'),
-          BottomNavigationBarItem(icon: Icon(Icons.person_outline), activeIcon: Icon(Icons.person), label: 'You'),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person_outline),
+            activeIcon: Icon(Icons.person),
+            label: 'You',
+          ),
         ],
       ),
     );
@@ -97,7 +108,11 @@ class _HomeScreenState extends State<HomeScreen> {
           const Icon(Icons.translate, color: NaaguruTheme.text, size: 20),
           const SizedBox(width: NaaguruTheme.spacing16),
           // Notification Bell
-          const Icon(Icons.notifications_none, color: NaaguruTheme.text, size: 24),
+          const Icon(
+            Icons.notifications_none,
+            color: NaaguruTheme.text,
+            size: 24,
+          ),
           const SizedBox(width: NaaguruTheme.spacing16),
           // Explicit Logout Button for Testing
           if (widget.authService?.isAuthenticated ?? false)
@@ -119,7 +134,11 @@ class _HomeScreenState extends State<HomeScreen> {
                 color: NaaguruTheme.primaryDark,
                 shape: BoxShape.circle,
               ),
-              child: const Icon(Icons.person, color: NaaguruTheme.surface, size: 20),
+              child: const Icon(
+                Icons.person,
+                color: NaaguruTheme.surface,
+                size: 20,
+              ),
             ),
           ),
         ],
@@ -156,7 +175,10 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               const SizedBox(height: 16),
               ListTile(
-                leading: const Icon(Icons.person_outline, color: NaaguruTheme.primary),
+                leading: const Icon(
+                  Icons.person_outline,
+                  color: NaaguruTheme.primary,
+                ),
                 title: const Text('My Profile'),
                 onTap: () {
                   Navigator.pop(ctx);
@@ -165,7 +187,10 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               ListTile(
                 leading: const Icon(Icons.logout, color: NaaguruTheme.error),
-                title: const Text('Log Out', style: TextStyle(color: NaaguruTheme.error)),
+                title: const Text(
+                  'Log Out',
+                  style: TextStyle(color: NaaguruTheme.error),
+                ),
                 onTap: () async {
                   Navigator.pop(ctx);
                   await widget.authService?.logout();
@@ -213,7 +238,11 @@ class _HomeScreenState extends State<HomeScreen> {
                   SizedBox(width: 4),
                   Text(
                     'తెలుగు / Eng',
-                    style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: NaaguruTheme.muted),
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                      color: NaaguruTheme.muted,
+                    ),
                   ),
                 ],
               ),
@@ -223,10 +252,7 @@ class _HomeScreenState extends State<HomeScreen> {
         const SizedBox(height: NaaguruTheme.spacing4),
         const Text(
           "Ready to explore what's next after Class 10?",
-          style: TextStyle(
-            fontSize: 14,
-            color: NaaguruTheme.muted,
-          ),
+          style: TextStyle(fontSize: 14, color: NaaguruTheme.muted),
         ),
       ],
     );
@@ -238,11 +264,7 @@ class _HomeScreenState extends State<HomeScreen> {
         color: NaaguruTheme.surface,
         border: Border.all(color: NaaguruTheme.muted.withAlpha(51)),
         boxShadow: const [
-          BoxShadow(
-            color: Colors.black12,
-            blurRadius: 4,
-            offset: Offset(0, 2),
-          ),
+          BoxShadow(color: Colors.black12, blurRadius: 4, offset: Offset(0, 2)),
         ],
       ),
       child: Stack(
@@ -253,12 +275,16 @@ class _HomeScreenState extends State<HomeScreen> {
             height: 24,
             decoration: BoxDecoration(
               color: NaaguruTheme.accent.withAlpha(51),
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(20),
+              ),
             ),
             child: SvgPicture.asset(
               'assets/illustrations/home_exploration.svg',
               fit: BoxFit.contain,
-              placeholderBuilder: (_) => const Center(child: Icon(Icons.image, size: 48, color: NaaguruTheme.muted)),
+              placeholderBuilder: (_) => const Center(
+                child: Icon(Icons.image, size: 48, color: NaaguruTheme.muted),
+              ),
             ),
           ),
           Padding(
@@ -289,14 +315,21 @@ class _HomeScreenState extends State<HomeScreen> {
                   text: 'Start Your Journey \u2192',
                   onPressed: () {
                     final isAuth = widget.authService?.isAuthenticated ?? false;
-                    Navigator.pushNamed(context, isAuth ? '/profile' : '/login');
+                    Navigator.pushNamed(
+                      context,
+                      isAuth ? '/profile' : '/login',
+                    );
                   },
                 ),
                 const SizedBox(height: NaaguruTheme.spacing12),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Icon(Icons.auto_awesome, size: 14, color: NaaguruTheme.accent),
+                    const Icon(
+                      Icons.auto_awesome,
+                      size: 14,
+                      color: NaaguruTheme.accent,
+                    ),
                     const SizedBox(width: 4),
                     const Expanded(
                       child: Text(
@@ -339,10 +372,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 SizedBox(height: 2),
                 Text(
                   'Step 1 of 4 • Just beginning',
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: NaaguruTheme.muted,
-                  ),
+                  style: TextStyle(fontSize: 12, color: NaaguruTheme.muted),
                 ),
               ],
             ),
@@ -368,7 +398,8 @@ class _HomeScreenState extends State<HomeScreen> {
               _buildStepItem(
                 number: '1',
                 title: 'Create your profile',
-                description: 'Tell us a little about your class, goals, and dreams.',
+                description:
+                    'Tell us a little about your class, goals, and dreams.',
                 isActive: true,
                 badge: 'In Progress',
                 isLast: false,
@@ -376,21 +407,24 @@ class _HomeScreenState extends State<HomeScreen> {
               _buildStepItem(
                 number: '2',
                 title: 'Explore your interests',
-                description: 'Quick, fun questions about activities that genuinely excite you.',
+                description:
+                    'Quick, fun questions about activities that genuinely excite you.',
                 isActive: false,
                 isLast: false,
               ),
               _buildStepItem(
                 number: '3',
                 title: 'Discover possible paths',
-                description: 'Understand Intermediate streams (MPC, BiPC, CEC, MEC) & career maps.',
+                description:
+                    'Understand Intermediate streams (MPC, BiPC, CEC, MEC) & career maps.',
                 isActive: false,
                 isLast: false,
               ),
               _buildStepItem(
                 number: '4',
                 title: 'Find colleges',
-                description: 'Explore junior colleges and polytechnic campuses tailored to your vision.',
+                description:
+                    'Explore junior colleges and polytechnic campuses tailored to your vision.',
                 isActive: false,
                 isLast: true,
               ),
@@ -420,13 +454,21 @@ class _HomeScreenState extends State<HomeScreen> {
                 width: 28,
                 height: 28,
                 decoration: BoxDecoration(
-                  color: isActive ? NaaguruTheme.primaryDark : NaaguruTheme.background,
+                  color: isActive
+                      ? NaaguruTheme.primaryDark
+                      : NaaguruTheme.background,
                   shape: BoxShape.circle,
-                  border: isActive ? null : Border.all(color: NaaguruTheme.muted.withAlpha(77)),
+                  border: isActive
+                      ? null
+                      : Border.all(color: NaaguruTheme.muted.withAlpha(77)),
                 ),
                 alignment: Alignment.center,
                 child: isActive
-                    ? const Icon(Icons.edit, size: 14, color: NaaguruTheme.surface)
+                    ? const Icon(
+                        Icons.edit,
+                        size: 14,
+                        color: NaaguruTheme.surface,
+                      )
                     : Text(
                         number,
                         style: const TextStyle(
@@ -463,13 +505,18 @@ class _HomeScreenState extends State<HomeScreen> {
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
-                            color: isActive ? NaaguruTheme.primaryDark : NaaguruTheme.text,
+                            color: isActive
+                                ? NaaguruTheme.primaryDark
+                                : NaaguruTheme.text,
                           ),
                         ),
                       ),
                       if (badge != null)
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 4,
+                          ),
                           decoration: BoxDecoration(
                             color: NaaguruTheme.primaryLight,
                             borderRadius: BorderRadius.circular(12),
@@ -519,7 +566,10 @@ class _HomeScreenState extends State<HomeScreen> {
               color: NaaguruTheme.accent.withAlpha(51),
               borderRadius: BorderRadius.circular(12),
             ),
-            child: const Icon(Icons.account_balance, color: NaaguruTheme.primaryDark),
+            child: const Icon(
+              Icons.account_balance,
+              color: NaaguruTheme.primaryDark,
+            ),
           ),
           const SizedBox(width: NaaguruTheme.spacing16),
           Expanded(
@@ -537,10 +587,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 const SizedBox(height: 4),
                 const Text(
                   'Browse junior colleges & Polytechnic institutes nearby.',
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: NaaguruTheme.muted,
-                  ),
+                  style: TextStyle(fontSize: 12, color: NaaguruTheme.muted),
                 ),
                 const SizedBox(height: 8),
                 Row(
@@ -554,7 +601,11 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
                     SizedBox(width: 4),
-                    Icon(Icons.arrow_forward, size: 14, color: NaaguruTheme.primaryDark),
+                    Icon(
+                      Icons.arrow_forward,
+                      size: 14,
+                      color: NaaguruTheme.primaryDark,
+                    ),
                   ],
                 ),
               ],
@@ -568,7 +619,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildTertiaryCard() {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: NaaguruTheme.spacing16, vertical: NaaguruTheme.spacing12),
+      padding: const EdgeInsets.symmetric(
+        horizontal: NaaguruTheme.spacing16,
+        vertical: NaaguruTheme.spacing12,
+      ),
       decoration: BoxDecoration(
         color: NaaguruTheme.primaryLight.withAlpha(128),
         borderRadius: BorderRadius.circular(12),
@@ -581,7 +635,11 @@ class _HomeScreenState extends State<HomeScreen> {
               color: NaaguruTheme.accent,
               shape: BoxShape.circle,
             ),
-            child: const Icon(Icons.favorite, size: 16, color: NaaguruTheme.primaryDark),
+            child: const Icon(
+              Icons.favorite,
+              size: 16,
+              color: NaaguruTheme.primaryDark,
+            ),
           ),
           const SizedBox(width: NaaguruTheme.spacing12),
           const Expanded(
@@ -592,13 +650,40 @@ class _HomeScreenState extends State<HomeScreen> {
                 children: [
                   TextSpan(
                     text: "Naaguru",
-                    style: TextStyle(fontWeight: FontWeight.w700, color: NaaguruTheme.primaryDark),
+                    style: TextStyle(
+                      fontWeight: FontWeight.w700,
+                      color: NaaguruTheme.primaryDark,
+                    ),
                   ),
                   TextSpan(text: " is with you at every step."),
                 ],
               ),
             ),
           ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildHomeView(BuildContext context) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.symmetric(
+        horizontal: NaaguruTheme.spacing20,
+        vertical: NaaguruTheme.spacing24,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          _buildGreeting(),
+          const SizedBox(height: NaaguruTheme.spacing24),
+          _buildMainCard(context),
+          const SizedBox(height: NaaguruTheme.spacing32),
+          _buildJourneySection(),
+          const SizedBox(height: NaaguruTheme.spacing32),
+          _buildSecondaryCard(),
+          const SizedBox(height: NaaguruTheme.spacing16),
+          _buildTertiaryCard(),
+          const SizedBox(height: NaaguruTheme.spacing24),
         ],
       ),
     );
