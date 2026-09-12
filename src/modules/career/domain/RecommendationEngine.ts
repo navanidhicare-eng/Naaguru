@@ -2,7 +2,7 @@ import { Stream, CareerRule, RankedResult } from './models';
 
 export class RecommendationEngine {
   static generate(
-    dimensionScores: Record<string, number>,
+    pompScores: Record<string, number>,
     streams: Stream[],
     rules: CareerRule[]
   ): RankedResult[] {
@@ -15,32 +15,22 @@ export class RecommendationEngine {
       if (streamRules.length === 0) continue;
 
       let matchScore = 0;
-      let qualifies = true;
-      const matchedDimensions: string[] = [];
 
       for (const rule of streamRules) {
-        const studentScore = dimensionScores[rule.dimensionName] || 0;
-        
-        if (studentScore < rule.minScore) {
-          qualifies = false;
-          break; // Fails minimum threshold, disqualify this stream
-        }
-
+        const studentScore = pompScores[rule.dimensionName] || 0;
         matchScore += (studentScore * rule.weight);
-        if (studentScore > 0) {
-          matchedDimensions.push(rule.dimensionName);
-        }
       }
 
-      if (qualifies) {
-        const explanation = `Your scores in ${matchedDimensions.join(', ')} align with the ${stream.streamCode} pathway.`;
-        results.push({
-          streamId: stream.id,
-          streamCode: stream.streamCode,
-          matchScore,
-          explanation,
-        });
-      }
+      // We do not invent arbitrary classification categories (Strong Affinity, etc).
+      // Awaiting clinical classification threshold definitions.
+      const fitCategory = "REQUIRES VALIDATION / CONFIGURATION";
+
+      results.push({
+        streamId: stream.id,
+        streamCode: stream.streamCode,
+        matchScore,
+        fitCategory,
+      });
     }
 
     // Sort descending by matchScore. For ties, sort alphabetically by streamCode to ensure determinism.

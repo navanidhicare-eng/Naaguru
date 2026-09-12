@@ -23,16 +23,21 @@ export class CareerUseCases {
     }
 
     const streams = await this.careerRepository.getAllStreams();
-    const rules = await this.careerRepository.getAllRules();
+    const activeRulesetData = await this.careerRepository.getActiveRuleset();
+    if (!activeRulesetData) {
+      throw new AppError('No active career ruleset found', 500);
+    }
 
+    const { rulesetId, rules } = activeRulesetData;
     const rankedResults = RecommendationEngine.generate(latestResult.dimensionScores, streams, rules);
 
     const recommendation = Recommendation.create({
       id: crypto.randomUUID(),
       studentId,
       attemptId: latestResult.attemptId,
+      rulesetId,
       rankedResults,
-      appliedRules: { rules, streams }, // Snapshot of configuration used
+      appliedRules: { rulesetId, rules, streams }, // Snapshot of configuration used
       createdAt: new Date().toISOString(),
     });
 

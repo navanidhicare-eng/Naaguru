@@ -20,9 +20,9 @@ export class Stream {
 
 export interface CareerRuleProps {
   id: string;
+  rulesetId: string;
   streamId: string;
   dimensionName: string;
-  minScore: number;
   weight: number;
 }
 
@@ -34,9 +34,9 @@ export class CareerRule {
   }
 
   get id() { return this.props.id; }
+  get rulesetId() { return this.props.rulesetId; }
   get streamId() { return this.props.streamId; }
   get dimensionName() { return this.props.dimensionName; }
-  get minScore() { return this.props.minScore; }
   get weight() { return this.props.weight; }
 }
 
@@ -44,13 +44,14 @@ export interface RankedResult {
   streamId: string;
   streamCode: StreamCode;
   matchScore: number;
-  explanation: string;
+  fitCategory: string; // "REQUIRES VALIDATION / CONFIGURATION"
 }
 
 export interface RecommendationProps {
   id: string;
   studentId: string;
   attemptId: string;
+  rulesetId: string;
   rankedResults: RankedResult[];
   appliedRules: Record<string, unknown>; // Snapshot of rules
   createdAt: string;
@@ -66,6 +67,7 @@ export class Recommendation {
   get id() { return this.props.id; }
   get studentId() { return this.props.studentId; }
   get attemptId() { return this.props.attemptId; }
+  get rulesetId() { return this.props.rulesetId; }
   get rankedResults() { return this.props.rankedResults; }
   get appliedRules() { return this.props.appliedRules; }
   get createdAt() { return this.props.createdAt; }

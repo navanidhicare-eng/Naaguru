@@ -9,7 +9,7 @@ describe('ScoringEngine', () => {
     questionId: 'q1',
     textEn: 'Yes',
     textTe: 'అవును',
-    weights: { 'Analytical': 2, 'Creative': 0 },
+    value: 5,
   });
 
   const mockOption2 = QuestionOption.create({
@@ -17,12 +17,13 @@ describe('ScoringEngine', () => {
     questionId: 'q1',
     textEn: 'No',
     textTe: 'కాదు',
-    weights: { 'Analytical': 0, 'Creative': 1 },
+    value: 1,
   });
 
   const mockQuestion = Question.create({
     id: 'q1',
-    versionId: 'v1',
+    construct: 'ISI',
+    type: 'SCORED',
     sequence: 1,
     textEn: 'Do you like math?',
     textTe: 'మీకు గణితం ఇష్టమా?',
@@ -36,7 +37,7 @@ describe('ScoringEngine', () => {
     questions: [mockQuestion],
   });
 
-  it('calculates dimension scores correctly', () => {
+  it('calculates dimension scores correctly with POMP standardization', () => {
     const attempt = AssessmentAttempt.create({
       id: 'a1',
       versionId: 'v1',
@@ -45,13 +46,17 @@ describe('ScoringEngine', () => {
       createdAt: new Date().toISOString(),
       completedAt: null,
       answers: [{ questionId: 'q1', selectedOptionId: 'opt1' }],
+      scoringVersionId: null,
+      rawResponsesJsonb: null,
+      constructRawScoresJsonb: null,
       dimensionScores: null,
     });
 
     const scores = ScoringEngine.calculateScores(attempt, mockVersion);
 
-    expect(scores['Analytical']).toBe(2);
-    expect(scores['Creative']).toBe(0);
+    // Q1 has max 5, min 1. Selected is 5. So POMP should be 100
+    expect(scores.pompScores['ISI']).toBe(100);
+    expect(scores.rawScores['ISI']).toBe(5);
   });
 
   it('throws an error if not all questions are answered', () => {
@@ -63,6 +68,9 @@ describe('ScoringEngine', () => {
       createdAt: new Date().toISOString(),
       completedAt: null,
       answers: [],
+      scoringVersionId: null,
+      rawResponsesJsonb: null,
+      constructRawScoresJsonb: null,
       dimensionScores: null,
     });
 
@@ -78,9 +86,13 @@ describe('ScoringEngine', () => {
       createdAt: new Date().toISOString(),
       completedAt: null,
       answers: [{ questionId: 'q1', selectedOptionId: 'opt1' }],
+      scoringVersionId: null,
+      rawResponsesJsonb: null,
+      constructRawScoresJsonb: null,
       dimensionScores: null,
     });
 
     expect(() => ScoringEngine.calculateScores(attempt, mockVersion)).toThrow('Attempt version mismatch');
   });
 });
+

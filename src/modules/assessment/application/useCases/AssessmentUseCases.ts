@@ -4,8 +4,16 @@ import { AssessmentAttempt } from '../../domain/AssessmentAttempt';
 import { ScoringEngine } from '../../domain/ScoringEngine';
 import { AssessmentVersionDto, AssessmentAttemptDto, AssessmentResultDto } from '../dtos';
 
+// Minimal interface to decouple from career module
+export interface IRulesetProvider {
+  getActiveRulesetId(): Promise<string>;
+}
+
 export class AssessmentUseCases {
-  constructor(private readonly assessmentRepository: IAssessmentRepository) {}
+  constructor(
+    private readonly assessmentRepository: IAssessmentRepository,
+    private readonly rulesetProvider?: IRulesetProvider
+  ) {}
 
   async getActiveAssessment(): Promise<AssessmentVersionDto> {
     const version = await this.assessmentRepository.getActiveVersion();
@@ -45,6 +53,9 @@ export class AssessmentUseCases {
         createdAt: new Date().toISOString(),
         completedAt: null,
         answers: [],
+        scoringVersionId: null,
+        rawResponsesJsonb: null,
+        constructRawScoresJsonb: null,
         dimensionScores: null,
       });
 
@@ -93,8 +104,13 @@ export class AssessmentUseCases {
       throw new AppError('Attempt version not found', 404);
     }
 
-    const scores = ScoringEngine.calculateScores(attempt, version);
-    attempt.markCompleted(scores);
+    const { rawResponses, rawScores, pompScores } = ScoringEngine.calculateScores(attempt, version);
+    
+    // In a real system, the scoring version might come from a configuration service.
+    // For now, we fallback to the assessment version ID if a provider is not injected.
+    const scoringVersionId = this.rulesetProvider ? await this.rulesetProvider.getActiveRulesetId() : version.id;
+
+    attempt.markCompleted(scoringVersionId, rawResponses, rawScores, pompScores);
 
     await this.assessmentRepository.saveAttempt(attempt);
 

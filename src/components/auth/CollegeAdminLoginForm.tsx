@@ -46,9 +46,9 @@ export default function CollegeAdminLoginForm() {
           <h2 className={styles.signInTitle}>Administrator Sign In</h2>
           <p className={styles.signInSubtitle}>Please enter your authorized institutional credentials to continue</p>
         </div>
-        <a className={styles.backLink} href="/">
+        <Link className={styles.backLink} href="/">
           <i className="fa-solid fa-arrow-left" style={{ fontSize: '11px' }}></i> Back to Main Site
-        </a>
+        </Link>
       </div>
 
       {/* Role Selector Pills */}

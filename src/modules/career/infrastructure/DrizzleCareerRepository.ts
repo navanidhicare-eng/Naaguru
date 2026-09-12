@@ -1,8 +1,8 @@
 import { ICareerRepository } from '../domain/ICareerRepository';
 import { Stream, CareerRule, Recommendation, RankedResult } from '../domain/models';
 import { db } from '@/shared/database/db';
-import { streamsTable, careerRulesTable, recommendationsTable } from './schema';
-import { eq } from 'drizzle-orm';
+import { streamsTable, careerRulesetsTable, careerRulesTable, recommendationsTable } from './schema';
+import { eq, desc } from 'drizzle-orm';
 import 'server-only';
 
 import { StreamCode } from '@/shared/domain/StreamCode';
@@ -13,20 +13,37 @@ export class DrizzleCareerRepository implements ICareerRepository {
     const rows = await db.select().from(streamsTable);
     return rows.map(r => Stream.create({
       id: r.id,
-      streamCode: r.name as StreamCode,
+      streamCode: r.code as StreamCode,
       description: r.description,
     }));
   }
 
-  async getAllRules(): Promise<CareerRule[]> {
-    const rows = await db.select().from(careerRulesTable);
-    return rows.map(r => CareerRule.create({
+  async getActiveRuleset(): Promise<{ rulesetId: string, rules: CareerRule[] } | null> {
+    const rulesets = await db.select()
+      .from(careerRulesetsTable)
+      .where(eq(careerRulesetsTable.isDefault, true))
+      .orderBy(desc(careerRulesetsTable.createdAt))
+      .limit(1);
+
+    if (rulesets.length === 0) return null;
+    
+    const activeRuleset = rulesets[0];
+    const rules = await db.select()
+      .from(careerRulesTable)
+      .where(eq(careerRulesTable.rulesetId, activeRuleset.id));
+
+    const domainRules = rules.map(r => CareerRule.create({
       id: r.id,
+      rulesetId: r.rulesetId,
       streamId: r.streamId,
       dimensionName: r.dimensionName,
-      minScore: r.minScore,
       weight: r.weight,
     }));
+
+    return {
+      rulesetId: activeRuleset.id,
+      rules: domainRules,
+    };
   }
 
   async saveRecommendation(recommendation: Recommendation): Promise<void> {
@@ -34,6 +51,7 @@ export class DrizzleCareerRepository implements ICareerRepository {
       id: recommendation.id,
       studentId: recommendation.studentId,
       attemptId: recommendation.attemptId,
+      rulesetId: recommendation.rulesetId,
       rankedResultsJsonb: recommendation.rankedResults,
       appliedRulesJsonb: recommendation.appliedRules,
       createdAt: recommendation.createdAt,
@@ -54,6 +72,7 @@ export class DrizzleCareerRepository implements ICareerRepository {
       id: r.id,
       studentId: r.studentId,
       attemptId: r.attemptId,
+      rulesetId: r.rulesetId,
       rankedResults: r.rankedResultsJsonb as RankedResult[],
       appliedRules: r.appliedRulesJsonb as Record<string, unknown>,
       createdAt: r.createdAt,

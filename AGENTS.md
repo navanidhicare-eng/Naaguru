@@ -82,4 +82,59 @@ This version has breaking changes — APIs, conventions, and file structure may 
 
 This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
 
+
+## Database Portability Requirement
+
+PostgreSQL is the application database standard.
+
+Supabase is currently used only as the initial PostgreSQL hosting/
+infrastructure provider. Do not create application-level dependencies
+that make the database schema or data dependent on Supabase.
+
+All database design and implementation MUST remain portable to a
+standard PostgreSQL server.
+
+Requirements:
+
+- Use standard PostgreSQL types and features where practical.
+- Use Drizzle migrations as the canonical schema history.
+- Keep all schema definitions in the repository.
+- Keep migrations version-controlled.
+- Keep seed scripts/data version-controlled and reproducible.
+- Do not use Supabase-specific database APIs unless explicitly
+  approved as a deliberate infrastructure decision.
+- Do not use Supabase JS for normal backend database operations.
+- Backend database access must continue through the existing Drizzle
+  repository/infrastructure layer.
+- Avoid provider-specific extensions unless there is a documented
+  portability plan.
+- Database connection configuration must come from DATABASE_URL.
+- Never hard-code database hostnames, credentials, or provider details.
+- Foreign keys, indexes, constraints, enums, timestamps, UUIDs, and
+  other schema objects must be represented in the migration history.
+
+MIGRATION REQUIREMENT
+
+The application must be designed so that a future migration from
+Supabase PostgreSQL to an independently hosted PostgreSQL server can
+be performed using standard PostgreSQL backup/restore and the
+version-controlled Drizzle migration history.
+
+Before introducing any provider-specific database feature, explicitly
+evaluate its impact on future PostgreSQL portability.
+
+The application code must not need to change merely because the
+PostgreSQL hosting provider changes, except for infrastructure/
+connection configuration.
+
+For every database-related feature, preserve:
+
+1. Schema portability
+2. Data portability
+3. Migration reproducibility
+4. Backup/restore capability
+5. Referential integrity
+6. Indexes and constraints
+7. Version history
+
 <!-- END:nextjs-agent-rules -->

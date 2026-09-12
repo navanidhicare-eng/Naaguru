@@ -3,9 +3,9 @@ import { AppError } from '../../../shared/errors';
 export interface QuestionOptionProps {
   id: string;
   questionId: string;
+  value: number;
   textEn: string;
   textTe: string;
-  weights: Record<string, number>; // Maps dimensionId -> weight
 }
 
 export class QuestionOption {
@@ -16,15 +16,16 @@ export class QuestionOption {
   }
 
   get id() { return this.props.id; }
+  get value() { return this.props.value; }
   get textEn() { return this.props.textEn; }
   get textTe() { return this.props.textTe; }
-  get weights() { return this.props.weights; }
 }
 
 export interface QuestionProps {
   id: string;
-  versionId: string;
-  sequence: number;
+  construct: string; // e.g., 'ISI', 'QCR', 'TMD', 'CEE', 'SHC', 'CEA', or 'CONTEXT'
+  type: string; // 'SCORED' or 'UNSCORED'
+  sequence: number; // Injected from assessment_version_questions
   textEn: string;
   textTe: string;
   options: QuestionOption[];
@@ -41,6 +42,8 @@ export class Question {
   }
 
   get id() { return this.props.id; }
+  get construct() { return this.props.construct; }
+  get type() { return this.props.type; }
   get sequence() { return this.props.sequence; }
   get textEn() { return this.props.textEn; }
   get textTe() { return this.props.textTe; }

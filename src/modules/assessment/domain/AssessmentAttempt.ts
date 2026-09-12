@@ -14,7 +14,10 @@ export interface AssessmentAttemptProps {
   createdAt: string;
   completedAt: string | null;
   answers: AttemptAnswerProps[];
-  dimensionScores: Record<string, number> | null;
+  scoringVersionId: string | null;
+  rawResponsesJsonb: any | null;
+  constructRawScoresJsonb: Record<string, number> | null;
+  dimensionScores: Record<string, number> | null; // POMP
 }
 
 export class AssessmentAttempt {
@@ -29,6 +32,9 @@ export class AssessmentAttempt {
   get studentId() { return this.props.studentId; }
   get state() { return this.props.state; }
   get answers() { return this.props.answers; }
+  get scoringVersionId() { return this.props.scoringVersionId; }
+  get rawResponsesJsonb() { return this.props.rawResponsesJsonb; }
+  get constructRawScoresJsonb() { return this.props.constructRawScoresJsonb; }
   get dimensionScores() { return this.props.dimensionScores; }
   get isCompleted() { return this.props.state === 'COMPLETED'; }
 
@@ -44,12 +50,20 @@ export class AssessmentAttempt {
     }
   }
 
-  markCompleted(scores: Record<string, number>) {
+  markCompleted(
+    scoringVersionId: string,
+    rawResponses: any,
+    rawScores: Record<string, number>,
+    pompScores: Record<string, number>
+  ) {
     if (this.isCompleted) {
       throw new AppError('Attempt is already completed', 409);
     }
     this.props.state = 'COMPLETED';
-    this.props.dimensionScores = scores;
+    this.props.scoringVersionId = scoringVersionId;
+    this.props.rawResponsesJsonb = rawResponses;
+    this.props.constructRawScoresJsonb = rawScores;
+    this.props.dimensionScores = pompScores;
     this.props.completedAt = new Date().toISOString();
   }
 }

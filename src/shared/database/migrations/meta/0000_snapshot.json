@@ -1,5 +1,5 @@
 {
-  "id": "a0afd32f-e241-4a5f-aa1c-ee2454f25b74",
+  "id": "28765327-3543-4940-80de-080868a0c7fc",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -162,7 +162,19 @@
           "name": "phone_number",
           "type": "varchar(20)",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
+        },
+        "email": {
+          "name": "email",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "password_hash": {
+          "name": "password_hash",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
         },
         "role": {
           "name": "role",
@@ -196,6 +208,13 @@
           "nullsNotDistinct": false,
           "columns": [
             "phone_number"
+          ]
+        },
+        "users_email_unique": {
+          "name": "users_email_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "email"
           ]
         }
       },
@@ -416,11 +435,42 @@
           "primaryKey": true,
           "notNull": true
         },
+        "version_id": {
+          "name": "version_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "scoring_version_id": {
+          "name": "scoring_version_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "raw_responses_jsonb": {
+          "name": "raw_responses_jsonb",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "construct_raw_scores_jsonb": {
+          "name": "construct_raw_scores_jsonb",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": true
+        },
         "dimension_scores_jsonb": {
           "name": "dimension_scores_jsonb",
           "type": "jsonb",
           "primaryKey": false,
           "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
         }
       },
       "indexes": {},
@@ -437,9 +487,88 @@
           ],
           "onDelete": "cascade",
           "onUpdate": "no action"
+        },
+        "assessment_results_version_id_assessment_versions_id_fk": {
+          "name": "assessment_results_version_id_assessment_versions_id_fk",
+          "tableFrom": "assessment_results",
+          "tableTo": "assessment_versions",
+          "columnsFrom": [
+            "version_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "restrict",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.assessment_version_questions": {
+      "name": "assessment_version_questions",
+      "schema": "",
+      "columns": {
+        "version_id": {
+          "name": "version_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "question_id": {
+          "name": "question_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "sequence": {
+          "name": "sequence",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "assessment_version_questions_version_id_assessment_versions_id_fk": {
+          "name": "assessment_version_questions_version_id_assessment_versions_id_fk",
+          "tableFrom": "assessment_version_questions",
+          "tableTo": "assessment_versions",
+          "columnsFrom": [
+            "version_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "assessment_version_questions_question_id_questions_id_fk": {
+          "name": "assessment_version_questions_question_id_questions_id_fk",
+          "tableFrom": "assessment_version_questions",
+          "tableTo": "questions",
+          "columnsFrom": [
+            "question_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "assessment_version_questions_version_id_question_id_pk": {
+          "name": "assessment_version_questions_version_id_question_id_pk",
+          "columns": [
+            "version_id",
+            "question_id"
+          ]
+        }
+      },
       "uniqueConstraints": {},
       "policies": {},
       "checkConstraints": {},
@@ -558,106 +687,6 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.dimensions": {
-      "name": "dimensions",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "uuid",
-          "primaryKey": true,
-          "notNull": true,
-          "default": "gen_random_uuid()"
-        },
-        "name": {
-          "name": "name",
-          "type": "varchar(100)",
-          "primaryKey": false,
-          "notNull": true
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {},
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {
-        "dimensions_name_unique": {
-          "name": "dimensions_name_unique",
-          "nullsNotDistinct": false,
-          "columns": [
-            "name"
-          ]
-        }
-      },
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
-    "public.question_option_weights": {
-      "name": "question_option_weights",
-      "schema": "",
-      "columns": {
-        "option_id": {
-          "name": "option_id",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "dimension_id": {
-          "name": "dimension_id",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "weight": {
-          "name": "weight",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {
-        "question_option_weights_option_id_question_options_id_fk": {
-          "name": "question_option_weights_option_id_question_options_id_fk",
-          "tableFrom": "question_option_weights",
-          "tableTo": "question_options",
-          "columnsFrom": [
-            "option_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        },
-        "question_option_weights_dimension_id_dimensions_id_fk": {
-          "name": "question_option_weights_dimension_id_dimensions_id_fk",
-          "tableFrom": "question_option_weights",
-          "tableTo": "dimensions",
-          "columnsFrom": [
-            "dimension_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {
-        "question_option_weights_option_id_dimension_id_pk": {
-          "name": "question_option_weights_option_id_dimension_id_pk",
-          "columns": [
-            "option_id",
-            "dimension_id"
-          ]
-        }
-      },
-      "uniqueConstraints": {},
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
     "public.question_options": {
       "name": "question_options",
       "schema": "",
@@ -672,6 +701,12 @@
         "question_id": {
           "name": "question_id",
           "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "value": {
+          "name": "value",
+          "type": "integer",
           "primaryKey": false,
           "notNull": true
         },
@@ -721,17 +756,18 @@
           "notNull": true,
           "default": "gen_random_uuid()"
         },
-        "version_id": {
-          "name": "version_id",
-          "type": "uuid",
+        "construct": {
+          "name": "construct",
+          "type": "varchar(50)",
           "primaryKey": false,
           "notNull": true
         },
-        "sequence": {
-          "name": "sequence",
-          "type": "integer",
+        "type": {
+          "name": "type",
+          "type": "varchar(50)",
           "primaryKey": false,
-          "notNull": true
+          "notNull": true,
+          "default": "'SCORED'"
         },
         "text_en": {
           "name": "text_en",
@@ -744,24 +780,17 @@
           "type": "varchar(1000)",
           "primaryKey": false,
           "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
         }
       },
       "indexes": {},
-      "foreignKeys": {
-        "questions_version_id_assessment_versions_id_fk": {
-          "name": "questions_version_id_assessment_versions_id_fk",
-          "tableFrom": "questions",
-          "tableTo": "assessment_versions",
-          "columnsFrom": [
-            "version_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        }
-      },
+      "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "policies": {},
@@ -779,6 +808,12 @@
           "notNull": true,
           "default": "gen_random_uuid()"
         },
+        "ruleset_id": {
+          "name": "ruleset_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
         "stream_id": {
           "name": "stream_id",
           "type": "uuid",
@@ -791,13 +826,6 @@
           "primaryKey": false,
           "notNull": true
         },
-        "min_score": {
-          "name": "min_score",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true,
-          "default": 0
-        },
         "weight": {
           "name": "weight",
           "type": "double precision",
@@ -808,6 +836,19 @@
       },
       "indexes": {},
       "foreignKeys": {
+        "career_rules_ruleset_id_career_rulesets_id_fk": {
+          "name": "career_rules_ruleset_id_career_rulesets_id_fk",
+          "tableFrom": "career_rules",
+          "tableTo": "career_rulesets",
+          "columnsFrom": [
+            "ruleset_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
         "career_rules_stream_id_streams_id_fk": {
           "name": "career_rules_stream_id_streams_id_fk",
           "tableFrom": "career_rules",
@@ -822,6 +863,47 @@
           "onUpdate": "no action"
         }
       },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.career_rulesets": {
+      "name": "career_rulesets",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "status": {
+          "name": "status",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'DRAFT'"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "is_default": {
+          "name": "is_default",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "policies": {},
@@ -847,6 +929,12 @@
         },
         "attempt_id": {
           "name": "attempt_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "ruleset_id": {
+          "name": "ruleset_id",
           "type": "uuid",
           "primaryKey": false,
           "notNull": true
@@ -898,6 +986,19 @@
           ],
           "onDelete": "restrict",
           "onUpdate": "no action"
+        },
+        "recommendations_ruleset_id_career_rulesets_id_fk": {
+          "name": "recommendations_ruleset_id_career_rulesets_id_fk",
+          "tableFrom": "recommendations",
+          "tableTo": "career_rulesets",
+          "columnsFrom": [
+            "ruleset_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "restrict",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -925,6 +1026,12 @@
           "notNull": true,
           "default": "gen_random_uuid()"
         },
+        "code": {
+          "name": "code",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": true
+        },
         "name": {
           "name": "name",
           "type": "varchar(100)",
@@ -942,11 +1049,11 @@
       "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
-        "streams_name_unique": {
-          "name": "streams_name_unique",
+        "streams_code_unique": {
+          "name": "streams_code_unique",
           "nullsNotDistinct": false,
           "columns": [
-            "name"
+            "code"
           ]
         }
       },

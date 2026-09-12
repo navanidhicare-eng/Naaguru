@@ -7,9 +7,9 @@ export interface ICareerRepository {
   getAllStreams(): Promise<Stream[]>;
 
   /**
-   * Retrieves all active career rules.
+   * Retrieves the currently active career ruleset and its rules.
    */
-  getAllRules(): Promise<CareerRule[]>;
+  getActiveRuleset(): Promise<{ rulesetId: string, rules: CareerRule[] } | null>;
 
   /**
    * Saves a recommendation snapshot to the database.

@@ -6,8 +6,7 @@ import {
   assessmentVersionsTable, 
   questionsTable, 
   questionOptionsTable, 
-  questionOptionWeightsTable, 
-  dimensionsTable, 
+  assessmentVersionQuestionsTable,
   assessmentAttemptsTable, 
   attemptAnswersTable, 
   assessmentResultsTable 
@@ -21,6 +20,7 @@ export class DrizzleAssessmentRepository implements IAssessmentRepository {
     const versions = await db.select()
       .from(assessmentVersionsTable)
       .where(eq(assessmentVersionsTable.status, 'PUBLISHED'))
+      .orderBy(desc(assessmentVersionsTable.createdAt))
       .limit(1);
 
     if (versions.length === 0) return null;
@@ -37,10 +37,19 @@ export class DrizzleAssessmentRepository implements IAssessmentRepository {
 
     const versionRow = versionRows[0];
 
-    // Fetch questions
-    const qRows = await db.select().from(questionsTable)
-      .where(eq(questionsTable.versionId, versionId))
-      .orderBy(questionsTable.sequence);
+    // Fetch questions mapped to this version
+    const qRows = await db.select({
+      id: questionsTable.id,
+      construct: questionsTable.construct,
+      type: questionsTable.type,
+      textEn: questionsTable.textEn,
+      textTe: questionsTable.textTe,
+      sequence: assessmentVersionQuestionsTable.sequence,
+    })
+    .from(questionsTable)
+    .innerJoin(assessmentVersionQuestionsTable, eq(questionsTable.id, assessmentVersionQuestionsTable.questionId))
+    .where(eq(assessmentVersionQuestionsTable.versionId, versionId))
+    .orderBy(assessmentVersionQuestionsTable.sequence);
 
     if (qRows.length === 0) {
       return AssessmentVersion.create({
@@ -57,41 +66,15 @@ export class DrizzleAssessmentRepository implements IAssessmentRepository {
     const oRows = await db.select().from(questionOptionsTable)
       .where(inArray(questionOptionsTable.questionId, questionIds));
 
-    const optionIds = oRows.map(o => o.id);
-
-    let optionWeights: Array<{
-      optionId: string;
-      dimensionName: string;
-      weight: number;
-    }> = [];
-
-    if (optionIds.length > 0) {
-      // Fetch weights joined with dimensions to get dimension names
-      optionWeights = await db.select({
-        optionId: questionOptionWeightsTable.optionId,
-        dimensionName: dimensionsTable.name,
-        weight: questionOptionWeightsTable.weight,
-      })
-      .from(questionOptionWeightsTable)
-      .innerJoin(dimensionsTable, eq(questionOptionWeightsTable.dimensionId, dimensionsTable.id))
-      .where(inArray(questionOptionWeightsTable.optionId, optionIds));
-    }
-
-    // Map weights to options
+    // Map options
     const optionsMap = new Map<string, QuestionOption[]>();
     for (const optionRow of oRows) {
-      const weightsForOption = optionWeights.filter(w => w.optionId === optionRow.id);
-      const weightsDict: Record<string, number> = {};
-      for (const w of weightsForOption) {
-        weightsDict[w.dimensionName] = w.weight;
-      }
-
       const qOption = QuestionOption.create({
         id: optionRow.id,
         questionId: optionRow.questionId,
         textEn: optionRow.textEn,
         textTe: optionRow.textTe,
-        weights: weightsDict,
+        value: optionRow.value,
       });
 
       if (!optionsMap.has(optionRow.questionId)) {
@@ -103,7 +86,8 @@ export class DrizzleAssessmentRepository implements IAssessmentRepository {
     // Assemble questions
     const questions = qRows.map(qRow => Question.create({
       id: qRow.id,
-      versionId: qRow.versionId,
+      construct: qRow.construct,
+      type: qRow.type,
       sequence: qRow.sequence,
       textEn: qRow.textEn,
       textTe: qRow.textTe,
@@ -178,12 +162,20 @@ export class DrizzleAssessmentRepository implements IAssessmentRepository {
       selectedOptionId: a.selectedOptionId,
     }));
 
+    let scoringVersionId: string | null = null;
+    let rawResponsesJsonb: any = null;
+    let constructRawScoresJsonb: Record<string, number> | null = null;
     let dimensionScores: Record<string, number> | null = null;
+
     if (attempt.state === 'COMPLETED') {
       const resultRows = await db.select().from(assessmentResultsTable)
         .where(eq(assessmentResultsTable.attemptId, attemptId));
       if (resultRows.length > 0) {
-        dimensionScores = resultRows[0].dimensionScoresJsonb as Record<string, number>;
+        const res = resultRows[0];
+        scoringVersionId = res.scoringVersionId;
+        rawResponsesJsonb = res.rawResponsesJsonb;
+        constructRawScoresJsonb = res.constructRawScoresJsonb as Record<string, number>;
+        dimensionScores = res.dimensionScoresJsonb as Record<string, number>;
       }
     }
 
@@ -195,6 +187,9 @@ export class DrizzleAssessmentRepository implements IAssessmentRepository {
       createdAt: attempt.createdAt,
       completedAt: attempt.completedAt,
       answers,
+      scoringVersionId,
+      rawResponsesJsonb,
+      constructRawScoresJsonb,
       dimensionScores,
     });
   }
@@ -235,11 +230,17 @@ export class DrizzleAssessmentRepository implements IAssessmentRepository {
       if (attempt.isCompleted && attempt.dimensionScores) {
         await tx.insert(assessmentResultsTable).values({
           attemptId: attempt.id,
+          versionId: attempt.versionId,
+          scoringVersionId: attempt.scoringVersionId!,
+          rawResponsesJsonb: attempt.rawResponsesJsonb,
+          constructRawScoresJsonb: attempt.constructRawScoresJsonb!,
           dimensionScoresJsonb: attempt.dimensionScores,
         }).onConflictDoUpdate({
           target: assessmentResultsTable.attemptId,
           set: {
             dimensionScoresJsonb: attempt.dimensionScores,
+            constructRawScoresJsonb: attempt.constructRawScoresJsonb!,
+            rawResponsesJsonb: attempt.rawResponsesJsonb,
           }
         });
       }
