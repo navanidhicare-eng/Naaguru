@@ -151,7 +151,7 @@ class _StudentProfileScreenState extends State<StudentProfileScreen> {
       }
 
       if (mounted) {
-        Navigator.of(context).pushReplacementNamed('/assessment-intro');
+        Navigator.of(context).pushReplacementNamed('/home');
       }
     } on ApiException catch (e) {
       if (mounted) {

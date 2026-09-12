@@ -11,6 +11,7 @@ export async function GET(request: Request) {
     const state = searchParams.get('state') || undefined;
     const district = searchParams.get('district') || undefined;
     const city = searchParams.get('city') || undefined;
+    const requiresHostel = searchParams.get('requiresHostel') === 'true';
     const requiresBoysHostel = searchParams.get('requiresBoysHostel') === 'true';
     const requiresGirlsHostel = searchParams.get('requiresGirlsHostel') === 'true';
     
@@ -31,6 +32,7 @@ export async function GET(request: Request) {
       state,
       district,
       city,
+      requiresHostel: requiresHostel ? true : undefined,
       requiresBoysHostel: requiresBoysHostel ? true : undefined,
       requiresGirlsHostel: requiresGirlsHostel ? true : undefined,
       maxFee: maxFee && !isNaN(maxFee) ? maxFee : undefined,

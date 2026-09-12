@@ -1,16 +1,28 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:naaguru_student/core/theme.dart';
 import 'package:naaguru_student/core/ui/buttons.dart';
+import 'package:naaguru_student/core/ui/language_toggle.dart';
+import 'package:naaguru_student/features/assessment/data/assessment_api_client.dart';
+import 'package:naaguru_student/features/assessment/presentation/results_screen.dart';
 import 'package:naaguru_student/features/auth/auth_service.dart';
-import 'package:naaguru_student/features/student/data/student_api_client.dart';
+import 'package:naaguru_student/features/college/data/college_api_client.dart';
+import 'package:naaguru_student/features/college/presentation/college_preferences_screen.dart';
 import 'package:naaguru_student/features/explore/presentation/explore_paths_screen.dart';
+import 'package:naaguru_student/features/student/data/student_api_client.dart';
 
 class HomeScreen extends StatefulWidget {
   final AuthService? authService;
   final StudentApiClient? studentApiClient;
+  final AssessmentApiClient? assessmentApiClient;
+  final CollegeApiClient? collegeApiClient;
 
-  const HomeScreen({super.key, this.authService, this.studentApiClient});
+  const HomeScreen({
+    super.key,
+    this.authService,
+    this.studentApiClient,
+    this.assessmentApiClient,
+    this.collegeApiClient,
+  });
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -18,6 +30,92 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int _currentIndex = 0;
+  bool _isTelugu = false;
+
+  String? _studentName;
+  bool _isLoadingState = true;
+
+  // Assessment State
+  bool _hasCompletedAssessment = false;
+  String? _recommendedStream;
+  bool _hasInProgressAssessment = false;
+  Map<String, dynamic>? _completedResult;
+  Map<String, dynamic>? _completedRecommendation;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadInitialData();
+  }
+
+  Future<void> _loadInitialData() async {
+    setState(() => _isLoadingState = true);
+
+    // 1. Fetch Student Profile for greeting
+    if (widget.studentApiClient != null) {
+      try {
+        final profile = await widget.studentApiClient!.getProfile();
+        if (profile != null && mounted) {
+          final fullName = profile['fullName'] as String?;
+          if (fullName != null && fullName.isNotEmpty) {
+            _studentName = fullName.split(' ').first;
+          }
+        }
+      } catch (_) {}
+    }
+
+    // 2. Fetch Assessment State from Backend
+    if (widget.assessmentApiClient != null) {
+      try {
+        // Check if completed
+        final result = await widget.assessmentApiClient!.getResult();
+        if (result.isNotEmpty) {
+          _hasCompletedAssessment = true;
+          _completedResult = result;
+
+          try {
+            final rec = await widget.assessmentApiClient!.getRecommendation();
+            _completedRecommendation = rec;
+            final rankedResults = (rec['rankedResults'] as List<dynamic>?) ?? [];
+            if (rankedResults.isNotEmpty) {
+              final top = rankedResults.first as Map<String, dynamic>;
+              _recommendedStream = top['streamCode'] as String?;
+            }
+          } catch (_) {
+            _recommendedStream = 'MPC';
+          }
+        }
+      } catch (_) {
+        // Not completed, check if in progress
+        try {
+          final attempt = await widget.assessmentApiClient!.startOrResumeAttempt();
+          final answers = (attempt['answers'] as List<dynamic>?) ?? [];
+          if (answers.isNotEmpty && attempt['state'] == 'IN_PROGRESS') {
+            _hasInProgressAssessment = true;
+          }
+        } catch (_) {}
+      }
+    }
+
+    if (mounted) {
+      setState(() => _isLoadingState = false);
+    }
+  }
+
+  String _getStreamDescription(String code) {
+    switch (code.toUpperCase()) {
+      case 'MPC':
+        return 'Mathematics • Physics • Chemistry';
+      case 'BIPC':
+        return 'Biology • Physics • Chemistry';
+      case 'MEC':
+        return 'Mathematics • Economics • Commerce';
+      case 'CEC':
+        return 'Commerce • Economics • Civics';
+      default:
+        return 'Core Academic Stream';
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,12 +137,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       style: TextStyle(color: NaaguruTheme.muted),
                     ),
                   ),
-                  const Center(
-                    child: Text(
-                      'Profile Settings - Use top right icon',
-                      style: TextStyle(color: NaaguruTheme.muted),
-                    ),
-                  ),
+                  _buildYouView(),
                 ],
               ),
             ),
@@ -58,22 +151,25 @@ class _HomeScreenState extends State<HomeScreen> {
         unselectedItemColor: NaaguruTheme.muted,
         showUnselectedLabels: true,
         type: BottomNavigationBarType.fixed,
-        items: const [
+        items: [
           BottomNavigationBarItem(
-            icon: Icon(Icons.home_outlined),
-            activeIcon: Icon(Icons.home),
-            label: 'Home',
+            icon: const Icon(Icons.home_outlined),
+            activeIcon: const Icon(Icons.home),
+            label: _isTelugu ? 'హోమ్' : 'Home',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.explore_outlined),
-            activeIcon: Icon(Icons.explore),
-            label: 'Explore',
+            icon: const Icon(Icons.explore_outlined),
+            activeIcon: const Icon(Icons.explore),
+            label: _isTelugu ? 'అన్వేషించండి' : 'Explore',
           ),
-          BottomNavigationBarItem(icon: Icon(Icons.timeline), label: 'Journey'),
           BottomNavigationBarItem(
-            icon: Icon(Icons.person_outline),
-            activeIcon: Icon(Icons.person),
-            label: 'You',
+            icon: const Icon(Icons.timeline),
+            label: _isTelugu ? 'జర్నీ' : 'Journey',
+          ),
+          BottomNavigationBarItem(
+            icon: const Icon(Icons.person_outline),
+            activeIcon: const Icon(Icons.person),
+            label: _isTelugu ? 'మీరు' : 'You',
           ),
         ],
       ),
@@ -81,21 +177,26 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildAppBar() {
-    return Padding(
+    return Container(
       padding: const EdgeInsets.symmetric(
         horizontal: NaaguruTheme.spacing20,
         vertical: NaaguruTheme.spacing12,
       ),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        border: Border(
+          bottom: BorderSide(color: NaaguruTheme.muted.withAlpha(25)),
+        ),
+      ),
       child: Row(
         children: [
-          // Logo placeholder or SVG
           Row(
             children: [
               const Icon(Icons.school, color: NaaguruTheme.primaryDark),
               const SizedBox(width: 8),
-              Text(
+              const Text(
                 'Naaguru',
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.w700,
                   color: NaaguruTheme.primaryDark,
@@ -104,41 +205,21 @@ class _HomeScreenState extends State<HomeScreen> {
             ],
           ),
           const Spacer(),
-          // Language indicator
-          const Icon(Icons.translate, color: NaaguruTheme.text, size: 20),
-          const SizedBox(width: NaaguruTheme.spacing16),
-          // Notification Bell
-          const Icon(
-            Icons.notifications_none,
-            color: NaaguruTheme.text,
-            size: 24,
+          LanguageToggle(
+            isTelugu: _isTelugu,
+            onToggle: (val) => setState(() => _isTelugu = val),
           ),
-          const SizedBox(width: NaaguruTheme.spacing16),
-          // Explicit Logout Button for Testing
-          if (widget.authService?.isAuthenticated ?? false)
-            IconButton(
-              icon: const Icon(Icons.logout, color: NaaguruTheme.error),
-              tooltip: 'Log Out',
-              onPressed: () async {
-                await widget.authService?.logout();
-              },
-            ),
-          const SizedBox(width: NaaguruTheme.spacing8),
-          // User Avatar
+          const SizedBox(width: 12),
           GestureDetector(
             onTap: () => _handleAvatarTap(context),
             child: Container(
-              width: 32,
-              height: 32,
+              width: 34,
+              height: 34,
               decoration: const BoxDecoration(
                 color: NaaguruTheme.primaryDark,
                 shape: BoxShape.circle,
               ),
-              child: const Icon(
-                Icons.person,
-                color: NaaguruTheme.surface,
-                size: 20,
-              ),
+              child: const Icon(Icons.person, color: Colors.white, size: 20),
             ),
           ),
         ],
@@ -147,12 +228,6 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _handleAvatarTap(BuildContext context) {
-    final isAuth = widget.authService?.isAuthenticated ?? false;
-    if (!isAuth) {
-      Navigator.pushNamed(context, '/login');
-      return;
-    }
-
     showModalBottomSheet(
       context: context,
       shape: const RoundedRectangleBorder(
@@ -165,9 +240,9 @@ class _HomeScreenState extends State<HomeScreen> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const Text(
-                'My Account',
-                style: TextStyle(
+              Text(
+                _isTelugu ? 'నా ఖాతా' : 'My Account',
+                style: const TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.w700,
                   color: NaaguruTheme.primaryDark,
@@ -175,11 +250,8 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               const SizedBox(height: 16),
               ListTile(
-                leading: const Icon(
-                  Icons.person_outline,
-                  color: NaaguruTheme.primary,
-                ),
-                title: const Text('My Profile'),
+                leading: const Icon(Icons.person_outline, color: NaaguruTheme.primary),
+                title: Text(_isTelugu ? 'నా ప్రొఫైల్' : 'My Profile'),
                 onTap: () {
                   Navigator.pop(ctx);
                   Navigator.pushNamed(context, '/profile');
@@ -187,18 +259,15 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               ListTile(
                 leading: const Icon(Icons.logout, color: NaaguruTheme.error),
-                title: const Text(
-                  'Log Out',
-                  style: TextStyle(color: NaaguruTheme.error),
+                title: Text(
+                  _isTelugu ? 'లాగ్ అవుట్' : 'Log Out',
+                  style: const TextStyle(color: NaaguruTheme.error),
                 ),
                 onTap: () async {
                   Navigator.pop(ctx);
                   await widget.authService?.logout();
                   if (context.mounted) {
-                    setState(() {});
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Logged out successfully.')),
-                    );
+                    Navigator.pushReplacementNamed(context, '/login');
                   }
                 },
               ),
@@ -209,456 +278,436 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  Widget _buildYouView() {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(24.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              width: 80,
+              height: 80,
+              decoration: const BoxDecoration(
+                color: NaaguruTheme.primaryLight,
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(Icons.person, size: 44, color: NaaguruTheme.primaryDark),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              _studentName != null ? 'Hello, $_studentName' : 'Student Account',
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: NaaguruTheme.text),
+            ),
+            const SizedBox(height: 24),
+            OutlinedButton.icon(
+              icon: const Icon(Icons.edit_outlined),
+              label: Text(_isTelugu ? 'ప్రొఫైల్ వివరాలు సవరించండి' : 'Edit Profile'),
+              onPressed: () => Navigator.pushNamed(context, '/profile'),
+            ),
+            const SizedBox(height: 12),
+            OutlinedButton.icon(
+              icon: const Icon(Icons.logout, color: NaaguruTheme.error),
+              label: Text(_isTelugu ? 'లాగ్ అవుట్' : 'Log Out', style: const TextStyle(color: NaaguruTheme.error)),
+              onPressed: () async {
+                await widget.authService?.logout();
+                if (mounted) Navigator.pushReplacementNamed(context, '/login');
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _buildGreeting() {
+    final String greetingText = _studentName != null
+        ? (_isTelugu ? 'నమస్తే, $_studentName! 👋' : 'Hi, $_studentName! 👋')
+        : (_isTelugu ? 'నమస్తే! 👋' : 'Hi there! 👋');
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        Text(
+          greetingText,
+          style: const TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.w700,
+            color: NaaguruTheme.primaryDark,
+          ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          _isTelugu
+              ? "10వ తరగతి తర్వాత మీ ప్రయాణాన్ని ప్రారంభించండి."
+              : "What would you like to explore today?",
+          style: const TextStyle(fontSize: 14, color: NaaguruTheme.muted),
+        ),
+      ],
+    );
+  }
+
+  /// PILLAR 1: Discover Your Path (Take / Continue Assessment OR View Results)
+  Widget _buildAssessmentPillar(BuildContext context) {
+    if (_hasCompletedAssessment) {
+      final stream = _recommendedStream ?? 'MPC';
+      return Container(
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: NaaguruTheme.primary.withAlpha(51), width: 1.5),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withAlpha(8),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'Hi there! 👋',
-              style: TextStyle(
-                fontSize: 24,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: NaaguruTheme.primaryLight,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
+                    _isTelugu ? "• మీ అంచనా ఫలితం" : "• YOUR ASSESSMENT RESULT",
+                    style: const TextStyle(
+                      color: NaaguruTheme.primaryDark,
+                      fontSize: 10,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.all(6),
+                  decoration: BoxDecoration(
+                    color: Colors.green.withAlpha(25),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(Icons.check, size: 14, color: Colors.green),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Text(
+              _isTelugu ? "మీ బలమైన విద్యా-విభాగ మ్యాచ్" : "Your Strongest Academic Stream",
+              style: const TextStyle(
+                fontSize: 13,
+                color: NaaguruTheme.muted,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            const SizedBox(height: 6),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.baseline,
+              textBaseline: TextBaseline.alphabetic,
+              children: [
+                Text(
+                  stream,
+                  style: const TextStyle(
+                    fontSize: 28,
+                    fontWeight: FontWeight.bold,
+                    color: NaaguruTheme.primaryDark,
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Text(
+                    _getStreamDescription(stream),
+                    style: const TextStyle(fontSize: 12, color: NaaguruTheme.muted),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            PrimaryButton(
+              text: _isTelugu ? 'నా ఫలితాలను చూడండి →' : 'View My Results →',
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => ResultsScreen(
+                      assessmentApiClient: widget.assessmentApiClient,
+                      initialResult: _completedResult,
+                      initialRecommendation: _completedRecommendation,
+                    ),
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
+      );
+    }
+
+    if (_hasInProgressAssessment) {
+      return Container(
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: Colors.orange.withAlpha(77), width: 1.5),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withAlpha(8),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: Colors.orange.withAlpha(25),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
+                    _isTelugu ? "• కొనసాగుతోంది" : "• IN PROGRESS",
+                    style: TextStyle(
+                      color: Colors.orange.shade800,
+                      fontSize: 10,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                const Icon(Icons.edit_note, size: 20, color: Colors.orange),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Text(
+              _isTelugu ? "మీ అసెస్‌మెంట్‌ను కొనసాగించండి" : "Continue Your Assessment",
+              style: const TextStyle(
+                fontSize: 18,
                 fontWeight: FontWeight.w700,
                 color: NaaguruTheme.primaryDark,
               ),
             ),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-              decoration: BoxDecoration(
-                color: NaaguruTheme.surface,
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: NaaguruTheme.muted.withAlpha(77)),
-              ),
-              child: Row(
-                children: const [
-                  Icon(Icons.translate, size: 14, color: NaaguruTheme.muted),
-                  SizedBox(width: 4),
-                  Text(
-                    'తెలుగు / Eng',
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
-                      color: NaaguruTheme.muted,
-                    ),
-                  ),
-                ],
-              ),
+            const SizedBox(height: 6),
+            Text(
+              _isTelugu
+                  ? "మీరు ఆపిన చోట నుండే ప్రారంభించండి. 40 చిన్న ప్రశ్నలు, ఎటువంటి మార్కులు లేదా ఒత్తిడి లేదు."
+                  : "Pick up right where you left off. 40 quick interest questions with zero pressure.",
+              style: const TextStyle(fontSize: 13, color: NaaguruTheme.muted, height: 1.4),
+            ),
+            const SizedBox(height: 16),
+            PrimaryButton(
+              text: _isTelugu ? 'కొనసాగించండి →' : 'Continue Assessment →',
+              onPressed: () {
+                Navigator.pushNamed(context, '/assessment-question');
+              },
             ),
           ],
         ),
-        const SizedBox(height: NaaguruTheme.spacing4),
-        const Text(
-          "Ready to explore what's next after Class 10?",
-          style: TextStyle(fontSize: 14, color: NaaguruTheme.muted),
-        ),
-      ],
-    );
-  }
+      );
+    }
 
-  Widget _buildMainCard(BuildContext context) {
+    // Default: No Attempt
     return Container(
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: NaaguruTheme.surface,
-        border: Border.all(color: NaaguruTheme.muted.withAlpha(51)),
-        boxShadow: const [
-          BoxShadow(color: Colors.black12, blurRadius: 4, offset: Offset(0, 2)),
-        ],
-      ),
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          Container(
-            width: 24,
-            height: 24,
-            decoration: BoxDecoration(
-              color: NaaguruTheme.accent.withAlpha(51),
-              borderRadius: const BorderRadius.vertical(
-                top: Radius.circular(20),
-              ),
-            ),
-            child: SvgPicture.asset(
-              'assets/illustrations/home_exploration.svg',
-              fit: BoxFit.contain,
-              placeholderBuilder: (_) => const Center(
-                child: Icon(Icons.image, size: 48, color: NaaguruTheme.muted),
-              ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(NaaguruTheme.spacing20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  "Let's find a path that feels right for you.",
-                  style: TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.w700,
-                    color: NaaguruTheme.primaryDark,
-                    height: 1.3,
-                  ),
-                ),
-                const SizedBox(height: NaaguruTheme.spacing8),
-                const Text(
-                  "Explore your interests, discover possible career directions, and find colleges that match your journey.",
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: NaaguruTheme.muted,
-                    height: 1.5,
-                  ),
-                ),
-                const SizedBox(height: NaaguruTheme.spacing20),
-                PrimaryButton(
-                  text: 'Start Your Journey \u2192',
-                  onPressed: () {
-                    final isAuth = widget.authService?.isAuthenticated ?? false;
-                    Navigator.pushNamed(
-                      context,
-                      isAuth ? '/profile' : '/login',
-                    );
-                  },
-                ),
-                const SizedBox(height: NaaguruTheme.spacing12),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Icon(
-                      Icons.auto_awesome,
-                      size: 14,
-                      color: NaaguruTheme.accent,
-                    ),
-                    const SizedBox(width: 4),
-                    const Expanded(
-                      child: Text(
-                        "Takes only 8-10 mins • No pressure, explore at your own pace",
-                        style: TextStyle(
-                          fontSize: 11,
-                          color: NaaguruTheme.muted,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildJourneySection() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
-                Text(
-                  'Your Journey',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w700,
-                    color: NaaguruTheme.primaryDark,
-                  ),
-                ),
-                SizedBox(height: 2),
-                Text(
-                  'Step 1 of 4 • Just beginning',
-                  style: TextStyle(fontSize: 12, color: NaaguruTheme.muted),
-                ),
-              ],
-            ),
-            const Icon(Icons.explore_outlined, color: NaaguruTheme.muted),
-          ],
-        ),
-        const SizedBox(height: NaaguruTheme.spacing16),
-        Container(
-          padding: const EdgeInsets.all(NaaguruTheme.spacing20),
-          decoration: BoxDecoration(
-            color: NaaguruTheme.surface,
-            borderRadius: BorderRadius.circular(16),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withAlpha(5),
-                blurRadius: 8,
-                offset: const Offset(0, 2),
-              ),
-            ],
-          ),
-          child: Column(
-            children: [
-              _buildStepItem(
-                number: '1',
-                title: 'Create your profile',
-                description:
-                    'Tell us a little about your class, goals, and dreams.',
-                isActive: true,
-                badge: 'In Progress',
-                isLast: false,
-              ),
-              _buildStepItem(
-                number: '2',
-                title: 'Explore your interests',
-                description:
-                    'Quick, fun questions about activities that genuinely excite you.',
-                isActive: false,
-                isLast: false,
-              ),
-              _buildStepItem(
-                number: '3',
-                title: 'Discover possible paths',
-                description:
-                    'Understand Intermediate streams (MPC, BiPC, CEC, MEC) & career maps.',
-                isActive: false,
-                isLast: false,
-              ),
-              _buildStepItem(
-                number: '4',
-                title: 'Find colleges',
-                description:
-                    'Explore junior colleges and polytechnic campuses tailored to your vision.',
-                isActive: false,
-                isLast: true,
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildStepItem({
-    required String number,
-    required String title,
-    required String description,
-    required bool isActive,
-    required bool isLast,
-    String? badge,
-  }) {
-    return IntrinsicHeight(
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Timeline column
-          Column(
-            children: [
-              Container(
-                width: 28,
-                height: 28,
-                decoration: BoxDecoration(
-                  color: isActive
-                      ? NaaguruTheme.primaryDark
-                      : NaaguruTheme.background,
-                  shape: BoxShape.circle,
-                  border: isActive
-                      ? null
-                      : Border.all(color: NaaguruTheme.muted.withAlpha(77)),
-                ),
-                alignment: Alignment.center,
-                child: isActive
-                    ? const Icon(
-                        Icons.edit,
-                        size: 14,
-                        color: NaaguruTheme.surface,
-                      )
-                    : Text(
-                        number,
-                        style: const TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
-                          color: NaaguruTheme.muted,
-                        ),
-                      ),
-              ),
-              if (!isLast)
-                Expanded(
-                  child: Container(
-                    width: 2,
-                    color: NaaguruTheme.background,
-                    margin: const EdgeInsets.symmetric(vertical: 4),
-                  ),
-                ),
-            ],
-          ),
-          const SizedBox(width: NaaguruTheme.spacing16),
-          // Content column
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.only(bottom: NaaguruTheme.spacing24),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        child: Text(
-                          title,
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            color: isActive
-                                ? NaaguruTheme.primaryDark
-                                : NaaguruTheme.text,
-                          ),
-                        ),
-                      ),
-                      if (badge != null)
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 8,
-                            vertical: 4,
-                          ),
-                          decoration: BoxDecoration(
-                            color: NaaguruTheme.primaryLight,
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Text(
-                            badge,
-                            style: const TextStyle(
-                              fontSize: 10,
-                              fontWeight: FontWeight.w600,
-                              color: NaaguruTheme.primaryDark,
-                            ),
-                          ),
-                        ),
-                    ],
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    description,
-                    style: TextStyle(
-                      fontSize: 13,
-                      color: NaaguruTheme.muted,
-                      height: 1.4,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSecondaryCard() {
-    return Container(
-      padding: const EdgeInsets.all(NaaguruTheme.spacing16),
-      decoration: BoxDecoration(
-        color: NaaguruTheme.surface,
+        color: Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: NaaguruTheme.muted.withAlpha(51)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withAlpha(6),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+            decoration: BoxDecoration(
+              color: NaaguruTheme.primaryLight,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Text(
+              _isTelugu ? "• ఆసక్తుల అన్వేషణ" : "• DISCOVER YOUR PATH",
+              style: const TextStyle(
+                color: NaaguruTheme.primaryDark,
+                fontSize: 10,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+          const SizedBox(height: 12),
+          Text(
+            _isTelugu ? "10వ తరగతి తర్వాత మీ మార్గం తెలుసుకోండి" : "Discover What Comes After 10th",
+            style: const TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w700,
+              color: NaaguruTheme.primaryDark,
+            ),
+          ),
+          const SizedBox(height: 6),
+          Text(
+            _isTelugu
+                ? "మీ నిజమైన ఆసక్తులను అర్థం చేసుకుని, మీకు సరిపోయే ఇంటర్మీడియట్ స్ట్రీమ్‌ను కనుగొనండి."
+                : "Understand your interests and discover which academic stream fits you best.",
+            style: const TextStyle(fontSize: 13, color: NaaguruTheme.muted, height: 1.4),
+          ),
+          const SizedBox(height: 16),
+          PrimaryButton(
+            text: _isTelugu ? 'అసెస్‌మెంట్ ప్రారంభించండి →' : 'Take Assessment →',
+            onPressed: () {
+              Navigator.pushNamed(context, '/assessment-intro');
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// PILLAR 2: Find a College (Browse Colleges directly)
+  Widget _buildCollegePillar(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: NaaguruTheme.muted.withAlpha(51)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withAlpha(6),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+            decoration: BoxDecoration(
+              color: const Color(0xFFE8F4FD),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Text(
+              _isTelugu ? "• ప్రత్యక్ష కళాశాలల శోధన" : "• FIND A COLLEGE",
+              style: TextStyle(
+                color: Colors.blue.shade800,
+                fontSize: 10,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+          const SizedBox(height: 12),
+          Text(
+            _isTelugu ? "కళాశాలలను శోధించండి" : "Browse Verified Colleges",
+            style: const TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w700,
+              color: NaaguruTheme.primaryDark,
+            ),
+          ),
+          const SizedBox(height: 6),
+          Text(
+            _isTelugu
+                ? "మీకు ఏ స్ట్రీమ్ లేదా లొకేషన్ కావాలో ఇప్పటికే తెలుసా? మీ ప్రాధాన్యతలకు సరిపోయే కళాశాలలను చూడండి."
+                : "Already know what you want? Find junior colleges that match your stream, location, and hostel preferences.",
+            style: const TextStyle(fontSize: 13, color: NaaguruTheme.muted, height: 1.4),
+          ),
+          const SizedBox(height: 16),
+          ElevatedButton(
+            onPressed: () {
+              if (widget.collegeApiClient != null) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => CollegePreferencesScreen(
+                      collegeApiClient: widget.collegeApiClient!,
+                    ),
+                  ),
+                );
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('College search is initializing...')),
+                );
+              }
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF1E3A5F),
+              foregroundColor: Colors.white,
+              padding: const EdgeInsets.symmetric(vertical: 14),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              minimumSize: const Size(double.infinity, 48),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  _isTelugu ? 'కళాశాలలను చూడండి →' : 'Browse Colleges →',
+                  style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Supporting Section: Teaser for Explore Paths
+  Widget _buildExploreTeaser(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: NaaguruTheme.primaryLight.withAlpha(77),
+        borderRadius: BorderRadius.circular(16),
       ),
       child: Row(
         children: [
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: NaaguruTheme.accent.withAlpha(51),
+              color: Colors.white,
               borderRadius: BorderRadius.circular(12),
             ),
-            child: const Icon(
-              Icons.account_balance,
-              color: NaaguruTheme.primaryDark,
-            ),
+            child: const Icon(Icons.explore, color: NaaguruTheme.primaryDark, size: 24),
           ),
-          const SizedBox(width: NaaguruTheme.spacing16),
+          const SizedBox(width: 14),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  'Looking for colleges directly?',
-                  style: TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w700,
-                    color: NaaguruTheme.text,
-                  ),
+                Text(
+                  _isTelugu ? 'అన్ని మార్గాలను అన్వేషించండి' : 'Explore All Major Paths',
+                  style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: NaaguruTheme.primaryDark),
                 ),
-                const SizedBox(height: 4),
-                const Text(
-                  'Browse junior colleges & Polytechnic institutes nearby.',
-                  style: TextStyle(fontSize: 12, color: NaaguruTheme.muted),
-                ),
-                const SizedBox(height: 8),
-                Row(
-                  children: const [
-                    Text(
-                      'Browse colleges',
-                      style: TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w600,
-                        color: NaaguruTheme.primaryDark,
-                      ),
-                    ),
-                    SizedBox(width: 4),
-                    Icon(
-                      Icons.arrow_forward,
-                      size: 14,
-                      color: NaaguruTheme.primaryDark,
-                    ),
-                  ],
+                const SizedBox(height: 2),
+                Text(
+                  _isTelugu
+                      ? 'ఇంటర్మీడియట్, పాలిటెక్నిక్, ఐటిఐ మరియు డిఫెన్స్ అవకాశాలను చూడండి.'
+                      : 'Discover Intermediate, Polytechnic, ITI, and Defence pathways after 10th.',
+                  style: const TextStyle(fontSize: 12, color: NaaguruTheme.muted),
                 ),
               ],
             ),
           ),
-          const Icon(Icons.chevron_right, color: NaaguruTheme.muted),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildTertiaryCard() {
-    return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: NaaguruTheme.spacing16,
-        vertical: NaaguruTheme.spacing12,
-      ),
-      decoration: BoxDecoration(
-        color: NaaguruTheme.primaryLight.withAlpha(128),
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(8),
-            decoration: const BoxDecoration(
-              color: NaaguruTheme.accent,
-              shape: BoxShape.circle,
-            ),
-            child: const Icon(
-              Icons.favorite,
-              size: 16,
-              color: NaaguruTheme.primaryDark,
-            ),
-          ),
-          const SizedBox(width: NaaguruTheme.spacing12),
-          const Expanded(
-            child: Text.rich(
-              TextSpan(
-                text: "You don't have to figure everything out alone. ",
-                style: TextStyle(fontSize: 13, color: NaaguruTheme.text),
-                children: [
-                  TextSpan(
-                    text: "Naaguru",
-                    style: TextStyle(
-                      fontWeight: FontWeight.w700,
-                      color: NaaguruTheme.primaryDark,
-                    ),
-                  ),
-                  TextSpan(text: " is with you at every step."),
-                ],
-              ),
-            ),
+          IconButton(
+            icon: const Icon(Icons.arrow_forward_ios, size: 16, color: NaaguruTheme.primaryDark),
+            onPressed: () => setState(() => _currentIndex = 1), // Switch to Explore tab
           ),
         ],
       ),
@@ -666,24 +715,51 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildHomeView(BuildContext context) {
+    if (_isLoadingState) {
+      return const Center(child: CircularProgressIndicator(color: NaaguruTheme.primary));
+    }
+
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(
         horizontal: NaaguruTheme.spacing20,
-        vertical: NaaguruTheme.spacing24,
+        vertical: NaaguruTheme.spacing20,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           _buildGreeting(),
-          const SizedBox(height: NaaguruTheme.spacing24),
-          _buildMainCard(context),
-          const SizedBox(height: NaaguruTheme.spacing32),
-          _buildJourneySection(),
-          const SizedBox(height: NaaguruTheme.spacing32),
-          _buildSecondaryCard(),
-          const SizedBox(height: NaaguruTheme.spacing16),
-          _buildTertiaryCard(),
-          const SizedBox(height: NaaguruTheme.spacing24),
+          const SizedBox(height: 20),
+
+          // Pillar 1: Assessment Action
+          _buildAssessmentPillar(context),
+          const SizedBox(height: 16),
+
+          // Pillar 2: College Action
+          _buildCollegePillar(context),
+          const SizedBox(height: 24),
+
+          // Explore Paths Teaser
+          _buildExploreTeaser(context),
+          const SizedBox(height: 24),
+
+          // Peace of Mind Guidance Banner
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(Icons.verified_user_outlined, size: 16, color: NaaguruTheme.primary),
+              const SizedBox(width: 6),
+              Expanded(
+                child: Text(
+                  _isTelugu
+                      ? "నాగురు మీ నిర్ణయాలలో విశ్వసనీయ మార్గదర్శి."
+                      : "Naaguru is your trusted guide for life after 10th grade.",
+                  style: const TextStyle(fontSize: 12, color: NaaguruTheme.muted),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
         ],
       ),
     );

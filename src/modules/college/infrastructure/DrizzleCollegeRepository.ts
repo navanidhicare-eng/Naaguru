@@ -1,4 +1,4 @@
-import { eq, and, lte, inArray, sql } from 'drizzle-orm';
+import { eq, and, or, lte, inArray, sql } from 'drizzle-orm';
 import { db } from '@/shared/database/db';
 import { collegesTable, collegeStreamOfferingsTable } from './schema';
 import { College, CollegeStreamOffering, CollegeStatus, VerificationStatus, OwnershipType } from '../domain/models';
@@ -29,6 +29,9 @@ export class DrizzleCollegeRepository implements ICollegeRepository {
     if (criteria.district) conditions.push(eq(collegesTable.district, criteria.district));
     if (criteria.city) conditions.push(eq(collegesTable.city, criteria.city));
     
+    if (criteria.requiresHostel) {
+      conditions.push(or(eq(collegesTable.hasBoysHostel, true), eq(collegesTable.hasGirlsHostel, true))!);
+    }
     if (criteria.requiresBoysHostel) conditions.push(eq(collegesTable.hasBoysHostel, true));
     if (criteria.requiresGirlsHostel) conditions.push(eq(collegesTable.hasGirlsHostel, true));
 

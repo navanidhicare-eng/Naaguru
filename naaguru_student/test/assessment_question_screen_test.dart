@@ -93,27 +93,47 @@ void main() {
     expect(find.text("Question 1"), findsOneWidget);
   });
 
-  testWidgets('displays results screen if attempt already completed', (WidgetTester tester) async {
+  testWidgets('resumes from first unanswered question when attempt has existing answers', (WidgetTester tester) async {
     final mockApi = MockApiClient(
       onGet: (path) {
-        if (path == '/assessments/results/current') {
+        if (path == '/assessments/active') {
           return {
-            'dimensionScores': {'Math': 95, 'Science': 88}
+            'questions': [
+              {
+                'id': 'q-1',
+                'sequence': 1,
+                'textEn': 'Do you enjoy science?',
+                'textTe': 'మీకు సైన్స్ ఇష్టమా?',
+                'options': [
+                  {'id': 'opt-1-1', 'textEn': 'Like', 'textTe': 'ఇష్టం'},
+                  {'id': 'opt-1-2', 'textEn': 'Dislike', 'textTe': 'ఇష్టం లేదు'},
+                ],
+              },
+              {
+                'id': 'q-2',
+                'sequence': 2,
+                'textEn': 'Do you enjoy building software?',
+                'textTe': 'మీకు సాఫ్ట్‌వేర్ తయారు చేయడం ఇష్టమా?',
+                'options': [
+                  {'id': 'opt-2-1', 'textEn': 'Like', 'textTe': 'ఇష్టం'},
+                  {'id': 'opt-2-2', 'textEn': 'Dislike', 'textTe': 'ఇష్టం లేదు'},
+                ],
+              },
+            ],
           };
         }
-        throw Exception('Not found');
-      },
-      onPost: (path, {body}) {
-        if (path == '/career/recommendations/generate') {
+        if (path == '/assessments/attempts/current') {
           return {
-            'rankedResults': [
-              {'streamCode': 'MPC', 'matchScore': 90},
-              {'streamCode': 'MEC', 'matchScore': 80},
-            ]
+            'id': 'attempt-123',
+            'status': 'IN_PROGRESS',
+            'answers': [
+              {'questionId': 'q-1', 'selectedOptionId': 'opt-1-1'}
+            ],
           };
         }
-        return {};
+        throw Exception('Not found: $path');
       },
+      onPost: (path, {body}) => {},
       onPatch: (path, {body}) => {},
     );
 
@@ -121,9 +141,7 @@ void main() {
 
     await tester.pumpWidget(buildTestWidget(apiClient: apiClient));
     await tester.pumpAndSettle();
-    expect(find.text("YOUR TOP INTEREST AREAS"), findsOneWidget);
-    expect(find.text("MATH"), findsWidgets); // Can be title or fallback
-    expect(find.text("Strong affinity"), findsWidgets);
-
+    expect(find.text("Question 2"), findsOneWidget);
+    expect(find.text("Do you enjoy building software?"), findsOneWidget);
   });
 }

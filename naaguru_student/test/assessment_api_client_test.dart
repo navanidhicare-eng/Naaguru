@@ -114,7 +114,7 @@ void main() {
       final client = AssessmentApiClient(apiClient: mock);
 
       final result = await client.getResult();
-      expect(result?['dimensionScores']?['Math'], 90);
+      expect(result['dimensionScores']?['Math'], 90);
       expect(called, isTrue);
     });
   });

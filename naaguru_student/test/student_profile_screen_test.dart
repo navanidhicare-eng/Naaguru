@@ -56,7 +56,7 @@ void main() {
 
     // Select District
     await tester.ensureVisible(find.text("Select your district"));
-    await tester.tap(find.text("Select your district"));
+    await tester.tap(find.text("Select your district"), warnIfMissed: false);
     await tester.pumpAndSettle();
     await tester.ensureVisible(find.text("Visakhapatnam").last);
     await tester.tap(find.text("Visakhapatnam").last);

@@ -168,22 +168,22 @@
     "semantic_hash": "12099233bcb478ecb7a4271cb792a56e"
   },
   "naaguru_student/lib/features/assessment/data/assessment_api_client.dart": {
-    "mtime": 1789053780.092329,
-    "seen": 1789056680.5088086,
-    "ast_hash": "c5f7a119978e4c878ff7d0f9bf245609",
-    "semantic_hash": "c5f7a119978e4c878ff7d0f9bf245609"
+    "mtime": 1789221521.8099484,
+    "seen": 1789222618.317295,
+    "ast_hash": "4bed50aaa44169068dfdcb099ac8ebcf",
+    "semantic_hash": ""
   },
   "naaguru_student/lib/features/assessment/presentation/assessment_intro_screen.dart": {
-    "mtime": 1789053780.1080654,
-    "seen": 1789056680.5088093,
-    "ast_hash": "00860d763d494f43de1c37ce6facacdb",
-    "semantic_hash": "00860d763d494f43de1c37ce6facacdb"
+    "mtime": 1789222011.8581946,
+    "seen": 1789222618.3172972,
+    "ast_hash": "a721d63317e5d2e71aea16867095617b",
+    "semantic_hash": ""
   },
   "naaguru_student/lib/features/assessment/presentation/assessment_question_screen.dart": {
-    "mtime": 1789053780.1093102,
-    "seen": 1789056680.50881,
-    "ast_hash": "2c82dacf6c50c43f1dca10d5951b052d",
-    "semantic_hash": "2c82dacf6c50c43f1dca10d5951b052d"
+    "mtime": 1789221841.9366624,
+    "seen": 1789222618.317299,
+    "ast_hash": "c3a6fc1352a3ea47c3e898fce753d391",
+    "semantic_hash": ""
   },
   "naaguru_student/lib/features/auth/auth_service.dart": {
     "mtime": 1789055329.0386052,
@@ -192,16 +192,16 @@
     "semantic_hash": "0632417a1b39b8f82354a6715635c710"
   },
   "naaguru_student/lib/features/auth/login_screen.dart": {
-    "mtime": 1789053780.1594296,
-    "seen": 1789056680.5088115,
-    "ast_hash": "c85e70c4c8d56c26fb3403b5ed65ef76",
-    "semantic_hash": "c85e70c4c8d56c26fb3403b5ed65ef76"
+    "mtime": 1789221720.347788,
+    "seen": 1789222618.3174615,
+    "ast_hash": "5b9c03c1526cfd9c5618f678dd2444ca",
+    "semantic_hash": ""
   },
   "naaguru_student/lib/features/home/home_screen.dart": {
-    "mtime": 1789055370.929765,
-    "seen": 1789056680.5088122,
-    "ast_hash": "2f4a3b5275534a4838a7ee4ef57881cf",
-    "semantic_hash": "2f4a3b5275534a4838a7ee4ef57881cf"
+    "mtime": 1789222001.9486172,
+    "seen": 1789222618.3174715,
+    "ast_hash": "b84b2aa4b157cd84eea948ae36bf8854",
+    "semantic_hash": ""
   },
   "naaguru_student/lib/features/journey/journey_placeholder_screen.dart": {
     "mtime": 1788880862.242942,
@@ -210,22 +210,22 @@
     "semantic_hash": "052d6244a441904fd69429116f66d261"
   },
   "naaguru_student/lib/features/student/data/student_api_client.dart": {
-    "mtime": 1788687577.77477,
-    "seen": 1789056680.5088139,
-    "ast_hash": "88a5c1d5c8ea25f169a4c6330eeccc07",
-    "semantic_hash": "88a5c1d5c8ea25f169a4c6330eeccc07"
+    "mtime": 1789221521.8298006,
+    "seen": 1789222618.3176293,
+    "ast_hash": "f0bec0fafd7e5e881d0f569b3a9ab69a",
+    "semantic_hash": ""
   },
   "naaguru_student/lib/features/student/presentation/student_profile_screen.dart": {
-    "mtime": 1789053780.1756568,
-    "seen": 1789056680.5088143,
-    "ast_hash": "359e9f7d60ce8514ca9606acf3b4a15c",
-    "semantic_hash": "359e9f7d60ce8514ca9606acf3b4a15c"
+    "mtime": 1789221729.4210076,
+    "seen": 1789222618.317631,
+    "ast_hash": "e94a8ab85f977f19a612b0c5ca8615cb",
+    "semantic_hash": ""
   },
   "naaguru_student/lib/main.dart": {
-    "mtime": 1789055391.7278123,
-    "seen": 1789056680.508815,
-    "ast_hash": "86f8597942008e68f1fcb452ac35d1b9",
-    "semantic_hash": "86f8597942008e68f1fcb452ac35d1b9"
+    "mtime": 1789222046.8381362,
+    "seen": 1789222618.3176324,
+    "ast_hash": "e872353f8e8d3542c3a7bfda0ddf8b72",
+    "semantic_hash": ""
   },
   "naaguru_student/linux/flutter/generated_plugin_registrant.cc": {
     "mtime": 1788871306.26922,
@@ -300,10 +300,10 @@
     "semantic_hash": "d1e9f1779b5cd92662bf1c2c16e11843"
   },
   "naaguru_student/test/assessment_question_screen_test.dart": {
-    "mtime": 1789053780.941922,
-    "seen": 1789056680.5088255,
-    "ast_hash": "b8b7226ea30fed1b85278b84d740b5ba",
-    "semantic_hash": "b8b7226ea30fed1b85278b84d740b5ba"
+    "mtime": 1789222357.4660387,
+    "seen": 1789222618.3197627,
+    "ast_hash": "3ae7fa5b72c4f24ccc7b1e2f1963c249",
+    "semantic_hash": ""
   },
   "naaguru_student/test/auth_service_test.dart": {
     "mtime": 1789055559.6561296,
@@ -312,10 +312,10 @@
     "semantic_hash": "655f6eb8198a8ba122a8bfb3df852446"
   },
   "naaguru_student/test/home_screen_test.dart": {
-    "mtime": 1789055468.3445866,
-    "seen": 1789056680.508827,
-    "ast_hash": "453af543c72472a030ae09adf9f6d120",
-    "semantic_hash": "453af543c72472a030ae09adf9f6d120"
+    "mtime": 1789222076.2034118,
+    "seen": 1789222618.319926,
+    "ast_hash": "e9bcd0ce9385d4b2465d0ce11a31b1c5",
+    "semantic_hash": ""
   },
   "naaguru_student/test/student_api_client_test.dart": {
     "mtime": 1788687675.7248034,
@@ -324,10 +324,10 @@
     "semantic_hash": "774e7794078903aac554520a1bc7f65d"
   },
   "naaguru_student/test/student_profile_screen_test.dart": {
-    "mtime": 1789053780.9593098,
-    "seen": 1789056680.5088284,
-    "ast_hash": "243160755bef926bca72de48fb763022",
-    "semantic_hash": "243160755bef926bca72de48fb763022"
+    "mtime": 1789222328.1354961,
+    "seen": 1789222618.3200972,
+    "ast_hash": "4e80fa886f1e9fbc58bf0eb5dd1875e0",
+    "semantic_hash": ""
   },
   "naaguru_student/test/widget_test.dart": {
     "mtime": 1788880856.1453774,
@@ -402,10 +402,10 @@
     "semantic_hash": "7569387d58711ab975940f4df3b4bcda"
   },
   "next.config.ts": {
-    "mtime": 1788688351.8865097,
-    "seen": 1789056680.5088382,
-    "ast_hash": "551d6b01cc79966368b1e70f16596abd",
-    "semantic_hash": "551d6b01cc79966368b1e70f16596abd"
+    "mtime": 1789221521.8335567,
+    "seen": 1789222618.3220294,
+    "ast_hash": "7b720ff2e4f61ab0c06d69da8101dd12",
+    "semantic_hash": ""
   },
   "package.json": {
     "mtime": 1789053843.4217308,
@@ -432,34 +432,34 @@
     "semantic_hash": "d8dcc8a0a2ef76cf4330ba55bd0efd6b"
   },
   "src/app/api/v1/assessments/active/route.ts": {
-    "mtime": 1788665327.5177562,
-    "seen": 1789056680.508842,
-    "ast_hash": "017745aa104b8ed48d5e32039cdfcc6a",
-    "semantic_hash": "017745aa104b8ed48d5e32039cdfcc6a"
+    "mtime": 1789201412.7324462,
+    "seen": 1789222618.3226771,
+    "ast_hash": "8368c27b69f20d67c8528868187ec000",
+    "semantic_hash": ""
   },
   "src/app/api/v1/assessments/attempts/current/answers/route.ts": {
-    "mtime": 1788665325.4718823,
-    "seen": 1789056680.5088425,
-    "ast_hash": "5614c1346cbbb4a2693e7c5649c516f6",
-    "semantic_hash": "5614c1346cbbb4a2693e7c5649c516f6"
+    "mtime": 1789201412.7334497,
+    "seen": 1789222618.3226788,
+    "ast_hash": "5277237f16281f3c496757e1b3c51a2d",
+    "semantic_hash": ""
   },
   "src/app/api/v1/assessments/attempts/current/route.ts": {
-    "mtime": 1788665323.4176414,
-    "seen": 1789056680.5088434,
-    "ast_hash": "6d5d36e5b3756eeb52d2e0687c215101",
-    "semantic_hash": "6d5d36e5b3756eeb52d2e0687c215101"
+    "mtime": 1789201412.7344525,
+    "seen": 1789222618.32268,
+    "ast_hash": "b03dffcaf51420404371cbe50d059ea4",
+    "semantic_hash": ""
   },
   "src/app/api/v1/assessments/attempts/current/submit/route.ts": {
-    "mtime": 1788665321.346383,
-    "seen": 1789056680.5088441,
-    "ast_hash": "add1fdcb10580fd68004cbd2daa7e18f",
-    "semantic_hash": "add1fdcb10580fd68004cbd2daa7e18f"
+    "mtime": 1789201412.7360282,
+    "seen": 1789222618.3226814,
+    "ast_hash": "8699f1ae446e18935b650f2a14cfd0a0",
+    "semantic_hash": ""
   },
   "src/app/api/v1/assessments/results/current/route.ts": {
-    "mtime": 1788665319.282341,
-    "seen": 1789056680.5088449,
-    "ast_hash": "ec3694e035da657d1d25a05c2982ceb1",
-    "semantic_hash": "ec3694e035da657d1d25a05c2982ceb1"
+    "mtime": 1789201412.737328,
+    "seen": 1789222618.3226826,
+    "ast_hash": "ef9f582df15485a5a225c463da04f9ee",
+    "semantic_hash": ""
   },
   "src/app/api/v1/auth/college-login/route.ts": {
     "mtime": 1788963877.0203228,
@@ -510,10 +510,10 @@
     "semantic_hash": "acf42b956366062075227606e3eb1018"
   },
   "src/app/api/v1/colleges/route.ts": {
-    "mtime": 1788683207.9181175,
-    "seen": 1789056680.5088518,
-    "ast_hash": "f46d13941848added1901a906d5396e3",
-    "semantic_hash": "f46d13941848added1901a906d5396e3"
+    "mtime": 1789221598.634046,
+    "seen": 1789222618.3239996,
+    "ast_hash": "6429c77af0f2ac8faa09c758ce134f9e",
+    "semantic_hash": ""
   },
   "src/app/api/v1/students/me/route.ts": {
     "mtime": 1788696556.3023725,
@@ -534,10 +534,10 @@
     "semantic_hash": "e0f6405e8bb172da45fbc3f64095867e"
   },
   "src/app/college/profile/page.tsx": {
-    "mtime": 1789051774.148693,
-    "seen": 1789056680.508856,
-    "ast_hash": "cbbb9d65376aa57b074d4e37fb10ddc3",
-    "semantic_hash": "cbbb9d65376aa57b074d4e37fb10ddc3"
+    "mtime": 1789201412.737328,
+    "seen": 1789222618.3244808,
+    "ast_hash": "0e6857ff114544342201f4241bcc3867",
+    "semantic_hash": ""
   },
   "src/app/layout.tsx": {
     "mtime": 1789046174.0667777,
@@ -552,10 +552,10 @@
     "semantic_hash": "ca73b79a1b9024c26878ecf32001de79"
   },
   "src/components/auth/CollegeAdminLoginForm.tsx": {
-    "mtime": 1789012939.423985,
-    "seen": 1789056680.5088584,
-    "ast_hash": "b4176f7102e930f4e6bec25ad3bf0767",
-    "semantic_hash": "b4176f7102e930f4e6bec25ad3bf0767"
+    "mtime": 1789201412.738948,
+    "seen": 1789222618.324798,
+    "ast_hash": "90c55d2f2fff752cf295c9b9c0da7a52",
+    "semantic_hash": ""
   },
   "src/modules/assessment/application/dtos.ts": {
     "mtime": 1788663650.2349494,
@@ -564,22 +564,22 @@
     "semantic_hash": "8139bcbef183099d7fb6efa8bc080d71"
   },
   "src/modules/assessment/application/useCases/AssessmentUseCases.ts": {
-    "mtime": 1788664162.855294,
-    "seen": 1789056680.5088599,
-    "ast_hash": "f0659988078a4f2e05779bb444c0fba9",
-    "semantic_hash": "f0659988078a4f2e05779bb444c0fba9"
+    "mtime": 1789221521.8365824,
+    "seen": 1789222618.3249679,
+    "ast_hash": "a930b60a340037c81c9547f41ae05bf7",
+    "semantic_hash": ""
   },
   "src/modules/assessment/domain/AssessmentAttempt.ts": {
-    "mtime": 1788664257.7199903,
-    "seen": 1789056680.5088606,
-    "ast_hash": "8fec717f9f11887499c2f33d3f295505",
-    "semantic_hash": "8fec717f9f11887499c2f33d3f295505"
+    "mtime": 1789201412.7399523,
+    "seen": 1789222618.3249695,
+    "ast_hash": "bc38d656a543494f1118c813e5a6cbf8",
+    "semantic_hash": ""
   },
   "src/modules/assessment/domain/AssessmentVersion.ts": {
-    "mtime": 1788664259.2907164,
-    "seen": 1789056680.5088615,
-    "ast_hash": "341a54027d0ad8d3292d332f5fcfec68",
-    "semantic_hash": "341a54027d0ad8d3292d332f5fcfec68"
+    "mtime": 1789201412.7410512,
+    "seen": 1789222618.3249707,
+    "ast_hash": "a2c39ae1c9a8030b06274f68a49797a1",
+    "semantic_hash": ""
   },
   "src/modules/assessment/domain/IAssessmentRepository.ts": {
     "mtime": 1788663679.2209196,
@@ -588,16 +588,16 @@
     "semantic_hash": "4a4106bc64d2e763caa741b760a00a98"
   },
   "src/modules/assessment/domain/ScoringEngine.test.ts": {
-    "mtime": 1788663951.2375562,
-    "seen": 1789056680.5088627,
-    "ast_hash": "e0f3f1a08906618c0d721ad11b063d1c",
-    "semantic_hash": "e0f3f1a08906618c0d721ad11b063d1c"
+    "mtime": 1789201412.7420566,
+    "seen": 1789222618.3251328,
+    "ast_hash": "9acd74c79006206d4806cf2a30e13917",
+    "semantic_hash": ""
   },
   "src/modules/assessment/domain/ScoringEngine.ts": {
-    "mtime": 1788664260.529061,
-    "seen": 1789056680.5088634,
-    "ast_hash": "bae2636b4ad15d84f75a93f0129076f9",
-    "semantic_hash": "bae2636b4ad15d84f75a93f0129076f9"
+    "mtime": 1789201412.7420566,
+    "seen": 1789222618.325134,
+    "ast_hash": "75f0c3445cc449e8228ec1f5567b0766",
+    "semantic_hash": ""
   },
   "src/modules/assessment/index.ts": {
     "mtime": 1788665473.188405,
@@ -606,16 +606,16 @@
     "semantic_hash": "0f9ecca7336ac1bb88d82284bc904bc5"
   },
   "src/modules/assessment/infrastructure/DrizzleAssessmentRepository.ts": {
-    "mtime": 1788663729.0299468,
-    "seen": 1789056680.508865,
-    "ast_hash": "49cd0b85e1b0f3ecbb4afa497b00ae8a",
-    "semantic_hash": "49cd0b85e1b0f3ecbb4afa497b00ae8a"
+    "mtime": 1789201412.743169,
+    "seen": 1789222618.325292,
+    "ast_hash": "600c43198ad959422c1ded477611a3f3",
+    "semantic_hash": ""
   },
   "src/modules/assessment/infrastructure/schema.ts": {
-    "mtime": 1788663387.162975,
-    "seen": 1789056680.5088658,
-    "ast_hash": "7e9743fbacb2d1c2bf13200cfd70f7c4",
-    "semantic_hash": "7e9743fbacb2d1c2bf13200cfd70f7c4"
+    "mtime": 1789181763.4222786,
+    "seen": 1789222618.3252938,
+    "ast_hash": "d999e10a1c85bec0333e33578d0dd377",
+    "semantic_hash": ""
   },
   "src/modules/career/application/dtos.ts": {
     "mtime": 1788670323.5236168,
@@ -624,34 +624,34 @@
     "semantic_hash": "101f238721627b8201682dae75c9017c"
   },
   "src/modules/career/application/useCases/CareerUseCases.ts": {
-    "mtime": 1788670064.7720366,
-    "seen": 1789056680.5088673,
-    "ast_hash": "d73286a4112e51edb3db88e7f525f824",
-    "semantic_hash": "d73286a4112e51edb3db88e7f525f824"
+    "mtime": 1789201412.7442956,
+    "seen": 1789222618.325454,
+    "ast_hash": "2f5757e85a1b8cbf519cfa9d199f67e3",
+    "semantic_hash": ""
   },
   "src/modules/career/domain/ICareerRepository.ts": {
-    "mtime": 1788668363.3013434,
-    "seen": 1789056680.508868,
-    "ast_hash": "1e87b71fb250e69c56cfc4db3e95e264",
-    "semantic_hash": "1e87b71fb250e69c56cfc4db3e95e264"
+    "mtime": 1789201412.745337,
+    "seen": 1789222618.3254557,
+    "ast_hash": "a60bbc6a249c99dd0e6763917c3c413d",
+    "semantic_hash": ""
   },
   "src/modules/career/domain/RecommendationEngine.test.ts": {
-    "mtime": 1788684604.1899407,
-    "seen": 1789056680.508869,
-    "ast_hash": "17bae8000f1b47a95e2ff29ae879f368",
-    "semantic_hash": "17bae8000f1b47a95e2ff29ae879f368"
+    "mtime": 1789201412.745337,
+    "seen": 1789222618.3254566,
+    "ast_hash": "7b86f01c3744e37c381cae9d9d9ef42a",
+    "semantic_hash": ""
   },
   "src/modules/career/domain/RecommendationEngine.ts": {
-    "mtime": 1788684548.8240457,
-    "seen": 1789056680.5088696,
-    "ast_hash": "8ccbb953c20d8c087fb670290616e57f",
-    "semantic_hash": "8ccbb953c20d8c087fb670290616e57f"
+    "mtime": 1789201412.7463396,
+    "seen": 1789222618.3254576,
+    "ast_hash": "21cb766bd33a843fd7689d15e80638c3",
+    "semantic_hash": ""
   },
   "src/modules/career/domain/models.ts": {
-    "mtime": 1788684468.5359156,
-    "seen": 1789056680.5088704,
-    "ast_hash": "f23ef6f784e5e0b3b1cd3f422e1bdc37",
-    "semantic_hash": "f23ef6f784e5e0b3b1cd3f422e1bdc37"
+    "mtime": 1789201412.747351,
+    "seen": 1789222618.3254588,
+    "ast_hash": "05c5c8328db64db41dbcd40913128583",
+    "semantic_hash": ""
   },
   "src/modules/career/index.ts": {
     "mtime": 1788670095.9013402,
@@ -660,16 +660,16 @@
     "semantic_hash": "111b1fe62cb418ce79c8af836f6ae88a"
   },
   "src/modules/career/infrastructure/DrizzleCareerRepository.ts": {
-    "mtime": 1788684680.8914235,
-    "seen": 1789056680.508874,
-    "ast_hash": "6e421f6924826879e6853520c699caeb",
-    "semantic_hash": "6e421f6924826879e6853520c699caeb"
+    "mtime": 1789201412.7483537,
+    "seen": 1789222618.3256173,
+    "ast_hash": "f3c3a2b496ca8f620e33081d1a820087",
+    "semantic_hash": ""
   },
   "src/modules/career/infrastructure/schema.ts": {
-    "mtime": 1788669866.2660916,
-    "seen": 1789056680.508875,
-    "ast_hash": "75152d81e5e62d957e2aa7124c17300c",
-    "semantic_hash": "75152d81e5e62d957e2aa7124c17300c"
+    "mtime": 1789181763.4864259,
+    "seen": 1789222618.325619,
+    "ast_hash": "a95df656128443c9bdef6debdf5c9284",
+    "semantic_hash": ""
   },
   "src/modules/college/application/dtos.ts": {
     "mtime": 1788682745.3803432,
@@ -690,10 +690,10 @@
     "semantic_hash": "94fe79dfa0844fd010b61c5b87016c0e"
   },
   "src/modules/college/domain/ICollegeRepository.ts": {
-    "mtime": 1788682838.85693,
-    "seen": 1789056680.5088778,
-    "ast_hash": "ca8d89505670e9cbff4d3370139d7577",
-    "semantic_hash": "ca8d89505670e9cbff4d3370139d7577"
+    "mtime": 1789221521.8365824,
+    "seen": 1789222618.3261044,
+    "ast_hash": "a80eb6554ffed4ec03b887ec7df1adf7",
+    "semantic_hash": ""
   },
   "src/modules/college/domain/models.ts": {
     "mtime": 1788682652.7703366,
@@ -714,10 +714,10 @@
     "semantic_hash": "cfdc8c244e53ed306460ffd316844c42"
   },
   "src/modules/college/infrastructure/DrizzleCollegeRepository.ts": {
-    "mtime": 1788685210.4475074,
-    "seen": 1789056680.5088809,
-    "ast_hash": "45331da25d4b80935ddf89f3d947074f",
-    "semantic_hash": "45331da25d4b80935ddf89f3d947074f"
+    "mtime": 1789221592.6552694,
+    "seen": 1789222618.3265836,
+    "ast_hash": "c34cc9a327585740fe157718bbb6ba4f",
+    "semantic_hash": ""
   },
   "src/modules/college/infrastructure/schema.ts": {
     "mtime": 1788684735.6032147,
@@ -846,10 +846,10 @@
     "semantic_hash": "917e49b1e3e5efcc2381a41b641a703e"
   },
   "src/shared/auth/useCases.ts": {
-    "mtime": 1788659412.069024,
-    "seen": 1789056680.508898,
-    "ast_hash": "8c57d1b7f4c597e74718909fe2a40bd0",
-    "semantic_hash": "8c57d1b7f4c597e74718909fe2a40bd0"
+    "mtime": 1789221521.8403518,
+    "seen": 1789222618.3302624,
+    "ast_hash": "880cd27865e39759e59bf2417fdbb5f0",
+    "semantic_hash": ""
   },
   "src/shared/auth/utils.ts": {
     "mtime": 1788659551.4342203,
@@ -869,35 +869,17 @@
     "ast_hash": "e45cc0e14a8b7361d1dfbf8839047a24",
     "semantic_hash": "e45cc0e14a8b7361d1dfbf8839047a24"
   },
-  "src/shared/database/migrations/0000_panoramic_jigsaw.sql": {
-    "mtime": 1788685081.550205,
-    "seen": 1789056680.5089011,
-    "ast_hash": "",
-    "semantic_hash": ""
-  },
-  "src/shared/database/migrations/0001_famous_galactus.sql": {
-    "mtime": 1788963058.1475093,
-    "seen": 1789056680.5089018,
-    "ast_hash": "",
-    "semantic_hash": ""
-  },
   "src/shared/database/migrations/meta/0000_snapshot.json": {
-    "mtime": 1788685081.5491705,
-    "seen": 1789056680.508903,
-    "ast_hash": "39491efbca093e592ee93c3ec1ac7dd2",
-    "semantic_hash": "39491efbca093e592ee93c3ec1ac7dd2"
-  },
-  "src/shared/database/migrations/meta/0001_snapshot.json": {
-    "mtime": 1788963058.146995,
-    "seen": 1789056680.5089035,
-    "ast_hash": "3e683a432a8b0339ba26c6d59ec88e9f",
-    "semantic_hash": "3e683a432a8b0339ba26c6d59ec88e9f"
+    "mtime": 1789201412.7493558,
+    "seen": 1789222618.330731,
+    "ast_hash": "941aee852448415f837d523f0ea6ba60",
+    "semantic_hash": ""
   },
   "src/shared/database/migrations/meta/_journal.json": {
-    "mtime": 1788963058.1475093,
-    "seen": 1789056680.5089042,
-    "ast_hash": "87fd2bc66c2c563b1694b274d4e69efa",
-    "semantic_hash": "87fd2bc66c2c563b1694b274d4e69efa"
+    "mtime": 1789201412.7503662,
+    "seen": 1789222618.3307328,
+    "ast_hash": "40d794b2d22dcd85655f04040ccea1a5",
+    "semantic_hash": ""
   },
   "src/shared/database/schema.ts": {
     "mtime": 1788682510.4948921,
@@ -948,10 +930,10 @@
     "semantic_hash": "ee17fd1c97c735e9f3564e3f5251f125"
   },
   "AGENTS.md": {
-    "mtime": 1788873257.2802024,
-    "seen": 1789056680.5089114,
-    "ast_hash": "3e07acd66807ec68557ee994cdf69b28",
-    "semantic_hash": "3e07acd66807ec68557ee994cdf69b28"
+    "mtime": 1789201412.680439,
+    "seen": 1789222618.3320038,
+    "ast_hash": "7d2607a5cff86cf3eab704ac80a042a6",
+    "semantic_hash": ""
   },
   "README.md": {
     "mtime": 1788697568.231474,
@@ -970,5 +952,839 @@
     "seen": 1789056680.508914,
     "ast_hash": "e2c6758b4cf7a5a70800078a3b2e6fee",
     "semantic_hash": "e2c6758b4cf7a5a70800078a3b2e6fee"
+  },
+  "naaguru_student/lib/features/assessment/presentation/results_screen.dart": {
+    "mtime": 1789221779.1426876,
+    "seen": 1789222618.3173006,
+    "ast_hash": "66547e5d9d3099d9287da4b31bf1715a",
+    "semantic_hash": ""
+  },
+  "naaguru_student/lib/features/college/data/college_api_client.dart": {
+    "mtime": 1789221986.6483111,
+    "seen": 1789222618.3174634,
+    "ast_hash": "777a2e04540c4ada4c035cbcf0db4fdd",
+    "semantic_hash": ""
+  },
+  "naaguru_student/lib/features/college/presentation/college_detail_screen.dart": {
+    "mtime": 1789221902.0889134,
+    "seen": 1789222618.3174648,
+    "ast_hash": "af9d2fe29beaaf8c756d65031b739805",
+    "semantic_hash": ""
+  },
+  "naaguru_student/lib/features/college/presentation/college_list_screen.dart": {
+    "mtime": 1789221917.2891974,
+    "seen": 1789222618.3174658,
+    "ast_hash": "8a8bf20313c2dc794efbc032f27673bc",
+    "semantic_hash": ""
+  },
+  "naaguru_student/lib/features/college/presentation/college_preferences_screen.dart": {
+    "mtime": 1789221886.3312764,
+    "seen": 1789222618.317467,
+    "ast_hash": "5b2633b7df4ca823ccf5c68f0201642d",
+    "semantic_hash": ""
+  },
+  "naaguru_student/lib/features/explore/presentation/explore_paths_screen.dart": {
+    "mtime": 1789221521.824969,
+    "seen": 1789222618.3174684,
+    "ast_hash": "54ef07bc889069e251564a92e2af1496",
+    "semantic_hash": ""
+  },
+  "naaguru_student/lib/features/explore/presentation/path_detail_screen.dart": {
+    "mtime": 1789221521.824969,
+    "seen": 1789222618.3174698,
+    "ast_hash": "879b7c58072df446cfb2d487d4070ff7",
+    "semantic_hash": ""
+  },
+  "naaguru_student/test/assessment_api_client_test.dart": {
+    "mtime": 1789222085.990852,
+    "seen": 1789222618.319601,
+    "ast_hash": "5592fd55ab517a7401ad7aba1d25e786",
+    "semantic_hash": ""
+  },
+  "naaguru_student/test/college_api_client_test.dart": {
+    "mtime": 1789222428.6915708,
+    "seen": 1789222618.3199208,
+    "ast_hash": "4bd3d67792b0ac4158c8ba9c10747008",
+    "semantic_hash": ""
+  },
+  "naaguru_student/test/college_list_screen_test.dart": {
+    "mtime": 1789222565.3936067,
+    "seen": 1789222618.3199227,
+    "ast_hash": "195994b6b10f51dbc2f7a5cabf1580c2",
+    "semantic_hash": ""
+  },
+  "naaguru_student/test/college_preferences_screen_test.dart": {
+    "mtime": 1789222545.1244974,
+    "seen": 1789222618.3199239,
+    "ast_hash": "e2933387c107ac8d65a1e947c4ae214d",
+    "semantic_hash": ""
+  },
+  "naaguru_student/test/results_screen_test.dart": {
+    "mtime": 1789222362.3988373,
+    "seen": 1789222618.3199277,
+    "ast_hash": "072fc05db833488ebc73058a4bb120d7",
+    "semantic_hash": ""
+  },
+  "naaguru_student/test/test_assets.dart": {
+    "mtime": 1789222273.1120582,
+    "seen": 1789222618.3200989,
+    "ast_hash": "575e5bf08e372ac0032c4d6af91a17c6",
+    "semantic_hash": ""
+  },
+  "scratch/clean_routes.py": {
+    "mtime": 1789201412.6930888,
+    "seen": 1789222618.3223443,
+    "ast_hash": "43fff83eaf67c37342d2b7802536d8f8",
+    "semantic_hash": ""
+  },
+  "scratch/fix_syntax.py": {
+    "mtime": 1789201412.6930888,
+    "seen": 1789222618.322346,
+    "ast_hash": "1ae9f3cd9e93f6ffc5d287ed8e240ebd",
+    "semantic_hash": ""
+  },
+  "scratch/update_routes.py": {
+    "mtime": 1789201412.694372,
+    "seen": 1789222618.3223472,
+    "ast_hash": "86c3233665536e2fae96d9f58f1d0a41",
+    "semantic_hash": ""
+  },
+  "scripts/extract_pdf.py": {
+    "mtime": 1789201412.6947503,
+    "seen": 1789222618.3223488,
+    "ast_hash": "f00b48fffd5cdda4715f4bbfeb54cb81",
+    "semantic_hash": ""
+  },
+  "scripts/extract_raw.py": {
+    "mtime": 1789201412.6947503,
+    "seen": 1789222618.32235,
+    "ast_hash": "d1998b2607f4bc5c13a01ff0a2ec2da4",
+    "semantic_hash": ""
+  },
+  "scripts/parse_raw.py": {
+    "mtime": 1789201412.6947503,
+    "seen": 1789222618.3223515,
+    "ast_hash": "3f2f459e895bdccd28a435b89fc64c5e",
+    "semantic_hash": ""
+  },
+  "scripts/reset-db.ts": {
+    "mtime": 1789201412.6947503,
+    "seen": 1789222618.3223526,
+    "ast_hash": "09e159935de087a0515be0ca601df6bc",
+    "semantic_hash": ""
+  },
+  "scripts/seed-colleges-dev.ts": {
+    "mtime": 1789221626.249338,
+    "seen": 1789222618.322513,
+    "ast_hash": "016942794fa22f7b8612602f513746cc",
+    "semantic_hash": ""
+  },
+  "scripts/seed.ts": {
+    "mtime": 1789201412.7048154,
+    "seen": 1789222618.3225148,
+    "ast_hash": "725a1a61b5975d1f93039edb27cb1848",
+    "semantic_hash": ""
+  },
+  "scripts/seed_data/questions.json": {
+    "mtime": 1789201412.7208345,
+    "seen": 1789222618.3225162,
+    "ast_hash": "223f34e42553397239fc85f40a00f7db",
+    "semantic_hash": ""
+  },
+  "scripts/seed_data/questions_final.json": {
+    "mtime": 1789201412.7253468,
+    "seen": 1789222618.3225174,
+    "ast_hash": "e5caac6338143a24b86d7293de91d645",
+    "semantic_hash": ""
+  },
+  "scripts/seed_data/rules.json": {
+    "mtime": 1789201412.7314038,
+    "seen": 1789222618.3225186,
+    "ast_hash": "5982ff47df2a529dbcc5e707c2770bc9",
+    "semantic_hash": ""
+  },
+  "src/app/api/v1/auth/me/route.ts": {
+    "mtime": 1789221521.8355694,
+    "seen": 1789222618.323027,
+    "ast_hash": "32485bdfcd8c1ac37789726160079360",
+    "semantic_hash": ""
+  },
+  "src/middleware.ts": {
+    "mtime": 1789221521.8365824,
+    "seen": 1789222618.3248003,
+    "ast_hash": "394d70c316f2ba4bfc8fa3e804086da7",
+    "semantic_hash": ""
+  },
+  ".agents/rules/graphify.md": {
+    "mtime": 1789055476.5256324,
+    "seen": 1789222618.3319988,
+    "ast_hash": "a0e4d192b9e2e17256124dbfc8e24e6a",
+    "semantic_hash": ""
+  },
+  ".agents/workflows/graphify.md": {
+    "mtime": 1789055476.5269027,
+    "seen": 1789222618.3320005,
+    "ast_hash": "a831cf3669f1e6ab85d8a80ebe655f99",
+    "semantic_hash": ""
+  },
+  ".github/workflows/ci.yml": {
+    "mtime": 1788697509.3609955,
+    "seen": 1789222618.3320017,
+    "ast_hash": "7e7b3d8db4ca556620209e5954e53a0f",
+    "semantic_hash": ""
+  },
+  "CLAUDE.md": {
+    "mtime": 1788619500.0217717,
+    "seen": 1789222618.332005,
+    "ast_hash": "5c27369b226fcf2be8a6cfe52224e767",
+    "semantic_hash": ""
+  },
+  "naaguru_student/README.md": {
+    "mtime": 1788686562.238729,
+    "seen": 1789222618.3321798,
+    "ast_hash": "2ab37873dbf1cbd56bebbc2fd51ff2f1",
+    "semantic_hash": ""
+  },
+  "naaguru_student/analysis_options.yaml": {
+    "mtime": 1789053780.0594423,
+    "seen": 1789222618.332182,
+    "ast_hash": "9ec7b1eff0fd95a9d2922aae93ff8d36",
+    "semantic_hash": ""
+  },
+  "naaguru_student/ios/Runner/Assets.xcassets/LaunchImage.imageset/README.md": {
+    "mtime": 1765369497.7386727,
+    "seen": 1789222618.3321834,
+    "ast_hash": "f7ee1b402881509d197f34963e569927",
+    "semantic_hash": ""
+  },
+  "naaguru_student/linux/CMakeLists.txt": {
+    "mtime": 1788871301.516928,
+    "seen": 1789222618.3321848,
+    "ast_hash": "1618a660a115b2273eca08615ea6e6a4",
+    "semantic_hash": ""
+  },
+  "naaguru_student/linux/flutter/CMakeLists.txt": {
+    "mtime": 1765369497.881952,
+    "seen": 1789222618.3321865,
+    "ast_hash": "2195470ce31675d31db5a37590d011f6",
+    "semantic_hash": ""
+  },
+  "naaguru_student/linux/runner/CMakeLists.txt": {
+    "mtime": 1765369497.8977818,
+    "seen": 1789222618.3321877,
+    "ast_hash": "30cc1614b16214b66c014af09ba699eb",
+    "semantic_hash": ""
+  },
+  "naaguru_student/web/index.html": {
+    "mtime": 1788871301.7193215,
+    "seen": 1789222618.3323615,
+    "ast_hash": "7c4e55d5f27c5f35b758fa4f958e5853",
+    "semantic_hash": ""
+  },
+  "naaguru_student/windows/CMakeLists.txt": {
+    "mtime": 1788871301.760149,
+    "seen": 1789222618.3323636,
+    "ast_hash": "74bcb99b357f76d86df7b37c76970002",
+    "semantic_hash": ""
+  },
+  "naaguru_student/windows/flutter/CMakeLists.txt": {
+    "mtime": 1765369498.23219,
+    "seen": 1789222618.3323648,
+    "ast_hash": "bbf66fed5180bd9ae8198b8d7c4a0001",
+    "semantic_hash": ""
+  },
+  "naaguru_student/windows/runner/CMakeLists.txt": {
+    "mtime": 1765369498.23219,
+    "seen": 1789222618.3323658,
+    "ast_hash": "028602ab9754bffe716659ada7590d29",
+    "semantic_hash": ""
+  },
+  "scripts/seed_data/raw_table_text.txt": {
+    "mtime": 1789201412.7293732,
+    "seen": 1789222618.332367,
+    "ast_hash": "b3eee67899598344ee1bdb8b73d32117",
+    "semantic_hash": ""
+  },
+  "ui-designs for mobile app/README.md": {
+    "mtime": 1788884108.846467,
+    "seen": 1789222618.332368,
+    "ast_hash": "11119e8d815f39a2c082a67dc65c418e",
+    "semantic_hash": ""
+  },
+  "ui-designs for mobile app/naaguru_assessment_completion_mobile_portrait_390x844/code.html": {
+    "mtime": 1788863706.0,
+    "seen": 1789222618.3323689,
+    "ast_hash": "2f93117cdca3954d0f9e6de40ce25d88",
+    "semantic_hash": ""
+  },
+  "ui-designs for mobile app/naaguru_assessment_question_bilingual_en/code.html": {
+    "mtime": 1788863706.0,
+    "seen": 1789222618.3323703,
+    "ast_hash": "7c7a1a02d5126725ba7878428ab9480e",
+    "semantic_hash": ""
+  },
+  "ui-designs for mobile app/naaguru_assessment_transition_screen_bilingual_en/code.html": {
+    "mtime": 1788863706.0,
+    "seen": 1789222618.3323715,
+    "ast_hash": "e79f3ac1250f1007988bb883feb9f85e",
+    "semantic_hash": ""
+  },
+  "ui-designs for mobile app/naaguru_college_details_mobile_390x844/code.html": {
+    "mtime": 1788863706.0,
+    "seen": 1789222618.3323724,
+    "ast_hash": "df68818c07c741b55cf00c3d21814d9e",
+    "semantic_hash": ""
+  },
+  "ui-designs for mobile app/naaguru_continue_your_assessment_mobile_390x844/code.html": {
+    "mtime": 1788863706.0,
+    "seen": 1789222618.3323736,
+    "ast_hash": "f704e8f2acd78234a62d1841bfb74c14",
+    "semantic_hash": ""
+  },
+  "ui-designs for mobile app/naaguru_create_your_profile_mobile_390x844/code.html": {
+    "mtime": 1788863706.0,
+    "seen": 1789222618.3323746,
+    "ast_hash": "c32e9e49bd01385f5a5c09c56ac0ccd7",
+    "semantic_hash": ""
+  },
+  "ui-designs for mobile app/naaguru_enquiry_could_not_be_sent_mobile_390x844/code.html": {
+    "mtime": 1788863706.0,
+    "seen": 1789222618.3323755,
+    "ast_hash": "14bf8f48caf9ac97048086fc4dda9e50",
+    "semantic_hash": ""
+  },
+  "ui-designs for mobile app/naaguru_enquiry_sent_mobile_390x844/code.html": {
+    "mtime": 1788863706.0,
+    "seen": 1789222618.3323765,
+    "ast_hash": "7540278a435c5e016347665272299fbe",
+    "semantic_hash": ""
+  },
+  "ui-designs for mobile app/naaguru_enter_your_mobile_number_mobile_390x844/code.html": {
+    "mtime": 1788863706.0,
+    "seen": 1789222618.3323777,
+    "ast_hash": "5d4dbc9f91494bdb4779a3295d7b5469",
+    "semantic_hash": ""
+  },
+  "ui-designs for mobile app/naaguru_explore_colleges_mpc_stream/code.html": {
+    "mtime": 1788863706.0,
+    "seen": 1789222618.3323786,
+    "ast_hash": "2eceaff3d78be6d78e1b95538df0c470",
+    "semantic_hash": ""
+  },
+  "ui-designs for mobile app/naaguru_explore_my_paths_mpc_stream/code.html": {
+    "mtime": 1788863706.0,
+    "seen": 1789222618.3323796,
+    "ast_hash": "7a73acc36f58cae81e99d4b1fd866602",
+    "semantic_hash": ""
+  },
+  "ui-designs for mobile app/naaguru_no_colleges_found_mobile_390x844/code.html": {
+    "mtime": 1788863706.0,
+    "seen": 1789222618.3323808,
+    "ast_hash": "0c365e4c876aa163736cf52140353cdf",
+    "semantic_hash": ""
+  },
+  "ui-designs for mobile app/naaguru_ready_to_explore_bilingual_en/code.html": {
+    "mtime": 1788863706.0,
+    "seen": 1789222618.3323815,
+    "ast_hash": "05600f2c0903c89b3962e99a450c01a5",
+    "semantic_hash": ""
+  },
+  "ui-designs for mobile app/naaguru_revised_assessment_results_mobile_390x844/code.html": {
+    "mtime": 1788863706.0,
+    "seen": 1789222618.3323827,
+    "ast_hash": "e2257ecf4b48dbf5c9ed691069b3843a",
+    "semantic_hash": ""
+  },
+  "ui-designs for mobile app/naaguru_send_enquiry_mobile_390x844/code.html": {
+    "mtime": 1788863706.0,
+    "seen": 1789222618.3323834,
+    "ast_hash": "b169f8b538759d6e71a2e17ae8945909",
+    "semantic_hash": ""
+  },
+  "ui-designs for mobile app/naaguru_student_home_screen/code.html": {
+    "mtime": 1788863706.0,
+    "seen": 1789222618.3323846,
+    "ast_hash": "efcfe2e51289d7cf51cde589fb974997",
+    "semantic_hash": ""
+  },
+  "ui-designs for mobile app/naaguru_verify_your_number_mobile_390x844/code.html": {
+    "mtime": 1788863706.0,
+    "seen": 1789222618.3323855,
+    "ast_hash": "68dd3968ae7d7570d52b68f424e2d4a6",
+    "semantic_hash": ""
+  },
+  "research/Adolescent Career Assessment Design.pdf": {
+    "mtime": 1789181763.408581,
+    "seen": 1789222618.332556,
+    "ast_hash": "334580aca5d12a84240d4d60c906d709",
+    "semantic_hash": ""
+  },
+  "naaguru_student/android/app/src/main/res/mipmap-hdpi/ic_launcher.png": {
+    "mtime": 1765369497.5800054,
+    "seen": 1789222618.3325577,
+    "ast_hash": "13e9c72ec37fac220397aa819fa1ef2d",
+    "semantic_hash": ""
+  },
+  "naaguru_student/android/app/src/main/res/mipmap-mdpi/ic_launcher.png": {
+    "mtime": 1765369497.5958276,
+    "seen": 1789222618.3325586,
+    "ast_hash": "6270344430679711b81476e29878caa7",
+    "semantic_hash": ""
+  },
+  "naaguru_student/android/app/src/main/res/mipmap-xhdpi/ic_launcher.png": {
+    "mtime": 1765369497.5958276,
+    "seen": 1789222618.3325598,
+    "ast_hash": "a0a8db5985280b3679d99a820ae2db79",
+    "semantic_hash": ""
+  },
+  "naaguru_student/android/app/src/main/res/mipmap-xxhdpi/ic_launcher.png": {
+    "mtime": 1765369497.6115892,
+    "seen": 1789222618.3325608,
+    "ast_hash": "afe1b655b9f32da22f9a4301bb8e6ba8",
+    "semantic_hash": ""
+  },
+  "naaguru_student/android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png": {
+    "mtime": 1765369497.627388,
+    "seen": 1789222618.332562,
+    "ast_hash": "57838d52c318faff743130c3fcfae0c6",
+    "semantic_hash": ""
+  },
+  "naaguru_student/assets/branding/app-icon.png": {
+    "mtime": 1788697417.51077,
+    "seen": 1789222618.332563,
+    "ast_hash": "164445600df26a3caf4af9fe6142c4ea",
+    "semantic_hash": ""
+  },
+  "naaguru_student/assets/branding/logo.svg": {
+    "mtime": 1788879736.2532992,
+    "seen": 1789222618.3325639,
+    "ast_hash": "0a2587b64a40f1dad2b827094b36abc6",
+    "semantic_hash": ""
+  },
+  "naaguru_student/assets/illustrations/assessment/question_business.svg": {
+    "mtime": 1788796003.9870336,
+    "seen": 1789222618.332565,
+    "ast_hash": "fdba6892fbe28dd24bc14a51b1f36baa",
+    "semantic_hash": ""
+  },
+  "naaguru_student/assets/illustrations/assessment/question_communication.svg": {
+    "mtime": 1788875968.1075625,
+    "seen": 1789222618.332566,
+    "ast_hash": "73381faf15872b4ed9098726521caa34",
+    "semantic_hash": ""
+  },
+  "naaguru_student/assets/illustrations/assessment/question_creative.svg": {
+    "mtime": 1788875495.2675598,
+    "seen": 1789222618.332567,
+    "ast_hash": "6ef535f93ad2a203271017fb01ab9f26",
+    "semantic_hash": ""
+  },
+  "naaguru_student/assets/illustrations/assessment/question_helping.svg": {
+    "mtime": 1788796239.3142846,
+    "seen": 1789222618.3325682,
+    "ast_hash": "dc8d7513b0ff9c89cc7fdd8c39fdb0e1",
+    "semantic_hash": ""
+  },
+  "naaguru_student/assets/illustrations/assessment/question_nature.svg": {
+    "mtime": 1788875697.335243,
+    "seen": 1789222618.3325691,
+    "ast_hash": "2bb60c79a2e05a190bead3d748a6daf6",
+    "semantic_hash": ""
+  },
+  "naaguru_student/assets/illustrations/assessment/question_problem_solving.svg": {
+    "mtime": 1788876052.3784332,
+    "seen": 1789222618.33257,
+    "ast_hash": "f59bb7c8bb41df9d876d7ac90985fa27",
+    "semantic_hash": ""
+  },
+  "naaguru_student/assets/illustrations/assessment/question_quantitative.svg": {
+    "mtime": 1788794785.9479105,
+    "seen": 1789222618.3325708,
+    "ast_hash": "9d42e6e535bc39324a769bc4c3f41887",
+    "semantic_hash": ""
+  },
+  "naaguru_student/assets/illustrations/assessment/question_science.svg": {
+    "mtime": 1788794525.5825307,
+    "seen": 1789222618.332572,
+    "ast_hash": "960316f976b80398227bf99c06198f56",
+    "semantic_hash": ""
+  },
+  "naaguru_student/assets/illustrations/assessment/question_technical.svg": {
+    "mtime": 1788795625.1065764,
+    "seen": 1789222618.332573,
+    "ast_hash": "8d8d0f16ab212b63fb45602989c7acee",
+    "semantic_hash": ""
+  },
+  "naaguru_student/assets/illustrations/assessment/question_technology.svg": {
+    "mtime": 1788795369.9767456,
+    "seen": 1789222618.332574,
+    "ast_hash": "5c6378fa1ce57e05add2cda175a5167d",
+    "semantic_hash": ""
+  },
+  "naaguru_student/assets/illustrations/home_exploration.svg": {
+    "mtime": 1788793571.8148484,
+    "seen": 1789222618.332575,
+    "ast_hash": "378d861fce80b280e228299cec8926ba",
+    "semantic_hash": ""
+  },
+  "naaguru_student/assets/illustrations/images/Placeholder.svg": {
+    "mtime": 1788877163.3717897,
+    "seen": 1789222618.3325763,
+    "ast_hash": "fcc00c89db80dab02decaf6b7fe98a7e",
+    "semantic_hash": ""
+  },
+  "naaguru_student/assets/illustrations/path_exploration.svg": {
+    "mtime": 1788876936.5711327,
+    "seen": 1789222618.3325772,
+    "ast_hash": "bfee85b304bda60f1289d7a3d5ff244a",
+    "semantic_hash": ""
+  },
+  "naaguru_student/assets/illustrations/profile_student.svg": {
+    "mtime": 1788794120.2085688,
+    "seen": 1789222618.3325784,
+    "ast_hash": "9af59d0cf2a04caa5ebcd310ba9f9eaf",
+    "semantic_hash": ""
+  },
+  "naaguru_student/assets/illustrations/results_discovery.svg": {
+    "mtime": 1788876842.6942558,
+    "seen": 1789222618.3325791,
+    "ast_hash": "53a691296780a22109312d6d30caa06f",
+    "semantic_hash": ""
+  },
+  "naaguru_student/assets/illustrations/states/assessment_resume.svg": {
+    "mtime": 1788877581.7672803,
+    "seen": 1789222618.33258,
+    "ast_hash": "f03726a6865bc8f9f9b1e88596561a21",
+    "semantic_hash": ""
+  },
+  "naaguru_student/assets/illustrations/states/empty_colleges.svg": {
+    "mtime": 1788879181.2786252,
+    "seen": 1789222618.3325813,
+    "ast_hash": "543793127f907071658df998c2a32e09",
+    "semantic_hash": ""
+  },
+  "naaguru_student/assets/illustrations/states/enquiry_error.svg": {
+    "mtime": 1788877940.9992688,
+    "seen": 1789222618.3325825,
+    "ast_hash": "a9633676754b39cfca42570438376a74",
+    "semantic_hash": ""
+  },
+  "naaguru_student/assets/illustrations/states/offline_connection.svg": {
+    "mtime": 1788877754.1172948,
+    "seen": 1789222618.3325837,
+    "ast_hash": "8b17ab0ef4090f8c6e0f43eca21449a7",
+    "semantic_hash": ""
+  },
+  "naaguru_student/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-1024x1024@1x.png": {
+    "mtime": 1767752695.5090275,
+    "seen": 1789222618.3325846,
+    "ast_hash": "c785f8932297af4acd5f5ccb7630f01c",
+    "semantic_hash": ""
+  },
+  "naaguru_student/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-20x20@1x.png": {
+    "mtime": 1767752695.5151174,
+    "seen": 1789222618.3325858,
+    "ast_hash": "a2f8558fb1d42514111fbbb19fb67314",
+    "semantic_hash": ""
+  },
+  "naaguru_student/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-20x20@2x.png": {
+    "mtime": 1767752695.4963357,
+    "seen": 1789222618.3325868,
+    "ast_hash": "2247a840b6ee72b8a069208af170e5b1",
+    "semantic_hash": ""
+  },
+  "naaguru_student/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-20x20@3x.png": {
+    "mtime": 1767752695.5273538,
+    "seen": 1789222618.3325877,
+    "ast_hash": "1b3b1538136316263c7092951e923e9d",
+    "semantic_hash": ""
+  },
+  "naaguru_student/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-29x29@1x.png": {
+    "mtime": 1767752695.551179,
+    "seen": 1789222618.332589,
+    "ast_hash": "be8887071dd7ec39cb754d236aa9584f",
+    "semantic_hash": ""
+  },
+  "naaguru_student/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-29x29@2x.png": {
+    "mtime": 1767752695.470502,
+    "seen": 1789222618.3325899,
+    "ast_hash": "043119ef4faa026ff82bd03f241e5338",
+    "semantic_hash": ""
+  },
+  "naaguru_student/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-29x29@3x.png": {
+    "mtime": 1767752695.5216272,
+    "seen": 1789222618.3325908,
+    "ast_hash": "2b1452c4c1bda6177b4fbbb832df217f",
+    "semantic_hash": ""
+  },
+  "naaguru_student/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-40x40@1x.png": {
+    "mtime": 1767752695.477291,
+    "seen": 1789222618.332592,
+    "ast_hash": "2247a840b6ee72b8a069208af170e5b1",
+    "semantic_hash": ""
+  },
+  "naaguru_student/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-40x40@2x.png": {
+    "mtime": 1767752695.5440624,
+    "seen": 1789222618.3325932,
+    "ast_hash": "8245359312aea1b0d2412f79a07b0ca5",
+    "semantic_hash": ""
+  },
+  "naaguru_student/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-40x40@3x.png": {
+    "mtime": 1767752695.4840274,
+    "seen": 1789222618.3325942,
+    "ast_hash": "5b3c0902200ce596e9848f22e1f0fe0e",
+    "semantic_hash": ""
+  },
+  "naaguru_student/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-60x60@2x.png": {
+    "mtime": 1767752695.502086,
+    "seen": 1789222618.3325949,
+    "ast_hash": "5b3c0902200ce596e9848f22e1f0fe0e",
+    "semantic_hash": ""
+  },
+  "naaguru_student/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-60x60@3x.png": {
+    "mtime": 1767752695.4626446,
+    "seen": 1789222618.3325958,
+    "ast_hash": "e419d22a37bc40ba185aca1acb6d4ac6",
+    "semantic_hash": ""
+  },
+  "naaguru_student/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-76x76@1x.png": {
+    "mtime": 1767752695.4896402,
+    "seen": 1789222618.3325968,
+    "ast_hash": "36c0d7a7132bdde18898ffdfcfcdc4d2",
+    "semantic_hash": ""
+  },
+  "naaguru_student/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-76x76@2x.png": {
+    "mtime": 1767752695.5579696,
+    "seen": 1789222618.3325977,
+    "ast_hash": "643842917530acf4c5159ae851b0baf2",
+    "semantic_hash": ""
+  },
+  "naaguru_student/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-83.5x83.5@2x.png": {
+    "mtime": 1767752695.5385423,
+    "seen": 1789222618.332599,
+    "ast_hash": "665cb5e3c5729da6d639d26eff47a503",
+    "semantic_hash": ""
+  },
+  "naaguru_student/ios/Runner/Assets.xcassets/LaunchImage.imageset/LaunchImage.png": {
+    "mtime": 1767752695.4564736,
+    "seen": 1789222618.3325999,
+    "ast_hash": "978c1bee49d7ad5fc1a4d81099b13e18",
+    "semantic_hash": ""
+  },
+  "naaguru_student/ios/Runner/Assets.xcassets/LaunchImage.imageset/LaunchImage@2x.png": {
+    "mtime": 1767752695.448656,
+    "seen": 1789222618.3326008,
+    "ast_hash": "978c1bee49d7ad5fc1a4d81099b13e18",
+    "semantic_hash": ""
+  },
+  "naaguru_student/ios/Runner/Assets.xcassets/LaunchImage.imageset/LaunchImage@3x.png": {
+    "mtime": 1767752695.4411936,
+    "seen": 1789222618.3326018,
+    "ast_hash": "978c1bee49d7ad5fc1a4d81099b13e18",
+    "semantic_hash": ""
+  },
+  "naaguru_student/macos/Runner/Assets.xcassets/AppIcon.appiconset/app_icon_1024.png": {
+    "mtime": 1767752695.423751,
+    "seen": 1789222618.332603,
+    "ast_hash": "c9becc9105f8cabce934d20c7bfb6aac",
+    "semantic_hash": ""
+  },
+  "naaguru_student/macos/Runner/Assets.xcassets/AppIcon.appiconset/app_icon_128.png": {
+    "mtime": 1767752695.3770764,
+    "seen": 1789222618.3326037,
+    "ast_hash": "3ded30823804caaa5ccc944067c54a36",
+    "semantic_hash": ""
+  },
+  "naaguru_student/macos/Runner/Assets.xcassets/AppIcon.appiconset/app_icon_16.png": {
+    "mtime": 1767752695.3904636,
+    "seen": 1789222618.3326044,
+    "ast_hash": "8bf511604bc6ed0a6aeb380c5113fdcf",
+    "semantic_hash": ""
+  },
+  "naaguru_student/macos/Runner/Assets.xcassets/AppIcon.appiconset/app_icon_256.png": {
+    "mtime": 1767752695.4316292,
+    "seen": 1789222618.3326051,
+    "ast_hash": "dfe2c93d1536ae02f085cc63faa3430e",
+    "semantic_hash": ""
+  },
+  "naaguru_student/macos/Runner/Assets.xcassets/AppIcon.appiconset/app_icon_32.png": {
+    "mtime": 1767752695.396564,
+    "seen": 1789222618.3326063,
+    "ast_hash": "8e0ae58e362a6636bdfccbc04da2c58c",
+    "semantic_hash": ""
+  },
+  "naaguru_student/macos/Runner/Assets.xcassets/AppIcon.appiconset/app_icon_512.png": {
+    "mtime": 1767752695.3828106,
+    "seen": 1789222618.332607,
+    "ast_hash": "0ad44039155424738917502c69667699",
+    "semantic_hash": ""
+  },
+  "naaguru_student/macos/Runner/Assets.xcassets/AppIcon.appiconset/app_icon_64.png": {
+    "mtime": 1767752695.369409,
+    "seen": 1789222618.332608,
+    "ast_hash": "04e7b6ef05346c70b663ca1d97de3ad5",
+    "semantic_hash": ""
+  },
+  "naaguru_student/web/favicon.png": {
+    "mtime": 1765369498.200185,
+    "seen": 1789222618.332609,
+    "ast_hash": "5dcef449791fa27946b3d35ad8803796",
+    "semantic_hash": ""
+  },
+  "naaguru_student/web/icons/Icon-192.png": {
+    "mtime": 1765369498.200185,
+    "seen": 1789222618.3326101,
+    "ast_hash": "ac9a721a12bbc803b44f645561ecb1e1",
+    "semantic_hash": ""
+  },
+  "naaguru_student/web/icons/Icon-512.png": {
+    "mtime": 1765369498.2162995,
+    "seen": 1789222618.332611,
+    "ast_hash": "96e752610906ba2a93c65f8abe1645f1",
+    "semantic_hash": ""
+  },
+  "naaguru_student/web/icons/Icon-maskable-192.png": {
+    "mtime": 1767752695.9404914,
+    "seen": 1789222618.332612,
+    "ast_hash": "c457ef57daa1d16f64b27b786ec2ea3c",
+    "semantic_hash": ""
+  },
+  "naaguru_student/web/icons/Icon-maskable-512.png": {
+    "mtime": 1767752695.9331002,
+    "seen": 1789222618.3326132,
+    "ast_hash": "301a7604d45b3e739efc881eb04896ea",
+    "semantic_hash": ""
+  },
+  "public/file.svg": {
+    "mtime": 1788502499.6736877,
+    "seen": 1789222618.332614,
+    "ast_hash": "d09f95206c3fa0bb9bd9fefabfd0ea71",
+    "semantic_hash": ""
+  },
+  "public/globe.svg": {
+    "mtime": 1788502499.6796846,
+    "seen": 1789222618.332615,
+    "ast_hash": "2aaafa6a49b6563925fe440891e32717",
+    "semantic_hash": ""
+  },
+  "public/next.svg": {
+    "mtime": 1788502499.683962,
+    "seen": 1789222618.3326159,
+    "ast_hash": "8e061864f388b47f33a1c3780831193e",
+    "semantic_hash": ""
+  },
+  "public/vercel.svg": {
+    "mtime": 1788502499.688676,
+    "seen": 1789222618.332617,
+    "ast_hash": "c0af2f507b369b085b35ef4bbe3bcf1e",
+    "semantic_hash": ""
+  },
+  "public/window.svg": {
+    "mtime": 1788502499.6949883,
+    "seen": 1789222618.332618,
+    "ast_hash": "a2760511c65806022ad20adf74370ff3",
+    "semantic_hash": ""
+  },
+  "ui-designs for mobile app/naaguru_assessment_completion_mobile_portrait_390x844/screen.png": {
+    "mtime": 1788863706.0,
+    "seen": 1789222618.332619,
+    "ast_hash": "df8b39e102a745596fbfa55d922ef529",
+    "semantic_hash": ""
+  },
+  "ui-designs for mobile app/naaguru_assessment_question_bilingual_en/screen.png": {
+    "mtime": 1788863706.0,
+    "seen": 1789222618.3326201,
+    "ast_hash": "27cbb4d2c884367fd941b4aaa23bc694",
+    "semantic_hash": ""
+  },
+  "ui-designs for mobile app/naaguru_assessment_transition_screen_bilingual_en/screen.png": {
+    "mtime": 1788863706.0,
+    "seen": 1789222618.3326209,
+    "ast_hash": "eba5bd79b10ec46b79d1cef1ecd2a3da",
+    "semantic_hash": ""
+  },
+  "ui-designs for mobile app/naaguru_college_details_mobile_390x844/screen.png": {
+    "mtime": 1788863706.0,
+    "seen": 1789222618.3326218,
+    "ast_hash": "d10ede973f07b135df43ebd4c5e97c5e",
+    "semantic_hash": ""
+  },
+  "ui-designs for mobile app/naaguru_continue_your_assessment_mobile_390x844/screen.png": {
+    "mtime": 1788863706.0,
+    "seen": 1789222618.332623,
+    "ast_hash": "59c0304b2a4b0fd5c49831715ec39174",
+    "semantic_hash": ""
+  },
+  "ui-designs for mobile app/naaguru_create_your_profile_mobile_390x844/screen.png": {
+    "mtime": 1788863706.0,
+    "seen": 1789222618.332624,
+    "ast_hash": "487e7da1df2023728319e758a3748b32",
+    "semantic_hash": ""
+  },
+  "ui-designs for mobile app/naaguru_enquiry_could_not_be_sent_mobile_390x844/screen.png": {
+    "mtime": 1788863706.0,
+    "seen": 1789222618.332625,
+    "ast_hash": "d2e1de0b2233114c40b1fcce54de5a61",
+    "semantic_hash": ""
+  },
+  "ui-designs for mobile app/naaguru_enquiry_sent_mobile_390x844/screen.png": {
+    "mtime": 1788863706.0,
+    "seen": 1789222618.3326259,
+    "ast_hash": "ae9f3fca76e3c308f74841bdfc82401b",
+    "semantic_hash": ""
+  },
+  "ui-designs for mobile app/naaguru_enter_your_mobile_number_mobile_390x844/screen.png": {
+    "mtime": 1788863706.0,
+    "seen": 1789222618.332627,
+    "ast_hash": "e65a1455c6e82a5591d2d88ee2cd95b4",
+    "semantic_hash": ""
+  },
+  "ui-designs for mobile app/naaguru_explore_colleges_mpc_stream/screen.png": {
+    "mtime": 1788863706.0,
+    "seen": 1789222618.332628,
+    "ast_hash": "b375e0db915124c883549ac398a0bde1",
+    "semantic_hash": ""
+  },
+  "ui-designs for mobile app/naaguru_explore_my_paths_mpc_stream/screen.png": {
+    "mtime": 1788863706.0,
+    "seen": 1789222618.332629,
+    "ast_hash": "33db2452e3c06b224a064229d20cd6a6",
+    "semantic_hash": ""
+  },
+  "ui-designs for mobile app/naaguru_no_colleges_found_mobile_390x844/screen.png": {
+    "mtime": 1788863706.0,
+    "seen": 1789222618.33263,
+    "ast_hash": "c3618bdd79b803979ead30ff6abc2c12",
+    "semantic_hash": ""
+  },
+  "ui-designs for mobile app/naaguru_ready_to_explore_bilingual_en/screen.png": {
+    "mtime": 1788863706.0,
+    "seen": 1789222618.332631,
+    "ast_hash": "a04dbba0c6c3841f335b8b5a4e341085",
+    "semantic_hash": ""
+  },
+  "ui-designs for mobile app/naaguru_revised_assessment_results_mobile_390x844/screen.png": {
+    "mtime": 1788863706.0,
+    "seen": 1789222618.3326323,
+    "ast_hash": "dfb57d6bbb4f870ea4a0b20202a756ea",
+    "semantic_hash": ""
+  },
+  "ui-designs for mobile app/naaguru_send_enquiry_mobile_390x844/screen.png": {
+    "mtime": 1788863706.0,
+    "seen": 1789222618.332633,
+    "ast_hash": "bad9b7617cd50202ee043dee079e7e80",
+    "semantic_hash": ""
+  },
+  "ui-designs for mobile app/naaguru_student_home_screen/screen.png": {
+    "mtime": 1788863706.0,
+    "seen": 1789222618.3326342,
+    "ast_hash": "a08b21bd544e2c0c76d988faf5848c75",
+    "semantic_hash": ""
+  },
+  "ui-designs for mobile app/naaguru_verify_your_number_mobile_390x844/screen.png": {
+    "mtime": 1788863706.0,
+    "seen": 1789222618.3326352,
+    "ast_hash": "f3cdfd08a8fb1d22b4d827b994a95d89",
+    "semantic_hash": ""
   }
 }

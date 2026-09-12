@@ -1,4 +1,3 @@
-import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lottie/lottie.dart';
 
@@ -14,13 +13,8 @@ void main() {
     ];
 
     for (final file in lottieFiles) {
-      print('Testing Lottie: $file');
-      try {
-        final composition = await AssetLottie(file).load();
-        print('Success: $file loaded ${composition.duration}');
-      } catch (e, stack) {
-        print('Error loading $file: $e\n$stack');
-      }
+      final composition = await AssetLottie(file).load();
+      expect(composition.duration.inMilliseconds, greaterThan(0));
     }
   });
 }

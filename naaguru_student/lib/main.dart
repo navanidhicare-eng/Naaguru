@@ -4,8 +4,11 @@ import 'package:naaguru_student/core/theme.dart';
 import 'package:naaguru_student/features/assessment/data/assessment_api_client.dart';
 import 'package:naaguru_student/features/assessment/presentation/assessment_intro_screen.dart';
 import 'package:naaguru_student/features/assessment/presentation/assessment_question_screen.dart';
+import 'package:naaguru_student/features/assessment/presentation/results_screen.dart';
 import 'package:naaguru_student/features/auth/auth_service.dart';
 import 'package:naaguru_student/features/auth/login_screen.dart';
+import 'package:naaguru_student/features/college/data/college_api_client.dart';
+import 'package:naaguru_student/features/college/presentation/college_preferences_screen.dart';
 import 'package:naaguru_student/features/home/home_screen.dart';
 import 'package:naaguru_student/features/student/data/student_api_client.dart';
 import 'package:naaguru_student/features/student/presentation/student_profile_screen.dart';
@@ -18,11 +21,13 @@ void main() {
   final authService = AuthService(apiClient: apiClient);
   final studentApiClient = StudentApiClient(apiClient: apiClient);
   final assessmentApiClient = AssessmentApiClient(apiClient: apiClient);
+  final collegeApiClient = CollegeApiClient(apiClient: apiClient);
 
   runApp(NaaguruStudentApp(
     authService: authService,
     studentApiClient: studentApiClient,
     assessmentApiClient: assessmentApiClient,
+    collegeApiClient: collegeApiClient,
   ));
 }
 
@@ -31,12 +36,14 @@ class NaaguruStudentApp extends StatelessWidget {
   final AuthService authService;
   final StudentApiClient studentApiClient;
   final AssessmentApiClient? assessmentApiClient;
+  final CollegeApiClient? collegeApiClient;
 
   const NaaguruStudentApp({
     super.key,
     required this.authService,
     required this.studentApiClient,
     this.assessmentApiClient,
+    this.collegeApiClient,
   });
 
   @override
@@ -51,17 +58,28 @@ class NaaguruStudentApp extends StatelessWidget {
               authService: authService,
               studentApiClient: studentApiClient,
               assessmentApiClient: assessmentApiClient,
+              collegeApiClient: collegeApiClient,
             ),
         '/home': (_) => HomeScreen(
               authService: authService,
               studentApiClient: studentApiClient,
+              assessmentApiClient: assessmentApiClient,
+              collegeApiClient: collegeApiClient,
             ),
-        '/login': (_) => LoginScreen(authService: authService),
+        '/login': (_) => LoginScreen(
+              authService: authService,
+              studentApiClient: studentApiClient,
+            ),
         '/profile': (_) =>
             StudentProfileScreen(studentApiClient: studentApiClient),
         '/assessment-intro': (_) => const AssessmentIntroScreen(),
         '/assessment-question': (_) =>
             AssessmentQuestionScreen(assessmentApiClient: assessmentApiClient),
+        '/results': (_) =>
+            ResultsScreen(assessmentApiClient: assessmentApiClient),
+        '/college-preferences': (_) => collegeApiClient != null
+            ? CollegePreferencesScreen(collegeApiClient: collegeApiClient!)
+            : const Scaffold(body: Center(child: Text('Service unavailable'))),
       },
     );
   }
@@ -73,12 +91,14 @@ class AuthGate extends StatefulWidget {
   final AuthService authService;
   final StudentApiClient studentApiClient;
   final AssessmentApiClient? assessmentApiClient;
+  final CollegeApiClient? collegeApiClient;
 
   const AuthGate({
     super.key,
     required this.authService,
     required this.studentApiClient,
     this.assessmentApiClient,
+    this.collegeApiClient,
   });
 
   @override
@@ -126,15 +146,80 @@ class _AuthGateState extends State<AuthGate> {
           valueListenable: widget.authService.authStateNotifier,
           builder: (context, isAuthenticated, _) {
             if (isAuthenticated) {
-              return HomeScreen(
+              return _StudentBootstrap(
+                authService: widget.authService,
+                studentApiClient: widget.studentApiClient,
+                assessmentApiClient: widget.assessmentApiClient,
+                collegeApiClient: widget.collegeApiClient,
+              );
+            } else {
+              return LoginScreen(
                 authService: widget.authService,
                 studentApiClient: widget.studentApiClient,
               );
-            } else {
-              return LoginScreen(authService: widget.authService);
             }
           },
         );
+      },
+    );
+  }
+}
+
+/// Lightweight bootstrap component that resolves whether an authenticated student
+/// already has an existing profile, routing cleanly to Home or Profile onboarding.
+class _StudentBootstrap extends StatefulWidget {
+  final AuthService authService;
+  final StudentApiClient studentApiClient;
+  final AssessmentApiClient? assessmentApiClient;
+  final CollegeApiClient? collegeApiClient;
+
+  const _StudentBootstrap({
+    required this.authService,
+    required this.studentApiClient,
+    this.assessmentApiClient,
+    this.collegeApiClient,
+  });
+
+  @override
+  State<_StudentBootstrap> createState() => _StudentBootstrapState();
+}
+
+class _StudentBootstrapState extends State<_StudentBootstrap> {
+  late Future<Map<String, dynamic>?> _profileFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _profileFuture = widget.studentApiClient.getProfile();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<Map<String, dynamic>?>(
+      future: _profileFuture,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Scaffold(
+            backgroundColor: NaaguruTheme.background,
+            body: Center(
+              child: CircularProgressIndicator(color: NaaguruTheme.primary),
+            ),
+          );
+        }
+
+        final profile = snapshot.data;
+        if (profile != null) {
+          return HomeScreen(
+            authService: widget.authService,
+            studentApiClient: widget.studentApiClient,
+            assessmentApiClient: widget.assessmentApiClient,
+            collegeApiClient: widget.collegeApiClient,
+          );
+        } else {
+          return StudentProfileScreen(
+            studentApiClient: widget.studentApiClient,
+          );
+        }
       },
     );
   }

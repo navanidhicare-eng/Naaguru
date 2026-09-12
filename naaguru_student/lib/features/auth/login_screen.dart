@@ -1,16 +1,20 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:flutter/material.dart';
 import 'package:naaguru_student/core/api_client.dart';
 import 'package:naaguru_student/core/theme.dart';
 import 'package:naaguru_student/features/auth/auth_service.dart';
-
+import 'package:naaguru_student/features/student/data/student_api_client.dart';
 import 'package:naaguru_student/core/ui/language_toggle.dart';
 
 class LoginScreen extends StatefulWidget {
   final AuthService authService;
+  final StudentApiClient? studentApiClient;
 
-  const LoginScreen({super.key, required this.authService});
+  const LoginScreen({
+    super.key,
+    required this.authService,
+    this.studentApiClient,
+  });
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
@@ -91,7 +95,20 @@ class _LoginScreenState extends State<LoginScreen> {
     try {
       await widget.authService.verifyOtp(phone, code);
       if (mounted) {
-        Navigator.pushReplacementNamed(context, '/profile');
+        if (widget.studentApiClient != null) {
+          try {
+            final profile = await widget.studentApiClient!.getProfile();
+            if (mounted && profile != null) {
+              Navigator.pushReplacementNamed(context, '/home');
+              return;
+            }
+          } catch (_) {
+            // If checking fails, proceed to profile onboarding
+          }
+        }
+        if (mounted) {
+          Navigator.pushReplacementNamed(context, '/profile');
+        }
       }
     } on ApiException catch (e) {
       setState(() => _errorMessage = e.message);

@@ -4,9 +4,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:naaguru_student/core/api_client.dart';
 import 'package:naaguru_student/features/auth/auth_service.dart';
 import 'package:naaguru_student/features/student/data/student_api_client.dart';
-import 'package:naaguru_student/main.dart';
 import 'package:naaguru_student/features/home/home_screen.dart';
 import 'package:naaguru_student/features/auth/login_screen.dart';
+
 void main() {
   late ApiClient apiClient;
   late AuthService authService;
@@ -25,13 +25,14 @@ void main() {
           studentApiClient: studentApiClient,
         ),
         routes: {
-          '/login': (context) => LoginScreen(authService: authService),
+          '/login': (context) => LoginScreen(authService: authService, studentApiClient: studentApiClient),
         },
       );
 
   Widget buildLoginScreen() => MaterialApp(
         home: LoginScreen(
           authService: authService,
+          studentApiClient: studentApiClient,
         ),
       );
 
@@ -39,53 +40,35 @@ void main() {
     testWidgets('renders Naaguru branding', (tester) async {
       await tester.pumpWidget(buildHomeScreen());
       await tester.pumpAndSettle();
-      expect(find.text('Naaguru'), findsWidgets); // Can be found multiple times
+      expect(find.text('Naaguru'), findsWidgets);
     });
 
-    testWidgets('renders the main headline', (tester) async {
+    testWidgets('renders the two primary discovery pillars', (tester) async {
       await tester.pumpWidget(buildHomeScreen());
       await tester.pumpAndSettle();
-      expect(find.text("Let's find a path that feels right for you."), findsOneWidget);
+      // Pillar 1: Assessment action
+      expect(find.text('Take Assessment →'), findsOneWidget);
+      // Pillar 2: Browse Colleges action
+      expect(find.text('Browse Colleges →'), findsOneWidget);
     });
 
-    testWidgets('renders the supporting text', (tester) async {
+    testWidgets('renders the supporting exploration text', (tester) async {
       await tester.pumpWidget(buildHomeScreen());
       await tester.pumpAndSettle();
       expect(
-        find.text("Ready to explore what's next after Class 10?"),
+        find.text("Discover What Comes After 10th"),
         findsOneWidget,
       );
-    });
-
-    testWidgets('"Start Your Journey" button is visible', (tester) async {
-      await tester.pumpWidget(buildHomeScreen());
-      await tester.pumpAndSettle();
-      expect(find.text('Start Your Journey \u2192'), findsOneWidget);
-    });
-
-    testWidgets('tapping "Start Your Journey" navigates to login screen',
-        (tester) async {
-      await tester.pumpWidget(buildHomeScreen());
-      await tester.pumpAndSettle();
-
-      // Scroll to button if needed
-      await tester.ensureVisible(find.text('Start Your Journey \u2192'));
-      await tester.tap(find.text('Start Your Journey \u2192'));
-      await tester.pumpAndSettle();
-
-      // Should now see the login screen
-      expect(find.text("Let's get you started"), findsOneWidget);
-      expect(find.text('Send OTP'), findsOneWidget);
+      expect(
+        find.text("Browse Verified Colleges"),
+        findsOneWidget,
+      );
     });
   });
 
   group('LoginScreen', () {
     testWidgets('renders phone input and send OTP button', (tester) async {
-      await tester.pumpWidget(buildHomeScreen());
-      await tester.pumpAndSettle();
-
-      await tester.ensureVisible(find.text('Start Your Journey \u2192'));
-      await tester.tap(find.text('Start Your Journey \u2192'));
+      await tester.pumpWidget(buildLoginScreen());
       await tester.pumpAndSettle();
 
       expect(find.byType(TextField), findsOneWidget);
@@ -94,11 +77,7 @@ void main() {
 
     testWidgets('shows error when phone is empty and Send OTP tapped',
         (tester) async {
-      await tester.pumpWidget(buildHomeScreen());
-      await tester.pumpAndSettle();
-
-      await tester.ensureVisible(find.text('Start Your Journey \u2192'));
-      await tester.tap(find.text('Start Your Journey \u2192'));
+      await tester.pumpWidget(buildLoginScreen());
       await tester.pumpAndSettle();
 
       await tester.ensureVisible(find.text('Send OTP'));
@@ -112,7 +91,6 @@ void main() {
 
   group('StudentProfileScreen', () {
     testWidgets('renders profile form fields', (tester) async {
-      // Navigate directly to profile route
       await tester.pumpWidget(MaterialApp(
         home: Builder(builder: (context) {
           return Scaffold(
@@ -128,15 +106,10 @@ void main() {
           );
         }),
       ));
-
-      // The mock profile screen verifies that the widget tree renders
-      // without requiring actual HTTP calls
     });
   });
 }
 
-/// A minimal mock that verifies the profile screen's static structure
-/// without needing a real API connection.
 class _MockProfileScreen extends StatelessWidget {
   const _MockProfileScreen();
 
