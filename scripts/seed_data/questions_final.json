@@ -1,0 +1,322 @@
+[
+  {
+    "pos": 1,
+    "itemId": "CTX-01",
+    "construct": "Context",
+    "englishStem": "When studying for exams in Class 10, which subject area generally felt easiest and most natural for you to understand?",
+    "teluguStem": "10వ తరగతి పరీక్షలకు 10, చదివేట పు్పడు, మీకు ఏ సబె\u0000 క్్ట చాలా సులభంగా మరియు సహజంగా అర్థ మై నటు్ల అనిపించిం ది??",
+    "type": "CONTEXT"
+  },
+  {
+    "pos": 2,
+    "itemId": "CTX-02",
+    "construct": "Context",
+    "englishStem": "What stream or career path do your parents or \u0000\u0000 family elders most hope you will choose after Class 10?",
+    "teluguStem": "10వ తరగతి తరా్వత మీరు ఏ \u0000\u0000 ప్ లేదా కెరీర్ ఎంచుకోవా లని మీ తలి్ల దండు\u0000 లు లేదా 10? పెద్ద లు ఎకు్కవగా కోరుకుంటు నా్నరు?",
+    "type": "CONTEXT"
+  },
+  {
+    "pos": 3,
+    "itemId": "ISI-01",
+    "construct": "ISI",
+    "englishStem": "How much do you enjoy using a microscope or magnifying lens to examine plant leaves, insects, or tiny pond water organisms?",
+    "teluguStem": "మొక్కల ఆకులు, కీటకాలు లేదా నీటిలోని సూక్ష ్మజీవు లను మై కో్ర సో్కప్ లేదా భూతద్ద ం దా్వరా పరిశీలించ డం మీకు ఎంతవరకు ఇష్ట ం?",
+    "type": "SCORED"
+  },
+  {
+    "pos": 4,
+    "itemId": "QCR-02",
+    "construct": "QCR",
+    "englishStem": "When faced with a word problem in math, how much do (equations you enjoy translating it into algebraic equations to find the unknown value?",
+    "teluguStem": "లెక్కలో్ల ఒక సమస్యను సమీకరణా లుగా మారి్చ పరి\u0000్కరం కనుగొన డం మీకు ఎంతవరకు ఆసకి్త కరం గా ఉంటుంది?",
+    "type": "SCORED"
+  },
+  {
+    "pos": 5,
+    "itemId": "TMD-03",
+    "construct": "TMD",
+    "englishStem": "How much do you, enjoy connecting batteries, wires, small bulbs, and switches to build working electrical circuits?",
+    "teluguStem": "బా్యటరీలు, వై రు్ల, చిన్న బలు్బలు మరియు సి్వచ్ లను కలిపి ఎలకి్ట \u0000కల్ సరూ్క్యట్ లను తయారుచే యడం మీకు ఎంతవరకు ఇష్ట ం?",
+    "type": "SCORED"
+  },
+  {
+    "pos": 6,
+    "itemId": "CEE-01",
+    "construct": "CEE",
+    "englishStem": "How much do you enjoy calculating profit, loss, and discounts when buying items in bulk or planning a sale?",
+    "teluguStem": "వసు్త వుల ను కొనుగోలు చేసేటపు్ప డు లేదా విక్ర యించే టపు్పడు లాభం, నష్ట ం మరియు డి\u0000్కంట్ల ను లెకి్కంచ డం మీకు ఎంతవరకు ఇష్ట ం?",
+    "type": "SCORED"
+  },
+  {
+    "pos": 7,
+    "itemId": "SHC-01",
+    "construct": "SHC",
+    "englishStem": "How much do you enjoy patiently explaining a difficult homework topic to a classmate who is struggling to understand it?",
+    "teluguStem": "అర్థ ం చేసుకోవ డానికి ఇబ్బంది పడుతున్న మీ కా్ల స్ మేట్ కి ఒక కష్ట మై న పాఠాని్న ఓపికగా వివరించ డం మీకు ఎంతవరకు ఇష్ట ం?",
+    "type": "SCORED"
+  },
+  {
+    "pos": 8,
+    "itemId": "CEA-01",
+    "construct": "CEA",
+    "englishStem": "How much do you enjoy writing imaginative poems, short stories, or personal diary entries to express your feelings?",
+    "teluguStem": "మీ భావాలను వ్యక్త పరచ డానికి కవితలు, కథలు లేదా \u0000ౖ రీ రాయడం మీకు ఎంతవరకు ఇష్ట మై న పని?",
+    "type": "SCORED"
+  },
+  {
+    "pos": 9,
+    "itemId": "ISI-02",
+    "construct": "ISI",
+    "englishStem": "How much do you enjoy mixing household liquids (like lemon juice, baking soda, and vinegar to observe chemical reactions and color changes?",
+    "teluguStem": "నిమ్మరసం, వంటసోడా లాంటి పదారా్థ ల ను కలిపి రసాయన మారు్పల ను మరియు రంగుల మారు్పల ను గమనించ డం మీకు ఎంతవరకు ఇష్ట ం?",
+    "type": "SCORED"
+  },
+  {
+    "pos": 10,
+    "itemId": "QCR-01",
+    "construct": "QCR",
+    "englishStem": "How much do you enjoy finding (patterns patterns in sequences of numbers or solving sudoku and logic number grids?",
+    "teluguStem": "సంఖ్యల క్ర మంలోని సూతా్ర లను కనుగొన డం లేదా సుడోకు మరియు లాజిక్ పజిల్్స​ ను పరిష్కరిం చడం మీకు ఎంతవరకు ఇష్ట ం?",
+    "type": "SCORED"
+  },
+  {
+    "pos": 11,
+    "itemId": "TMD-02",
+    "construct": "TMD",
+    "englishStem": "How much, do you enjoy drawing scale floor plans or diagrams of how a house, room, or bridge should be constructe d?",
+    "teluguStem": "ఒక ఇలు్ల, గది లేదా వంతెన నిరా్మణానికి సంబంధిం చిన పా్ల న్ లు లేదా డా్ర యింగ్ లు గీయడం మీకు ఎంతవరకు ఇష్ట ం?",
+    "type": "SCORED"
+  },
+  {
+    "pos": 12,
+    "itemId": "CEE-02",
+    "construct": "CEE",
+    "englishStem": "How much do you enjoy learning how local markets determine the daily prices of vegetables, petrol, gold, or grains?",
+    "teluguStem": "కూరగాయ లు, పెటో్ర ల్, బంగారం లేదా ధానా్యల ధరలు మారె్కట్ లో ఎలా నిర్ణ యించ బడతాయో తెలుసుకోవ డం మీకు ఎంత ఆసకి్త గా ఉంటుంది?",
+    "type": "SCORED"
+  },
+  {
+    "pos": 13,
+    "itemId": "SHC-02",
+    "construct": "SHC",
+    "englishStem": "When friends have an argument or disagreeme nt, how much do you enjoy stepping in to help them find a peaceful, fair solution?",
+    "teluguStem": "సే్నహితుల మధ్య గొడవ లేదా అభిపా్ర య భేదాలు వచి్చనపు్ప డు, పరి\u0000్కరం చూపి వారిని కలపడం మీకు ఎంతవరకు ఇష్ట ం?",
+    "type": "SCORED"
+  },
+  {
+    "pos": 14,
+    "itemId": "CEA-02",
+    "construct": "CEA",
+    "englishStem": "How much do you enjoy sketching pencil portraits, landscape drawings, or digital poster illustrations?",
+    "teluguStem": "పెని్సల్ తో ముఖచితా్ర లు, ప్ర కృతి దృశా్యలు గీయడం లేదా పోస్ట రు్ల డిజై న్ చేయడం మీకు ఎంతవరకు? ఇష్ట ం?",
+    "type": "SCORED"
+  },
+  {
+    "pos": 15,
+    "itemId": "ISI-04",
+    "construct": "ISI",
+    "englishStem": "How much do you enjoy tracking why a plant in your garden is drying up by testing different soil types and watering schedules?",
+    "teluguStem": "తోటలోని మొక్క ఎండిపో తుంటే, నేల రకాని్న మరియు నీటి పరిమాణా ని్న మారుసూ్త పరిశీలించ డం మీకు ఎంతవరకు ఇష్ట ం?",
+    "type": "SCORED"
+  },
+  {
+    "pos": 16,
+    "itemId": "QCR-03",
+    "construct": "QCR",
+    "englishStem": "How much do you enjoy writing down step-by-ste p instructions (algorithms so someone else can solve a complex riddle without making mistakes?",
+    "teluguStem": "ఏ\u0000ౖ నా ఒక చికు్క ప్ర శ్నను ఇతరులు సులభంగా పరిష్కరిం చేలా దశలవారీ గా నియమాల ను రూపొందిం చడం మీకు ఎంతవరకు ఇష్ట ం?",
+    "type": "SCORED"
+  },
+  {
+    "pos": 17,
+    "itemId": "TMD-01",
+    "construct": "TMD",
+    "englishStem": "How much do you enjoy taking apart a broken mechanical object (like a bicycle bell, toy, or pen to see how its gears and springs work?",
+    "teluguStem": "పా\u0000ౖ పోయి న \u0000ౖ కిల్ బెల్, బొమ్మ లేదా పెను్న విపి్ప, అందులోని సి్ప\u0000ంగ్ లు మరియు భాగాలు ఎలా పనిచేసు్త నా్నయో చూడటం మీకు ఎంతవరకు ఇష్ట ం?",
+    "type": "SCORED"
+  },
+  {
+    "pos": 18,
+    "itemId": "CEE-04",
+    "construct": "CEE",
+    "englishStem": "How much do you enjoy maintaining a neat, accurate logbook of income, pocket money, and expenses to track your savings?",
+    "teluguStem": "మీ ఖరు్చలు మరియు పొదుపును లెకి్కంచడా నికి పాకెట్ మనీ వివరాలను ఒక పుస్త కంలో క్ర మపద్ధ తి లో నమోదు చేయడం మీకు ఎంతవరకు ఇష్ట ం?",
+    "type": "SCORED"
+  },
+  {
+    "pos": 19,
+    "itemId": "SHC-03",
+    "construct": "SHC",
+    "englishStem": "How much do you enjoy learning about governmen t welfare programs and how citizens can access their legal rights and benefits?",
+    "teluguStem": "ప్ర భుత్వ సం\u0000\u0000మ పథకాలు మరియు ప్ర జలకు లభించే చట్ట పరమై న హకు్కల గురించి తెలుసుకోవ డం మీకు ఎంతవరకు ఆసకి్త కరం?",
+    "type": "SCORED"
+  },
+  {
+    "pos": 20,
+    "itemId": "CEA-03",
+    "construct": "CEA",
+    "englishStem": "How much do you enjoy selecting colors, fonts, and photo layouts to make an invitation card or banner look attractive?",
+    "teluguStem": "శుభలేఖలు లేదా బా్యనరు్ల అందంగా కనిపించే లా రంగులు, అక్షరాలు మరియు ఫోటోలను ఎంపిక చేయడం మీకు ఎంతవరకు ఇష్ట ం?",
+    "type": "SCORED"
+  },
+  {
+    "pos": 21,
+    "itemId": "QCR-04",
+    "construct": "QCR",
+    "englishStem": "How much do you enjoy calculating speed, time, and distance to figure out the fastest travel route between two towns?",
+    "teluguStem": "రెండు ఊర్ల మధ్య త్వరగా చేరుకోవడా నికి వేగం, సమయం మరియు దూరాని్న లెకి్కంచ డం మీకు ఎంతవరకు ఇష్ట ం?",
+    "type": "SCORED"
+  },
+  {
+    "pos": 22,
+    "itemId": "TMD-04",
+    "construct": "TMD",
+    "englishStem": "How much do you enjoy using hand tools (like screwdriver s, pliers, or hammers to repair a loose hinge or fix furniture at home?",
+    "teluguStem": "ఇంటో్ల సూ్క\u0000\u0000ౖ \u0000వ ర్, సుతి్త వంటి పరికరాల ను ఉపయోగిం చి వసు్త వుల ను బాగుచేయ డం మీకు ఎంతవరకు ఇష్ట ం?",
+    "type": "SCORED"
+  },
+  {
+    "pos": 23,
+    "itemId": "CEE-03",
+    "construct": "CEE",
+    "englishStem": "How much do you enjoy planning how to advertise and pitch a new product to convince classmates to buy it for a school fundraiser?",
+    "teluguStem": "పాఠశాల కార్యక్ర మం లో ఏ\u0000ౖ నా వసు్త వును ఇతరులు కొనేలా ఆకటు్ట కునే మాటలతో ప్ర చారం చేయడం మీకు ఎంతవరకు ఇష్ట ం?",
+    "type": "SCORED"
+  },
+  {
+    "pos": 24,
+    "itemId": "SHC-04",
+    "construct": "SHC",
+    "englishStem": "How much do you enjoy volunteerin g your time to help organize health camps, blood donation drives, or neighborho od cleanups?",
+    "teluguStem": "రక్త దాన శిబిరాలు, ఉచిత వై ద్య శిబిరాలు లేదా పరిసరాల పరిశుబ\u0000్ర త కార్యక్ర మా లో్ల వాలంటీర్ గా పా\u0000\u0000 నడం మీకు ఎంతవరకు ఇష్ట ం?",
+    "type": "SCORED"
+  },
+  {
+    "pos": 25,
+    "itemId": "CEA-05",
+    "construct": "CEA",
+    "englishStem": "How much do you enjoy analyzing movies or web series to figure out how camera angles, background music, and storytelling create emotion?",
+    "teluguStem": "సినిమాలో్ల కథ, నేపథ్య సంగీతం మరియు కెమెరా దృశా్యలు పే్ర క్షకులను ఎలా ఆకటు్ట కుం టునా్నయో వి\u0000్ల షించ డం మీకు ఎంతవరకు ఇష్ట ం?",
+    "type": "SCORED"
+  },
+  {
+    "pos": 26,
+    "itemId": "ISI-03",
+    "construct": "ISI",
+    "englishStem": "How much, do you enjoy reading articles or watching videos about how human vaccines, medicines, and the immune system fight infections?",
+    "teluguStem": "వా్యకి్సను్ల, మందులు మరియు శరీర రోగనిరోధక వ్యవస్థ వా్యధులతో ఎలా పోరాడుతా యో తెలుసుకోవ డం మీకు ఎంతవరకు ఆసకి్త కరం?",
+    "type": "SCORED"
+  },
+  {
+    "pos": 27,
+    "itemId": "QCR-05",
+    "construct": "QCR",
+    "englishStem": "How much do you enjoy organizing scattered facts or exam marks into neat data tables, bar charts, and pie graphs?",
+    "teluguStem": "వివరాలు లేదా మారు్కల పటి్ట కలను నిశితంగా పరిశీలించి బార్ చార్్ట లు మరియు గా\u0000 ఫ్ లుగా అమర్చడం మీకు ఎంతవరకు ఇష్ట ం?",
+    "type": "SCORED"
+  },
+  {
+    "pos": 28,
+    "itemId": "TMD-05",
+    "construct": "TMD",
+    "englishStem": "How much do you enjoy reading instruction manuals or diagrams that explain how a new electronic machine works?",
+    "teluguStem": "కొత్త ఎలకా్ట \u0000నిక్ వసు్త వు ఎలా పనిచేసు్త ం దో తెలిపే మాను్యవల్ లేదా రేఖాచితా్ర ల ను చదవడం మీకు ఎంతవరకు ఇష్ట ం?",
+    "type": "SCORED"
+  },
+  {
+    "pos": 29,
+    "itemId": "CEE-05",
+    "construct": "CEE",
+    "englishStem": "How much do you enjoy reading or discussing news stories about new business startups, banks, and economic growth in India?",
+    "teluguStem": "భారతదేశం లో కొత్త వా్యపారా లు (సా్ట ర్ట ప్ లు, బా్యంకులు మరియు ఆరి్థ క అభివృది్ధ కి సంబంధిం చిన వార్త లను తెలుసుకోవ డం మీకు ఎంత ఆసకి్త కరం?",
+    "type": "SCORED"
+  },
+  {
+    "pos": 30,
+    "itemId": "SHC-05",
+    "construct": "SHC",
+    "englishStem": "When someone in your family or circle feels sad, how much do you, enjoy listening to their personal worries and comforting them?",
+    "teluguStem": "కుటుంబం లో లేదా సే్నహితులో్ల ఎవౖరెనా బాధలో ఉన్నపు్పడు, వారి సమస్యల ను విని ఓదార్చడం మీకు ఎంతవరకు సహజంగా అనిపిసు్త ం ది?",
+    "type": "SCORED"
+  },
+  {
+    "pos": 31,
+    "itemId": "CEA-04",
+    "construct": "CEA",
+    "englishStem": "How much do you enjoy performing in school plays, acting out characters, or reciting dramatic dialogues on stage?",
+    "teluguStem": "నాటకాలో్ల నటించడం, విభిన్న పాత్ర లు వేయడం లేదా సే్ట జ్ పై \u0000ౖ లాగులు చెప్పడం మీకు ఎంతవరకు ఇష్ట ం?",
+    "type": "SCORED"
+  },
+  {
+    "pos": 32,
+    "itemId": "ISI-06",
+    "construct": "ISI",
+    "englishStem": "How much do you enjoy dissecting flower petals and seeds to understand their inner reproductiv e parts?",
+    "teluguStem": "పువు్వ భాగాలు మరియు విత్త నాల లోపలి నిరా్మణాని్న తెలుసుకోవ డానికి వాటిని విడదీసి చూడటం మీకు ఎంతవరకు ఆసకి్త కరం?",
+    "type": "SCORED"
+  },
+  {
+    "pos": 33,
+    "itemId": "QCR-06",
+    "construct": "QCR",
+    "englishStem": "How much do you enjoy ​ calculating probability, such as figuring out the exact chances of winning a game with dice or coins?",
+    "teluguStem": "పాచికలు లేదా కాయిన్్స ​ ఆటలో్ల గెలిచే అవకాశాల ను లెకి్కంచ డం మీకు ఎంతవరకు ఆసకి్త గా ఉంటుంది?",
+    "type": "SCORED"
+  },
+  {
+    "pos": 34,
+    "itemId": "TMD-06",
+    "construct": "TMD",
+    "englishStem": "How much do you enjoy building sturdy, three-dime nsional models (like towers, vehicles, or cardboard bridges using basic craft materials?",
+    "teluguStem": "అట్ట పె\u0000్ట లు మరియు సాధారణ వసు్త వుల తో వంతెనలు, భవనాలు లేదా వాహనాల నమూనాల ను నిరి్మంచడం మీకు ఎంతవరకు ఇష్ట ం?",
+    "type": "SCORED"
+  },
+  {
+    "pos": 35,
+    "itemId": "CEE-06",
+    "construct": "CEE",
+    "englishStem": "How much do you enjoy negotiating prices or terms with someone to reach a deal where both sides feel satisfied?",
+    "teluguStem": "ఇరువై పులా నా్యయంగా ఉండేలా చరి్చంచి ఒప్పందం చేసుకోవ డం మీకు ఎంతవరకు ఇష్ట మై న విషయం?",
+    "type": "SCORED"
+  },
+  {
+    "pos": 36,
+    "itemId": "SHC-06",
+    "construct": "SHC",
+    "englishStem": "How much do you enjoy learning how a district court or village panchayat hears evidence to make fair legal judgments?",
+    "teluguStem": "కోరు్ట లు లేదా గా\u0000 మ పంచాయ తీలు సాకా\u0000 ్యలను పరిశీలించి తీరు్పలు ఎలా ఇసా్త యో తెలుసుకోవ డం మీకు ఎంత ఆసకి్త కరం?",
+    "type": "SCORED"
+  },
+  {
+    "pos": 37,
+    "itemId": "CEA-06",
+    "construct": "CEA",
+    "englishStem": "How much do you enjoy practicing musical instruments, humming melodies, or arranging rhythms and beats?",
+    "teluguStem": "సంగీత వాయిదా్య లను వాయించ డం, పాటలు, పాడటం లేదా కొత్త \u0000్యన్ లు సృ\u0000్ట ంచ డం మీకు ఎంతవరకు ఇష్ట ం?",
+    "type": "SCORED"
+  },
+  {
+    "pos": 38,
+    "itemId": "ISI-08",
+    "construct": "ISI",
+    "englishStem": "How much do you enjoy learning the biological reasons behind why animals behave differently during seasonal migrations or weather changes?",
+    "teluguStem": "వాతావరణ మారు్పల పు్పడు జంతువు లు చేసే ప్ర యాణా లు (వలసలు మరియు వాటి ప్ర వర్త నల వెనుక ఉన్న కారణాలను తెలుసుకోవ డం మీకు ఎంత ఆసకి్త కరం?",
+    "type": "SCORED"
+  },
+  {
+    "pos": 39,
+    "itemId": "CTX-03",
+    "construct": "Context",
+    "englishStem": "Thinking about your education (10+2 after Intermediat e (10+2, what is your current long-term educational plan?",
+    "teluguStem": "ఇంటరీ్మడి యట్ (10+2 తరా్వత మీ పై చదువుల (10+2, గురించి మీ ప్ర సు్త త ఆలోచన ఏమిటి?",
+    "type": "CONTEXT"
+  },
+  {
+    "pos": 40,
+    "itemId": "CTX-04",
+    "construct": "Context",
+    "englishStem": "When you imagine yourself working in the future, what type of everyday setting",
+    "teluguStem": "భవిష్యతు్త లో మీరు పని చేసే వాతావర ణం ఎలా ఉండాలని కోరుకుంటు నా్నరు?",
+    "type": "CONTEXT"
+  }
+]

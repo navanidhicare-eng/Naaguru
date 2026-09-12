@@ -24,6 +24,7 @@ class _AssessmentQuestionScreenState extends State<AssessmentQuestionScreen> {
   int _currentIndex = 0;
   List<Map<String, dynamic>> _questions = [];
   final Map<String, String> _userAnswers = {};
+  Map<String, dynamic>? _completedResult;
 
   @override
   void initState() {
@@ -44,6 +45,22 @@ class _AssessmentQuestionScreenState extends State<AssessmentQuestionScreen> {
     }
 
     try {
+      // Check if already completed
+      try {
+        final result = await widget.assessmentApiClient!.getResult();
+        if (result != null && result.isNotEmpty) {
+          if (mounted) {
+            setState(() {
+              _completedResult = result;
+              _isLoading = false;
+            });
+          }
+          return;
+        }
+      } catch (_) {
+        // Proceed normally if no result found
+      }
+
       final activeAssessment =
           await widget.assessmentApiClient!.getActiveAssessment();
       final rawQuestions =
@@ -244,20 +261,45 @@ class _AssessmentQuestionScreenState extends State<AssessmentQuestionScreen> {
       if (widget.assessmentApiClient != null) {
         try {
           await widget.assessmentApiClient!.submitAttempt();
-        } catch (_) {}
+          final result = await widget.assessmentApiClient!.getResult();
+          if (mounted) {
+            setState(() {
+              _completedResult = result;
+            });
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(
+                  _isTelugu
+                      ? "అసెస్‌మెంట్ పూర్తయింది! మీ ఫలితాలు సిద్ధమవుతున్నాయి..."
+                      : "Assessment Complete! Your results are ready.",
+                ),
+              ),
+            );
+          }
+        } catch (e) {
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(
+                  _isTelugu
+                      ? "సమర్పించడంలో విఫలమైంది. దయచేసి మళ్లీ ప్రయత్నించండి."
+                      : "Failed to submit assessment. Please try again.",
+                ),
+              ),
+            );
+          }
+        }
+      } else {
+        // Fallback local completion
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text("Assessment Complete (Local)")),
+          );
+        }
       }
 
-      setState(() => _isSavingAnswer = false);
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              _isTelugu
-                  ? "అసెస్‌మెంట్ పూర్తయింది! మీ ఫలితాలు సిద్ధమవుతున్నాయి..."
-                  : "Assessment Complete! Preparing your results...",
-            ),
-          ),
-        );
+        setState(() => _isSavingAnswer = false);
       }
     }
   }
@@ -281,6 +323,10 @@ class _AssessmentQuestionScreenState extends State<AssessmentQuestionScreen> {
           child: CircularProgressIndicator(color: NaaguruTheme.primary),
         ),
       );
+    }
+
+    if (_completedResult != null) {
+      return _buildResultScreen();
     }
 
     if (_questions.isEmpty) {
@@ -721,5 +767,80 @@ class _AssessmentQuestionScreenState extends State<AssessmentQuestionScreen> {
       default:
         return Icons.sentiment_neutral;
     }
+  }
+
+  Widget _buildResultScreen() {
+    final scores = _completedResult?['dimensionScores'] as Map<String, dynamic>? ?? {};
+
+    return Scaffold(
+      backgroundColor: NaaguruTheme.background,
+      appBar: AppBar(
+        title: Text(_isTelugu ? "మీ ఫలితాలు" : "Your Results", style: const TextStyle(color: NaaguruTheme.primaryDark)),
+        backgroundColor: NaaguruTheme.background,
+        elevation: 0,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.close, color: NaaguruTheme.text),
+            onPressed: () => Navigator.of(context).pop(),
+          )
+        ],
+      ),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const Icon(Icons.check_circle, size: 64, color: NaaguruTheme.primary),
+              const SizedBox(height: 16),
+              Text(
+                _isTelugu ? "అసెస్‌మెంట్ పూర్తయింది" : "Assessment Completed",
+                textAlign: TextAlign.center,
+                style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: NaaguruTheme.text),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                _isTelugu
+                    ? "కింది విభాగాల్లో మీ ఆసక్తుల స్కోర్లు:"
+                    : "Your interest scores across dimensions:",
+                textAlign: TextAlign.center,
+                style: const TextStyle(fontSize: 14, color: NaaguruTheme.muted),
+              ),
+              const SizedBox(height: 32),
+              if (scores.isEmpty)
+                const Text("No scores available", textAlign: TextAlign.center),
+              ...scores.entries.map((e) {
+                final val = double.tryParse(e.value.toString()) ?? 0.0;
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 12),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(e.key, style: const TextStyle(fontWeight: FontWeight.w600)),
+                          Text("${val.toStringAsFixed(1)}/100", style: const TextStyle(color: NaaguruTheme.primaryDark)),
+                        ],
+                      ),
+                      const SizedBox(height: 6),
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(4),
+                        child: LinearProgressIndicator(
+                          value: val / 100.0,
+                          minHeight: 8,
+                          backgroundColor: NaaguruTheme.primaryLight,
+                          valueColor: const AlwaysStoppedAnimation<Color>(NaaguruTheme.primary),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              }),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:lottie/lottie.dart';
+import 'package:flutter/material.dart';
 import 'package:naaguru_student/core/theme.dart';
 import 'package:naaguru_student/core/ui/buttons.dart';
 import 'package:naaguru_student/core/ui/language_toggle.dart';
@@ -146,20 +146,14 @@ class _AssessmentIntroScreenState extends State<AssessmentIntroScreen> {
                       ),
                       padding: const EdgeInsets.all(12),
                       child: Center(
-                        child: Lottie.asset(
-                          'assets/illustrations/assessment/assessment_intro.json',
+                        child: SvgPicture.asset(
+                          'assets/illustrations/home_exploration.svg',
                           fit: BoxFit.contain,
-                          repeat: false,
                           errorBuilder: (context, error, stackTrace) =>
-                              SvgPicture.asset(
-                            'assets/illustrations/home_exploration.svg',
-                            fit: BoxFit.contain,
-                            errorBuilder: (context, error, stackTrace) =>
-                                const Icon(
-                              Icons.explore,
-                              size: 64,
-                              color: NaaguruTheme.primary,
-                            ),
+                              const Icon(
+                            Icons.explore,
+                            size: 64,
+                            color: NaaguruTheme.primary,
                           ),
                         ),
                       ),

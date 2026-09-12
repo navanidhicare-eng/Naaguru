@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import styles from '@/app/college/login/login.module.css';
 
 export default function CollegeAdminLoginForm() {

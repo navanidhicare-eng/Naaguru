@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:lottie/lottie.dart';
+import 'package:flutter/material.dart';
 import 'package:naaguru_student/core/api_client.dart';
 import 'package:naaguru_student/core/theme.dart';
 import 'package:naaguru_student/features/auth/auth_service.dart';
@@ -179,12 +179,8 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(12),
-                    child: Lottie.asset(
-                      '/illustrations/journey_start.json',
-                      fit: BoxFit.cover,
-                      repeat: false,
-                      errorBuilder: (context, error, stackTrace) =>
-                          const Center(child: Icon(Icons.image, size: 48, color: NaaguruTheme.muted)),
+                    child: const Center(
+                      child: Icon(Icons.explore, size: 64, color: NaaguruTheme.primaryDark),
                     ),
                   ),
                 ),
@@ -566,14 +562,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 Center(
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(20),
-                    child: Lottie.asset(
-                      'illustrations/otp-verification.json',
-                      fit: BoxFit.contain,
-                      repeat: false,
-                      animate: true,
-                      errorBuilder: (context, error, stackTrace) =>
-                          const Icon(Icons.image, size: 48, color: NaaguruTheme.muted),
-                    ),
+                    child: const Icon(Icons.phonelink_lock, size: 64, color: NaaguruTheme.primaryDark),
                   ),
                 ),
                 Positioned(

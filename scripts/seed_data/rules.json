@@ -1,0 +1,34 @@
+[
+  {
+    "streamCode": "MPC",
+    "rules": [
+      { "dimensionName": "QCR", "weight": 0.50 },
+      { "dimensionName": "TMD", "weight": 0.35 },
+      { "dimensionName": "ISI", "weight": 0.15 }
+    ]
+  },
+  {
+    "streamCode": "BIPC",
+    "rules": [
+      { "dimensionName": "ISI", "weight": 0.60 },
+      { "dimensionName": "SHC", "weight": 0.25 },
+      { "dimensionName": "QCR", "weight": 0.15 }
+    ]
+  },
+  {
+    "streamCode": "MEC",
+    "rules": [
+      { "dimensionName": "CEE", "weight": 0.45 },
+      { "dimensionName": "QCR", "weight": 0.40 },
+      { "dimensionName": "SHC", "weight": 0.15 }
+    ]
+  },
+  {
+    "streamCode": "CEC",
+    "rules": [
+      { "dimensionName": "CEE", "weight": 0.50 },
+      { "dimensionName": "SHC", "weight": 0.35 },
+      { "dimensionName": "CEA", "weight": 0.15 }
+    ]
+  }
+]

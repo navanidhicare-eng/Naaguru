@@ -11,6 +11,8 @@ import 'package:naaguru_student/features/student/data/student_api_client.dart';
 import 'package:naaguru_student/features/student/presentation/student_profile_screen.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  
   // Create the shared API client and services once at startup.
   final apiClient = ApiClient();
   final authService = AuthService(apiClient: apiClient);

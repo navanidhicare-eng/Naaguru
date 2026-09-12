@@ -99,6 +99,16 @@ class _HomeScreenState extends State<HomeScreen> {
           // Notification Bell
           const Icon(Icons.notifications_none, color: NaaguruTheme.text, size: 24),
           const SizedBox(width: NaaguruTheme.spacing16),
+          // Explicit Logout Button for Testing
+          if (widget.authService?.isAuthenticated ?? false)
+            IconButton(
+              icon: const Icon(Icons.logout, color: NaaguruTheme.error),
+              tooltip: 'Log Out',
+              onPressed: () async {
+                await widget.authService?.logout();
+              },
+            ),
+          const SizedBox(width: NaaguruTheme.spacing8),
           // User Avatar
           GestureDetector(
             onTap: () => _handleAvatarTap(context),

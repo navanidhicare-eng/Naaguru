@@ -599,7 +599,7 @@ export default function CollegeProfilePage() {
                         <div className="flex items-center justify-between border-b border-slate-100 pb-3">
                           <span className="text-xs font-bold text-amber-900 uppercase tracking-wider flex items-center gap-2">
                             <span className="material-symbols-outlined text-[18px] text-amber-600">restaurant</span> 
-                            <span>Today's Mess Menu</span>
+                            <span>Today&apos;s Mess Menu</span>
                           </span>
                           <span className="px-2.5 py-0.5 rounded-full bg-amber-50 text-amber-900 text-[10px] font-bold border border-amber-200/80">
                             FSSAI Certified

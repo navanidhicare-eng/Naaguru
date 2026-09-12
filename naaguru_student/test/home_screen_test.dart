@@ -5,7 +5,8 @@ import 'package:naaguru_student/core/api_client.dart';
 import 'package:naaguru_student/features/auth/auth_service.dart';
 import 'package:naaguru_student/features/student/data/student_api_client.dart';
 import 'package:naaguru_student/main.dart';
-
+import 'package:naaguru_student/features/home/home_screen.dart';
+import 'package:naaguru_student/features/auth/login_screen.dart';
 void main() {
   late ApiClient apiClient;
   late AuthService authService;
@@ -18,26 +19,37 @@ void main() {
     studentApiClient = StudentApiClient(apiClient: apiClient);
   });
 
-  Widget buildApp() => NaaguruStudentApp(
-        authService: authService,
-        studentApiClient: studentApiClient,
+  Widget buildHomeScreen() => MaterialApp(
+        home: HomeScreen(
+          authService: authService,
+          studentApiClient: studentApiClient,
+        ),
+        routes: {
+          '/login': (context) => LoginScreen(authService: authService),
+        },
+      );
+
+  Widget buildLoginScreen() => MaterialApp(
+        home: LoginScreen(
+          authService: authService,
+        ),
       );
 
   group('HomeScreen', () {
     testWidgets('renders Naaguru branding', (tester) async {
-      await tester.pumpWidget(buildApp());
+      await tester.pumpWidget(buildHomeScreen());
       await tester.pumpAndSettle();
       expect(find.text('Naaguru'), findsWidgets); // Can be found multiple times
     });
 
     testWidgets('renders the main headline', (tester) async {
-      await tester.pumpWidget(buildApp());
+      await tester.pumpWidget(buildHomeScreen());
       await tester.pumpAndSettle();
       expect(find.text("Let's find a path that feels right for you."), findsOneWidget);
     });
 
     testWidgets('renders the supporting text', (tester) async {
-      await tester.pumpWidget(buildApp());
+      await tester.pumpWidget(buildHomeScreen());
       await tester.pumpAndSettle();
       expect(
         find.text("Ready to explore what's next after Class 10?"),
@@ -46,14 +58,14 @@ void main() {
     });
 
     testWidgets('"Start Your Journey" button is visible', (tester) async {
-      await tester.pumpWidget(buildApp());
+      await tester.pumpWidget(buildHomeScreen());
       await tester.pumpAndSettle();
       expect(find.text('Start Your Journey \u2192'), findsOneWidget);
     });
 
     testWidgets('tapping "Start Your Journey" navigates to login screen',
         (tester) async {
-      await tester.pumpWidget(buildApp());
+      await tester.pumpWidget(buildHomeScreen());
       await tester.pumpAndSettle();
 
       // Scroll to button if needed
@@ -69,7 +81,7 @@ void main() {
 
   group('LoginScreen', () {
     testWidgets('renders phone input and send OTP button', (tester) async {
-      await tester.pumpWidget(buildApp());
+      await tester.pumpWidget(buildHomeScreen());
       await tester.pumpAndSettle();
 
       await tester.ensureVisible(find.text('Start Your Journey \u2192'));
@@ -82,7 +94,7 @@ void main() {
 
     testWidgets('shows error when phone is empty and Send OTP tapped',
         (tester) async {
-      await tester.pumpWidget(buildApp());
+      await tester.pumpWidget(buildHomeScreen());
       await tester.pumpAndSettle();
 
       await tester.ensureVisible(find.text('Start Your Journey \u2192'));

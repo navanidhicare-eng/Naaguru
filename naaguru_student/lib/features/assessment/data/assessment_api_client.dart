@@ -40,4 +40,9 @@ class AssessmentApiClient {
   Future<Map<String, dynamic>> submitAttempt() async {
     return await _apiClient.post('/assessments/attempts/current/submit');
   }
+
+  /// Fetches the latest completed assessment result for the student.
+  Future<Map<String, dynamic>> getResult() async {
+    return await _apiClient.get('/assessments/results/current');
+  }
 }

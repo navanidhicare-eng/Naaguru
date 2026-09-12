@@ -1,4 +1,6 @@
 import 'dotenv/config';
+import fs from 'fs';
+import path from 'path';
 import { db } from '../src/shared/database/db';
 import { 
   questionsTable, 
@@ -12,6 +14,13 @@ import {
   careerRulesTable 
 } from '../src/modules/career/infrastructure/schema';
 
+// Helper to load JSON
+function loadJson(filename: string) {
+  const filepath = path.join(__dirname, 'seed_data', filename);
+  const content = fs.readFileSync(filepath, 'utf8').replace(/\u0000/g, '');
+  return JSON.parse(content);
+}
+
 async function seed() {
   console.log('Seeding database...');
 
@@ -22,48 +31,67 @@ async function seed() {
 
   console.log(`Created Assessment Version: ${version.id}`);
 
-  // 2. Insert Constructs & Questions (Generating dummy items mapped to constructs based on research spec)
-  // The research specified 6 constructs: ISI, QCR, TMD, CEE, SHC, CEA
-  const constructs = ['ISI', 'QCR', 'TMD', 'CEE', 'SHC', 'CEA'];
-  const questionsData = [];
+  // 2. Insert Constructs & Questions
+  const questionsData = loadJson('questions_final.json');
 
-  let sequence = 1;
-  for (const construct of constructs) {
-    for (let i = 1; i <= 6; i++) {
-      questionsData.push({
-        construct,
-        type: 'SCORED',
-        textEn: `Sample Question ${i} for ${construct}`,
-        textTe: `${construct} కోసం నమూనా ప్రశ్న ${i}`,
-        sequence: sequence++,
-      });
-    }
-  }
+  const scoredOptions = [
+    { value: 1, textEn: 'Strongly Dislike / Not Interested At All', textTe: 'పూర్తిగా ఇష్టం లేదు / ఆసక్తి లేదు' },
+    { value: 2, textEn: 'Dislike / Slightly Uninterested', textTe: 'ఇష్టం లేదు / కొంచెం ఆసక్తి లేదు' },
+    { value: 3, textEn: 'Neutral / Unsure', textTe: 'తటస్థం / కచ్చితంగా తెలియదు' },
+    { value: 4, textEn: 'Like / Interested', textTe: 'ఇష్టం / ఆసక్తి ఉంది' },
+    { value: 5, textEn: 'Strongly Like / Extremely Interested', textTe: 'చాలా ఇష్టం / బాగా ఆసక్తి ఉంది' },
+  ];
 
-  // Insert questions
+  const ctxOptionsMap: Record<string, { value: number, textEn: string, textTe: string }[]> = {
+    'CTX-01': [
+      { value: 1, textEn: 'Mathematics (Algebra, Geometry, Trigonometry)', textTe: 'గణితం' },
+      { value: 2, textEn: 'Physical Science (Physics, Chemistry)', textTe: 'భౌతిక శాస్త్రం' },
+      { value: 3, textEn: 'Biological Science (Plants, Animals)', textTe: 'జీవ శాస్త్రం' },
+      { value: 4, textEn: 'Social Studies (History, Economics, Civics)', textTe: 'సాంఘిక శాస్త్రం' },
+      { value: 5, textEn: 'Languages and Literature', textTe: 'భాషలు' },
+    ],
+    'CTX-02': [
+      { value: 1, textEn: 'Engineering / Technology', textTe: 'ఇంజనీరింగ్ / టెక్నాలజీ' },
+      { value: 2, textEn: 'Medical / Healthcare', textTe: 'వైద్యం / ఆరోగ్యం' },
+      { value: 3, textEn: 'Commerce / Business', textTe: 'కామర్స్ / వ్యాపారం' },
+      { value: 4, textEn: 'Civil Services / Govt', textTe: 'సివిల్ సర్వీసెస్ / ప్రభుత్వ' },
+      { value: 5, textEn: 'Whatever matches my interests', textTe: 'నా ఆసక్తికి తగినట్లు' },
+      { value: 6, textEn: 'We have not discussed this yet', textTe: 'ఇంకా చర్చించలేదు' },
+    ],
+    'CTX-03': [
+      { value: 1, textEn: 'Professional Bachelor’s degree (B.Tech, MBBS, etc.)', textTe: 'బ్యాచిలర్ డిగ్రీ' },
+      { value: 2, textEn: 'Short 2-year or 3-year diploma to start earning', textTe: 'డిప్లొమా' },
+      { value: 3, textEn: 'Advanced postgraduate study (Masters, CA, etc.)', textTe: 'పోస్ట్ గ్రాడ్యుయేట్ డిగ్రీ' },
+      { value: 4, textEn: 'I am still exploring options', textTe: 'ఇంకా ఆలోచిస్తున్నాను' },
+    ],
+    'CTX-04': [
+      { value: 1, textEn: 'Working at an indoor desk using a computer', textTe: 'కంప్యూటర్ తో పని' },
+      { value: 2, textEn: 'Working actively in outdoor fields, nature', textTe: 'బయట పని' },
+      { value: 3, textEn: 'Working in laboratories, hospitals', textTe: 'ల్యాబ్‌లు, ఆసుపత్రులు' },
+      { value: 4, textEn: 'Moving around to interact with people', textTe: 'ప్రజలతో పరస్పర చర్య' },
+    ]
+  };
+
   for (const qData of questionsData) {
     const [insertedQuestion] = await db.insert(questionsTable).values({
       construct: qData.construct,
       type: qData.type,
-      textEn: qData.textEn,
-      textTe: qData.textTe,
+      textEn: qData.englishStem.replace(/\0/g, ''),
+      textTe: qData.teluguStem.replace(/\0/g, ''),
     }).returning();
 
     // Map to version
     await db.insert(assessmentVersionQuestionsTable).values({
       versionId: version.id,
       questionId: insertedQuestion.id,
-      sequence: qData.sequence,
+      sequence: qData.pos,
     });
 
-    // Insert options (1 to 5 scale)
-    const options = [
-      { value: 1, textEn: 'Strongly Disagree', textTe: 'పూర్తిగా ఏకీభవించడం లేదు' },
-      { value: 2, textEn: 'Disagree', textTe: 'ఏకీభవించడం లేదు' },
-      { value: 3, textEn: 'Neutral', textTe: 'తటస్థం' },
-      { value: 4, textEn: 'Agree', textTe: 'ఏకీభవిస్తున్నాను' },
-      { value: 5, textEn: 'Strongly Agree', textTe: 'పూర్తిగా ఏకీభవిస్తున్నాను' },
-    ];
+    // Insert options
+    let options = scoredOptions;
+    if (qData.type === 'CONTEXT' && ctxOptionsMap[qData.itemId]) {
+      options = ctxOptionsMap[qData.itemId];
+    }
 
     for (const opt of options) {
       await db.insert(questionOptionsTable).values({
@@ -106,20 +134,19 @@ async function seed() {
 
   console.log(`Created Career Ruleset: ${ruleset.id}`);
 
-  // 5. Insert Career Rules
-  // Just arbitrary weights for now, awaiting clinical configuration
-  for (const stream of insertedStreams) {
-    for (const construct of constructs) {
-      // Assign weight 1.0 to a few dimensions per stream for illustration
-      const weight = Math.random() > 0.5 ? 1.0 : 0.0;
-      if (weight > 0) {
-        await db.insert(careerRulesTable).values({
-          rulesetId: ruleset.id,
-          streamId: stream.id,
-          dimensionName: construct,
-          weight,
-        });
-      }
+  // 5. Insert Career Rules from rules.json
+  const rulesData = loadJson('rules.json');
+  for (const streamRules of rulesData) {
+    const stream = insertedStreams.find(s => s.code.toUpperCase() === streamRules.streamCode.toUpperCase());
+    if (!stream) continue;
+
+    for (const rule of streamRules.rules) {
+      await db.insert(careerRulesTable).values({
+        rulesetId: ruleset.id,
+        streamId: stream.id,
+        dimensionName: rule.dimensionName,
+        weight: rule.weight,
+      });
     }
   }
 
