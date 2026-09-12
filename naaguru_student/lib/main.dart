@@ -123,10 +123,14 @@ class _AuthGateState extends State<AuthGate> {
         return ValueListenableBuilder<bool>(
           valueListenable: widget.authService.authStateNotifier,
           builder: (context, isAuthenticated, _) {
-            return HomeScreen(
-              authService: widget.authService,
-              studentApiClient: widget.studentApiClient,
-            );
+            if (isAuthenticated) {
+              return HomeScreen(
+                authService: widget.authService,
+                studentApiClient: widget.studentApiClient,
+              );
+            } else {
+              return LoginScreen(authService: widget.authService);
+            }
           },
         );
       },

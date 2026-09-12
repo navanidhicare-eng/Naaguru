@@ -1,17 +1,13 @@
-# Graph Report - Naaguru  (2026-09-12)
+# Graph Report - Naaguru  (2026-09-10)
 
 ## Corpus Check
-- cluster-only mode — file stats not available
+- 272 files · ~408,736 words
+- Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
 - 960 nodes · 1631 edges · 65 communities (45 shown, 11 thin omitted)
 - Extraction: 97% EXTRACTED · 3% INFERRED · 0% AMBIGUOUS · INFERRED: 47 edges (avg confidence: 0.82)
 - Token cost: 0 input · 0 output
-
-## Graph Freshness
-- Built from commit: `4a45f744`
-- Run `git rev-parse HEAD` and compare to check if the graph is stale.
-- Run `graphify update .` after code changes (no API cost).
 
 ## Community Hubs (Navigation)
 - Database Schema and ORM
@@ -84,16 +80,16 @@
 10. `AssessmentModule` - 14 edges
 
 ## Surprising Connections (you probably didn't know these)
-- `Win32Window::Win32Window()` --calls--> `Destroy`  [INFERRED]
-  naaguru_student/windows/runner/win32_window.cpp → naaguru_student/windows/runner/win32_window.h
 - `wWinMain()` --calls--> `CreateAndAttachConsole()`  [INFERRED]
   naaguru_student/windows/runner/main.cpp → naaguru_student/windows/runner/utils.cpp
-- `DrizzleAssessmentRepository` --implements--> `IAssessmentRepository`  [EXTRACTED]
-  src/modules/assessment/infrastructure/DrizzleAssessmentRepository.ts → src/modules/assessment/domain/IAssessmentRepository.ts
-- `StreamProps` --references--> `StreamCode`  [EXTRACTED]
-  src/modules/career/domain/models.ts → src/shared/domain/StreamCode.ts
-- `CollegeStreamOfferingProps` --references--> `StreamCode`  [EXTRACTED]
-  src/modules/college/domain/models.ts → src/shared/domain/StreamCode.ts
+- `Win32Window::Win32Window()` --calls--> `Destroy`  [INFERRED]
+  naaguru_student/windows/runner/win32_window.cpp → naaguru_student/windows/runner/win32_window.h
+- `my_application_activate()` --calls--> `fl_register_plugins()`  [INFERRED]
+  naaguru_student/linux/runner/my_application.cc → naaguru_student/linux/flutter/generated_plugin_registrant.cc
+- `main()` --calls--> `my_application_new()`  [INFERRED]
+  naaguru_student/linux/runner/main.cc → naaguru_student/linux/runner/my_application.cc
+- `OnCreate` --calls--> `RegisterPlugins()`  [INFERRED]
+  naaguru_student/windows/runner/flutter_window.h → naaguru_student/windows/flutter/generated_plugin_registrant.cc
 
 ## Import Cycles
 - None detected.
@@ -281,7 +277,7 @@ Cohesion: 0.40
 Nodes (3): env, envSchema, parsedEnv
 
 ## Knowledge Gaps
-- **335 isolated node(s):** `RouteContext`, `RouteHandler`, `LogContext`, `CollegeStreamOfferingDto`, `CollegeProps` (+330 more)
+- **335 isolated node(s):** `eslintConfig`, `_httpClient`, `_accessToken`, `_refreshToken`, `_refreshFuture` (+330 more)
   These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 500 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
 - **11 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
@@ -294,7 +290,7 @@ _Questions this graph is uniquely positioned to answer:_
   _High betweenness centrality (0.033) - this node is a cross-community bridge._
 - **Why does `zod` connect `Auth API and Validation` to `Database Schema and ORM`, `OTP Authentication Routes`, `Assessment API Endpoints`, `Project Build Configurations`, `Environment Variable Config`, `Student Route Handlers`?**
   _High betweenness centrality (0.022) - this node is a cross-community bridge._
-- **What connects `RouteContext`, `RouteHandler`, `LogContext` to the rest of the system?**
+- **What connects `eslintConfig`, `_httpClient`, `_accessToken` to the rest of the system?**
   _335 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Database Schema and ORM` be split into smaller, more focused modules?**
   _Cohesion score 0.06265984654731457 - nodes in this community are weakly interconnected._

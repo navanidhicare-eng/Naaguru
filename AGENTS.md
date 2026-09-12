@@ -1,4 +1,21 @@
 # Naaguru — AI Agent Rules
+## Graphify Usage
+
+This repository uses Graphify as a codebase knowledge graph.
+
+Before broad repository exploration:
+1. Check graphify-out/ exists.
+2. Use Graphify query/path/explain when investigating architecture or relationships.
+3. Inspect only files relevant to the current task.
+4. Do not create temporary Python investigation scripts inside graphify-out/.
+5. Do not modify graphify-out manually.
+6. Do not rebuild the graph from scratch when --update is sufficient.
+7. Do not explore unrelated modules.
+
+After completing a meaningful implementation task:
+- run tests/build/typecheck
+- update project state
+- refresh Graphify when required
 
 ## Rule 1 — Do not over-engineer
 Prefer the simplest implementation that correctly solves the requirement.
