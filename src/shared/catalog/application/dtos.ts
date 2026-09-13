@@ -28,3 +28,20 @@ export interface ServiceAreaDto {
   displayNameTe: string;
   displayOrder: number;
 }
+
+export interface LocationDto {
+  id: string;
+  parentId: string | null;
+  type: string;
+  nameEn: string;
+  nameTe: string;
+  code: string | null;
+}
+
+export interface SchoolDto {
+  id: string;
+  locationId: string;
+  nameEn: string;
+  nameTe: string;
+  partnershipStatus: string | null;
+}

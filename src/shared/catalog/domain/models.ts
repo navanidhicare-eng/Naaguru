@@ -44,3 +44,36 @@ export class ServiceArea {
   private constructor(public readonly props: ServiceAreaProps) {}
   static create(props: ServiceAreaProps) { return new ServiceArea(props); }
 }
+
+export type LocationType = 'STATE' | 'DISTRICT' | 'MANDAL' | 'LOCALITY';
+
+export interface LocationProps {
+  id: string;
+  parentId: string | null;
+  type: LocationType;
+  nameEn: string;
+  nameTe: string;
+  code: string | null;
+  status: CatalogStatus;
+  latitude: number | null;
+  longitude: number | null;
+}
+
+export class Location {
+  private constructor(public readonly props: LocationProps) {}
+  static create(props: LocationProps) { return new Location(props); }
+}
+
+export interface SchoolProps {
+  id: string;
+  locationId: string;
+  nameEn: string;
+  nameTe: string;
+  partnershipStatus: string | null;
+  status: CatalogStatus;
+}
+
+export class School {
+  private constructor(public readonly props: SchoolProps) {}
+  static create(props: SchoolProps) { return new School(props); }
+}

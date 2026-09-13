@@ -1,5 +1,6 @@
 import { DrizzleCatalogRepository } from '../../infrastructure/DrizzleCatalogRepository';
-import { PathwayDto, ProgramDto, ServiceAreaDto } from '../dtos';
+import { PathwayDto, ProgramDto, ServiceAreaDto, LocationDto, SchoolDto } from '../dtos';
+import { LocationType } from '../../domain/models';
 
 export class CatalogUseCases {
   constructor(private readonly catalogRepository: DrizzleCatalogRepository) {}
@@ -56,7 +57,30 @@ export class CatalogUseCases {
   }
 
   async validateArea(id: string): Promise<boolean> {
-    const area = await this.catalogRepository.getAreaById(id);
+    const area = await this.catalogRepository.getLocationById(id);
     return area !== null && area.props.status === 'ACTIVE';
+  }
+
+  async getStudentVisibleLocations(type?: LocationType, parentId?: string): Promise<LocationDto[]> {
+    const locations = await this.catalogRepository.getActiveLocations(type, parentId);
+    return locations.map(l => ({
+      id: l.props.id,
+      parentId: l.props.parentId,
+      type: l.props.type,
+      nameEn: l.props.nameEn,
+      nameTe: l.props.nameTe,
+      code: l.props.code,
+    }));
+  }
+
+  async getPartnerSchools(locationId?: string): Promise<SchoolDto[]> {
+    const schools = await this.catalogRepository.getActiveSchools(locationId);
+    return schools.map(s => ({
+      id: s.props.id,
+      locationId: s.props.locationId,
+      nameEn: s.props.nameEn,
+      nameTe: s.props.nameTe,
+      partnershipStatus: s.props.partnershipStatus,
+    }));
   }
 }

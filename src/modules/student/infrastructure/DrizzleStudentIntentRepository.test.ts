@@ -23,7 +23,7 @@ describe('DrizzleStudentIntentRepository', () => {
   const baseIntent = {
     pathwayCode: 'INTERMEDIATE',
     programCode: 'MPC',
-    areaId: null,
+    preferredLocationId: null,
     requiresHostel: false,
     hostelGender: null as null,
     maxAnnualFee: null,
