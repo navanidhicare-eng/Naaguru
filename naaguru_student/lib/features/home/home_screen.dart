@@ -133,6 +133,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   CollegeDiscoveryIntroScreen(
                     collegeApiClient: widget.collegeApiClient,
                     isTelugu: _isTelugu,
+                    onLanguageChanged: (val) => setState(() => _isTelugu = val),
                   ),
                   const Center(
                     child: Text(
@@ -640,6 +641,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   MaterialPageRoute(
                     builder: (_) => CollegePreferencesScreen(
                       collegeApiClient: widget.collegeApiClient!,
+                      isTelugu: _isTelugu,
+                      onLanguageChanged: (val) => setState(() => _isTelugu = val),
                     ),
                   ),
                 );

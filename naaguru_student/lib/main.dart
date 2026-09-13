@@ -8,7 +8,6 @@ import 'package:naaguru_student/features/assessment/presentation/results_screen.
 import 'package:naaguru_student/features/auth/auth_service.dart';
 import 'package:naaguru_student/features/auth/login_screen.dart';
 import 'package:naaguru_student/features/college/data/college_api_client.dart';
-import 'package:naaguru_student/features/college/presentation/college_preferences_screen.dart';
 import 'package:naaguru_student/features/home/home_screen.dart';
 import 'package:naaguru_student/features/student/data/student_api_client.dart';
 import 'package:naaguru_student/features/student/presentation/student_profile_screen.dart';
@@ -77,9 +76,6 @@ class NaaguruStudentApp extends StatelessWidget {
             AssessmentQuestionScreen(assessmentApiClient: assessmentApiClient),
         '/results': (_) =>
             ResultsScreen(assessmentApiClient: assessmentApiClient),
-        '/college-preferences': (_) => collegeApiClient != null
-            ? CollegePreferencesScreen(collegeApiClient: collegeApiClient!)
-            : const Scaffold(body: Center(child: Text('Service unavailable'))),
       },
     );
   }

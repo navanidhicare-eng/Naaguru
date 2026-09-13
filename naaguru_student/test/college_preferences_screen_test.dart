@@ -7,6 +7,16 @@ import 'package:naaguru_student/features/college/presentation/college_preference
 class MockApiClient extends ApiClient {
   @override
   Future<Map<String, dynamic>> get(String path) async {
+    if (path.contains('/catalog/pathways')) {
+      return {
+        'data': [
+          {"id":"1","code":"INTERMEDIATE","nameEn":"Intermediate","nameTe":"ఇంటర్మీడియట్","icon":"🎓","status":"ACTIVE","displayOrder":1,"programs":[]},
+          {"id":"2","code":"POLYTECHNIC","nameEn":"Polytechnic","nameTe":"పాలిటెక్నిక్","icon":"🔧","status":"COMING_SOON","displayOrder":2,"programs":[]},
+          {"id":"3","code":"ITI","nameEn":"ITI Trades","nameTe":"ఐటిఐ ట్రేడ్స్","icon":"🛠","status":"COMING_SOON","displayOrder":3,"programs":[]},
+          {"id":"4","code":"DEFENCE","nameEn":"Defence & Service","nameTe":"డిఫెన్స్ & సర్వీస్","icon":"🛡","status":"COMING_SOON","displayOrder":4,"programs":[]}
+        ]
+      };
+    }
     return {'data': []};
   }
 }
@@ -16,43 +26,38 @@ void main() {
     final client = CollegeApiClient(apiClient: MockApiClient());
 
     await tester.pumpWidget(MaterialApp(
-      home: CollegePreferencesScreen(collegeApiClient: client),
+      home: CollegePreferencesScreen(
+        collegeApiClient: client,
+        isTelugu: false,
+        onLanguageChanged: (val) {},
+      ),
     ));
     await tester.pumpAndSettle();
 
-    expect(find.text('Find a College'), findsOneWidget);
+    expect(find.text('What do you want to pursue?'), findsOneWidget);
     expect(find.text('Intermediate'), findsOneWidget);
     expect(find.text('Polytechnic'), findsOneWidget);
-    expect(find.text('Find Colleges →'), findsOneWidget);
+    expect(find.text('Continue →'), findsOneWidget);
 
-    // Tapping Polytechnic reveals Coming Soon note
-    await tester.tap(find.text('Polytechnic'));
-    await tester.pumpAndSettle();
-
-    expect(find.text('Coming Soon to Naaguru'), findsOneWidget);
-    expect(find.text('Switch to Intermediate'), findsOneWidget);
-
-    // Tapping back to Intermediate shows Stream selector
-    await tester.tap(find.text('Switch to Intermediate'));
-    await tester.pumpAndSettle();
-
-    expect(find.text('2. Academic Stream'), findsOneWidget);
-    expect(find.text('MPC (Maths, Physics, Chemistry)'), findsOneWidget);
+    // Coming soon text is visible 3 times (for Poly, ITI, Defence)
+    expect(find.text('Coming soon'), findsNWidgets(3));
   });
 
-  testWidgets('CollegePreferencesScreen toggles language to Telugu', (WidgetTester tester) async {
+  testWidgets('CollegePreferencesScreen renders in Telugu', (WidgetTester tester) async {
     final client = CollegeApiClient(apiClient: MockApiClient());
 
     await tester.pumpWidget(MaterialApp(
-      home: CollegePreferencesScreen(collegeApiClient: client),
+      home: CollegePreferencesScreen(
+        collegeApiClient: client,
+        isTelugu: true,
+        onLanguageChanged: (val) {},
+      ),
     ));
     await tester.pumpAndSettle();
 
-    await tester.tap(find.text('తెలుగు'));
-    await tester.pumpAndSettle();
-
-    expect(find.text('కళాశాల ప్రాధాన్యతలు'), findsOneWidget);
+    expect(find.text('మీరు ఏమి చదవాలనుకుంటున్నారు?'), findsOneWidget);
     expect(find.text('ఇంటర్మీడియట్'), findsOneWidget);
-    expect(find.text('కళాశాలలను కనుగొనండి →'), findsOneWidget);
+    expect(find.text('కొనసాగించండి →'), findsOneWidget);
+    expect(find.text('త్వరలో'), findsNWidgets(3));
   });
 }

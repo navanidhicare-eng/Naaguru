@@ -8,11 +8,13 @@ import 'package:naaguru_student/features/explore/presentation/explore_paths_scre
 class CollegeDiscoveryIntroScreen extends StatelessWidget {
   final CollegeApiClient? collegeApiClient;
   final bool isTelugu;
+  final ValueChanged<bool> onLanguageChanged;
 
   const CollegeDiscoveryIntroScreen({
     super.key,
     this.collegeApiClient,
     required this.isTelugu,
+    required this.onLanguageChanged,
   });
 
   @override
@@ -139,6 +141,8 @@ class CollegeDiscoveryIntroScreen extends StatelessWidget {
                     MaterialPageRoute(
                       builder: (_) => CollegePreferencesScreen(
                         collegeApiClient: collegeApiClient!,
+                        isTelugu: isTelugu,
+                        onLanguageChanged: onLanguageChanged,
                       ),
                     ),
                   );
