@@ -94,6 +94,11 @@ async function seedCatalog() {
     const mandalsData = [
       { parentId: vizagId, type: 'MANDAL' as const, nameEn: 'Anandapuram', nameTe: 'ఆనందపురం', status: 'ACTIVE' as const },
       { parentId: vizagId, type: 'MANDAL' as const, nameEn: 'Gajuwaka', nameTe: 'గాజువాక', status: 'ACTIVE' as const },
+      { parentId: vizagId, type: 'MANDAL' as const, nameEn: 'Bheemunipatnam', nameTe: 'భీమునిపట్నం', status: 'ACTIVE' as const },
+      { parentId: vizagId, type: 'MANDAL' as const, nameEn: 'Pendurthi', nameTe: 'పెందుర్తి', status: 'ACTIVE' as const },
+      { parentId: vizagId, type: 'MANDAL' as const, nameEn: 'Sabbavaram', nameTe: 'సబ్బవరం', status: 'ACTIVE' as const },
+      { parentId: vizagId, type: 'MANDAL' as const, nameEn: 'Anakapalle', nameTe: 'అనకాపల్లి', status: 'ACTIVE' as const },
+      { parentId: vizagId, type: 'MANDAL' as const, nameEn: 'Narsipatnam', nameTe: 'నర్సీపట్నం', status: 'ACTIVE' as const },
     ];
     const mandals = await db.insert(locationsTable).values(mandalsData).onConflictDoUpdate({
       target: [locationsTable.parentId, locationsTable.nameEn],
@@ -101,11 +106,25 @@ async function seedCatalog() {
     }).returning({ id: locationsTable.id, nameEn: locationsTable.nameEn });
 
     const anandapuramId = mandals.find(m => m.nameEn === 'Anandapuram')!.id;
+    const gajuwakaId = mandals.find(m => m.nameEn === 'Gajuwaka')!.id;
+    const bheemunipatnamId = mandals.find(m => m.nameEn === 'Bheemunipatnam')!.id;
 
     // LOCALITIES
     const localitiesData = [
       { parentId: anandapuramId, type: 'LOCALITY' as const, nameEn: 'Demo Locality A', nameTe: 'డెమో లోకాలిటీ ఏ', status: 'ACTIVE' as const },
       { parentId: anandapuramId, type: 'LOCALITY' as const, nameEn: 'Demo Locality B', nameTe: 'డెమో లోకాలిటీ బి', status: 'ACTIVE' as const },
+      { parentId: anandapuramId, type: 'LOCALITY' as const, nameEn: 'Anandapuram Town', nameTe: 'ఆనందపురం టౌన్', status: 'ACTIVE' as const },
+      { parentId: anandapuramId, type: 'LOCALITY' as const, nameEn: 'Gambheeram', nameTe: 'గంభీరం', status: 'ACTIVE' as const },
+      { parentId: anandapuramId, type: 'LOCALITY' as const, nameEn: 'Sontyam', nameTe: 'సొంటియం', status: 'ACTIVE' as const },
+      { parentId: anandapuramId, type: 'LOCALITY' as const, nameEn: 'Vellanki', nameTe: 'వెల్లంకి', status: 'ACTIVE' as const },
+      { parentId: anandapuramId, type: 'LOCALITY' as const, nameEn: 'Bheemali', nameTe: 'భీమాలి', status: 'ACTIVE' as const },
+      
+      { parentId: gajuwakaId, type: 'LOCALITY' as const, nameEn: 'Old Gajuwaka', nameTe: 'పాత గాజువాక', status: 'ACTIVE' as const },
+      { parentId: gajuwakaId, type: 'LOCALITY' as const, nameEn: 'New Gajuwaka', nameTe: 'కొత్త గాజువాక', status: 'ACTIVE' as const },
+      { parentId: gajuwakaId, type: 'LOCALITY' as const, nameEn: 'Sri Nagar', nameTe: 'శ్రీ నగర్', status: 'ACTIVE' as const },
+      
+      { parentId: bheemunipatnamId, type: 'LOCALITY' as const, nameEn: 'Bheemili Town', nameTe: 'భీమిలి టౌన్', status: 'ACTIVE' as const },
+      { parentId: bheemunipatnamId, type: 'LOCALITY' as const, nameEn: 'Thotlakonda', nameTe: 'తొట్లకొండ', status: 'ACTIVE' as const },
     ];
     const localities = await db.insert(locationsTable).values(localitiesData).onConflictDoUpdate({
       target: [locationsTable.parentId, locationsTable.nameEn],

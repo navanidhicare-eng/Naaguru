@@ -4,12 +4,22 @@ import 'package:naaguru_student/core/theme.dart';
 import 'package:naaguru_student/core/ui/buttons.dart';
 import 'package:naaguru_student/core/ui/inputs.dart';
 import 'package:naaguru_student/core/ui/language_toggle.dart';
+import 'package:naaguru_student/features/auth/auth_service.dart';
 import 'package:naaguru_student/features/student/data/student_api_client.dart';
 
 class StudentProfileScreen extends StatefulWidget {
   final StudentApiClient studentApiClient;
 
-  const StudentProfileScreen({super.key, required this.studentApiClient});
+  /// The [AuthService] instance. Required so that successful profile completion
+  /// can call [AuthService.markProfileComplete()] to unblock the [ProfileGate]
+  /// before any navigation occurs.
+  final AuthService authService;
+
+  const StudentProfileScreen({
+    super.key,
+    required this.studentApiClient,
+    required this.authService,
+  });
 
   @override
   State<StudentProfileScreen> createState() => _StudentProfileScreenState();
@@ -24,6 +34,7 @@ class _StudentProfileScreenState extends State<StudentProfileScreen> {
   String? _selectedClass = '10TH_PURSUING';
   String? _selectedBoard = 'AP Board';
   String? _selectedDistrict;
+  String? _selectedGender;
   String? _authPhone;
 
   bool _isTelugu = false;
@@ -63,8 +74,9 @@ class _StudentProfileScreenState extends State<StudentProfileScreen> {
     final guardianNameValid = _guardianNameController.text.trim().isNotEmpty;
     final phoneText = _guardianPhoneController.text.trim();
     final guardianPhoneValid = phoneText.length == 10 && RegExp(r'^\d{10}$').hasMatch(phoneText);
+    final genderValid = _selectedGender != null && _selectedGender!.isNotEmpty;
 
-    return nameValid && classValid && boardValid && districtValid && guardianNameValid && guardianPhoneValid;
+    return nameValid && genderValid && classValid && boardValid && districtValid && guardianNameValid && guardianPhoneValid;
   }
 
   Future<void> _loadProfile() async {
@@ -91,6 +103,11 @@ class _StudentProfileScreenState extends State<StudentProfileScreen> {
           _selectedClass = edStage;
         } else {
           _selectedClass = '10TH_PURSUING';
+        }
+
+        final gender = profile['gender'] as String?;
+        if (gender == 'MALE' || gender == 'FEMALE') {
+          _selectedGender = gender;
         }
 
         final board = profile['board'] as String?;
@@ -132,26 +149,31 @@ class _StudentProfileScreenState extends State<StudentProfileScreen> {
       if (_profileExists) {
         await widget.studentApiClient.updateProfile(
           fullName: _nameController.text.trim(),
+          gender: _selectedGender!,
           educationStage: _selectedClass,
           board: _selectedBoard,
-          district: _selectedDistrict,
+          residenceLocationId: _selectedDistrict,
           guardianName: _guardianNameController.text.trim(),
           guardianPhone: _guardianPhoneController.text.trim(),
         );
       } else {
         await widget.studentApiClient.createProfile(
           fullName: _nameController.text.trim(),
+          gender: _selectedGender!,
           educationStage: _selectedClass ?? '10TH_PURSUING',
           board: _selectedBoard,
-          district: _selectedDistrict,
+          residenceLocationId: _selectedDistrict,
           guardianName: _guardianNameController.text.trim(),
           guardianPhone: _guardianPhoneController.text.trim(),
         );
         _profileExists = true;
       }
 
+      // IMPORTANT: Update gate state BEFORE navigation.
+      // The ProfileGate reacts to profileStateNotifier — if we navigated first,
+      // the gate would immediately redirect back to this screen.
       if (mounted) {
-        Navigator.of(context).pushReplacementNamed('/home');
+        widget.authService.markProfileComplete();
       }
     } on ApiException catch (e) {
       if (mounted) {
@@ -190,20 +212,8 @@ class _StudentProfileScreenState extends State<StudentProfileScreen> {
               ),
               child: Row(
                 children: [
-                  GestureDetector(
-                    onTap: () => Navigator.of(context).pop(),
-                    child: Container(
-                      width: 36,
-                      height: 36,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        shape: BoxShape.circle,
-                        border: Border.all(color: NaaguruTheme.muted.withAlpha(51)),
-                      ),
-                      child: const Icon(Icons.chevron_left, color: NaaguruTheme.text, size: 24),
-                    ),
-                  ),
-                  const SizedBox(width: 12),
+                  // No back button — this screen is mandatory during onboarding.
+                  // Once ProfileGate resolves COMPLETE the user proceeds to Home.
                   Expanded(
                     child: Text(
                       _isTelugu ? "మీ ప్రొఫైల్‌ను రూపొందించండి" : "Create Your Profile",
@@ -271,6 +281,18 @@ class _StudentProfileScreenState extends State<StudentProfileScreen> {
                         hintText: _isTelugu ? "మీ పేరు నమోదు చేయండి" : "Enter your name",
                         onChanged: (_) => setState(() {}),
                         validator: (v) => v == null || v.trim().isEmpty ? (_isTelugu ? "దయచేసి మీ పేరును నమోదు చేయండి." : "Please enter your name.") : null,
+                      ),
+                      const SizedBox(height: 12),
+
+                      NaaguruDropdownField<String>(
+                        label: _isTelugu ? "లింగం *" : "Gender *",
+                        hintText: _isTelugu ? "లింగం ఎంచుకోండి" : "Select gender",
+                        value: _selectedGender,
+                        items: [
+                          DropdownMenuItem(value: 'MALE', child: Text(_isTelugu ? "పురుషుడు" : "Male")),
+                          DropdownMenuItem(value: 'FEMALE', child: Text(_isTelugu ? "స్త్రీ" : "Female")),
+                        ],
+                        onChanged: (val) => setState(() => _selectedGender = val),
                       ),
                       const SizedBox(height: 12),
 

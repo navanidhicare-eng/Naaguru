@@ -93,23 +93,16 @@ class _LoginScreenState extends State<LoginScreen> {
     });
 
     try {
+      // verifyOtp() internally:
+      //   1. exchanges OTP for tokens
+      //   2. fetches the student profile once
+      //   3. resolves profileStateNotifier (INCOMPLETE / COMPLETE / ERROR)
+      //   4. sets authStateNotifier = true
+      //
+      // AuthGate then rebuilds and renders ProfileGate, which routes to
+      // Home or ProfileScreen based on the resolved state.
+      // LoginScreen makes no routing decisions.
       await widget.authService.verifyOtp(phone, code);
-      if (mounted) {
-        if (widget.studentApiClient != null) {
-          try {
-            final profile = await widget.studentApiClient!.getProfile();
-            if (mounted && profile != null) {
-              Navigator.pushReplacementNamed(context, '/home');
-              return;
-            }
-          } catch (_) {
-            // If checking fails, proceed to profile onboarding
-          }
-        }
-        if (mounted) {
-          Navigator.pushReplacementNamed(context, '/profile');
-        }
-      }
     } on ApiException catch (e) {
       setState(() => _errorMessage = e.message);
     } catch (e) {
@@ -118,6 +111,7 @@ class _LoginScreenState extends State<LoginScreen> {
       if (mounted) setState(() => _loading = false);
     }
   }
+
 
   @override
   Widget build(BuildContext context) {

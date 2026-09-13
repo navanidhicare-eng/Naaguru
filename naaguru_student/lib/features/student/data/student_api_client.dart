@@ -30,22 +30,26 @@ class StudentApiClient {
   /// Creates a new student profile.
   Future<Map<String, dynamic>> createProfile({
     required String fullName,
+    required String gender,
     required String educationStage,
     String? board,
-    String? state,
-    String? district,
-    String? city,
+    String? residenceLocationId,
+    String? schoolId,
+    String? pincode,
+    String? landmark,
     String? guardianName,
     String? guardianPhone,
   }) async {
     final body = <String, dynamic>{
       'fullName': fullName,
+      'gender': gender,
       'educationStage': educationStage,
     };
     if (board != null && board.isNotEmpty) body['board'] = board;
-    if (state != null && state.isNotEmpty) body['state'] = state;
-    if (district != null && district.isNotEmpty) body['district'] = district;
-    if (city != null && city.isNotEmpty) body['city'] = city;
+    if (residenceLocationId != null && residenceLocationId.isNotEmpty) body['residenceLocationId'] = residenceLocationId;
+    if (schoolId != null && schoolId.isNotEmpty) body['schoolId'] = schoolId;
+    if (pincode != null && pincode.isNotEmpty) body['pincode'] = pincode;
+    if (landmark != null && landmark.isNotEmpty) body['landmark'] = landmark;
     if (guardianName != null && guardianName.isNotEmpty) {
       body['guardianName'] = guardianName;
     }
@@ -59,21 +63,25 @@ class StudentApiClient {
   /// Updates the current student's profile.
   Future<Map<String, dynamic>> updateProfile({
     String? fullName,
+    String? gender,
     String? educationStage,
     String? board,
-    String? state,
-    String? district,
-    String? city,
+    String? residenceLocationId,
+    String? schoolId,
+    String? pincode,
+    String? landmark,
     String? guardianName,
     String? guardianPhone,
   }) async {
     final body = <String, dynamic>{};
     if (fullName != null) body['fullName'] = fullName;
+    if (gender != null) body['gender'] = gender;
     if (educationStage != null) body['educationStage'] = educationStage;
     if (board != null) body['board'] = board;
-    if (state != null) body['state'] = state;
-    if (district != null) body['district'] = district;
-    if (city != null) body['city'] = city;
+    if (residenceLocationId != null) body['residenceLocationId'] = residenceLocationId;
+    if (schoolId != null) body['schoolId'] = schoolId;
+    if (pincode != null) body['pincode'] = pincode;
+    if (landmark != null) body['landmark'] = landmark;
     if (guardianName != null) body['guardianName'] = guardianName;
     if (guardianPhone != null) body['guardianPhone'] = guardianPhone;
 

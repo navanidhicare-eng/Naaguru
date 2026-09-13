@@ -19,6 +19,7 @@ export class StudentUseCases {
     const student = Student.create({
       userId: dto.userId,
       fullName: dto.fullName,
+      gender: dto.gender,
       educationStage: dto.educationStage,
       board: dto.board,
       residenceLocationId: dto.residenceLocationId,

@@ -1,6 +1,9 @@
+import { StudentGender } from '../domain/Student';
+
 export interface CreateStudentProfileDto {
   userId: string;
   fullName: string;
+  gender: StudentGender;
   educationStage: string;
   board?: string | null;
   residenceLocationId?: string | null;
@@ -13,6 +16,7 @@ export interface CreateStudentProfileDto {
 
 export interface UpdateStudentProfileDto {
   fullName?: string;
+  gender?: StudentGender;
   educationStage?: string;
   board?: string | null;
   residenceLocationId?: string | null;
@@ -26,6 +30,7 @@ export interface UpdateStudentProfileDto {
 export interface StudentProfileDto {
   userId: string;
   fullName: string;
+  gender?: StudentGender | null;
   educationStage: string;
   board?: string | null;
   residenceLocationId?: string | null;

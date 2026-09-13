@@ -16,6 +16,7 @@ export const studentsTable = pgTable('students', {
   longitude: numeric('longitude', { precision: 10, scale: 7 }),
   guardianName: varchar('guardian_name', { length: 255 }),
   guardianPhone: varchar('guardian_phone', { length: 20 }),
+  gender: varchar('gender', { length: 10 }),
   createdAt: timestamp('created_at', { withTimezone: true, mode: 'string' }).defaultNow().notNull(),
   updatedAt: timestamp('updated_at', { withTimezone: true, mode: 'string' }).defaultNow().notNull(),
 });

@@ -1,28 +1,36 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 import 'package:naaguru_student/core/api_client.dart';
 import 'package:naaguru_student/features/assessment/presentation/assessment_intro_screen.dart';
+import 'package:naaguru_student/features/auth/auth_service.dart';
 import 'package:naaguru_student/features/student/data/student_api_client.dart';
 import 'package:naaguru_student/features/student/presentation/student_profile_screen.dart';
 
 void main() {
   late ApiClient apiClient;
   late StudentApiClient studentApiClient;
+  late AuthService authService;
 
   setUp(() {
+    FlutterSecureStorage.setMockInitialValues({});
     final mockHttp = MockClient((request) async {
       return http.Response('', 404);
     });
     apiClient = ApiClient(httpClient: mockHttp);
     studentApiClient = StudentApiClient(apiClient: apiClient);
+    authService = AuthService(apiClient: apiClient, storage: const FlutterSecureStorage());
   });
 
   Widget buildTestWidget() {
     return MaterialApp(
       routes: {
-        '/': (_) => StudentProfileScreen(studentApiClient: studentApiClient),
+        '/': (_) => StudentProfileScreen(
+              studentApiClient: studentApiClient,
+              authService: authService,
+            ),
         '/assessment-intro': (_) => const AssessmentIntroScreen(),
       },
     );
@@ -52,6 +60,14 @@ void main() {
 
     // Fill Student Name (0th field)
     await tester.enterText(textFields.at(0), "Ramu");
+    await tester.pumpAndSettle();
+
+    // Select Gender
+    await tester.ensureVisible(find.text("Select gender"));
+    await tester.tap(find.text("Select gender"), warnIfMissed: false);
+    await tester.pumpAndSettle();
+    await tester.ensureVisible(find.text("Male").last);
+    await tester.tap(find.text("Male").last);
     await tester.pumpAndSettle();
 
     // Select District

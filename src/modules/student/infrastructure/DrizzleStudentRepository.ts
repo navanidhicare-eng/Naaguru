@@ -1,7 +1,7 @@
 import { db } from '@/shared/database/db';
 import { eq } from 'drizzle-orm';
 import { IStudentRepository } from '../domain/IStudentRepository';
-import { Student } from '../domain/Student';
+import { Student, StudentGender } from '../domain/Student';
 import { studentsTable } from './schema';
 
 export class DrizzleStudentRepository implements IStudentRepository {
@@ -15,6 +15,7 @@ export class DrizzleStudentRepository implements IStudentRepository {
     return Student.create({
       userId: record.userId,
       fullName: record.fullName,
+      gender: record.gender as StudentGender | null,
       educationStage: record.educationStage,
       board: record.board,
       residenceLocationId: record.residenceLocationId,
@@ -34,6 +35,7 @@ export class DrizzleStudentRepository implements IStudentRepository {
     await db.insert(studentsTable).values({
       userId: student.userId,
       fullName: student.fullName,
+      gender: student.gender,
       educationStage: student.educationStage,
       board: student.board,
       residenceLocationId: student.residenceLocationId,
@@ -52,6 +54,7 @@ export class DrizzleStudentRepository implements IStudentRepository {
   async update(student: Student): Promise<void> {
     await db.update(studentsTable).set({
       fullName: student.fullName,
+      gender: student.gender,
       educationStage: student.educationStage,
       board: student.board,
       residenceLocationId: student.residenceLocationId,

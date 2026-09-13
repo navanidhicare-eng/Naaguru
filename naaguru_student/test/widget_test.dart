@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:naaguru_student/main.dart';
 import 'package:naaguru_student/core/api_client.dart';
 import 'package:naaguru_student/features/auth/auth_service.dart';
+import 'package:naaguru_student/features/student/data/catalog_api_client.dart';
 import 'package:naaguru_student/features/student/data/student_api_client.dart';
 
 void main() {
@@ -14,6 +15,7 @@ void main() {
     await tester.pumpWidget(NaaguruStudentApp(
       authService: authService,
       studentApiClient: studentApiClient,
+      catalogApiClient: CatalogApiClient(apiClient: apiClient),
     ));
 
     // Verify app launches successfully

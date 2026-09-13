@@ -1,6 +1,14 @@
+export const StudentGender = {
+  MALE: 'MALE',
+  FEMALE: 'FEMALE',
+} as const;
+
+export type StudentGender = (typeof StudentGender)[keyof typeof StudentGender];
+
 export interface StudentProps {
   userId: string;
   fullName: string;
+  gender?: StudentGender | null;
   educationStage: string;
   board?: string | null;
   residenceLocationId?: string | null;
@@ -29,6 +37,7 @@ export class Student {
 
   get userId(): string { return this.props.userId; }
   get fullName(): string { return this.props.fullName; }
+  get gender(): StudentGender | null | undefined { return this.props.gender; }
   get educationStage(): string { return this.props.educationStage; }
   get board(): string | null | undefined { return this.props.board; }
   get residenceLocationId(): string | null | undefined { return this.props.residenceLocationId; }

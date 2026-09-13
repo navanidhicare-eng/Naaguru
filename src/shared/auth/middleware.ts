@@ -21,6 +21,8 @@ type RouteHandler = (
 
 export function withAuth(handler: RouteHandler, allowedRoles?: AuthContext['role'][]) {
   return async (request: Request, context: unknown) => {
+    let authContext: AuthContext;
+
     try {
       let token: string | undefined;
 
@@ -48,13 +50,15 @@ export function withAuth(handler: RouteHandler, allowedRoles?: AuthContext['role
         throw new AppError('Forbidden: Insufficient permissions', 403, 'FORBIDDEN');
       }
 
-      // 5. Proceed to handler with injected context
-      return await handler(request, context, decoded);
+      authContext = decoded;
     } catch (error) {
       if (error instanceof AppError) {
         throw error; // Let withRouteContext catch it
       }
       throw new AppError('Unauthorized: Invalid or expired token', 401, 'UNAUTHORIZED');
     }
+
+    // 5. Proceed to handler with injected context OUTSIDE the auth try-catch
+    return await handler(request, context, authContext);
   };
 }

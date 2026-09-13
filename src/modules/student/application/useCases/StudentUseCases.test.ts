@@ -32,6 +32,7 @@ describe('StudentUseCases', () => {
     const result = await useCases.createMyProfile({
       userId: 'user-123',
       fullName: 'John Doe',
+      gender: 'MALE',
       educationStage: '10TH_PURSUING',
     });
 
@@ -41,18 +42,19 @@ describe('StudentUseCases', () => {
 
   it('prevents creating duplicate profiles', async () => {
     vi.mocked(mockRepo.findByUserId).mockResolvedValue(
-      Student.create({ userId: 'user-123', fullName: 'Existing', educationStage: '10TH_PASSED' })
+      Student.create({ userId: 'user-123', fullName: 'Existing', gender: 'MALE', educationStage: '10TH_PASSED' })
     );
 
     await expect(useCases.createMyProfile({
       userId: 'user-123',
       fullName: 'John Doe',
+      gender: 'MALE',
       educationStage: '10TH_PURSUING',
     })).rejects.toThrow('Profile already exists');
   });
 
   it('updates an existing profile', async () => {
-    const student = Student.create({ userId: 'user-123', fullName: 'Old Name', educationStage: '10TH_PASSED' });
+    const student = Student.create({ userId: 'user-123', fullName: 'Old Name', gender: 'MALE', educationStage: '10TH_PASSED' });
     vi.mocked(mockRepo.findByUserId).mockResolvedValue(student);
 
     const result = await useCases.updateMyProfile('user-123', {
@@ -69,6 +71,7 @@ describe('StudentUseCases', () => {
     await expect(useCases.createMyProfile({
       userId: 'user-123',
       fullName: 'John Doe',
+      gender: 'MALE',
       educationStage: '10TH_PURSUING',
       pincode: 'invalid',
     })).rejects.toThrow('Invalid pincode format');
