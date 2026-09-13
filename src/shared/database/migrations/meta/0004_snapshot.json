@@ -1,6 +1,6 @@
 {
-  "id": "fcd25a7d-e360-4c1f-b9cf-ba54804318f6",
-  "prevId": "d6d832dc-6e7d-4047-b630-10d4f7dfe2e0",
+  "id": "156614c5-59dd-4fd4-aa05-5696bf86f6e6",
+  "prevId": "fcd25a7d-e360-4c1f-b9cf-ba54804318f6",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -60,9 +60,9 @@
             }
           ],
           "isUnique": false,
-          "with": {},
+          "concurrently": false,
           "method": "btree",
-          "concurrently": false
+          "with": {}
         }
       },
       "foreignKeys": {},
@@ -121,24 +121,24 @@
             }
           ],
           "isUnique": false,
-          "with": {},
+          "concurrently": false,
           "method": "btree",
-          "concurrently": false
+          "with": {}
         }
       },
       "foreignKeys": {
         "sessions_user_id_users_id_fk": {
           "name": "sessions_user_id_users_id_fk",
           "tableFrom": "sessions",
+          "tableTo": "users",
           "columnsFrom": [
             "user_id"
           ],
-          "tableTo": "users",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -205,17 +205,17 @@
       "uniqueConstraints": {
         "users_phone_number_unique": {
           "name": "users_phone_number_unique",
+          "nullsNotDistinct": false,
           "columns": [
             "phone_number"
-          ],
-          "nullsNotDistinct": false
+          ]
         },
         "users_email_unique": {
           "name": "users_email_unique",
+          "nullsNotDistinct": false,
           "columns": [
             "email"
-          ],
-          "nullsNotDistinct": false
+          ]
         }
       },
       "policies": {},
@@ -321,9 +321,9 @@
             }
           ],
           "isUnique": true,
-          "with": {},
+          "concurrently": false,
           "method": "btree",
-          "concurrently": false
+          "with": {}
         },
         "idx_student_college_intents_student_active": {
           "name": "idx_student_college_intents_student_active",
@@ -336,38 +336,38 @@
             }
           ],
           "isUnique": true,
-          "with": {},
-          "method": "btree",
           "where": "\"student_college_intents\".\"status\" = 'ACTIVE'",
-          "concurrently": false
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
         }
       },
       "foreignKeys": {
         "student_college_intents_student_id_users_id_fk": {
           "name": "student_college_intents_student_id_users_id_fk",
           "tableFrom": "student_college_intents",
+          "tableTo": "users",
           "columnsFrom": [
             "student_id"
           ],
-          "tableTo": "users",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "restrict"
+          "onDelete": "restrict",
+          "onUpdate": "no action"
         },
         "student_college_intents_preferred_location_id_locations_id_fk": {
           "name": "student_college_intents_preferred_location_id_locations_id_fk",
           "tableFrom": "student_college_intents",
+          "tableTo": "locations",
           "columnsFrom": [
             "preferred_location_id"
           ],
-          "tableTo": "locations",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "restrict"
+          "onDelete": "restrict",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -452,6 +452,12 @@
           "primaryKey": false,
           "notNull": false
         },
+        "gender": {
+          "name": "gender",
+          "type": "varchar(10)",
+          "primaryKey": false,
+          "notNull": false
+        },
         "created_at": {
           "name": "created_at",
           "type": "timestamp with time zone",
@@ -465,12 +471,6 @@
           "primaryKey": false,
           "notNull": true,
           "default": "now()"
-        },
-        "gender": {
-          "name": "gender",
-          "type": "varchar(10)",
-          "primaryKey": false,
-          "notNull": false
         }
       },
       "indexes": {},
@@ -478,41 +478,41 @@
         "students_user_id_users_id_fk": {
           "name": "students_user_id_users_id_fk",
           "tableFrom": "students",
+          "tableTo": "users",
           "columnsFrom": [
             "user_id"
           ],
-          "tableTo": "users",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "restrict"
+          "onDelete": "restrict",
+          "onUpdate": "no action"
         },
         "students_residence_location_id_locations_id_fk": {
           "name": "students_residence_location_id_locations_id_fk",
           "tableFrom": "students",
+          "tableTo": "locations",
           "columnsFrom": [
             "residence_location_id"
           ],
-          "tableTo": "locations",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "restrict"
+          "onDelete": "restrict",
+          "onUpdate": "no action"
         },
         "students_school_id_schools_id_fk": {
           "name": "students_school_id_schools_id_fk",
           "tableFrom": "students",
+          "tableTo": "schools",
           "columnsFrom": [
             "school_id"
           ],
-          "tableTo": "schools",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "restrict"
+          "onDelete": "restrict",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -577,38 +577,38 @@
             }
           ],
           "isUnique": true,
-          "with": {},
-          "method": "btree",
           "where": "\"assessment_attempts\".\"state\" = 'IN_PROGRESS'",
-          "concurrently": false
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
         }
       },
       "foreignKeys": {
         "assessment_attempts_version_id_assessment_versions_id_fk": {
           "name": "assessment_attempts_version_id_assessment_versions_id_fk",
           "tableFrom": "assessment_attempts",
+          "tableTo": "assessment_versions",
           "columnsFrom": [
             "version_id"
           ],
-          "tableTo": "assessment_versions",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "restrict"
+          "onDelete": "restrict",
+          "onUpdate": "no action"
         },
         "assessment_attempts_student_id_users_id_fk": {
           "name": "assessment_attempts_student_id_users_id_fk",
           "tableFrom": "assessment_attempts",
+          "tableTo": "users",
           "columnsFrom": [
             "student_id"
           ],
-          "tableTo": "users",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "restrict"
+          "onDelete": "restrict",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -670,28 +670,28 @@
         "assessment_results_attempt_id_assessment_attempts_id_fk": {
           "name": "assessment_results_attempt_id_assessment_attempts_id_fk",
           "tableFrom": "assessment_results",
+          "tableTo": "assessment_attempts",
           "columnsFrom": [
             "attempt_id"
           ],
-          "tableTo": "assessment_attempts",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         },
         "assessment_results_version_id_assessment_versions_id_fk": {
           "name": "assessment_results_version_id_assessment_versions_id_fk",
           "tableFrom": "assessment_results",
+          "tableTo": "assessment_versions",
           "columnsFrom": [
             "version_id"
           ],
-          "tableTo": "assessment_versions",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "restrict"
+          "onDelete": "restrict",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -728,28 +728,28 @@
         "assessment_version_questions_version_id_assessment_versions_id_fk": {
           "name": "assessment_version_questions_version_id_assessment_versions_id_fk",
           "tableFrom": "assessment_version_questions",
+          "tableTo": "assessment_versions",
           "columnsFrom": [
             "version_id"
           ],
-          "tableTo": "assessment_versions",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         },
         "assessment_version_questions_question_id_questions_id_fk": {
           "name": "assessment_version_questions_question_id_questions_id_fk",
           "tableFrom": "assessment_version_questions",
+          "tableTo": "questions",
           "columnsFrom": [
             "question_id"
           ],
-          "tableTo": "questions",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {
@@ -828,41 +828,41 @@
         "attempt_answers_attempt_id_assessment_attempts_id_fk": {
           "name": "attempt_answers_attempt_id_assessment_attempts_id_fk",
           "tableFrom": "attempt_answers",
+          "tableTo": "assessment_attempts",
           "columnsFrom": [
             "attempt_id"
           ],
-          "tableTo": "assessment_attempts",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         },
         "attempt_answers_question_id_questions_id_fk": {
           "name": "attempt_answers_question_id_questions_id_fk",
           "tableFrom": "attempt_answers",
+          "tableTo": "questions",
           "columnsFrom": [
             "question_id"
           ],
-          "tableTo": "questions",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         },
         "attempt_answers_selected_option_id_question_options_id_fk": {
           "name": "attempt_answers_selected_option_id_question_options_id_fk",
           "tableFrom": "attempt_answers",
+          "tableTo": "question_options",
           "columnsFrom": [
             "selected_option_id"
           ],
-          "tableTo": "question_options",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "restrict"
+          "onDelete": "restrict",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {
@@ -920,15 +920,15 @@
         "question_options_question_id_questions_id_fk": {
           "name": "question_options_question_id_questions_id_fk",
           "tableFrom": "question_options",
+          "tableTo": "questions",
           "columnsFrom": [
             "question_id"
           ],
-          "tableTo": "questions",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -1031,28 +1031,28 @@
         "career_rules_ruleset_id_career_rulesets_id_fk": {
           "name": "career_rules_ruleset_id_career_rulesets_id_fk",
           "tableFrom": "career_rules",
+          "tableTo": "career_rulesets",
           "columnsFrom": [
             "ruleset_id"
           ],
-          "tableTo": "career_rulesets",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         },
         "career_rules_stream_id_streams_id_fk": {
           "name": "career_rules_stream_id_streams_id_fk",
           "tableFrom": "career_rules",
+          "tableTo": "streams",
           "columnsFrom": [
             "stream_id"
           ],
-          "tableTo": "streams",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -1156,51 +1156,51 @@
         "recommendations_student_id_users_id_fk": {
           "name": "recommendations_student_id_users_id_fk",
           "tableFrom": "recommendations",
+          "tableTo": "users",
           "columnsFrom": [
             "student_id"
           ],
-          "tableTo": "users",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         },
         "recommendations_attempt_id_assessment_attempts_id_fk": {
           "name": "recommendations_attempt_id_assessment_attempts_id_fk",
           "tableFrom": "recommendations",
+          "tableTo": "assessment_attempts",
           "columnsFrom": [
             "attempt_id"
           ],
-          "tableTo": "assessment_attempts",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "restrict"
+          "onDelete": "restrict",
+          "onUpdate": "no action"
         },
         "recommendations_ruleset_id_career_rulesets_id_fk": {
           "name": "recommendations_ruleset_id_career_rulesets_id_fk",
           "tableFrom": "recommendations",
+          "tableTo": "career_rulesets",
           "columnsFrom": [
             "ruleset_id"
           ],
-          "tableTo": "career_rulesets",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "restrict"
+          "onDelete": "restrict",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
         "recommendations_attempt_id_unique": {
           "name": "recommendations_attempt_id_unique",
+          "nullsNotDistinct": false,
           "columns": [
             "attempt_id"
-          ],
-          "nullsNotDistinct": false
+          ]
         }
       },
       "policies": {},
@@ -1243,10 +1243,10 @@
       "uniqueConstraints": {
         "streams_code_unique": {
           "name": "streams_code_unique",
+          "nullsNotDistinct": false,
           "columns": [
             "code"
-          ],
-          "nullsNotDistinct": false
+          ]
         }
       },
       "policies": {},
@@ -1301,9 +1301,9 @@
             }
           ],
           "isUnique": true,
-          "with": {},
+          "concurrently": false,
           "method": "btree",
-          "concurrently": false
+          "with": {}
         },
         "idx_stream_code": {
           "name": "idx_stream_code",
@@ -1316,24 +1316,24 @@
             }
           ],
           "isUnique": false,
-          "with": {},
+          "concurrently": false,
           "method": "btree",
-          "concurrently": false
+          "with": {}
         }
       },
       "foreignKeys": {
         "college_stream_offerings_college_id_colleges_id_fk": {
           "name": "college_stream_offerings_college_id_colleges_id_fk",
           "tableFrom": "college_stream_offerings",
+          "tableTo": "colleges",
           "columnsFrom": [
             "college_id"
           ],
-          "tableTo": "colleges",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -1509,9 +1509,9 @@
             }
           ],
           "isUnique": false,
-          "with": {},
+          "concurrently": false,
           "method": "btree",
-          "concurrently": false
+          "with": {}
         },
         "idx_colleges_visibility": {
           "name": "idx_colleges_visibility",
@@ -1530,9 +1530,9 @@
             }
           ],
           "isUnique": false,
-          "with": {},
+          "concurrently": false,
           "method": "btree",
-          "concurrently": false
+          "with": {}
         }
       },
       "foreignKeys": {},
@@ -1565,6 +1565,147 @@
           "value": "\"colleges\".\"ownership_type\" IN ('PRIVATE', 'GOVERNMENT')"
         }
       },
+      "isRLSEnabled": false
+    },
+    "public.staff_memberships": {
+      "name": "staff_memberships",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "college_id": {
+          "name": "college_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "role": {
+          "name": "role",
+          "type": "staff_role",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'COLLEGE_ADMIN'"
+        },
+        "status": {
+          "name": "status",
+          "type": "staff_status",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'ACTIVE'"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "idx_staff_memberships_user_college": {
+          "name": "idx_staff_memberships_user_college",
+          "columns": [
+            {
+              "expression": "user_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "college_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "idx_staff_memberships_user_id": {
+          "name": "idx_staff_memberships_user_id",
+          "columns": [
+            {
+              "expression": "user_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "idx_staff_memberships_college_id": {
+          "name": "idx_staff_memberships_college_id",
+          "columns": [
+            {
+              "expression": "college_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "staff_memberships_user_id_users_id_fk": {
+          "name": "staff_memberships_user_id_users_id_fk",
+          "tableFrom": "staff_memberships",
+          "tableTo": "users",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "staff_memberships_college_id_colleges_id_fk": {
+          "name": "staff_memberships_college_id_colleges_id_fk",
+          "tableFrom": "staff_memberships",
+          "tableTo": "colleges",
+          "columnsFrom": [
+            "college_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "restrict",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
       "isRLSEnabled": false
     },
     "public.education_pathways": {
@@ -1638,10 +1779,10 @@
       "uniqueConstraints": {
         "education_pathways_code_unique": {
           "name": "education_pathways_code_unique",
+          "nullsNotDistinct": false,
           "columns": [
             "code"
-          ],
-          "nullsNotDistinct": false
+          ]
         }
       },
       "policies": {},
@@ -1731,24 +1872,24 @@
             }
           ],
           "isUnique": true,
-          "with": {},
+          "concurrently": false,
           "method": "btree",
-          "concurrently": false
+          "with": {}
         }
       },
       "foreignKeys": {
         "education_programs_pathway_id_education_pathways_id_fk": {
           "name": "education_programs_pathway_id_education_pathways_id_fk",
           "tableFrom": "education_programs",
+          "tableTo": "education_pathways",
           "columnsFrom": [
             "pathway_id"
           ],
-          "tableTo": "education_pathways",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -1852,9 +1993,9 @@
             }
           ],
           "isUnique": true,
-          "with": {},
+          "concurrently": false,
           "method": "btree",
-          "concurrently": false
+          "with": {}
         },
         "idx_locations_parent_name_te": {
           "name": "idx_locations_parent_name_te",
@@ -1873,24 +2014,24 @@
             }
           ],
           "isUnique": true,
-          "with": {},
+          "concurrently": false,
           "method": "btree",
-          "concurrently": false
+          "with": {}
         }
       },
       "foreignKeys": {
         "locations_parent_id_locations_id_fk": {
           "name": "locations_parent_id_locations_id_fk",
           "tableFrom": "locations",
+          "tableTo": "locations",
           "columnsFrom": [
             "parent_id"
           ],
-          "tableTo": "locations",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "restrict"
+          "onDelete": "restrict",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -1975,24 +2116,24 @@
             }
           ],
           "isUnique": true,
-          "with": {},
+          "concurrently": false,
           "method": "btree",
-          "concurrently": false
+          "with": {}
         }
       },
       "foreignKeys": {
         "schools_location_id_locations_id_fk": {
           "name": "schools_location_id_locations_id_fk",
           "tableFrom": "schools",
+          "tableTo": "locations",
           "columnsFrom": [
             "location_id"
           ],
-          "tableTo": "locations",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "restrict"
+          "onDelete": "restrict",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -2084,9 +2225,9 @@
             }
           ],
           "isUnique": true,
-          "with": {},
+          "concurrently": false,
           "method": "btree",
-          "concurrently": false
+          "with": {}
         }
       },
       "foreignKeys": {},
@@ -2105,6 +2246,23 @@
         "STUDENT",
         "COLLEGE",
         "ADMIN"
+      ]
+    },
+    "public.staff_role": {
+      "name": "staff_role",
+      "schema": "public",
+      "values": [
+        "COLLEGE_ADMIN",
+        "COLLEGE_STAFF"
+      ]
+    },
+    "public.staff_status": {
+      "name": "staff_status",
+      "schema": "public",
+      "values": [
+        "ACTIVE",
+        "INACTIVE",
+        "SUSPENDED"
       ]
     },
     "public.catalog_status": {
@@ -2128,10 +2286,10 @@
     }
   },
   "schemas": {},
-  "views": {},
   "sequences": {},
   "roles": {},
   "policies": {},
+  "views": {},
   "_meta": {
     "columns": {},
     "schemas": {},

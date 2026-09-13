@@ -13,6 +13,13 @@ export interface AuthContext {
   role: 'STUDENT' | 'COLLEGE' | 'ADMIN';
 }
 
+export interface StaffAuthContext {
+  userId: string;
+  staffMembershipId: string;
+  collegeId: string;
+  role: 'COLLEGE_ADMIN' | 'COLLEGE_STAFF';
+}
+
 type RouteHandler = (
   request: Request,
   context: unknown,

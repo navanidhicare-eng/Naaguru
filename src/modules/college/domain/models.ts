@@ -88,3 +88,40 @@ export class College {
     return this.status === 'ACTIVE' && this.verificationStatus === 'VERIFIED';
   }
 }
+
+export type StaffRole = 'COLLEGE_ADMIN' | 'COLLEGE_STAFF';
+export type StaffStatus = 'ACTIVE' | 'INACTIVE' | 'SUSPENDED';
+
+export interface StaffMembershipProps {
+  id: string;
+  userId: string;
+  collegeId: string;
+  role: StaffRole;
+  status: StaffStatus;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export class StaffMembership {
+  private constructor(public readonly props: StaffMembershipProps) {}
+
+  static create(props: StaffMembershipProps): StaffMembership {
+    return new StaffMembership(props);
+  }
+
+  get id() { return this.props.id; }
+  get userId() { return this.props.userId; }
+  get collegeId() { return this.props.collegeId; }
+  get role() { return this.props.role; }
+  get status() { return this.props.status; }
+  get createdAt() { return this.props.createdAt; }
+  get updatedAt() { return this.props.updatedAt; }
+
+  isActive(): boolean {
+    return this.status === 'ACTIVE';
+  }
+
+  isAdmin(): boolean {
+    return this.role === 'COLLEGE_ADMIN';
+  }
+}

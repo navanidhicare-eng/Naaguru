@@ -1,5 +1,9 @@
-import { pgTable, uuid, varchar, text, integer, decimal, boolean, timestamp, uniqueIndex, index, check } from 'drizzle-orm/pg-core';
+import { pgTable, uuid, varchar, text, integer, decimal, boolean, timestamp, uniqueIndex, index, check, pgEnum } from 'drizzle-orm/pg-core';
 import { sql } from 'drizzle-orm';
+import { usersTable } from '@/shared/auth/schema';
+
+export const staffRoleEnum = pgEnum('staff_role', ['COLLEGE_ADMIN', 'COLLEGE_STAFF']);
+export const staffStatusEnum = pgEnum('staff_status', ['ACTIVE', 'INACTIVE', 'SUSPENDED']);
 
 export const collegesTable = pgTable('colleges', {
   id: uuid('id').primaryKey().defaultRandom(),
@@ -50,4 +54,18 @@ export const collegeStreamOfferingsTable = pgTable('college_stream_offerings', {
   collegeStreamUnique: uniqueIndex('idx_college_stream_unique').on(table.collegeId, table.streamCode),
   streamCodeIdx: index('idx_stream_code').on(table.streamCode),
   tuitionFeeCheck: check('tuition_fee_check', sql`${table.tuitionFee} >= 0`),
+}));
+
+export const staffMembershipsTable = pgTable('staff_memberships', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  userId: uuid('user_id').notNull().references(() => usersTable.id, { onDelete: 'cascade' }),
+  collegeId: uuid('college_id').notNull().references(() => collegesTable.id, { onDelete: 'restrict' }),
+  role: staffRoleEnum('role').default('COLLEGE_ADMIN').notNull(),
+  status: staffStatusEnum('status').default('ACTIVE').notNull(),
+  createdAt: timestamp('created_at', { withTimezone: true, mode: 'string' }).defaultNow().notNull(),
+  updatedAt: timestamp('updated_at', { withTimezone: true, mode: 'string' }).defaultNow().notNull(),
+}, (table) => ({
+  userCollegeUnique: uniqueIndex('idx_staff_memberships_user_college').on(table.userId, table.collegeId),
+  userIdx: index('idx_staff_memberships_user_id').on(table.userId),
+  collegeIdx: index('idx_staff_memberships_college_id').on(table.collegeId),
 }));

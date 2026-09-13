@@ -1,1 +1,1 @@
-ALTER TABLE "students" ADD COLUMN "gender" varchar(10);
+ALTER TABLE "students" ADD COLUMN IF NOT EXISTS "gender" varchar(10);
