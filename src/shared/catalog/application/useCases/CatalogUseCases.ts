@@ -25,6 +25,7 @@ export class CatalogUseCases {
           nameEn: prog.props.nameEn,
           nameTe: prog.props.nameTe,
           displayOrder: prog.props.displayOrder,
+          status: prog.props.status,
         })),
     }));
   }
