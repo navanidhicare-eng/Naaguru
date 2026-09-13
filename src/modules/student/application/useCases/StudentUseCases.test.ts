@@ -5,6 +5,14 @@ import { Student } from '../../domain/Student';
 
 vi.mock('server-only', () => ({}));
 
+vi.mock('../../../../shared/catalog', () => ({
+  CatalogModule: {
+    validateArea: vi.fn().mockResolvedValue(true),
+    getPartnerSchools: vi.fn().mockResolvedValue([{ id: 'school-123' }]),
+    validateSchool: vi.fn().mockResolvedValue(true)
+  }
+}));
+
 describe('StudentUseCases', () => {
   let useCases: StudentUseCases;
   let mockRepo: IStudentRepository;
@@ -53,5 +61,16 @@ describe('StudentUseCases', () => {
 
     expect(result.fullName).toBe('New Name');
     expect(mockRepo.update).toHaveBeenCalled();
+  });
+
+  it('rejects invalid pincode', async () => {
+    vi.mocked(mockRepo.findByUserId).mockResolvedValue(null);
+
+    await expect(useCases.createMyProfile({
+      userId: 'user-123',
+      fullName: 'John Doe',
+      educationStage: '10TH_PURSUING',
+      pincode: 'invalid',
+    })).rejects.toThrow('Invalid pincode format');
   });
 });

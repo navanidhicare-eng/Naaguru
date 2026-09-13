@@ -1,4 +1,4 @@
-import { eq, inArray, and, ne } from 'drizzle-orm';
+import { eq, inArray, and, ne, ilike, sql } from 'drizzle-orm';
 import { db } from '../../database/db';
 import { educationPathwaysTable, educationProgramsTable, locationsTable, schoolsTable } from './schema';
 import { Pathway, Program, ServiceArea, Location, School } from '../domain/models';
@@ -103,9 +103,42 @@ export class DrizzleCatalogRepository {
     }));
   }
 
-  async getActiveSchools(locationId?: string): Promise<School[]> {
-    const conditions = [eq(schoolsTable.status, 'ACTIVE')];
-    if (locationId) conditions.push(eq(schoolsTable.locationId, locationId));
+  async getActiveSchools(locationId?: string, search?: string): Promise<School[]> {
+    const conditions = [
+      eq(schoolsTable.status, 'ACTIVE'),
+      eq(schoolsTable.partnershipStatus, 'PARTNER')
+    ];
+
+    if (search) {
+      conditions.push(ilike(schoolsTable.nameEn, `%${search}%`));
+    }
+
+    if (locationId) {
+      // Recursive CTE to find all descendant location IDs, preventing cycles
+      const result = await db.execute(sql`
+        WITH RECURSIVE loc_tree AS (
+          SELECT id, ARRAY[id] as path 
+          FROM locations 
+          WHERE id = ${locationId}::uuid
+          
+          UNION ALL
+          
+          SELECT l.id, t.path || l.id
+          FROM locations l
+          INNER JOIN loc_tree t ON l.parent_id = t.id
+          WHERE NOT l.id = ANY(t.path) -- Prevent cycles
+        )
+        SELECT id FROM loc_tree;
+      `);
+      
+      const descendantIds = result.map(r => r.id as string);
+      
+      if (descendantIds.length > 0) {
+        conditions.push(inArray(schoolsTable.locationId, descendantIds));
+      } else {
+        return []; // If no descendants found (invalid locationId), return empty array
+      }
+    }
 
     const rows = await db
       .select()

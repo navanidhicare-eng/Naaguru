@@ -3,6 +3,7 @@ import { IStudentRepository } from '../../domain/IStudentRepository';
 import { Student } from '../../domain/Student';
 import { CreateStudentProfileDto, StudentProfileDto, UpdateStudentProfileDto } from '../dtos';
 import { AppError } from '../../../../shared/errors';
+import { CatalogModule } from '../../../../shared/catalog';
 
 export class StudentUseCases {
   constructor(private readonly studentRepository: IStudentRepository) {}
@@ -12,6 +13,8 @@ export class StudentUseCases {
     if (existing) {
       throw new AppError('Profile already exists', 409);
     }
+
+    await this.validateProfileFields(dto);
 
     const student = Student.create({
       userId: dto.userId,
@@ -44,6 +47,8 @@ export class StudentUseCases {
       throw new AppError('Profile not found', 404);
     }
 
+    await this.validateProfileFields(dto);
+
     student.update(dto);
     await this.studentRepository.update(student);
 
@@ -57,5 +62,32 @@ export class StudentUseCases {
       throw new AppError('Profile not found', 404);
     }
     return student.toJSON();
+  }
+
+  private async validateProfileFields(dto: Partial<CreateStudentProfileDto>): Promise<void> {
+    if (dto.residenceLocationId) {
+      const isValid = await CatalogModule.validateArea(dto.residenceLocationId);
+      if (!isValid) {
+        throw new AppError(`Invalid or inactive residence location ID: ${dto.residenceLocationId}`, 400);
+      }
+    }
+
+    if (dto.schoolId) {
+      const isValidSchool = await CatalogModule.validateSchool(dto.schoolId);
+      if (!isValidSchool) {
+        throw new AppError(`Invalid, inactive, or unpartnered school ID: ${dto.schoolId}`, 400);
+      }
+    }
+
+    if (dto.pincode) {
+      const pinRegex = /^[1-9][0-9]{5}$/;
+      if (!pinRegex.test(dto.pincode)) {
+        throw new AppError(`Invalid pincode format: ${dto.pincode}`, 400);
+      }
+    }
+
+    if (dto.landmark && dto.landmark.length > 255) {
+      throw new AppError(`Landmark too long (max 255 characters)`, 400);
+    }
   }
 }

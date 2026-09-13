@@ -1,6 +1,7 @@
 import { DrizzleCatalogRepository } from '../../infrastructure/DrizzleCatalogRepository';
 import { PathwayDto, ProgramDto, ServiceAreaDto, LocationDto, SchoolDto } from '../dtos';
 import { LocationType } from '../../domain/models';
+import { AppError } from '../../../errors';
 
 export class CatalogUseCases {
   constructor(private readonly catalogRepository: DrizzleCatalogRepository) {}
@@ -61,7 +62,41 @@ export class CatalogUseCases {
     return area !== null && area.props.status === 'ACTIVE';
   }
 
+  async validateSchool(id: string): Promise<boolean> {
+    const school = await this.catalogRepository.getSchoolById(id);
+    return school !== null && school.props.status === 'ACTIVE' && school.props.partnershipStatus === 'PARTNER';
+  }
+
   async getStudentVisibleLocations(type?: LocationType, parentId?: string): Promise<LocationDto[]> {
+    if (parentId) {
+      const parent = await this.catalogRepository.getLocationById(parentId);
+      if (!parent) {
+        throw new AppError('Parent location not found', 404);
+      }
+      if (parent.props.status !== 'ACTIVE') {
+        throw new AppError('Parent location is inactive', 400);
+      }
+      
+      if (type) {
+        const validParentTypeMap: Record<LocationType, LocationType | null> = {
+          STATE: null,
+          DISTRICT: 'STATE',
+          MANDAL: 'DISTRICT',
+          LOCALITY: 'MANDAL'
+        };
+        
+        if (validParentTypeMap[type] !== parent.props.type) {
+          throw new AppError(`Invalid hierarchy: ${type} cannot belong directly to a ${parent.props.type}`, 400);
+        }
+      }
+    } else if (type && type !== 'STATE') {
+       // if no parent is provided, only STATE is allowed to be queried without a parent.
+       // Although wait, if parentId is not provided, does it mean we fetch all districts globally?
+       // The prompt says: "No parentId + type=STATE -> active states. type=DISTRICT + parentId -> active districts".
+       // So we should enforce parentId for non-STATE.
+       throw new AppError(`parentId is required when fetching ${type}`, 400);
+    }
+
     const locations = await this.catalogRepository.getActiveLocations(type, parentId);
     return locations.map(l => ({
       id: l.props.id,
@@ -73,8 +108,8 @@ export class CatalogUseCases {
     }));
   }
 
-  async getPartnerSchools(locationId?: string): Promise<SchoolDto[]> {
-    const schools = await this.catalogRepository.getActiveSchools(locationId);
+  async getPartnerSchools(locationId?: string, search?: string): Promise<SchoolDto[]> {
+    const schools = await this.catalogRepository.getActiveSchools(locationId, search);
     return schools.map(s => ({
       id: s.props.id,
       locationId: s.props.locationId,

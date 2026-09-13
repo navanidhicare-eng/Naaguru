@@ -6,8 +6,9 @@ export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
     const locationId = searchParams.get('locationId') || undefined;
+    const search = searchParams.get('search') || undefined;
 
-    const schools = await CatalogModule.getPartnerSchools(locationId);
+    const schools = await CatalogModule.getPartnerSchools(locationId, search);
     return NextResponse.json(schools);
   } catch (error) {
     if (error instanceof AppError) {

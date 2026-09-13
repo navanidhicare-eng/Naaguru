@@ -8,12 +8,13 @@ export const CatalogModule = {
   getStudentVisiblePathways: () => catalogUseCases.getStudentVisiblePathways(),
   getStudentVisibleAreas: () => catalogUseCases.getStudentVisibleAreas(),
   getStudentVisibleLocations: (type?: any, parentId?: string) => catalogUseCases.getStudentVisibleLocations(type, parentId),
-  getPartnerSchools: (locationId?: string) => catalogUseCases.getPartnerSchools(locationId),
+  getPartnerSchools: (locationId?: string, search?: string) => catalogUseCases.getPartnerSchools(locationId, search),
   
   // Validation methods used by other modules (e.g., student module)
   validatePathway: (code: string) => catalogUseCases.validatePathway(code),
   validateProgram: (pathwayCode: string, programCode: string) => catalogUseCases.validateProgram(pathwayCode, programCode),
   validateArea: (id: string) => catalogUseCases.validateArea(id),
+  validateSchool: (id: string) => catalogUseCases.validateSchool(id),
 };
 
 export * from './application/dtos';
