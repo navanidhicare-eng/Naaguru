@@ -6,6 +6,7 @@ export interface ProgramDto {
   nameEn: string;
   nameTe: string;
   displayOrder: number;
+  status: CatalogStatus;
 }
 
 export interface PathwayDto {

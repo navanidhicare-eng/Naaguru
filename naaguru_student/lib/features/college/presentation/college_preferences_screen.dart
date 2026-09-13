@@ -4,6 +4,8 @@ import 'package:naaguru_student/core/ui/buttons.dart';
 import 'package:naaguru_student/core/ui/language_toggle.dart';
 import 'package:naaguru_student/features/college/data/college_api_client.dart';
 
+import 'package:naaguru_student/features/college/presentation/college_stream_selection_screen.dart';
+
 class CollegePreferencesScreen extends StatefulWidget {
   final CollegeApiClient collegeApiClient;
   final bool isTelugu;
@@ -70,25 +72,29 @@ class _CollegePreferencesScreenState extends State<CollegePreferencesScreen> {
     return '';
   }
 
+  IconData _getPathwayIcon(String code) {
+    if (code == 'INTERMEDIATE') return Icons.school_outlined;
+    if (code == 'POLYTECHNIC') return Icons.engineering_outlined;
+    if (code == 'ITI') return Icons.handyman_outlined;
+    if (code == 'DEFENCE') return Icons.shield_outlined;
+    return Icons.school_outlined;
+  }
+
   void _onContinue() {
     if (_selectedPathway == null) return;
     
-    // Navigate to dummy Screen 3
+    // Pass the active programs of the selected pathway to Screen 3
+    final selectedPathwayObj = _pathways.firstWhere((p) => p['code'] == _selectedPathway);
+    final programs = selectedPathwayObj['programs'] as List;
+
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (_) => Scaffold(
-          appBar: AppBar(
-            backgroundColor: Colors.white,
-            elevation: 0,
-            leading: IconButton(
-              icon: const Icon(Icons.arrow_back_ios, color: NaaguruTheme.primaryDark, size: 20),
-              onPressed: () => Navigator.of(context).pop(),
-            ),
-          ),
-          body: const Center(
-            child: Text('Screen 3 - Coming Soon'),
-          ),
+        builder: (_) => CollegeStreamSelectionScreen(
+          programs: programs.cast<Map<String, dynamic>>(),
+          pathwayCode: _selectedPathway!,
+          isTelugu: _isTelugu,
+          onLanguageChanged: widget.onLanguageChanged,
         ),
       ),
     );
@@ -141,7 +147,6 @@ class _CollegePreferencesScreenState extends State<CollegePreferencesScreen> {
       final code = pathway['code'] as String;
       final nameEn = pathway['nameEn'] as String;
       final nameTe = pathway['nameTe'] as String;
-      final icon = pathway['icon'] as String;
       final status = pathway['status'] as String;
       
       final isSelected = _selectedPathway == code;
@@ -170,7 +175,11 @@ class _CollegePreferencesScreenState extends State<CollegePreferencesScreen> {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                 Text(icon, style: const TextStyle(fontSize: 28)),
+                 Icon(
+                   _getPathwayIcon(code),
+                   size: 32,
+                   color: isActive ? NaaguruTheme.primaryDark : NaaguruTheme.muted.withAlpha(150),
+                 ),
                  const SizedBox(width: 16),
                  Expanded(
                    child: Column(
