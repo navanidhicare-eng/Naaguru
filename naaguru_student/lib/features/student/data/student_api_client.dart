@@ -87,4 +87,34 @@ class StudentApiClient {
 
     return await _apiClient.patch('/students/me', body: body);
   }
+
+  /// Submits the student's college intent (POST /students/me/college-intent).
+  Future<Map<String, dynamic>> submitCollegeIntent({
+    required String pathwayCode,
+    String? programCode,
+    String? preferredLocationId,
+    required bool requiresHostel,
+    String? hostelGender,
+    int? maxAnnualFee,
+  }) async {
+    final body = <String, dynamic>{
+      'pathwayCode': pathwayCode,
+      'programCode': programCode,
+      'preferredLocationId': preferredLocationId,
+      'requiresHostel': requiresHostel,
+      'hostelGender': hostelGender,
+      'maxAnnualFee': maxAnnualFee,
+    };
+    return await _apiClient.post('/students/me/college-intent', body: body);
+  }
+
+  /// Fetches the current active college intent for the student.
+  Future<Map<String, dynamic>?> getCurrentCollegeIntent() async {
+    try {
+      return await _apiClient.get('/students/me/college-intent');
+    } on ApiException catch (e) {
+      if (e.statusCode == 404) return null;
+      rethrow;
+    }
+  }
 }

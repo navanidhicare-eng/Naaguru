@@ -8,7 +8,6 @@ import 'package:naaguru_student/features/auth/auth_service.dart';
 import 'package:naaguru_student/features/student/data/catalog_api_client.dart';
 import 'package:naaguru_student/features/student/data/student_api_client.dart';
 import 'package:naaguru_student/features/student/presentation/profile_screen2_where_you_live.dart';
-import 'package:naaguru_student/features/student/presentation/profile_screen3_review.dart';
 import 'package:naaguru_student/features/student/presentation/profile_wizard_state.dart';
 
 void main() {

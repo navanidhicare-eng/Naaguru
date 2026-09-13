@@ -94,6 +94,7 @@ class NaaguruStudentApp extends StatelessWidget {
         '/home': (_) => gated(HomeScreen(
               authService: authService,
               studentApiClient: studentApiClient,
+              catalogApiClient: catalogApiClient,
               assessmentApiClient: assessmentApiClient,
               collegeApiClient: collegeApiClient,
             )),

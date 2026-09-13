@@ -107,6 +107,10 @@ void main() {
   setUp(() {
     wizard = ProfileWizardState();
     wizard.updateFullName('Test Student Name');
+    wizard.selectSchoolState(const CatalogLocation(id: 'sl1', nameEn: 'School State', type: 'STATE'));
+    wizard.selectSchoolDistrict(const CatalogLocation(id: 'sl2', nameEn: 'School District', type: 'DISTRICT'));
+    wizard.selectSchoolMandal(const CatalogLocation(id: 'sl3', nameEn: 'School Mandal', type: 'MANDAL'));
+    wizard.selectSchoolLocality(const CatalogLocation(id: 'sl4', nameEn: 'School Locality', type: 'LOCALITY'));
     wizard.selectSchool(const CatalogSchool(id: 's1', nameEn: 'Test School Name', nameTe: 'పాఠశాల'));
     wizard.selectState(const CatalogLocation(id: 'l1', nameEn: 'Test State', type: 'STATE'));
     wizard.selectDistrict(const CatalogLocation(id: 'l2', nameEn: 'Test District', type: 'DISTRICT'));

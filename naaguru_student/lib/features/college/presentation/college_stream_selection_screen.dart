@@ -2,11 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:naaguru_student/core/theme.dart';
 import 'package:naaguru_student/core/ui/buttons.dart';
 import 'package:naaguru_student/core/ui/language_toggle.dart';
+import 'package:naaguru_student/features/college/presentation/college_discovery_wizard_state.dart';
 import 'package:naaguru_student/features/college/presentation/college_location_preferences_screen.dart';
 import 'package:naaguru_student/features/college/data/college_api_client.dart';
+import 'package:naaguru_student/features/student/data/catalog_api_client.dart';
+import 'package:naaguru_student/features/student/data/student_api_client.dart';
 
 class CollegeStreamSelectionScreen extends StatefulWidget {
   final CollegeApiClient collegeApiClient;
+  final CatalogApiClient? catalogApiClient;
+  final StudentApiClient? studentApiClient;
+  final CollegeDiscoveryWizardState? wizardState;
   final List<Map<String, dynamic>> programs;
   final String pathwayCode;
   final bool isTelugu;
@@ -15,6 +21,9 @@ class CollegeStreamSelectionScreen extends StatefulWidget {
   const CollegeStreamSelectionScreen({
     super.key,
     required this.collegeApiClient,
+    this.catalogApiClient,
+    this.studentApiClient,
+    this.wizardState,
     required this.programs,
     required this.pathwayCode,
     required this.isTelugu,
@@ -27,12 +36,17 @@ class CollegeStreamSelectionScreen extends StatefulWidget {
 
 class _CollegeStreamSelectionScreenState extends State<CollegeStreamSelectionScreen> {
   late bool _isTelugu;
+  late final CollegeDiscoveryWizardState _wizard;
   String? _selectedStream;
 
   @override
   void initState() {
     super.initState();
     _isTelugu = widget.isTelugu;
+    _wizard = widget.wizardState ?? CollegeDiscoveryWizardState();
+    _wizard.pathwayCode = widget.pathwayCode;
+    _wizard.availablePrograms = widget.programs;
+    _selectedStream = _wizard.programCode;
   }
 
   Map<String, dynamic> _getStreamDetails(String code) {
@@ -80,12 +94,26 @@ class _CollegeStreamSelectionScreenState extends State<CollegeStreamSelectionScr
 
   void _onContinue() {
     if (_selectedStream == null) return;
+
+    final selectedProg = widget.programs.firstWhere(
+      (p) => p['code'] == _selectedStream,
+      orElse: () => <String, dynamic>{},
+    );
+
+    _wizard.selectProgram(
+      code: _selectedStream!,
+      nameEn: selectedProg['nameEn'] as String?,
+      nameTe: selectedProg['nameTe'] as String?,
+    );
     
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (_) => CollegeLocationPreferencesScreen(
           collegeApiClient: widget.collegeApiClient,
+          catalogApiClient: widget.catalogApiClient,
+          studentApiClient: widget.studentApiClient,
+          wizardState: _wizard,
           pathwayCode: widget.pathwayCode,
           programCode: _selectedStream!,
           isTelugu: _isTelugu,

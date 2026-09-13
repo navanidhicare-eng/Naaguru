@@ -4,6 +4,7 @@ import 'package:naaguru_student/core/theme.dart';
 import 'package:naaguru_student/features/auth/auth_service.dart';
 import 'package:naaguru_student/features/student/data/catalog_api_client.dart';
 import 'package:naaguru_student/features/student/data/student_api_client.dart';
+import 'package:naaguru_student/features/student/presentation/location_picker_sheet.dart';
 import 'package:naaguru_student/features/student/presentation/profile_screen2_where_you_live.dart';
 import 'package:naaguru_student/features/student/presentation/profile_wizard_state.dart';
 
@@ -18,14 +19,15 @@ class _C {
   static const onSurfaceVariant = Color(0xFF3E4946);
   static const secondaryContainer = Color(0xFFFEC24A);
   static const onSecondaryContainer = Color(0xFF715000);
-  static const primaryContainer = Color(0xFF087F6C); // same as primary
 }
 
 /// Screen 1 of the mandatory profile wizard: "Complete Your Profile — About You".
 ///
 /// Collects:
 ///   - Student's full name
-///   - School selection (live search from GET /catalog/schools)
+///   - Gender (MALE / FEMALE)
+///   - School selection via cascading School Location hierarchy:
+///     State → District → Mandal → Village / City (Locality) → Partner School
 ///
 /// Does NOT submit to the backend. Data is preserved in [ProfileWizardState].
 /// Continue navigates to [ProfileScreen2WhereYouLive].
@@ -33,12 +35,14 @@ class ProfileScreen1AboutYou extends StatefulWidget {
   final AuthService authService;
   final StudentApiClient studentApiClient;
   final CatalogApiClient catalogApiClient;
+  final ProfileWizardState? wizardState;
 
   const ProfileScreen1AboutYou({
     super.key,
     required this.authService,
     required this.studentApiClient,
     required this.catalogApiClient,
+    this.wizardState,
   });
 
   @override
@@ -56,9 +60,7 @@ class _ProfileScreen1State extends State<ProfileScreen1AboutYou> {
   late final TextEditingController _nameController;
   bool _nameTouched = false;
 
-  // ── School search ─────────────────────────────────────────────────────────
-  final TextEditingController _searchController = TextEditingController();
-  Timer? _debounce;
+  // ── School selection ──────────────────────────────────────────────────────
   List<CatalogSchool> _schools = [];
   bool _schoolsLoading = false;
   bool _schoolsError = false;
@@ -75,28 +77,29 @@ class _ProfileScreen1State extends State<ProfileScreen1AboutYou> {
   @override
   void initState() {
     super.initState();
-    _wizard = ProfileWizardState();
-    _nameController = TextEditingController();
+    _wizard = widget.wizardState ?? ProfileWizardState();
+    _nameController = TextEditingController(text: _wizard.fullName);
+    if (_wizard.fullName.isNotEmpty) {
+      _nameTouched = true;
+    }
 
-    // Pre-fill name from existing profile if available.
+    // Pre-fill name and gender from existing profile if available.
     _prefillName();
 
-    // Load initial school list (no filter).
-    _fetchSchools();
+    // If returning with locality already selected, fetch schools.
+    if (_wizard.schoolLocality != null) {
+      _fetchSchools();
+    }
 
-    _searchController.addListener(_onSearchChanged);
     _nameController.addListener(_onNameChanged);
   }
 
   @override
   void dispose() {
-    _debounce?.cancel();
     _nameController.dispose();
-    _searchController.dispose();
     _requestNameController.dispose();
     _requestDistrictController.dispose();
     _requestMandalController.dispose();
-    _wizard.dispose();
     super.dispose();
   }
 
@@ -106,11 +109,11 @@ class _ProfileScreen1State extends State<ProfileScreen1AboutYou> {
       final name = profile?['fullName'] as String?;
       final gender = profile?['gender'] as String?;
       if (mounted) {
-        if (name != null && name.isNotEmpty) {
+        if (name != null && name.isNotEmpty && _wizard.fullName.isEmpty) {
           _nameController.text = name;
           _wizard.fullName = name;
         }
-        if (gender != null) {
+        if (gender != null && _wizard.gender == null) {
           _wizard.updateGender(gender);
         }
       }
@@ -126,20 +129,107 @@ class _ProfileScreen1State extends State<ProfileScreen1AboutYou> {
     }
   }
 
-  void _onSearchChanged() {
-    _debounce?.cancel();
-    _debounce = Timer(const Duration(milliseconds: 350), () {
-      _fetchSchools(query: _searchController.text);
-    });
+  // ── School location picker helpers ────────────────────────────────────────
+
+  Future<void> _pickSchoolState() async {
+    final picked = await LocationPickerSheet.show(
+      context,
+      levelLabel: 'School State',
+      levelLabelTe: 'పాఠశాల రాష్ట్రం',
+      isTelugu: _isTelugu,
+      loader: () => widget.catalogApiClient.getLocations(type: 'STATE'),
+      current: _wizard.schoolState,
+    );
+    if (picked != null && mounted) {
+      setState(() {
+        _wizard.selectSchoolState(picked);
+        _schools = [];
+        _initialFetchDone = false;
+      });
+    }
   }
 
-  Future<void> _fetchSchools({String? query}) async {
+  Future<void> _pickSchoolDistrict() async {
+    if (_wizard.schoolState == null) return;
+    final picked = await LocationPickerSheet.show(
+      context,
+      levelLabel: 'School District',
+      levelLabelTe: 'పాఠశాల జిల్లా',
+      isTelugu: _isTelugu,
+      loader: () => widget.catalogApiClient.getLocations(
+        type: 'DISTRICT',
+        parentId: _wizard.schoolState!.id,
+      ),
+      current: _wizard.schoolDistrict,
+    );
+    if (picked != null && mounted) {
+      setState(() {
+        _wizard.selectSchoolDistrict(picked);
+        _schools = [];
+        _initialFetchDone = false;
+      });
+    }
+  }
+
+  Future<void> _pickSchoolMandal() async {
+    if (_wizard.schoolDistrict == null) return;
+    final picked = await LocationPickerSheet.show(
+      context,
+      levelLabel: 'School Mandal',
+      levelLabelTe: 'పాఠశాల మండలం',
+      isTelugu: _isTelugu,
+      loader: () => widget.catalogApiClient.getLocations(
+        type: 'MANDAL',
+        parentId: _wizard.schoolDistrict!.id,
+      ),
+      current: _wizard.schoolMandal,
+    );
+    if (picked != null && mounted) {
+      setState(() {
+        _wizard.selectSchoolMandal(picked);
+        _schools = [];
+        _initialFetchDone = false;
+      });
+    }
+  }
+
+  Future<void> _pickSchoolLocality() async {
+    if (_wizard.schoolMandal == null) return;
+    final picked = await LocationPickerSheet.show(
+      context,
+      levelLabel: 'School Village / City',
+      levelLabelTe: 'పాఠశాల గ్రామం / నగరం',
+      isTelugu: _isTelugu,
+      loader: () => widget.catalogApiClient.getLocations(
+        type: 'LOCALITY',
+        parentId: _wizard.schoolMandal!.id,
+      ),
+      current: _wizard.schoolLocality,
+    );
+    if (picked != null && mounted) {
+      setState(() {
+        _wizard.selectSchoolLocality(picked);
+      });
+      _fetchSchools();
+    }
+  }
+
+  Future<void> _fetchSchools() async {
+    if (_wizard.schoolLocality == null) {
+      setState(() {
+        _schools = [];
+        _initialFetchDone = false;
+      });
+      return;
+    }
     setState(() {
       _schoolsLoading = true;
       _schoolsError = false;
     });
     try {
-      final results = await widget.catalogApiClient.getSchools(search: query);
+      final results = await widget.catalogApiClient.getSchools(
+        locationId: _wizard.schoolLocality!.id,
+      );
       if (mounted) {
         setState(() {
           _schools = results;
@@ -168,6 +258,18 @@ class _ProfileScreen1State extends State<ProfileScreen1AboutYou> {
     });
   }
 
+  void _openRequestSheet() {
+    if (_wizard.schoolDistrict != null) {
+      _requestDistrictController.text =
+          _wizard.schoolDistrict!.displayName(_isTelugu);
+    }
+    if (_wizard.schoolMandal != null) {
+      _requestMandalController.text =
+          _wizard.schoolMandal!.displayName(_isTelugu);
+    }
+    setState(() => _showRequestSheet = true);
+  }
+
   bool get _canContinue => _wizard.screen1Valid;
 
   void _handleContinue() {
@@ -191,7 +293,6 @@ class _ProfileScreen1State extends State<ProfileScreen1AboutYou> {
 
     return Scaffold(
       backgroundColor: NaaguruTheme.background,
-      // Resize so keyboard pushes content up correctly.
       resizeToAvoidBottomInset: true,
       body: Stack(
         children: [
@@ -208,7 +309,6 @@ class _ProfileScreen1State extends State<ProfileScreen1AboutYou> {
                       left: 16,
                       right: 16,
                       top: 8,
-                      // Extra bottom pad so content is not hidden by sticky CTA.
                       bottom: 100 + bottomPad,
                     ),
                     child: Column(
@@ -240,8 +340,7 @@ class _ProfileScreen1State extends State<ProfileScreen1AboutYou> {
             child: _buildBottomCta(),
           ),
           // School-request bottom sheet overlay.
-          if (_showRequestSheet)
-            _buildSchoolRequestSheet(),
+          if (_showRequestSheet) _buildSchoolRequestSheet(),
         ],
       ),
     );
@@ -250,7 +349,7 @@ class _ProfileScreen1State extends State<ProfileScreen1AboutYou> {
   // ── Header ────────────────────────────────────────────────────────────────
 
   Widget _buildHeader() {
-    return Container(
+    return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -260,18 +359,26 @@ class _ProfileScreen1State extends State<ProfileScreen1AboutYou> {
               Container(
                 width: 32,
                 height: 32,
-                decoration: BoxDecoration(
-                  color: _C.surfaceContainer,
-                  borderRadius: BorderRadius.circular(8),
+                decoration: const BoxDecoration(
+                  color: NaaguruTheme.primary,
+                  shape: BoxShape.circle,
                 ),
-                child: const Icon(Icons.school_rounded,
-                    color: NaaguruTheme.primary, size: 18),
+                child: const Center(
+                  child: Text(
+                    'N',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
               ),
               const SizedBox(width: 8),
-              Text(
+              const Text(
                 'Naaguru',
-                style: const TextStyle(
-                  fontSize: 17,
+                style: TextStyle(
+                  fontSize: 18,
                   fontWeight: FontWeight.w700,
                   color: NaaguruTheme.primary,
                   letterSpacing: -0.3,
@@ -279,45 +386,50 @@ class _ProfileScreen1State extends State<ProfileScreen1AboutYou> {
               ),
             ],
           ),
-          // Pill-style language toggle matching Stitch.
-          _buildLanguageToggle(),
+          Row(
+            children: [
+              _buildLangButton('EN', !_isTelugu, () {
+                if (_isTelugu) setState(() => _isTelugu = false);
+              }),
+              _buildLangButton('తెలుగు', _isTelugu, () {
+                if (!_isTelugu) setState(() => _isTelugu = true);
+              }),
+              const SizedBox(width: 8),
+              Container(
+                width: 32,
+                height: 32,
+                decoration: const BoxDecoration(
+                  color: NaaguruTheme.primary,
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(Icons.person, color: Colors.white, size: 18),
+              ),
+            ],
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildLanguageToggle() {
-    return Container(
-      padding: const EdgeInsets.all(3),
-      decoration: BoxDecoration(
-        color: _C.surfaceContainerHigh,
-        borderRadius: BorderRadius.circular(100),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          _langPill('English', !_isTelugu, () => setState(() => _isTelugu = false)),
-          _langPill('తెలుగు', _isTelugu, () => setState(() => _isTelugu = true)),
-        ],
-      ),
-    );
-  }
-
-  Widget _langPill(String label, bool active, VoidCallback onTap) {
+  Widget _buildLangButton(String text, bool active, VoidCallback onTap) {
     return GestureDetector(
       onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 180),
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
         decoration: BoxDecoration(
-          color: active ? NaaguruTheme.surface : Colors.transparent,
+          color: active ? _C.surfaceContainerLow : Colors.transparent,
           borderRadius: BorderRadius.circular(100),
           boxShadow: active
-              ? [BoxShadow(color: Colors.black.withAlpha(20), blurRadius: 4)]
+              ? [
+                  BoxShadow(
+                    color: Colors.black.withAlpha(10),
+                    blurRadius: 4,
+                  ),
+                ]
               : null,
         ),
         child: Text(
-          label,
+          text,
           style: TextStyle(
             fontSize: 12,
             fontWeight: active ? FontWeight.w600 : FontWeight.w500,
@@ -344,7 +456,7 @@ class _ProfileScreen1State extends State<ProfileScreen1AboutYou> {
                   Container(
                     width: 7,
                     height: 7,
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                       color: NaaguruTheme.primary,
                       shape: BoxShape.circle,
                     ),
@@ -360,9 +472,9 @@ class _ProfileScreen1State extends State<ProfileScreen1AboutYou> {
                   ),
                 ],
               ),
-              Text(
+              const Text(
                 '33%',
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.w500,
                   color: NaaguruTheme.muted,
@@ -373,11 +485,11 @@ class _ProfileScreen1State extends State<ProfileScreen1AboutYou> {
           const SizedBox(height: 6),
           ClipRRect(
             borderRadius: BorderRadius.circular(100),
-            child: LinearProgressIndicator(
-              value: 1 / 3,
-              minHeight: 6,
+            child: const LinearProgressIndicator(
+              value: 0.33,
+              minHeight: 4,
               backgroundColor: _C.surfaceContainerHigh,
-              valueColor: AlwaysStoppedAnimation<Color>(_C.primaryContainer),
+              color: NaaguruTheme.primary,
             ),
           ),
           const SizedBox(height: 8),
@@ -386,26 +498,27 @@ class _ProfileScreen1State extends State<ProfileScreen1AboutYou> {
     );
   }
 
-  // ── Title ─────────────────────────────────────────────────────────────────
+  // ── Title & Intro ─────────────────────────────────────────────────────────
 
   Widget _buildTitle() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          _s('Complete Your Profile', 'మీ ప్రొఫైల్‌ను పూర్తి చేయండి'),
+          _s('Complete Your Profile', 'మీ ప్రొఫైల్ పూర్తి చేయండి'),
           style: const TextStyle(
-            fontSize: 26,
+            fontSize: 22,
             fontWeight: FontWeight.w700,
             color: NaaguruTheme.text,
-            letterSpacing: -0.5,
-            height: 1.2,
+            letterSpacing: -0.4,
           ),
         ),
         const SizedBox(height: 4),
         Text(
-          _s('Just a few details to get you started.',
-              'మీ ప్రారంభానికి కొన్ని ముఖ్య వివరాలు.'),
+          _s(
+            'This helps us give you accurate guidance for intermediate & polytechnic admissions.',
+            'ఇంటర్మీడియట్ & పాలిటెక్నిక్ ప్రవేశాలకు ఖచ్చితమైన మార్గదర్శకత్వాన్ని అందించడానికి ఇది సహాయపడుతుంది.',
+          ),
           style: const TextStyle(
             fontSize: 14,
             color: NaaguruTheme.muted,
@@ -415,8 +528,6 @@ class _ProfileScreen1State extends State<ProfileScreen1AboutYou> {
       ],
     );
   }
-
-  // ── Assurance card ────────────────────────────────────────────────────────
 
   Widget _buildAssuranceCard() {
     return Container(
@@ -439,24 +550,63 @@ class _ProfileScreen1State extends State<ProfileScreen1AboutYou> {
             width: 36,
             height: 36,
             decoration: BoxDecoration(
-              color: _C.surfaceContainer,
+              color: NaaguruTheme.surface,
               borderRadius: BorderRadius.circular(10),
+              boxShadow: [
+                BoxShadow(color: Colors.black.withAlpha(10), blurRadius: 4),
+              ],
             ),
-            child: const Icon(Icons.timer_rounded,
+            child: const Icon(Icons.shield_outlined,
                 color: NaaguruTheme.primary, size: 20),
           ),
           const SizedBox(width: 12),
           Expanded(
-            child: Text(
-              _s(
-                'Takes less than 2 minutes. Your details help us map local opportunities accurately.',
-                '2 నిమిషాల కన్నా తక్కువ సమయం పడుతుంది. స్థానిక అవకాశాలను గుర్తించడంలో ఇది తోడ్పడుతుంది.',
-              ),
-              style: const TextStyle(
-                fontSize: 12,
-                color: NaaguruTheme.text,
-                height: 1.5,
-              ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Text(
+                      _s('Privacy First', 'గోప్యతకు ప్రాధాన్యత'),
+                      style: const TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                        color: NaaguruTheme.primary,
+                      ),
+                    ),
+                    const SizedBox(width: 6),
+                    Container(
+                      width: 4,
+                      height: 4,
+                      decoration: BoxDecoration(
+                        color: NaaguruTheme.muted.withAlpha(120),
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                    const SizedBox(width: 6),
+                    Text(
+                      _s('Class 10 Students', '10వ తరగతి విద్యార్థులు'),
+                      style: const TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w500,
+                        color: NaaguruTheme.muted,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  _s(
+                    'Your school selection helps us find the right colleges near you.',
+                    'మీ పాఠశాల ఎంపిక మీకు సమీపంలోని సరైన కళాశాలలను కనుగొనడంలో సహాయపడుతుంది.',
+                  ),
+                  style: const TextStyle(
+                    fontSize: 12,
+                    color: NaaguruTheme.muted,
+                    height: 1.5,
+                  ),
+                ),
+              ],
             ),
           ),
         ],
@@ -468,9 +618,9 @@ class _ProfileScreen1State extends State<ProfileScreen1AboutYou> {
 
   Widget _buildSectionHeading() {
     return Text(
-      _s('About You', 'మీ గురించి'),
+      _s('Student Identity', 'విద్యార్థి వివరాలు'),
       style: const TextStyle(
-        fontSize: 18,
+        fontSize: 13,
         fontWeight: FontWeight.w600,
         color: NaaguruTheme.text,
       ),
@@ -480,9 +630,8 @@ class _ProfileScreen1State extends State<ProfileScreen1AboutYou> {
   // ── Name field ────────────────────────────────────────────────────────────
 
   Widget _buildNameField() {
-    final bool hasError =
-        _nameTouched && _nameController.text.trim().isEmpty;
-    final bool hasValue = _nameController.text.trim().isNotEmpty;
+    final hasError = _nameTouched && _nameController.text.trim().isEmpty;
+    final hasValue = _nameController.text.trim().isNotEmpty;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -490,7 +639,7 @@ class _ProfileScreen1State extends State<ProfileScreen1AboutYou> {
         Row(
           children: [
             Text(
-              _s('Your full name', 'పూర్తి పేరు'),
+              _s('Full Name', 'పూర్తి పేరు'),
               style: const TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
@@ -507,7 +656,7 @@ class _ProfileScreen1State extends State<ProfileScreen1AboutYou> {
             ),
           ],
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: 6),
         Container(
           height: 52,
           decoration: BoxDecoration(
@@ -516,14 +665,12 @@ class _ProfileScreen1State extends State<ProfileScreen1AboutYou> {
             border: Border.all(
               color: hasError
                   ? NaaguruTheme.error
-                  : hasValue
-                      ? NaaguruTheme.primary.withAlpha(100)
-                      : Colors.transparent,
-              width: 1.5,
+                  : (hasValue ? NaaguruTheme.primary : Colors.transparent),
+              width: hasError || hasValue ? 1.5 : 1,
             ),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withAlpha(10),
+                color: Colors.black.withAlpha(8),
                 blurRadius: 6,
                 offset: const Offset(0, 2),
               ),
@@ -532,21 +679,21 @@ class _ProfileScreen1State extends State<ProfileScreen1AboutYou> {
           child: Row(
             children: [
               const SizedBox(width: 14),
-              const Icon(Icons.person_outline_rounded,
-                  color: NaaguruTheme.primary, size: 20),
+              Icon(
+                Icons.person_outline_rounded,
+                size: 20,
+                color: hasValue ? NaaguruTheme.primary : NaaguruTheme.muted,
+              ),
               const SizedBox(width: 10),
               Expanded(
                 child: TextField(
                   controller: _nameController,
-                  textCapitalization: TextCapitalization.words,
-                  style: const TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w500,
-                    color: NaaguruTheme.text,
-                  ),
+                  style:
+                      const TextStyle(fontSize: 15, color: NaaguruTheme.text),
                   decoration: InputDecoration(
                     border: InputBorder.none,
-                    hintText: _s('Enter full name', 'పూర్తి పేరు నమోదు చేయండి'),
+                    hintText: _s('Enter your name as in school records',
+                        'పాఠశాల రికార్డులలో ఉన్నట్లు పేరు నమోదు చేయండి'),
                     hintStyle: TextStyle(
                       fontSize: 15,
                       color: NaaguruTheme.muted.withAlpha(180),
@@ -569,7 +716,8 @@ class _ProfileScreen1State extends State<ProfileScreen1AboutYou> {
         if (hasError) ...[
           const SizedBox(height: 4),
           Text(
-            _s('Please enter your full name.', 'దయచేసి పూర్తి పేరు నమోదు చేయండి.'),
+            _s('Please enter your full name.',
+                'దయచేసి పూర్తి పేరు నమోదు చేయండి.'),
             style: const TextStyle(
               fontSize: 11,
               color: NaaguruTheme.error,
@@ -579,6 +727,8 @@ class _ProfileScreen1State extends State<ProfileScreen1AboutYou> {
       ],
     );
   }
+
+  // ── Gender field ──────────────────────────────────────────────────────────
 
   Widget _buildGenderField() {
     return Column(
@@ -608,11 +758,13 @@ class _ProfileScreen1State extends State<ProfileScreen1AboutYou> {
         Row(
           children: [
             Expanded(
-              child: _buildGenderOption('MALE', _s('Male', 'పురుషుడు'), Icons.male_rounded),
+              child: _buildGenderOption(
+                  'MALE', _s('Male', 'పురుషుడు'), Icons.male_rounded),
             ),
             const SizedBox(width: 12),
             Expanded(
-              child: _buildGenderOption('FEMALE', _s('Female', 'స్త్రీ'), Icons.female_rounded),
+              child: _buildGenderOption(
+                  'FEMALE', _s('Female', 'స్త్రీ'), Icons.female_rounded),
             ),
           ],
         ),
@@ -669,172 +821,405 @@ class _ProfileScreen1State extends State<ProfileScreen1AboutYou> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          _s('Which school do you study at?', 'మీరు ఏ పాఠశాలలో చదువుతున్నారు?'),
-          style: const TextStyle(
-            fontSize: 13,
-            fontWeight: FontWeight.w600,
-            color: NaaguruTheme.text,
-          ),
+        Row(
+          children: [
+            Text(
+              _s('Which school do you study at?',
+                  'మీరు ఏ పాఠశాలలో చదువుతున్నారు?'),
+              style: const TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+                color: NaaguruTheme.text,
+              ),
+            ),
+            const Text(
+              ' *',
+              style: TextStyle(
+                fontSize: 13,
+                color: NaaguruTheme.error,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
         ),
         const SizedBox(height: 2),
         Text(
           _s(
-            'Class 10 school from Andhra Pradesh or Telangana',
-            'ఆంధ్రప్రదేశ్ లేదా తెలంగాణలోని 10వ తరగతి పాఠశాల',
+            'Select your school location to view schools (Andhra Pradesh & Telangana)',
+            'పాఠశాలలను చూడటానికి మీ పాఠశాల ప్రాంతాన్ని ఎంచుకోండి (ఆంధ్రప్రదేశ్ & తెలంగాణ)',
           ),
           style: const TextStyle(fontSize: 12, color: NaaguruTheme.muted),
         ),
         const SizedBox(height: 10),
-        Container(
-          decoration: BoxDecoration(
-            color: NaaguruTheme.surface,
-            borderRadius: BorderRadius.circular(16),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withAlpha(10),
-                blurRadius: 8,
-                offset: const Offset(0, 2),
-              ),
-            ],
-          ),
-          child: Column(
-            children: [
-              // Search input.
-              _buildSchoolSearch(),
-              // Results list.
-              _buildSchoolList(),
-              // Can't find action + neutral copy.
-              _buildSchoolFooter(),
-            ],
-          ),
-        ),
+        _buildSchoolLocationBlock(),
+        const SizedBox(height: 14),
+        _buildSchoolListSection(),
         const SizedBox(height: 10),
         _buildTrustLine(),
       ],
     );
   }
 
-  Widget _buildSchoolSearch() {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(12, 12, 12, 8),
-      child: Container(
-        height: 44,
-        decoration: BoxDecoration(
-          color: _C.surfaceContainer,
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Row(
-          children: [
-            const SizedBox(width: 12),
-            Icon(Icons.search_rounded, color: NaaguruTheme.muted, size: 20),
-            const SizedBox(width: 8),
-            Expanded(
-              child: TextField(
-                controller: _searchController,
-                style: const TextStyle(fontSize: 14, color: NaaguruTheme.text),
-                decoration: InputDecoration(
-                  border: InputBorder.none,
-                  hintText: _s(
-                    'Search school name or locality...',
-                    'పాఠశాల పేరు లేదా ప్రాంతం శోధించండి...',
-                  ),
-                  hintStyle: const TextStyle(
-                    fontSize: 14,
-                    color: NaaguruTheme.muted,
-                  ),
-                  isDense: true,
-                  contentPadding: EdgeInsets.zero,
+  Widget _buildSchoolLocationBlock() {
+    return Container(
+      decoration: BoxDecoration(
+        color: NaaguruTheme.surface,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withAlpha(10),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          _locationRow(
+            sublabel: _s('SCHOOL STATE', 'పాఠశాల రాష్ట్రం'),
+            value: _wizard.schoolState?.displayName(_isTelugu),
+            placeholder:
+                _s('Select school state', 'పాఠశాల రాష్ట్రాన్ని ఎంచుకోండి'),
+            enabled: true,
+            onTap: _pickSchoolState,
+          ),
+          _divider(),
+          _locationRow(
+            sublabel: _s('SCHOOL DISTRICT', 'పాఠశాల జిల్లా'),
+            value: _wizard.schoolDistrict?.displayName(_isTelugu),
+            placeholder: _wizard.schoolState != null
+                ? _s('Select school district', 'పాఠశాల జిల్లాను ఎంచుకోండి')
+                : _s('Select state first', 'ముందు రాష్ట్రం ఎంచుకోండి'),
+            enabled: _wizard.schoolState != null,
+            onTap: _pickSchoolDistrict,
+          ),
+          _divider(),
+          _locationRow(
+            sublabel: _s('SCHOOL MANDAL', 'పాఠశాల మండలం'),
+            value: _wizard.schoolMandal?.displayName(_isTelugu),
+            placeholder: _wizard.schoolDistrict != null
+                ? _s('Select school mandal', 'పాఠశాల మండలాన్ని ఎంచుకోండి')
+                : _s('Select district first', 'ముందు జిల్లా ఎంచుకోండి'),
+            enabled: _wizard.schoolDistrict != null,
+            onTap: _pickSchoolMandal,
+          ),
+          _divider(),
+          _locationRow(
+            sublabel: _s('SCHOOL VILLAGE / CITY / WARD',
+                'పాఠశాల గ్రామం / నగరం / వార్డు'),
+            value: _wizard.schoolLocality?.displayName(_isTelugu),
+            placeholder: _wizard.schoolMandal != null
+                ? _s('Select school village or city',
+                    'గ్రామం లేదా నగరాన్ని ఎంచుకోండి')
+                : _s('Select mandal first', 'ముందు మండలం ఎంచుకోండి'),
+            enabled: _wizard.schoolMandal != null,
+            onTap: _pickSchoolLocality,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _locationRow({
+    required String sublabel,
+    required String? value,
+    required String placeholder,
+    required bool enabled,
+    required VoidCallback onTap,
+  }) {
+    final hasValue = value != null && value.isNotEmpty;
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: enabled ? onTap : null,
+        borderRadius: BorderRadius.circular(16),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          child: Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      sublabel,
+                      style: TextStyle(
+                        fontSize: 10,
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: 0.8,
+                        color: enabled
+                            ? _C.onSurfaceVariant
+                            : NaaguruTheme.muted.withAlpha(100),
+                      ),
+                    ),
+                    const SizedBox(height: 3),
+                    Text(
+                      hasValue ? value : placeholder,
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontWeight:
+                            hasValue ? FontWeight.w600 : FontWeight.w400,
+                        color: hasValue
+                            ? NaaguruTheme.text
+                            : NaaguruTheme.muted.withAlpha(enabled ? 200 : 100),
+                      ),
+                    ),
+                  ],
                 ),
               ),
-            ),
-            if (_searchController.text.isNotEmpty)
-              GestureDetector(
-                onTap: () {
-                  _searchController.clear();
-                  _fetchSchools();
-                },
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
-                  child:
-                      Icon(Icons.close_rounded, color: NaaguruTheme.muted, size: 18),
+              Container(
+                width: 32,
+                height: 32,
+                decoration: BoxDecoration(
+                  color: enabled ? _C.surfaceContainerLow : Colors.transparent,
+                  shape: BoxShape.circle,
                 ),
-              )
-            else
-              const SizedBox(width: 12),
-          ],
+                child: Icon(
+                  Icons.chevron_right_rounded,
+                  size: 20,
+                  color: enabled
+                      ? _C.onSurfaceVariant
+                      : NaaguruTheme.muted.withAlpha(80),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildSchoolList() {
-    if (_schoolsLoading && !_initialFetchDone) {
-      return const Padding(
-        padding: EdgeInsets.symmetric(vertical: 24),
-        child: Center(
-          child: CircularProgressIndicator(
-            strokeWidth: 2,
-            color: NaaguruTheme.primary,
-          ),
-        ),
-      );
-    }
+  Widget _divider() {
+    return Container(
+      height: 1,
+      margin: const EdgeInsets.symmetric(horizontal: 16),
+      color: _C.surfaceContainerHigh,
+    );
+  }
 
-    if (_schoolsError) {
-      return Padding(
-        padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
+  // ── School List Section ───────────────────────────────────────────────────
+
+  Widget _buildSchoolListSection() {
+    // 1. If locality not selected, show helper card.
+    if (_wizard.schoolLocality == null) {
+      return Container(
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          color: _C.surfaceContainerLow,
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(color: _C.surfaceContainerHigh),
+        ),
         child: Row(
           children: [
-            const Icon(Icons.cloud_off_outlined,
-                color: NaaguruTheme.muted, size: 18),
-            const SizedBox(width: 8),
-            Text(
-              _s('Could not load schools. Tap to retry.',
-                  'పాఠశాలలు లోడ్ కాలేదు. మళ్లీ ప్రయత్నించండి.'),
-              style: const TextStyle(fontSize: 13, color: NaaguruTheme.muted),
+            const Icon(Icons.info_outline_rounded,
+                color: NaaguruTheme.primary, size: 20),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Text(
+                _s(
+                  'Select your school location to see schools.',
+                  'పాఠశాలలను చూడటానికి మీ పాఠశాల ప్రాంతాన్ని ఎంచుకోండి.',
+                ),
+                style: const TextStyle(
+                  fontSize: 13,
+                  color: NaaguruTheme.text,
+                  height: 1.4,
+                ),
+              ),
             ),
           ],
         ),
       );
     }
 
-    if (_initialFetchDone && _schools.isEmpty) {
-      return Padding(
-        padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
-        child: Center(
-          child: Text(
-            _s('No schools found. Try a different search.',
-                'ఏ పాఠశాల కనుగొనబడలేదు. వేరే పదం ప్రయత్నించండి.'),
-            style: const TextStyle(fontSize: 13, color: NaaguruTheme.muted),
-            textAlign: TextAlign.center,
+    // 2. Locality is selected: show container with header and school list.
+    final localityName = _wizard.schoolLocality!.displayName(_isTelugu);
+
+    return Container(
+      decoration: BoxDecoration(
+        color: NaaguruTheme.surface,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withAlpha(10),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
           ),
-        ),
-      );
-    }
-
-    // Show up to 5 results so the list stays usable without scrolling.
-    final visible = _schools.take(5).toList();
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(12, 0, 12, 0),
+        ],
+      ),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          for (int i = 0; i < visible.length; i++) ...[
-            if (i > 0) const SizedBox(height: 6),
-            _SchoolRow(
-              school: visible[i],
-              isSelected: _wizard.selectedSchool?.id == visible[i].id,
-              isTelugu: _isTelugu,
-              onTap: () => _selectSchool(visible[i]),
+          // Header showing area.
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 14, 16, 8),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Row(
+                    children: [
+                      const Icon(Icons.location_on_rounded,
+                          size: 16, color: NaaguruTheme.primary),
+                      const SizedBox(width: 6),
+                      Expanded(
+                        child: Text(
+                          _s('Schools in $localityName',
+                              '$localityName లోని పాఠశాలలు'),
+                          style: const TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w600,
+                            color: NaaguruTheme.text,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                if (_initialFetchDone && !_schoolsLoading)
+                  Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+                    decoration: BoxDecoration(
+                      color: _C.surfaceContainerLow,
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                    child: Text(
+                      '${_schools.length}',
+                      style: const TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w600,
+                        color: NaaguruTheme.primary,
+                      ),
+                    ),
+                  ),
+              ],
             ),
-          ],
-          if (_schoolsLoading && _initialFetchDone)
+          ),
+          _divider(),
+
+          // Body: loading, error, empty, or list.
+          if (_schoolsLoading && !_initialFetchDone)
             const Padding(
-              padding: EdgeInsets.only(top: 8),
-              child: LinearProgressIndicator(
-                minHeight: 2,
-                color: NaaguruTheme.primary,
-                backgroundColor: Colors.transparent,
+              padding: EdgeInsets.symmetric(vertical: 24),
+              child: Center(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SizedBox(
+                      width: 18,
+                      height: 18,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: NaaguruTheme.primary,
+                      ),
+                    ),
+                    SizedBox(width: 10),
+                    Text(
+                      'Finding schools...',
+                      style: TextStyle(
+                        fontSize: 13,
+                        color: NaaguruTheme.muted,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            )
+          else if (_schoolsError)
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Row(
+                children: [
+                  const Icon(Icons.cloud_off_outlined,
+                      color: NaaguruTheme.muted, size: 20),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      _s('Could not load schools.', 'పాఠశాలలు లోడ్ కాలేదు.'),
+                      style: const TextStyle(
+                          fontSize: 13, color: NaaguruTheme.muted),
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: _fetchSchools,
+                    child: Text(_s('Retry', 'మళ్లీ ప్రయత్నించండి')),
+                  ),
+                ],
+              ),
+            )
+          else if (_initialFetchDone && _schools.isEmpty)
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
+              child: Column(
+                children: [
+                  const Icon(Icons.school_outlined,
+                      color: NaaguruTheme.muted, size: 32),
+                  const SizedBox(height: 8),
+                  Text(
+                    _s('No schools available in this area.',
+                        'ఈ ప్రాంతంలో పాఠశాలలు అందుబాటులో లేవు.'),
+                    style: const TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w500,
+                      color: NaaguruTheme.muted,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 12),
+                  GestureDetector(
+                    onTap: _openRequestSheet,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(Icons.add_circle_outline_rounded,
+                            color: NaaguruTheme.primary, size: 18),
+                        const SizedBox(width: 6),
+                        Text(
+                          _s("Request your school",
+                              'మీ పాఠశాలను అభ్యర్థించండి'),
+                          style: const TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                            color: NaaguruTheme.primary,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            )
+          else
+            Padding(
+              padding: const EdgeInsets.fromLTRB(12, 10, 12, 4),
+              child: Column(
+                children: [
+                  for (int i = 0; i < _schools.length; i++) ...[
+                    if (i > 0) const SizedBox(height: 8),
+                    _SchoolRow(
+                      school: _schools[i],
+                      localityInfo:
+                          '${_wizard.schoolLocality?.displayName(_isTelugu) ?? ''}, ${_wizard.schoolMandal?.displayName(_isTelugu) ?? ''}',
+                      isSelected:
+                          _wizard.selectedSchool?.id == _schools[i].id,
+                      isTelugu: _isTelugu,
+                      onTap: () => _selectSchool(_schools[i]),
+                    ),
+                  ],
+                  if (_schoolsLoading && _initialFetchDone)
+                    const Padding(
+                      padding: EdgeInsets.only(top: 8),
+                      child: LinearProgressIndicator(
+                        minHeight: 2,
+                        color: NaaguruTheme.primary,
+                        backgroundColor: Colors.transparent,
+                      ),
+                    ),
+                  const SizedBox(height: 8),
+                  _buildSchoolFooter(),
+                ],
               ),
             ),
         ],
@@ -844,16 +1229,16 @@ class _ProfileScreen1State extends State<ProfileScreen1AboutYou> {
 
   Widget _buildSchoolFooter() {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(12, 10, 12, 14),
+      padding: const EdgeInsets.symmetric(vertical: 8),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           GestureDetector(
-            onTap: () => setState(() => _showRequestSheet = true),
+            onTap: _openRequestSheet,
             child: Row(
               children: [
                 const Icon(Icons.add_circle_outline_rounded,
-                    color: NaaguruTheme.primary, size: 18),
+                    color: NaaguruTheme.primary, size: 16),
                 const SizedBox(width: 4),
                 Text(
                   _s("Can't find your school?", 'మీ పాఠశాల కనిపించలేదా?'),
@@ -881,11 +1266,11 @@ class _ProfileScreen1State extends State<ProfileScreen1AboutYou> {
         Expanded(
           child: Text(
             _s(
-              'Select your school from the schools currently available on Naaguru.',
-              'నాగురులో అందుబాటులో ఉన్న పాఠశాలల నుండి మీ పాఠశాలను ఎంచుకోండి.',
+              'Select your school from the partner schools currently available on Naaguru.',
+              'నాగురులో అందుబాటులో ఉన్న భాగస్వామ్య పాఠశాలల నుండి మీ పాఠశాలను ఎంచుకోండి.',
             ),
-            style:
-                const TextStyle(fontSize: 12, color: NaaguruTheme.muted, height: 1.4),
+            style: const TextStyle(
+                fontSize: 12, color: NaaguruTheme.muted, height: 1.4),
           ),
         ),
       ],
@@ -964,7 +1349,7 @@ class _ProfileScreen1State extends State<ProfileScreen1AboutYou> {
     );
   }
 
-  // ── School request bottom sheet ────────────────────────────────────────────
+  // ── School request bottom sheet ───────────────────────────────────────────
 
   Widget _buildSchoolRequestSheet() {
     return GestureDetector(
@@ -974,13 +1359,11 @@ class _ProfileScreen1State extends State<ProfileScreen1AboutYou> {
         child: Align(
           alignment: Alignment.bottomCenter,
           child: GestureDetector(
-            // Prevent taps inside the sheet from closing it.
             onTap: () {},
             child: Container(
               decoration: const BoxDecoration(
                 color: NaaguruTheme.surface,
-                borderRadius:
-                    BorderRadius.vertical(top: Radius.circular(24)),
+                borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
               ),
               padding: EdgeInsets.fromLTRB(
                 20,
@@ -1046,7 +1429,9 @@ class _ProfileScreen1State extends State<ProfileScreen1AboutYou> {
                               'మా బృందం మీ పాఠశాల అభ్యర్థనను సమీక్షించి జోడిస్తుంది.',
                             ),
                             style: const TextStyle(
-                                fontSize: 12, color: NaaguruTheme.text, height: 1.5),
+                                fontSize: 12,
+                                color: NaaguruTheme.text,
+                                height: 1.5),
                           ),
                         ),
                       ],
@@ -1121,7 +1506,8 @@ class _ProfileScreen1State extends State<ProfileScreen1AboutYou> {
                             minimumSize: const Size.fromHeight(46),
                           ),
                           child: Text(_s('Submit', 'సమర్పించండి'),
-                              style: const TextStyle(fontWeight: FontWeight.w600)),
+                              style:
+                                  const TextStyle(fontWeight: FontWeight.w600)),
                         ),
                       ),
                     ],
@@ -1175,12 +1561,14 @@ class _ProfileScreen1State extends State<ProfileScreen1AboutYou> {
 
 class _SchoolRow extends StatelessWidget {
   final CatalogSchool school;
+  final String localityInfo;
   final bool isSelected;
   final bool isTelugu;
   final VoidCallback onTap;
 
   const _SchoolRow({
     required this.school,
+    required this.localityInfo,
     required this.isSelected,
     required this.isTelugu,
     required this.onTap,
@@ -1203,7 +1591,7 @@ class _SchoolRow extends StatelessWidget {
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
             color: isSelected
-                ? NaaguruTheme.primary.withAlpha(80)
+                ? NaaguruTheme.primary.withAlpha(120)
                 : _C.surfaceContainerHigh,
             width: isSelected ? 1.5 : 1,
           ),
@@ -1222,8 +1610,8 @@ class _SchoolRow extends StatelessWidget {
           children: [
             // Icon badge.
             Container(
-              width: 32,
-              height: 32,
+              width: 34,
+              height: 34,
               decoration: BoxDecoration(
                 color: isSelected
                     ? _C.surfaceContainer
@@ -1231,8 +1619,8 @@ class _SchoolRow extends StatelessWidget {
                 shape: BoxShape.circle,
               ),
               child: Icon(
-                Icons.account_balance_rounded,
-                size: 16,
+                Icons.school_rounded,
+                size: 18,
                 color: isSelected
                     ? NaaguruTheme.primary
                     : _C.onSurfaceVariant,
@@ -1245,7 +1633,7 @@ class _SchoolRow extends StatelessWidget {
                 children: [
                   Text(
                     displayName,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
                       color: NaaguruTheme.text,
@@ -1255,7 +1643,6 @@ class _SchoolRow extends StatelessWidget {
                   const SizedBox(height: 4),
                   Row(
                     children: [
-                      // Board chip — backend doesn't return board; show 'School' as neutral chip.
                       Container(
                         padding: const EdgeInsets.symmetric(
                             horizontal: 7, vertical: 2),
@@ -1266,9 +1653,9 @@ class _SchoolRow extends StatelessWidget {
                           borderRadius: BorderRadius.circular(4),
                         ),
                         child: Text(
-                          'School',
+                          isTelugu ? 'భాగస్వామ్య పాఠశాల' : 'Partner School',
                           style: TextStyle(
-                            fontSize: 11,
+                            fontSize: 10,
                             fontWeight: FontWeight.w600,
                             color: isSelected
                                 ? _C.onSecondaryContainer
@@ -1276,6 +1663,20 @@ class _SchoolRow extends StatelessWidget {
                           ),
                         ),
                       ),
+                      if (localityInfo.isNotEmpty) ...[
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            localityInfo,
+                            style: const TextStyle(
+                              fontSize: 11,
+                              color: NaaguruTheme.muted,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
                     ],
                   ),
                 ],

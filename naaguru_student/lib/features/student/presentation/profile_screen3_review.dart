@@ -10,8 +10,6 @@ class _C {
   static const surfaceContainerLow = Color(0xFFE9F7F3);
   static const surfaceContainerLowest = Color(0xFFFFFFFF);
   static const surfaceContainerHighest = Color(0xFFD8E5E2);
-  static const secondaryContainer = Color(0xFFFEC24A);
-  static const onSecondaryContainer = Color(0xFF715000);
 }
 
 class ProfileScreen3Review extends StatefulWidget {
@@ -579,6 +577,13 @@ class _ProfileScreen3ReviewState extends State<ProfileScreen3Review> {
                 ? wiz.selectedSchool!.nameTe!
                 : (wiz.selectedSchool?.nameEn ?? ''),
           ),
+          if (wiz.schoolLocality != null) ...[
+            const SizedBox(height: 8),
+            _buildSummaryBlock(
+              _s('School Area', 'పాఠశాల ప్రాంతం'),
+              '${wiz.schoolLocality!.displayName(_isTelugu)}, ${wiz.schoolMandal?.displayName(_isTelugu) ?? ''}',
+            ),
+          ],
           const SizedBox(height: 12),
           Container(
             padding: const EdgeInsets.all(8),

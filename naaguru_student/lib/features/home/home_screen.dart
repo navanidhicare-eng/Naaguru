@@ -6,13 +6,18 @@ import 'package:naaguru_student/features/assessment/data/assessment_api_client.d
 import 'package:naaguru_student/features/assessment/presentation/results_screen.dart';
 import 'package:naaguru_student/features/auth/auth_service.dart';
 import 'package:naaguru_student/features/college/data/college_api_client.dart';
+import 'package:naaguru_student/features/college/presentation/college_discovery_wizard_state.dart';
+import 'package:naaguru_student/features/college/presentation/college_list_screen.dart';
 import 'package:naaguru_student/features/college/presentation/college_preferences_screen.dart';
+import 'package:naaguru_student/features/college/presentation/college_review_and_confirm_screen.dart';
 import 'package:naaguru_student/features/explore/presentation/college_discovery_intro_screen.dart';
+import 'package:naaguru_student/features/student/data/catalog_api_client.dart';
 import 'package:naaguru_student/features/student/data/student_api_client.dart';
 
 class HomeScreen extends StatefulWidget {
   final AuthService? authService;
   final StudentApiClient? studentApiClient;
+  final CatalogApiClient? catalogApiClient;
   final AssessmentApiClient? assessmentApiClient;
   final CollegeApiClient? collegeApiClient;
 
@@ -20,6 +25,7 @@ class HomeScreen extends StatefulWidget {
     super.key,
     this.authService,
     this.studentApiClient,
+    this.catalogApiClient,
     this.assessmentApiClient,
     this.collegeApiClient,
   });
@@ -41,6 +47,11 @@ class _HomeScreenState extends State<HomeScreen> {
   bool _hasInProgressAssessment = false;
   Map<String, dynamic>? _completedResult;
   Map<String, dynamic>? _completedRecommendation;
+
+  // College Intent State
+  Map<String, dynamic>? _savedCollegeIntent;
+  CatalogLocation? _savedDistrictLocation;
+  bool _isCheckingIntent = false;
 
   @override
   void initState() {
@@ -97,8 +108,47 @@ class _HomeScreenState extends State<HomeScreen> {
       }
     }
 
+    // 3. Fetch Saved College Intent
+    await _fetchCollegeIntent();
+
     if (mounted) {
       setState(() => _isLoadingState = false);
+    }
+  }
+
+  Future<void> _fetchCollegeIntent() async {
+    if (widget.studentApiClient == null) return;
+    try {
+      final intent = await widget.studentApiClient!.getCurrentCollegeIntent();
+      if (!mounted) return;
+      setState(() {
+        _savedCollegeIntent = intent;
+      });
+      if (intent != null && intent['preferredLocationId'] != null && widget.catalogApiClient != null) {
+        try {
+          final locId = intent['preferredLocationId'] as String;
+          final locations = await widget.catalogApiClient!.getLocations();
+          final matched = locations.where((l) => l.id == locId).toList();
+          if (matched.isNotEmpty) {
+            final loc = matched.first;
+            if (loc.type == 'DISTRICT') {
+              if (mounted) setState(() => _savedDistrictLocation = loc);
+            } else if (loc.parentId != null) {
+              final parent = locations.where((l) => l.id == loc.parentId).toList();
+              if (parent.isNotEmpty && parent.first.type == 'DISTRICT') {
+                if (mounted) setState(() => _savedDistrictLocation = parent.first);
+              } else if (parent.isNotEmpty && parent.first.parentId != null) {
+                final grandParent = locations.where((l) => l.id == parent.first.parentId).toList();
+                if (grandParent.isNotEmpty && grandParent.first.type == 'DISTRICT') {
+                  if (mounted) setState(() => _savedDistrictLocation = grandParent.first);
+                }
+              }
+            }
+          }
+        } catch (_) {}
+      }
+    } catch (_) {
+      // Rule 7: Do not incorrectly assume an existing intent on GET failure
     }
   }
 
@@ -132,6 +182,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   _buildHomeView(context),
                   CollegeDiscoveryIntroScreen(
                     collegeApiClient: widget.collegeApiClient,
+                    catalogApiClient: widget.catalogApiClient,
+                    studentApiClient: widget.studentApiClient,
                     isTelugu: _isTelugu,
                     onLanguageChanged: (val) => setState(() => _isTelugu = val),
                   ),
@@ -283,43 +335,272 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildYouView() {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(24.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              width: 80,
-              height: 80,
-              decoration: const BoxDecoration(
-                color: NaaguruTheme.primaryLight,
-                shape: BoxShape.circle,
-              ),
-              child: const Icon(Icons.person, size: 44, color: NaaguruTheme.primaryDark),
+    return SingleChildScrollView(
+      padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 24.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Container(
+            width: 80,
+            height: 80,
+            decoration: const BoxDecoration(
+              color: NaaguruTheme.primaryLight,
+              shape: BoxShape.circle,
             ),
-            const SizedBox(height: 16),
-            Text(
-              _studentName != null ? 'Hello, $_studentName' : 'Student Account',
-              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: NaaguruTheme.text),
-            ),
-            const SizedBox(height: 24),
-            OutlinedButton.icon(
+            child: const Icon(Icons.person, size: 44, color: NaaguruTheme.primaryDark),
+          ),
+          const SizedBox(height: 14),
+          Text(
+            _studentName != null ? 'Hello, $_studentName' : 'Student Account',
+            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: NaaguruTheme.text),
+          ),
+          const SizedBox(height: 20),
+
+          // College Preferences Persistent Section
+          _buildCollegePreferencesCard(),
+          const SizedBox(height: 16),
+
+          // Edit Personal Profile
+          SizedBox(
+            width: double.infinity,
+            child: OutlinedButton.icon(
               icon: const Icon(Icons.edit_outlined),
               label: Text(_isTelugu ? 'ప్రొఫైల్ వివరాలు సవరించండి' : 'Edit Profile'),
+              style: OutlinedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              ),
               onPressed: () => Navigator.pushNamed(context, '/profile'),
             ),
-            const SizedBox(height: 12),
-            OutlinedButton.icon(
+          ),
+          const SizedBox(height: 12),
+
+          // Log Out
+          SizedBox(
+            width: double.infinity,
+            child: OutlinedButton.icon(
               icon: const Icon(Icons.logout, color: NaaguruTheme.error),
               label: Text(_isTelugu ? 'లాగ్ అవుట్' : 'Log Out', style: const TextStyle(color: NaaguruTheme.error)),
+              style: OutlinedButton.styleFrom(
+                foregroundColor: NaaguruTheme.error,
+                side: const BorderSide(color: Color(0xFFFCA5A5)),
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              ),
               onPressed: () async {
                 await widget.authService?.logout();
                 if (mounted) Navigator.pushReplacementNamed(context, '/login');
               },
             ),
+          ),
+          const SizedBox(height: 24),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPreferenceSummaryRow(IconData icon, String text) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Icon(icon, size: 16, color: NaaguruTheme.primaryDark),
+        const SizedBox(width: 8),
+        Expanded(
+          child: Text(
+            text,
+            style: const TextStyle(fontSize: 13, color: NaaguruTheme.text, height: 1.3),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildCollegePreferencesCard() {
+    final intent = _savedCollegeIntent;
+    if (intent == null) {
+      return Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: NaaguruTheme.muted.withAlpha(40)),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                const Icon(Icons.school_outlined, size: 20, color: NaaguruTheme.primaryDark),
+                const SizedBox(width: 8),
+                Text(
+                  _isTelugu ? 'కళాశాల ప్రాధాన్యతలు' : 'College Preferences',
+                  style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: NaaguruTheme.primaryDark),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Text(
+              _isTelugu
+                  ? 'మీరు ఇంకా కళాశాల ప్రాధాన్యతలను ఎంచుకోలేదు.'
+                  : 'You have not set up your college discovery preferences yet.',
+              style: const TextStyle(fontSize: 13, color: NaaguruTheme.muted),
+            ),
+            const SizedBox(height: 12),
+            ElevatedButton(
+              onPressed: _navigateToCollegeDiscovery,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: NaaguruTheme.primaryDark,
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              ),
+              child: Text(_isTelugu ? 'ప్రాధాన్యతలను ఎంచుకోండి →' : 'Set Preferences →'),
+            ),
           ],
         ),
+      );
+    }
+
+    final versionNumber = intent['versionNumber'] as int? ?? 1;
+    final isLocked = versionNumber >= 2;
+    final pathway = intent['pathwayCode'] == 'INTERMEDIATE'
+        ? 'Intermediate'
+        : (intent['pathwayCode'] as String? ?? 'Intermediate');
+    final program = intent['programCode'] as String?;
+    final pathwayStreamSummary = program != null && program.isNotEmpty
+        ? '$pathway • $program'
+        : pathway;
+
+    final requiresHostel = intent['requiresHostel'] == true;
+    final hostelSummary = requiresHostel
+        ? (_isTelugu ? 'హాస్టల్ అవసరం' : 'Hostel required')
+        : (_isTelugu ? 'డే స్కాలర్' : 'Day scholar');
+
+    final maxFee = intent['maxAnnualFee'] as int?;
+    String budgetSummary;
+    if (maxFee == null) {
+      budgetSummary = _isTelugu ? 'బడ్జెట్: ఇంకా నిర్ణయించలేదు' : 'Budget: Not sure yet';
+    } else if (maxFee <= 50000) {
+      budgetSummary = _isTelugu ? 'బడ్జెట్: < ₹50,000 / సం.' : 'Budget: < ₹50,000 / year';
+    } else if (maxFee <= 100000) {
+      budgetSummary = _isTelugu ? 'బడ్జెట్: ₹1,00,000 వరకు / సం.' : 'Budget: Up to ₹1,00,000 / year';
+    } else {
+      budgetSummary = _isTelugu ? 'బడ్జెట్: ₹1,00,000+ / సం.' : 'Budget: ₹1,00,000+ / year';
+    }
+
+    String locationSummary;
+    if (_savedDistrictLocation != null) {
+      locationSummary = _savedDistrictLocation!.displayName(_isTelugu);
+    } else {
+      locationSummary = _isTelugu ? 'ప్రాధాన్యతా ప్రాంతం ఎంచుకోబడింది' : 'Preferred location saved';
+    }
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: isLocked ? const Color(0xFFE2E8F0) : NaaguruTheme.primary.withAlpha(80),
+          width: 1.5,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withAlpha(6),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                children: [
+                  const Icon(Icons.tune_rounded, size: 18, color: NaaguruTheme.primaryDark),
+                  const SizedBox(width: 8),
+                  Text(
+                    _isTelugu ? 'కళాశాల ప్రాధాన్యతలు' : 'College Preferences',
+                    style: const TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                      color: NaaguruTheme.primaryDark,
+                    ),
+                  ),
+                ],
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                decoration: BoxDecoration(
+                  color: isLocked ? const Color(0xFFF1F5F9) : NaaguruTheme.primaryLight,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if (isLocked) ...[
+                      const Icon(Icons.lock_rounded, size: 12, color: NaaguruTheme.muted),
+                      const SizedBox(width: 4),
+                      Text(
+                        _isTelugu ? 'స్థిరమైనవి 🔒' : 'Final 🔒',
+                        style: const TextStyle(
+                          fontSize: 11,
+                          fontWeight: FontWeight.bold,
+                          color: NaaguruTheme.muted,
+                        ),
+                      ),
+                    ] else ...[
+                      const Icon(Icons.edit_outlined, size: 12, color: NaaguruTheme.primary),
+                      const SizedBox(width: 4),
+                      Text(
+                        _isTelugu ? '1 సవరణ మిగిలింది' : '1 edit left',
+                        style: const TextStyle(
+                          fontSize: 11,
+                          fontWeight: FontWeight.bold,
+                          color: NaaguruTheme.primaryDark,
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          _buildPreferenceSummaryRow(Icons.school_outlined, pathwayStreamSummary),
+          const SizedBox(height: 6),
+          _buildPreferenceSummaryRow(Icons.location_on_outlined, locationSummary),
+          const SizedBox(height: 6),
+          _buildPreferenceSummaryRow(Icons.bed_outlined, hostelSummary),
+          const SizedBox(height: 6),
+          _buildPreferenceSummaryRow(Icons.account_balance_wallet_outlined, budgetSummary),
+          const SizedBox(height: 16),
+          ElevatedButton(
+            onPressed: () => _navigateToReviewAndConfirm(intent),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: isLocked ? NaaguruTheme.surface : NaaguruTheme.primaryDark,
+              foregroundColor: isLocked ? NaaguruTheme.primaryDark : Colors.white,
+              side: isLocked ? const BorderSide(color: NaaguruTheme.primaryDark) : BorderSide.none,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              minimumSize: const Size(double.infinity, 44),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  isLocked
+                      ? (_isTelugu ? 'ప్రాధాన్యతలను చూడండి →' : 'View Preferences →')
+                      : (_isTelugu ? 'ప్రాధాన్యతలను చూడండి / మార్చండి →' : 'View / Change Preferences →'),
+                  style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -634,24 +915,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           const SizedBox(height: 16),
           ElevatedButton(
-            onPressed: () {
-              if (widget.collegeApiClient != null) {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => CollegePreferencesScreen(
-                      collegeApiClient: widget.collegeApiClient!,
-                      isTelugu: _isTelugu,
-                      onLanguageChanged: (val) => setState(() => _isTelugu = val),
-                    ),
-                  ),
-                );
-              } else {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('College search is initializing...')),
-                );
-              }
-            },
+            onPressed: _handleExploreColleges,
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFF1E3A5F),
               foregroundColor: Colors.white,
@@ -662,8 +926,16 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
+                if (_isCheckingIntent) ...[
+                  const SizedBox(
+                    width: 16,
+                    height: 16,
+                    child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                  ),
+                  const SizedBox(width: 8),
+                ],
                 Text(
-                  _isTelugu ? 'కళాశాలలను చూడండి →' : 'Browse Colleges →',
+                  _isTelugu ? 'కళాశాలలను చూడండి →' : 'Explore Colleges →',
                   style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                 ),
               ],
@@ -672,6 +944,144 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
       ),
     );
+  }
+
+  Future<void> _handleExploreColleges() async {
+    if (_isCheckingIntent) return; // Prevent duplicate rapid taps
+    setState(() => _isCheckingIntent = true);
+
+    try {
+      Map<String, dynamic>? intent;
+      if (widget.studentApiClient != null) {
+        try {
+          intent = await widget.studentApiClient!.getCurrentCollegeIntent();
+          _savedCollegeIntent = intent;
+        } catch (_) {
+          // Rule 7: GET intent failure: Do not incorrectly assume an existing intent.
+          intent = null;
+        }
+      } else {
+        intent = _savedCollegeIntent;
+      }
+
+      if (!mounted) return;
+
+      if (intent != null && intent.isNotEmpty) {
+        // Step 3: Existing intent -> CollegeListScreen directly!
+        _navigateToCollegeList(intent);
+      } else {
+        // Step 3: No intent exists -> Start College Discovery (Step 1)
+        _navigateToCollegeDiscovery();
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isCheckingIntent = false);
+      }
+    }
+  }
+
+  void _navigateToCollegeList(Map<String, dynamic> intent) {
+    if (widget.collegeApiClient == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('College search is initializing...')),
+      );
+      return;
+    }
+
+    final pathway = intent['pathwayCode'] as String? ?? 'INTERMEDIATE';
+    final streamCode = intent['programCode'] as String?;
+    final requiresHostel = intent['requiresHostel'] == true;
+    final maxFee = intent['maxAnnualFee'] as int?;
+    final district = _savedDistrictLocation?.nameEn;
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => CollegeListScreen(
+          collegeApiClient: widget.collegeApiClient!,
+          pathway: pathway,
+          streamCode: streamCode,
+          district: district,
+          requiresHostel: requiresHostel,
+          maxFee: maxFee,
+        ),
+      ),
+    );
+  }
+
+  void _navigateToCollegeDiscovery() {
+    if (widget.collegeApiClient == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('College search is initializing...')),
+      );
+      return;
+    }
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => CollegePreferencesScreen(
+          collegeApiClient: widget.collegeApiClient!,
+          catalogApiClient: widget.catalogApiClient,
+          studentApiClient: widget.studentApiClient,
+          isTelugu: _isTelugu,
+          onLanguageChanged: (val) => setState(() => _isTelugu = val),
+        ),
+      ),
+    ).then((_) {
+      _fetchCollegeIntent();
+    });
+  }
+
+  void _navigateToReviewAndConfirm(Map<String, dynamic> intent) {
+    if (widget.collegeApiClient == null || widget.studentApiClient == null) return;
+
+    final wizard = CollegeDiscoveryWizardState();
+    wizard.versionNumber = intent['versionNumber'] as int?;
+    if (intent['pathwayCode'] != null) {
+      wizard.selectPathway(code: intent['pathwayCode'] as String);
+    }
+    if (intent['programCode'] != null) {
+      wizard.selectProgram(code: intent['programCode'] as String);
+    }
+    if (_savedDistrictLocation != null) {
+      wizard.selectPreferredDistrict(_savedDistrictLocation!);
+    }
+    if (intent['preferredLocationId'] != null) {
+      wizard.preferredLocationId = intent['preferredLocationId'] as String;
+    }
+    if (intent['requiresHostel'] != null) {
+      wizard.selectHostel(intent['requiresHostel'] == true ? 'YES' : 'NO');
+    }
+    if (intent['maxAnnualFee'] != null) {
+      final fee = intent['maxAnnualFee'] as int;
+      if (fee <= 50000) {
+        wizard.selectBudget('UNDER_50K');
+      } else if (fee <= 100000) {
+        wizard.selectBudget('UP_TO_1L');
+      } else {
+        wizard.selectBudget('OVER_1L');
+      }
+    } else {
+      wizard.selectBudget('NOT_SURE');
+    }
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => CollegeReviewAndConfirmScreen(
+          wizardState: wizard,
+          collegeApiClient: widget.collegeApiClient!,
+          studentApiClient: widget.studentApiClient!,
+          catalogApiClient: widget.catalogApiClient,
+          isDirectEntry: true,
+          isTelugu: _isTelugu,
+          onLanguageChanged: (val) => setState(() => _isTelugu = val),
+        ),
+      ),
+    ).then((_) {
+      _fetchCollegeIntent();
+    });
   }
 
   /// Supporting Section: Teaser for Explore Paths

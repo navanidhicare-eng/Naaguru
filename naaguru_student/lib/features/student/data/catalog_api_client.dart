@@ -80,15 +80,23 @@ class CatalogApiClient {
 
   CatalogApiClient({required ApiClient apiClient}) : _apiClient = apiClient;
 
-  /// Fetches partner schools, optionally filtered by name search.
+  /// Fetches partner schools, optionally filtered by locationId and name search.
   ///
   /// Only returns schools that the backend considers student-visible
   /// (ACTIVE status + PARTNER partnershipStatus). The Flutter layer
   /// does NOT duplicate or weaken this rule.
-  Future<List<CatalogSchool>> getSchools({String? search}) async {
-    final query =
-        (search != null && search.trim().isNotEmpty) ? '&search=${Uri.encodeComponent(search.trim())}' : '';
-    final result = await _apiClient.get('/catalog/schools?$query');
+  Future<List<CatalogSchool>> getSchools({
+    String? search,
+    String? locationId,
+  }) async {
+    final params = StringBuffer('/catalog/schools?');
+    if (locationId != null && locationId.trim().isNotEmpty) {
+      params.write('locationId=${Uri.encodeComponent(locationId.trim())}&');
+    }
+    if (search != null && search.trim().isNotEmpty) {
+      params.write('search=${Uri.encodeComponent(search.trim())}&');
+    }
+    final result = await _apiClient.get(params.toString());
 
     // The API returns a JSON array wrapped as {'data': [...]} by ApiClient.
     final rawList = result['data'] as List<dynamic>?;

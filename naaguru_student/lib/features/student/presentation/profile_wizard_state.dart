@@ -16,12 +16,24 @@ import 'package:naaguru_student/features/student/data/catalog_api_client.dart';
 /// markProfileComplete() directly. ProfileGate is only unblocked
 /// after the final confirmed save.
 class ProfileWizardState extends ChangeNotifier {
-  // ── Screen 1 ──────────────────────────────────────────────────────────────
+  // ── Screen 1 — Identity ───────────────────────────────────────────────────
   String fullName = '';
   String? gender;
+
+  // ── Screen 1 — School Location hierarchy (independent from residence) ─────
+  CatalogLocation? schoolState;
+  CatalogLocation? schoolDistrict;
+  CatalogLocation? schoolMandal;
+  CatalogLocation? schoolLocality;
   CatalogSchool? selectedSchool;
 
-  // ── Screen 2 — Cascading location hierarchy ────────────────────────────────
+  String? get schoolStateId => schoolState?.id;
+  String? get schoolDistrictId => schoolDistrict?.id;
+  String? get schoolMandalId => schoolMandal?.id;
+  String? get schoolLocalityId => schoolLocality?.id;
+  String? get selectedSchoolId => selectedSchool?.id;
+
+  // ── Screen 2 — Residence Location hierarchy (independent from school) ─────
   CatalogLocation? selectedState;
   CatalogLocation? selectedDistrict;
   CatalogLocation? selectedMandal;
@@ -46,6 +58,40 @@ class ProfileWizardState extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Select school state and reset all dependent school selections.
+  void selectSchoolState(CatalogLocation state) {
+    schoolState = state;
+    schoolDistrict = null;
+    schoolMandal = null;
+    schoolLocality = null;
+    selectedSchool = null;
+    notifyListeners();
+  }
+
+  /// Select school district and reset mandal + locality + school.
+  void selectSchoolDistrict(CatalogLocation district) {
+    schoolDistrict = district;
+    schoolMandal = null;
+    schoolLocality = null;
+    selectedSchool = null;
+    notifyListeners();
+  }
+
+  /// Select school mandal and reset locality + school.
+  void selectSchoolMandal(CatalogLocation mandal) {
+    schoolMandal = mandal;
+    schoolLocality = null;
+    selectedSchool = null;
+    notifyListeners();
+  }
+
+  /// Select school locality and reset school.
+  void selectSchoolLocality(CatalogLocation locality) {
+    schoolLocality = locality;
+    selectedSchool = null;
+    notifyListeners();
+  }
+
   void selectSchool(CatalogSchool school) {
     selectedSchool = school;
     notifyListeners();
@@ -56,9 +102,9 @@ class ProfileWizardState extends ChangeNotifier {
     notifyListeners();
   }
 
-  // ── Screen 2 — Cascading location mutations ───────────────────────────────
+  // ── Screen 2 — Residence cascading location mutations ─────────────────────
 
-  /// Select a state and reset all dependent selections.
+  /// Select residence state and reset all dependent residence selections.
   void selectState(CatalogLocation state) {
     selectedState = state;
     selectedDistrict = null;
@@ -67,7 +113,7 @@ class ProfileWizardState extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Select a district and reset mandal + locality.
+  /// Select residence district and reset residence mandal + locality.
   void selectDistrict(CatalogLocation district) {
     selectedDistrict = district;
     selectedMandal = null;
@@ -75,7 +121,7 @@ class ProfileWizardState extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Select a mandal and reset locality.
+  /// Select residence mandal and reset residence locality.
   void selectMandal(CatalogLocation mandal) {
     selectedMandal = mandal;
     selectedLocality = null;
@@ -99,9 +145,17 @@ class ProfileWizardState extends ChangeNotifier {
 
   // ── Validation predicates ─────────────────────────────────────────────────
 
-  /// Returns true when Screen 1 has the minimum required data to proceed.
+  /// Returns true when Screen 1 has the minimum required data to proceed:
+  /// Full Name + Gender + School State + School District + School Mandal +
+  /// School Locality + Selected School.
   bool get screen1Valid =>
-      fullName.trim().isNotEmpty && gender != null && selectedSchool != null;
+      fullName.trim().isNotEmpty &&
+      gender != null &&
+      schoolState != null &&
+      schoolDistrict != null &&
+      schoolMandal != null &&
+      schoolLocality != null &&
+      selectedSchool != null;
 
   static final _pincodeRegex = RegExp(r'^[1-9][0-9]{5}$');
 
