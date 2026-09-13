@@ -1,7 +1,7 @@
 import { db } from '@/shared/database/db';
 import { eq } from 'drizzle-orm';
 import { IStudentRepository } from '../domain/IStudentRepository';
-import { Student } from '../domain/Student';
+import { Student, StudentGender } from '../domain/Student';
 import { studentsTable } from './schema';
 
 export class DrizzleStudentRepository implements IStudentRepository {
@@ -15,11 +15,13 @@ export class DrizzleStudentRepository implements IStudentRepository {
     return Student.create({
       userId: record.userId,
       fullName: record.fullName,
+      gender: record.gender as StudentGender | null,
       educationStage: record.educationStage,
       board: record.board,
-      state: record.state,
-      district: record.district,
-      city: record.city,
+      residenceLocationId: record.residenceLocationId,
+      schoolId: record.schoolId,
+      pincode: record.pincode,
+      landmark: record.landmark,
       latitude: record.latitude ? Number(record.latitude) : null,
       longitude: record.longitude ? Number(record.longitude) : null,
       guardianName: record.guardianName,
@@ -33,11 +35,13 @@ export class DrizzleStudentRepository implements IStudentRepository {
     await db.insert(studentsTable).values({
       userId: student.userId,
       fullName: student.fullName,
+      gender: student.gender,
       educationStage: student.educationStage,
       board: student.board,
-      state: student.state,
-      district: student.district,
-      city: student.city,
+      residenceLocationId: student.residenceLocationId,
+      schoolId: student.schoolId,
+      pincode: student.pincode,
+      landmark: student.landmark,
       latitude: student.latitude ? student.latitude.toString() : null,
       longitude: student.longitude ? student.longitude.toString() : null,
       guardianName: student.guardianName,
@@ -50,11 +54,13 @@ export class DrizzleStudentRepository implements IStudentRepository {
   async update(student: Student): Promise<void> {
     await db.update(studentsTable).set({
       fullName: student.fullName,
+      gender: student.gender,
       educationStage: student.educationStage,
       board: student.board,
-      state: student.state,
-      district: student.district,
-      city: student.city,
+      residenceLocationId: student.residenceLocationId,
+      schoolId: student.schoolId,
+      pincode: student.pincode,
+      landmark: student.landmark,
       latitude: student.latitude ? student.latitude.toString() : null,
       longitude: student.longitude ? student.longitude.toString() : null,
       guardianName: student.guardianName,

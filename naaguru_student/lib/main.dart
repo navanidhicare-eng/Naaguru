@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:naaguru_student/core/api_client.dart';
 import 'package:naaguru_student/core/theme.dart';
+import 'package:naaguru_student/core/ui/profile_gate.dart';
 import 'package:naaguru_student/features/assessment/data/assessment_api_client.dart';
 import 'package:naaguru_student/features/assessment/presentation/assessment_intro_screen.dart';
 import 'package:naaguru_student/features/assessment/presentation/assessment_question_screen.dart';
@@ -9,22 +10,25 @@ import 'package:naaguru_student/features/auth/auth_service.dart';
 import 'package:naaguru_student/features/auth/login_screen.dart';
 import 'package:naaguru_student/features/college/data/college_api_client.dart';
 import 'package:naaguru_student/features/home/home_screen.dart';
+import 'package:naaguru_student/features/student/data/catalog_api_client.dart';
 import 'package:naaguru_student/features/student/data/student_api_client.dart';
 import 'package:naaguru_student/features/student/presentation/student_profile_screen.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   // Create the shared API client and services once at startup.
   final apiClient = ApiClient();
   final authService = AuthService(apiClient: apiClient);
   final studentApiClient = StudentApiClient(apiClient: apiClient);
+  final catalogApiClient = CatalogApiClient(apiClient: apiClient);
   final assessmentApiClient = AssessmentApiClient(apiClient: apiClient);
   final collegeApiClient = CollegeApiClient(apiClient: apiClient);
 
   runApp(NaaguruStudentApp(
     authService: authService,
     studentApiClient: studentApiClient,
+    catalogApiClient: catalogApiClient,
     assessmentApiClient: assessmentApiClient,
     collegeApiClient: collegeApiClient,
   ));
@@ -34,6 +38,7 @@ void main() {
 class NaaguruStudentApp extends StatelessWidget {
   final AuthService authService;
   final StudentApiClient studentApiClient;
+  final CatalogApiClient catalogApiClient;
   final AssessmentApiClient? assessmentApiClient;
   final CollegeApiClient? collegeApiClient;
 
@@ -41,27 +46,33 @@ class NaaguruStudentApp extends StatelessWidget {
     super.key,
     required this.authService,
     required this.studentApiClient,
+    required this.catalogApiClient,
     this.assessmentApiClient,
     this.collegeApiClient,
   });
 
   @override
   Widget build(BuildContext context) {
+    // Helper: wraps an authenticated screen with the mandatory ProfileGate.
+    // Any route wrapped here cannot be bypassed by an incomplete-profile student.
+    Widget gated(Widget child) => ProfileGate(
+          authService: authService,
+          studentApiClient: studentApiClient,
+          catalogApiClient: catalogApiClient,
+          child: child,
+        );
+
     return MaterialApp(
       title: 'Naaguru',
       debugShowCheckedModeBanner: false,
       theme: NaaguruTheme.lightTheme,
       initialRoute: '/',
       routes: {
+        // ── Public / Authentication routes (NOT gated) ─────────────────────
         '/': (_) => AuthGate(
               authService: authService,
               studentApiClient: studentApiClient,
-              assessmentApiClient: assessmentApiClient,
-              collegeApiClient: collegeApiClient,
-            ),
-        '/home': (_) => HomeScreen(
-              authService: authService,
-              studentApiClient: studentApiClient,
+              catalogApiClient: catalogApiClient,
               assessmentApiClient: assessmentApiClient,
               collegeApiClient: collegeApiClient,
             ),
@@ -69,13 +80,31 @@ class NaaguruStudentApp extends StatelessWidget {
               authService: authService,
               studentApiClient: studentApiClient,
             ),
-        '/profile': (_) =>
-            StudentProfileScreen(studentApiClient: studentApiClient),
-        '/assessment-intro': (_) => const AssessmentIntroScreen(),
-        '/assessment-question': (_) =>
-            AssessmentQuestionScreen(assessmentApiClient: assessmentApiClient),
+        // Profile screen itself must remain reachable when profile is incomplete.
+        // ProfileGate renders it directly — this named route is kept for any
+        // edge-case deep-link that specifically targets /profile.
+        '/profile': (_) => StudentProfileScreen(
+              studentApiClient: studentApiClient,
+              authService: authService,
+            ),
+
+        // ── Authenticated routes (ALL wrapped with ProfileGate) ─────────────
+        // An incomplete-profile student navigating to any of these routes will
+        // be shown the new profile wizard Screen 1 regardless.
+        '/home': (_) => gated(HomeScreen(
+              authService: authService,
+              studentApiClient: studentApiClient,
+              catalogApiClient: catalogApiClient,
+              assessmentApiClient: assessmentApiClient,
+              collegeApiClient: collegeApiClient,
+            )),
+        '/assessment-intro': (_) => gated(const AssessmentIntroScreen()),
+        '/assessment-question': (_) => gated(
+              AssessmentQuestionScreen(
+                  assessmentApiClient: assessmentApiClient),
+            ),
         '/results': (_) =>
-            ResultsScreen(assessmentApiClient: assessmentApiClient),
+            gated(ResultsScreen(assessmentApiClient: assessmentApiClient)),
       },
     );
   }
@@ -83,9 +112,14 @@ class NaaguruStudentApp extends StatelessWidget {
 
 /// A lightweight startup widget that restores the user's session
 /// before displaying the app.
+///
+/// When authenticated, it renders [ProfileGate] wrapping [HomeScreen].
+/// The gate resolves the profile state (fetched once during session restore
+/// or OTP verification) and routes to Home or ProfileScreen accordingly.
 class AuthGate extends StatefulWidget {
   final AuthService authService;
   final StudentApiClient studentApiClient;
+  final CatalogApiClient catalogApiClient;
   final AssessmentApiClient? assessmentApiClient;
   final CollegeApiClient? collegeApiClient;
 
@@ -93,6 +127,7 @@ class AuthGate extends StatefulWidget {
     super.key,
     required this.authService,
     required this.studentApiClient,
+    required this.catalogApiClient,
     this.assessmentApiClient,
     this.collegeApiClient,
   });
@@ -107,6 +142,8 @@ class _AuthGateState extends State<AuthGate> {
   @override
   void initState() {
     super.initState();
+    // tryRestoreSession() fetches the profile internally before updating
+    // authStateNotifier so there is no flash of wrong content.
     _restoreFuture = widget.authService.tryRestoreSession();
   }
 
@@ -142,11 +179,18 @@ class _AuthGateState extends State<AuthGate> {
           valueListenable: widget.authService.authStateNotifier,
           builder: (context, isAuthenticated, _) {
             if (isAuthenticated) {
-              return _StudentBootstrap(
+              // ProfileGate resolves UNKNOWN/INCOMPLETE/COMPLETE/ERROR.
+              // No _StudentBootstrap needed — profile state is already set.
+              return ProfileGate(
                 authService: widget.authService,
                 studentApiClient: widget.studentApiClient,
-                assessmentApiClient: widget.assessmentApiClient,
-                collegeApiClient: widget.collegeApiClient,
+                catalogApiClient: widget.catalogApiClient,
+                child: HomeScreen(
+                  authService: widget.authService,
+                  studentApiClient: widget.studentApiClient,
+                  assessmentApiClient: widget.assessmentApiClient,
+                  collegeApiClient: widget.collegeApiClient,
+                ),
               );
             } else {
               return LoginScreen(
@@ -156,66 +200,6 @@ class _AuthGateState extends State<AuthGate> {
             }
           },
         );
-      },
-    );
-  }
-}
-
-/// Lightweight bootstrap component that resolves whether an authenticated student
-/// already has an existing profile, routing cleanly to Home or Profile onboarding.
-class _StudentBootstrap extends StatefulWidget {
-  final AuthService authService;
-  final StudentApiClient studentApiClient;
-  final AssessmentApiClient? assessmentApiClient;
-  final CollegeApiClient? collegeApiClient;
-
-  const _StudentBootstrap({
-    required this.authService,
-    required this.studentApiClient,
-    this.assessmentApiClient,
-    this.collegeApiClient,
-  });
-
-  @override
-  State<_StudentBootstrap> createState() => _StudentBootstrapState();
-}
-
-class _StudentBootstrapState extends State<_StudentBootstrap> {
-  late Future<Map<String, dynamic>?> _profileFuture;
-
-  @override
-  void initState() {
-    super.initState();
-    _profileFuture = widget.studentApiClient.getProfile();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return FutureBuilder<Map<String, dynamic>?>(
-      future: _profileFuture,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Scaffold(
-            backgroundColor: NaaguruTheme.background,
-            body: Center(
-              child: CircularProgressIndicator(color: NaaguruTheme.primary),
-            ),
-          );
-        }
-
-        final profile = snapshot.data;
-        if (profile != null) {
-          return HomeScreen(
-            authService: widget.authService,
-            studentApiClient: widget.studentApiClient,
-            assessmentApiClient: widget.assessmentApiClient,
-            collegeApiClient: widget.collegeApiClient,
-          );
-        } else {
-          return StudentProfileScreen(
-            studentApiClient: widget.studentApiClient,
-          );
-        }
       },
     );
   }

@@ -15,6 +15,20 @@
       "when": 1789226774919,
       "tag": "0001_material_vin_gonzales",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1789267098755,
+      "tag": "0002_lame_cerebro",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1789284100564,
+      "tag": "0003_add_student_gender",
+      "breakpoints": true
     }
   ]
 }

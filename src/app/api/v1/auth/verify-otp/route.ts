@@ -13,8 +13,13 @@ const verifyOtpSchema = z.object({
 export async function POST(request: Request) {
   try {
     const body = await request.json();
+    console.log('[DIAGNOSTIC route] verify-otp received body keys:', Object.keys(body), 'clientType:', body.clientType);
     const { phoneNumber, code, clientType } = verifyOtpSchema.parse(body);
     const normalizedPhone = normalizePhoneNumber(phoneNumber);
+    const maskedPhone = normalizedPhone.length >= 7 
+      ? normalizedPhone.slice(0, 3) + '***' + normalizedPhone.slice(-4) 
+      : '***';
+    console.log(`[DIAGNOSTIC route] verify-otp normalized phone: ${maskedPhone}, codeLength: ${code.length}`);
 
     const tokens = await authUseCases.verifyOtp(normalizedPhone, code);
 
@@ -42,9 +47,12 @@ export async function POST(request: Request) {
     }
   } catch (error) {
     if (error instanceof z.ZodError) {
+      console.log('[DIAGNOSTIC route] verify-otp Zod validation error:', error.issues);
       return NextResponse.json({ error: error.issues }, { status: 400 });
     }
     const message = error instanceof Error ? error.message : 'Internal Server Error';
-    return NextResponse.json({ error: message }, { status: error instanceof Error && message.includes('OTP') ? 401 : 500 });
+    const status = error instanceof Error && message.includes('OTP') ? 401 : 500;
+    console.log(`[DIAGNOSTIC route] verify-otp returning status: ${status}, message: "${message}"`);
+    return NextResponse.json({ error: message }, { status });
   }
 }

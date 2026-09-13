@@ -77,16 +77,17 @@ void main() {
 
       await studentApiClient.createProfile(
         fullName: 'New Student',
+        gender: 'MALE',
         educationStage: '10TH_PASSED',
-        state: 'Andhra Pradesh',
-        city: 'Vijayawada',
+        residenceLocationId: 'loc-1',
+        pincode: '530012',
       );
 
       expect(capturedBody, isNotNull);
       expect(capturedBody!['fullName'], 'New Student');
       expect(capturedBody!['educationStage'], '10TH_PASSED');
-      expect(capturedBody!['state'], 'Andhra Pradesh');
-      expect(capturedBody!['city'], 'Vijayawada');
+      expect(capturedBody!['residenceLocationId'], 'loc-1');
+      expect(capturedBody!['pincode'], '530012');
       // Empty optional fields should not be sent
       expect(capturedBody!.containsKey('board'), false);
     });
@@ -129,6 +130,7 @@ void main() {
       expect(
         () => studentApiClient.createProfile(
           fullName: 'Test',
+          gender: 'MALE',
           educationStage: '10TH_PURSUING',
         ),
         throwsA(isA<ApiException>()),

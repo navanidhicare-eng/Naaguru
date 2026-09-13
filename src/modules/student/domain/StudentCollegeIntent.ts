@@ -6,7 +6,7 @@ export interface StudentCollegeIntentProps {
   versionNumber: number;
   pathwayCode: string;
   programCode: string | null;
-  areaId: string | null;
+  preferredLocationId: string | null;
   requiresHostel: boolean;
   hostelGender: 'BOYS' | 'GIRLS' | null;
   maxAnnualFee: number | null;

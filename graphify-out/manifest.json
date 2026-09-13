@@ -174,33 +174,33 @@
     "semantic_hash": ""
   },
   "naaguru_student/lib/features/assessment/presentation/assessment_intro_screen.dart": {
-    "mtime": 1789222011.8581946,
-    "seen": 1789222618.3172972,
+    "mtime": 1789262613.4820168,
+    "seen": 1789294218.0227287,
     "ast_hash": "a721d63317e5d2e71aea16867095617b",
     "semantic_hash": ""
   },
   "naaguru_student/lib/features/assessment/presentation/assessment_question_screen.dart": {
-    "mtime": 1789221841.9366624,
-    "seen": 1789222618.317299,
+    "mtime": 1789262613.4820168,
+    "seen": 1789294218.022732,
     "ast_hash": "c3a6fc1352a3ea47c3e898fce753d391",
     "semantic_hash": ""
   },
   "naaguru_student/lib/features/auth/auth_service.dart": {
-    "mtime": 1789055329.0386052,
-    "seen": 1789056680.5088108,
-    "ast_hash": "0632417a1b39b8f82354a6715635c710",
-    "semantic_hash": "0632417a1b39b8f82354a6715635c710"
+    "mtime": 1789284798.5914588,
+    "seen": 1789294218.022738,
+    "ast_hash": "811cbb5a6d2e6ba2303d8140d94298bb",
+    "semantic_hash": ""
   },
   "naaguru_student/lib/features/auth/login_screen.dart": {
-    "mtime": 1789221720.347788,
-    "seen": 1789222618.3174615,
-    "ast_hash": "5b9c03c1526cfd9c5618f678dd2444ca",
+    "mtime": 1789272497.4852078,
+    "seen": 1789294218.0227401,
+    "ast_hash": "fa458ecaaf602b2a51c00325188e9879",
     "semantic_hash": ""
   },
   "naaguru_student/lib/features/home/home_screen.dart": {
-    "mtime": 1789222001.9486172,
-    "seen": 1789222618.3174715,
-    "ast_hash": "b84b2aa4b157cd84eea948ae36bf8854",
+    "mtime": 1789296161.563599,
+    "seen": 1789297454.7081072,
+    "ast_hash": "fba375939aca736b6b98a7f68a35fc93",
     "semantic_hash": ""
   },
   "naaguru_student/lib/features/journey/journey_placeholder_screen.dart": {
@@ -210,21 +210,21 @@
     "semantic_hash": "052d6244a441904fd69429116f66d261"
   },
   "naaguru_student/lib/features/student/data/student_api_client.dart": {
-    "mtime": 1789221521.8298006,
-    "seen": 1789222618.3176293,
-    "ast_hash": "f0bec0fafd7e5e881d0f569b3a9ab69a",
+    "mtime": 1789293508.185226,
+    "seen": 1789294218.0240428,
+    "ast_hash": "8055bb667fdebe70095eda1505d5f6ac",
     "semantic_hash": ""
   },
   "naaguru_student/lib/features/student/presentation/student_profile_screen.dart": {
-    "mtime": 1789221729.4210076,
-    "seen": 1789222618.317631,
-    "ast_hash": "e94a8ab85f977f19a612b0c5ca8615cb",
+    "mtime": 1789285104.158929,
+    "seen": 1789294218.0240574,
+    "ast_hash": "9d072d7d4d011218d8d99a60dc81aa52",
     "semantic_hash": ""
   },
   "naaguru_student/lib/main.dart": {
-    "mtime": 1789222046.8381362,
-    "seen": 1789222618.3176324,
-    "ast_hash": "e872353f8e8d3542c3a7bfda0ddf8b72",
+    "mtime": 1789293670.5966346,
+    "seen": 1789294218.02406,
+    "ast_hash": "933eafa72d2091f106ed1b4e9e530109",
     "semantic_hash": ""
   },
   "naaguru_student/linux/flutter/generated_plugin_registrant.cc": {
@@ -300,40 +300,40 @@
     "semantic_hash": "d1e9f1779b5cd92662bf1c2c16e11843"
   },
   "naaguru_student/test/assessment_question_screen_test.dart": {
-    "mtime": 1789222357.4660387,
-    "seen": 1789222618.3197627,
+    "mtime": 1789262613.4820168,
+    "seen": 1789294218.0285017,
     "ast_hash": "3ae7fa5b72c4f24ccc7b1e2f1963c249",
     "semantic_hash": ""
   },
   "naaguru_student/test/auth_service_test.dart": {
-    "mtime": 1789055559.6561296,
-    "seen": 1789056680.5088263,
-    "ast_hash": "655f6eb8198a8ba122a8bfb3df852446",
-    "semantic_hash": "655f6eb8198a8ba122a8bfb3df852446"
+    "mtime": 1789284854.854136,
+    "seen": 1789294218.0285044,
+    "ast_hash": "0f2e4cae046258133e2d113b84e8f715",
+    "semantic_hash": ""
   },
   "naaguru_student/test/home_screen_test.dart": {
-    "mtime": 1789222076.2034118,
-    "seen": 1789222618.319926,
-    "ast_hash": "e9bcd0ce9385d4b2465d0ce11a31b1c5",
+    "mtime": 1789297341.1721466,
+    "seen": 1789297454.7142477,
+    "ast_hash": "7ff9703cc3fe642fef191d1039cbc031",
     "semantic_hash": ""
   },
   "naaguru_student/test/student_api_client_test.dart": {
-    "mtime": 1788687675.7248034,
-    "seen": 1789056680.508828,
-    "ast_hash": "774e7794078903aac554520a1bc7f65d",
-    "semantic_hash": "774e7794078903aac554520a1bc7f65d"
+    "mtime": 1789284906.800729,
+    "seen": 1789294218.0285373,
+    "ast_hash": "7facdbdf7a80824835b4b18a283484c3",
+    "semantic_hash": ""
   },
   "naaguru_student/test/student_profile_screen_test.dart": {
-    "mtime": 1789222328.1354961,
-    "seen": 1789222618.3200972,
-    "ast_hash": "4e80fa886f1e9fbc58bf0eb5dd1875e0",
+    "mtime": 1789285120.0212517,
+    "seen": 1789294218.0285392,
+    "ast_hash": "25f35544f2b1d33494f06909f75ddf7a",
     "semantic_hash": ""
   },
   "naaguru_student/test/widget_test.dart": {
-    "mtime": 1788880856.1453774,
-    "seen": 1789056680.508829,
-    "ast_hash": "f26b5f9af59417374b6edcfcbc5ddd6d",
-    "semantic_hash": "f26b5f9af59417374b6edcfcbc5ddd6d"
+    "mtime": 1789274140.9859166,
+    "seen": 1789294218.0285435,
+    "ast_hash": "adf3976d5bedeb6edb08e82612397b61",
+    "semantic_hash": ""
   },
   "naaguru_student/web/manifest.json": {
     "mtime": 1788871301.7208388,
@@ -408,10 +408,10 @@
     "semantic_hash": ""
   },
   "package.json": {
-    "mtime": 1789053843.4217308,
-    "seen": 1789056680.508839,
-    "ast_hash": "67ee40cbd62e4df5cc5204fdd48f88a6",
-    "semantic_hash": "67ee40cbd62e4df5cc5204fdd48f88a6"
+    "mtime": 1789262613.4981813,
+    "seen": 1789294218.0326097,
+    "ast_hash": "9e39ebc3c71042776c0ee6062b04b17f",
+    "semantic_hash": ""
   },
   "postcss.config.mjs": {
     "mtime": 1788965451.2651412,
@@ -486,10 +486,10 @@
     "semantic_hash": "4d398af6206af0d0b45d99184a4dd1df"
   },
   "src/app/api/v1/auth/verify-otp/route.ts": {
-    "mtime": 1788659572.7207398,
-    "seen": 1789056680.508849,
-    "ast_hash": "488b84b4bce1dec552a4cec733c77145",
-    "semantic_hash": "488b84b4bce1dec552a4cec733c77145"
+    "mtime": 1789285749.7848666,
+    "seen": 1789294218.0383427,
+    "ast_hash": "b97f855b8f16349ca00c889c32f753e7",
+    "semantic_hash": ""
   },
   "src/app/api/v1/career/recommendations/current/route.ts": {
     "mtime": 1788668602.5020926,
@@ -510,9 +510,9 @@
     "semantic_hash": "acf42b956366062075227606e3eb1018"
   },
   "src/app/api/v1/colleges/route.ts": {
-    "mtime": 1789221598.634046,
-    "seen": 1789222618.3239996,
-    "ast_hash": "6429c77af0f2ac8faa09c758ce134f9e",
+    "mtime": 1789262613.502066,
+    "seen": 1789294218.0388992,
+    "ast_hash": "29203b2300a317689eea41f36d9c5bbd",
     "semantic_hash": ""
   },
   "src/app/api/v1/students/me/route.ts": {
@@ -714,9 +714,9 @@
     "semantic_hash": "cfdc8c244e53ed306460ffd316844c42"
   },
   "src/modules/college/infrastructure/DrizzleCollegeRepository.ts": {
-    "mtime": 1789221592.6552694,
-    "seen": 1789222618.3265836,
-    "ast_hash": "c34cc9a327585740fe157718bbb6ba4f",
+    "mtime": 1789262613.5030677,
+    "seen": 1789294218.0447905,
+    "ast_hash": "8c212e168502ae3cc9ac3b45bb88aa0e",
     "semantic_hash": ""
   },
   "src/modules/college/infrastructure/schema.ts": {
@@ -738,28 +738,28 @@
     "semantic_hash": "d41d8cd98f00b204e9800998ecf8427e"
   },
   "src/modules/student/application/dtos.ts": {
-    "mtime": 1788662060.6482239,
-    "seen": 1789056680.5088842,
-    "ast_hash": "62dafccdb02d4c93020dd482fa7d7e5f",
-    "semantic_hash": "62dafccdb02d4c93020dd482fa7d7e5f"
+    "mtime": 1789284417.1531613,
+    "seen": 1789294218.045304,
+    "ast_hash": "179295bfe9173973a8753e01552c1e5b",
+    "semantic_hash": ""
   },
   "src/modules/student/application/useCases/StudentUseCases.test.ts": {
-    "mtime": 1788661913.3353727,
-    "seen": 1789056680.508885,
-    "ast_hash": "8e7d77eef8421448147b4afaddb659f7",
-    "semantic_hash": "8e7d77eef8421448147b4afaddb659f7"
+    "mtime": 1789284481.5172503,
+    "seen": 1789294218.0453095,
+    "ast_hash": "5dc40f83175e1595425af3c8370cd813",
+    "semantic_hash": ""
   },
   "src/modules/student/application/useCases/StudentUseCases.ts": {
-    "mtime": 1788662069.082703,
-    "seen": 1789056680.5088859,
-    "ast_hash": "50128bbb8abdd2f7a9b6529a6c8938e4",
-    "semantic_hash": "50128bbb8abdd2f7a9b6529a6c8938e4"
+    "mtime": 1789284447.683603,
+    "seen": 1789294218.0453107,
+    "ast_hash": "ffaa7f920be4ce0b571cff7cdbf50d34",
+    "semantic_hash": ""
   },
   "src/modules/student/application/validation.ts": {
-    "mtime": 1788661821.24042,
-    "seen": 1789056680.5088866,
-    "ast_hash": "f03da0bccaf45b6fc57d210b26bbb83b",
-    "semantic_hash": "f03da0bccaf45b6fc57d210b26bbb83b"
+    "mtime": 1789284432.3837433,
+    "seen": 1789294218.0453138,
+    "ast_hash": "1bbc2cf7d8d561bbebbe17d091f3e61d",
+    "semantic_hash": ""
   },
   "src/modules/student/domain/IStudentRepository.ts": {
     "mtime": 1788661584.555493,
@@ -768,10 +768,10 @@
     "semantic_hash": "201596a01189b0c8c40b2b6ac7a2dcab"
   },
   "src/modules/student/domain/Student.ts": {
-    "mtime": 1788661572.7189798,
-    "seen": 1789056680.5088878,
-    "ast_hash": "62606419e2e1d718ef85dce5e4522c5f",
-    "semantic_hash": "62606419e2e1d718ef85dce5e4522c5f"
+    "mtime": 1789284398.450794,
+    "seen": 1789294218.0454903,
+    "ast_hash": "8accfa574f933991653b2802b8c81ef9",
+    "semantic_hash": ""
   },
   "src/modules/student/index.ts": {
     "mtime": 1788620894.3916297,
@@ -780,22 +780,22 @@
     "semantic_hash": "d41d8cd98f00b204e9800998ecf8427e"
   },
   "src/modules/student/infrastructure/DrizzleStudentRepository.ts": {
-    "mtime": 1788661606.862045,
-    "seen": 1789056680.5088897,
-    "ast_hash": "437d063349591f9bb0b6cdb1e9ad9f16",
-    "semantic_hash": "437d063349591f9bb0b6cdb1e9ad9f16"
+    "mtime": 1789284464.7243176,
+    "seen": 1789294218.045666,
+    "ast_hash": "71b674934ad8792db8926dd0eb1e85a5",
+    "semantic_hash": ""
   },
   "src/modules/student/infrastructure/schema.ts": {
-    "mtime": 1788661481.285205,
-    "seen": 1789056680.5088902,
-    "ast_hash": "5e33b9df344b943f92efadca4c5085d7",
-    "semantic_hash": "5e33b9df344b943f92efadca4c5085d7"
+    "mtime": 1789283578.2258847,
+    "seen": 1789294218.0456674,
+    "ast_hash": "942e0c519c74ba325fd74646ff9041bb",
+    "semantic_hash": ""
   },
   "src/modules/student/public/index.ts": {
-    "mtime": 1788662545.9119725,
-    "seen": 1789056680.5088909,
-    "ast_hash": "fb63f5573230d6fbbbf6a6410712b0ae",
-    "semantic_hash": "fb63f5573230d6fbbbf6a6410712b0ae"
+    "mtime": 1789262613.5265098,
+    "seen": 1789294218.0456686,
+    "ast_hash": "d80182fd729fe0c3f4f2301e5feb343e",
+    "semantic_hash": ""
   },
   "src/shared/api/withRouteContext.ts": {
     "mtime": 1788697766.4345274,
@@ -828,10 +828,10 @@
     "semantic_hash": "a08e44c1adb3948b8bb0032f4ea1e63e"
   },
   "src/shared/auth/middleware.ts": {
-    "mtime": 1788696537.143489,
-    "seen": 1789056680.5088954,
-    "ast_hash": "068286944573f71cc41166303c13aadb",
-    "semantic_hash": "068286944573f71cc41166303c13aadb"
+    "mtime": 1789280297.2462144,
+    "seen": 1789294218.0465236,
+    "ast_hash": "a99160f28f6c37526a37dc4f3141544d",
+    "semantic_hash": ""
   },
   "src/shared/auth/schema.ts": {
     "mtime": 1788963011.892232,
@@ -846,9 +846,9 @@
     "semantic_hash": "917e49b1e3e5efcc2381a41b641a703e"
   },
   "src/shared/auth/useCases.ts": {
-    "mtime": 1789221521.8403518,
-    "seen": 1789222618.3302624,
-    "ast_hash": "880cd27865e39759e59bf2417fdbb5f0",
+    "mtime": 1789285738.8893733,
+    "seen": 1789294218.0469139,
+    "ast_hash": "20da9ad732c86cf7a1b1e11e8179e582",
     "semantic_hash": ""
   },
   "src/shared/auth/utils.ts": {
@@ -876,16 +876,16 @@
     "semantic_hash": ""
   },
   "src/shared/database/migrations/meta/_journal.json": {
-    "mtime": 1789201412.7503662,
-    "seen": 1789222618.3307328,
-    "ast_hash": "40d794b2d22dcd85655f04040ccea1a5",
+    "mtime": 1789284100.5730362,
+    "seen": 1789294218.0476403,
+    "ast_hash": "c1bca9670fc48639466eff110ccd9010",
     "semantic_hash": ""
   },
   "src/shared/database/schema.ts": {
-    "mtime": 1788682510.4948921,
-    "seen": 1789056680.5089052,
-    "ast_hash": "31e054f4db98f652fb8911010b0e2707",
-    "semantic_hash": "31e054f4db98f652fb8911010b0e2707"
+    "mtime": 1789262613.535494,
+    "seen": 1789294218.0476418,
+    "ast_hash": "76f7549c61fa3f089ab3d3858b6fb4a7",
+    "semantic_hash": ""
   },
   "src/shared/domain/StreamCode.ts": {
     "mtime": 1788682403.3083422,
@@ -954,33 +954,33 @@
     "semantic_hash": "e2c6758b4cf7a5a70800078a3b2e6fee"
   },
   "naaguru_student/lib/features/assessment/presentation/results_screen.dart": {
-    "mtime": 1789221779.1426876,
-    "seen": 1789222618.3173006,
-    "ast_hash": "66547e5d9d3099d9287da4b31bf1715a",
+    "mtime": 1789262613.4820168,
+    "seen": 1789294218.022735,
+    "ast_hash": "da91afea683fd494dd9c311a0a6f3a39",
     "semantic_hash": ""
   },
   "naaguru_student/lib/features/college/data/college_api_client.dart": {
-    "mtime": 1789221986.6483111,
-    "seen": 1789222618.3174634,
-    "ast_hash": "777a2e04540c4ada4c035cbcf0db4fdd",
+    "mtime": 1789266290.3794074,
+    "seen": 1789294218.0227425,
+    "ast_hash": "95c7d07d3a2a37ac00987d8871414ae5",
     "semantic_hash": ""
   },
   "naaguru_student/lib/features/college/presentation/college_detail_screen.dart": {
-    "mtime": 1789221902.0889134,
-    "seen": 1789222618.3174648,
-    "ast_hash": "af9d2fe29beaaf8c756d65031b739805",
+    "mtime": 1789262613.4820168,
+    "seen": 1789294218.0227447,
+    "ast_hash": "cb0e00e28824e13cbf0b6ae1fba0191f",
     "semantic_hash": ""
   },
   "naaguru_student/lib/features/college/presentation/college_list_screen.dart": {
-    "mtime": 1789221917.2891974,
-    "seen": 1789222618.3174658,
-    "ast_hash": "8a8bf20313c2dc794efbc032f27673bc",
+    "mtime": 1789262613.4820168,
+    "seen": 1789294218.0227501,
+    "ast_hash": "d34be7a9497b930d378666d009eb57f5",
     "semantic_hash": ""
   },
   "naaguru_student/lib/features/college/presentation/college_preferences_screen.dart": {
-    "mtime": 1789221886.3312764,
-    "seen": 1789222618.317467,
-    "ast_hash": "5b2633b7df4ca823ccf5c68f0201642d",
+    "mtime": 1789295603.0214026,
+    "seen": 1789295840.1753876,
+    "ast_hash": "da2ab96325c5b0851207578c6abb3db1",
     "semantic_hash": ""
   },
   "naaguru_student/lib/features/explore/presentation/explore_paths_screen.dart": {
@@ -996,38 +996,38 @@
     "semantic_hash": ""
   },
   "naaguru_student/test/assessment_api_client_test.dart": {
-    "mtime": 1789222085.990852,
-    "seen": 1789222618.319601,
+    "mtime": 1789262613.4820168,
+    "seen": 1789294218.028165,
     "ast_hash": "5592fd55ab517a7401ad7aba1d25e786",
     "semantic_hash": ""
   },
   "naaguru_student/test/college_api_client_test.dart": {
-    "mtime": 1789222428.6915708,
-    "seen": 1789222618.3199208,
-    "ast_hash": "4bd3d67792b0ac4158c8ba9c10747008",
+    "mtime": 1789262613.4820168,
+    "seen": 1789294218.0285065,
+    "ast_hash": "ff26fcf5c6788b14e80fec997816b2e7",
     "semantic_hash": ""
   },
   "naaguru_student/test/college_list_screen_test.dart": {
-    "mtime": 1789222565.3936067,
-    "seen": 1789222618.3199227,
-    "ast_hash": "195994b6b10f51dbc2f7a5cabf1580c2",
+    "mtime": 1789262613.4820168,
+    "seen": 1789294218.028512,
+    "ast_hash": "e11fdfa8ea0b7bdbf0320042ffa6caa7",
     "semantic_hash": ""
   },
   "naaguru_student/test/college_preferences_screen_test.dart": {
-    "mtime": 1789222545.1244974,
-    "seen": 1789222618.3199239,
-    "ast_hash": "e2933387c107ac8d65a1e947c4ae214d",
+    "mtime": 1789295698.0928051,
+    "seen": 1789295840.1812687,
+    "ast_hash": "f74204443a28e17a0f49b51f9fb01919",
     "semantic_hash": ""
   },
   "naaguru_student/test/results_screen_test.dart": {
-    "mtime": 1789222362.3988373,
-    "seen": 1789222618.3199277,
-    "ast_hash": "072fc05db833488ebc73058a4bb120d7",
+    "mtime": 1789262613.494123,
+    "seen": 1789294218.028535,
+    "ast_hash": "71e02bb74731d9a20e4c4f0cc276894a",
     "semantic_hash": ""
   },
   "naaguru_student/test/test_assets.dart": {
-    "mtime": 1789222273.1120582,
-    "seen": 1789222618.3200989,
+    "mtime": 1789262613.4951246,
+    "seen": 1789294218.0285413,
     "ast_hash": "575e5bf08e372ac0032c4d6af91a17c6",
     "semantic_hash": ""
   },
@@ -1074,9 +1074,9 @@
     "semantic_hash": ""
   },
   "scripts/seed-colleges-dev.ts": {
-    "mtime": 1789221626.249338,
-    "seen": 1789222618.322513,
-    "ast_hash": "016942794fa22f7b8612602f513746cc",
+    "mtime": 1789262613.4995732,
+    "seen": 1789294218.0356152,
+    "ast_hash": "e87fe461a1d9d1c2e9650ca729803bac",
     "semantic_hash": ""
   },
   "scripts/seed.ts": {
@@ -1785,6 +1785,324 @@
     "mtime": 1788863706.0,
     "seen": 1789222618.3326352,
     "ast_hash": "f3cdfd08a8fb1d22b4d827b994a95d89",
+    "semantic_hash": ""
+  },
+  "naaguru_student/lib/core/ui/profile_gate.dart": {
+    "mtime": 1789274003.672818,
+    "seen": 1789294218.022293,
+    "ast_hash": "c9755534b58c0016d4962f6e6032e4a2",
+    "semantic_hash": ""
+  },
+  "naaguru_student/lib/features/college/presentation/college_discovery_wizard_state.dart": {
+    "mtime": 1789296251.9472613,
+    "seen": 1789297454.7070212,
+    "ast_hash": "0d13157de85b8c4b1831926aa49f14b4",
+    "semantic_hash": ""
+  },
+  "naaguru_student/lib/features/college/presentation/college_location_preferences_screen.dart": {
+    "mtime": 1789294081.791128,
+    "seen": 1789294218.0227528,
+    "ast_hash": "61b8328af5e341ad0064fc7d416a785e",
+    "semantic_hash": ""
+  },
+  "naaguru_student/lib/features/college/presentation/college_review_and_confirm_screen.dart": {
+    "mtime": 1789296056.4096098,
+    "seen": 1789297454.7075796,
+    "ast_hash": "4ba397ee5da2639a383bd2029a3277e1",
+    "semantic_hash": ""
+  },
+  "naaguru_student/lib/features/college/presentation/college_stream_selection_screen.dart": {
+    "mtime": 1789293630.7151868,
+    "seen": 1789294218.0227597,
+    "ast_hash": "a9996065bb465a64b31d8f0c301bd9de",
+    "semantic_hash": ""
+  },
+  "naaguru_student/lib/features/explore/presentation/college_discovery_intro_screen.dart": {
+    "mtime": 1789296102.0099344,
+    "seen": 1789297454.7077565,
+    "ast_hash": "4f502cfec752a34570d1a445192edc95",
+    "semantic_hash": ""
+  },
+  "naaguru_student/lib/features/student/data/catalog_api_client.dart": {
+    "mtime": 1789292151.8208578,
+    "seen": 1789294218.0240393,
+    "ast_hash": "df927bd096272e156e3f32c626b9db67",
+    "semantic_hash": ""
+  },
+  "naaguru_student/lib/features/student/presentation/location_picker_sheet.dart": {
+    "mtime": 1789275063.2936716,
+    "seen": 1789294218.0240455,
+    "ast_hash": "e86c173e7e09e4a1a1067d2a360735a1",
+    "semantic_hash": ""
+  },
+  "naaguru_student/lib/features/student/presentation/profile_screen1_about_you.dart": {
+    "mtime": 1789292419.2415073,
+    "seen": 1789294218.024048,
+    "ast_hash": "5cba24bc3a59b222d7dd81e9a999607c",
+    "semantic_hash": ""
+  },
+  "naaguru_student/lib/features/student/presentation/profile_screen2_where_you_live.dart": {
+    "mtime": 1789275134.8675718,
+    "seen": 1789294218.0240502,
+    "ast_hash": "3c15a2189b975d0f73929e66e255601a",
+    "semantic_hash": ""
+  },
+  "naaguru_student/lib/features/student/presentation/profile_screen3_review.dart": {
+    "mtime": 1789292429.4651072,
+    "seen": 1789294218.0240526,
+    "ast_hash": "faeaa202b1f4dc0d53576b0d3b052394",
+    "semantic_hash": ""
+  },
+  "naaguru_student/lib/features/student/presentation/profile_wizard_state.dart": {
+    "mtime": 1789292138.6481645,
+    "seen": 1789294218.0240548,
+    "ast_hash": "5109c778b29e5903e3e4e804b66b9654",
+    "semantic_hash": ""
+  },
+  "naaguru_student/test/college_discovery_wizard_state_test.dart": {
+    "mtime": 1789293889.6487777,
+    "seen": 1789294218.0285094,
+    "ast_hash": "0849e62fe46fbd311a1b8df83711242d",
+    "semantic_hash": ""
+  },
+  "naaguru_student/test/college_location_preferences_screen_test.dart": {
+    "mtime": 1789294092.5421085,
+    "seen": 1789294218.0285144,
+    "ast_hash": "37e59531d7a089264f3ca6394aa4d15a",
+    "semantic_hash": ""
+  },
+  "naaguru_student/test/college_review_and_confirm_screen_test.dart": {
+    "mtime": 1789295735.1678505,
+    "seen": 1789295840.1812706,
+    "ast_hash": "d30ba5a69d4b91ab30f7a642f36492f2",
+    "semantic_hash": ""
+  },
+  "naaguru_student/test/college_stream_selection_screen_test.dart": {
+    "mtime": 1789266290.385817,
+    "seen": 1789294218.0285208,
+    "ast_hash": "5fdef2fad3217afa8319dce06bce64f2",
+    "semantic_hash": ""
+  },
+  "naaguru_student/test/debug_test.dart": {
+    "mtime": 1789297401.347824,
+    "seen": 1789297454.7142458,
+    "ast_hash": "a7a29622bcb8a550ae6a3918fc570e25",
+    "semantic_hash": ""
+  },
+  "naaguru_student/test/profile_gate_test.dart": {
+    "mtime": 1789274094.2907994,
+    "seen": 1789294218.0285268,
+    "ast_hash": "7e38a3ea1a1f821290fa20b2d97680c4",
+    "semantic_hash": ""
+  },
+  "naaguru_student/test/profile_screen1_about_you_test.dart": {
+    "mtime": 1789292394.1626184,
+    "seen": 1789294218.028529,
+    "ast_hash": "6038b305d882d4b15e59eb4fbcfefe03",
+    "semantic_hash": ""
+  },
+  "naaguru_student/test/profile_screen2_where_you_live_test.dart": {
+    "mtime": 1789292439.1828609,
+    "seen": 1789294218.0285306,
+    "ast_hash": "eb26029889d4a12874a5089d1ce2484a",
+    "semantic_hash": ""
+  },
+  "naaguru_student/test/profile_screen3_review_test.dart": {
+    "mtime": 1789292327.8599138,
+    "seen": 1789294218.0285327,
+    "ast_hash": "fb92a17540aa6910a60c434c81c065af",
+    "semantic_hash": ""
+  },
+  "scratch/check_otp_rows.mjs": {
+    "mtime": 1789285875.8985186,
+    "seen": 1789294218.03299,
+    "ast_hash": "64bb0a0dbd6d54c0d9debbd6d889a690",
+    "semantic_hash": ""
+  },
+  "scratch/test-api.ts": {
+    "mtime": 1789262613.4981813,
+    "seen": 1789294218.0336459,
+    "ast_hash": "64397c89d2f9cdeb7da26fce5c87ee41",
+    "semantic_hash": ""
+  },
+  "scratch/test_verify_e2e.mjs": {
+    "mtime": 1789285819.4710333,
+    "seen": 1789294218.0336494,
+    "ast_hash": "c50a590e2bb63b578d594a42da04b868",
+    "semantic_hash": ""
+  },
+  "scripts/check-db.ts": {
+    "mtime": 1789276134.6401093,
+    "seen": 1789294218.0340466,
+    "ast_hash": "17acef15610ec07e63a268eb3eb13b89",
+    "semantic_hash": ""
+  },
+  "scripts/fix-locations.ts": {
+    "mtime": 1789276525.9337566,
+    "seen": 1789294218.0348532,
+    "ast_hash": "9d67a989a6f4dd5927830f24e6286569",
+    "semantic_hash": ""
+  },
+  "scripts/get-ids.ts": {
+    "mtime": 1789268469.8641331,
+    "seen": 1789294218.0348573,
+    "ast_hash": "e37d583caded218ca6925256ea4010b0",
+    "semantic_hash": ""
+  },
+  "scripts/run_migration.ts": {
+    "mtime": 1789292494.9840035,
+    "seen": 1789294218.0354338,
+    "ast_hash": "ee7791586198f07e93265e8509e60954",
+    "semantic_hash": ""
+  },
+  "scripts/seed-catalog.ts": {
+    "mtime": 1789275711.6916304,
+    "seen": 1789294218.0356133,
+    "ast_hash": "34754373891450e7cfd149f1ddd6b0f9",
+    "semantic_hash": ""
+  },
+  "src/app/api/v1/catalog/areas/route.ts": {
+    "mtime": 1789262613.5005755,
+    "seen": 1789294218.038712,
+    "ast_hash": "20e4458bd44264897ad88a3868ea9844",
+    "semantic_hash": ""
+  },
+  "src/app/api/v1/catalog/locations/route.ts": {
+    "mtime": 1789267443.711126,
+    "seen": 1789294218.038714,
+    "ast_hash": "35d5b185f956a6cabc3bb3e898db3016",
+    "semantic_hash": ""
+  },
+  "src/app/api/v1/catalog/pathways/route.ts": {
+    "mtime": 1789262613.5005755,
+    "seen": 1789294218.0387154,
+    "ast_hash": "69c4a5c98c9efb2ed19807a783031244",
+    "semantic_hash": ""
+  },
+  "src/app/api/v1/catalog/schools/route.ts": {
+    "mtime": 1789268246.2207983,
+    "seen": 1789294218.0387166,
+    "ast_hash": "26e8f8be7392e6a4a15019100f240bcc",
+    "semantic_hash": ""
+  },
+  "src/app/api/v1/students/me/college-intent/route.ts": {
+    "mtime": 1789262613.502066,
+    "seen": 1789294218.0389009,
+    "ast_hash": "a565c367f18d613d059e6498684e249d",
+    "semantic_hash": ""
+  },
+  "src/modules/student/application/useCases/StudentIntentUseCases.test.ts": {
+    "mtime": 1789267569.2037406,
+    "seen": 1789294218.0453062,
+    "ast_hash": "810127fe0fd7b4bdb01bd2a6b04ff69a",
+    "semantic_hash": ""
+  },
+  "src/modules/student/application/useCases/StudentIntentUseCases.ts": {
+    "mtime": 1789267555.2525666,
+    "seen": 1789294218.0453076,
+    "ast_hash": "069d56e383ae303b6a517361176601bd",
+    "semantic_hash": ""
+  },
+  "src/modules/student/application/validation.test.ts": {
+    "mtime": 1789284654.6691992,
+    "seen": 1789294218.0453122,
+    "ast_hash": "57d8e313a36e9905144a11936a32daa3",
+    "semantic_hash": ""
+  },
+  "src/modules/student/domain/IStudentIntentRepository.ts": {
+    "mtime": 1789262613.505428,
+    "seen": 1789294218.0453148,
+    "ast_hash": "f97d9dff3053ed5cb0696838c4286b9f",
+    "semantic_hash": ""
+  },
+  "src/modules/student/domain/StudentCollegeIntent.ts": {
+    "mtime": 1789267597.9644668,
+    "seen": 1789294218.0454915,
+    "ast_hash": "346c5e197cd2ae013292f9ce6d653097",
+    "semantic_hash": ""
+  },
+  "src/modules/student/infrastructure/DrizzleStudentIntentRepository.test.ts": {
+    "mtime": 1789267622.313831,
+    "seen": 1789294218.0456629,
+    "ast_hash": "dd48d092e85ad5093aa49a6e00ac7f53",
+    "semantic_hash": ""
+  },
+  "src/modules/student/infrastructure/DrizzleStudentIntentRepository.ts": {
+    "mtime": 1789267606.3590722,
+    "seen": 1789294218.0456645,
+    "ast_hash": "7acf58b1b169de9f6d70068ff73c454f",
+    "semantic_hash": ""
+  },
+  "src/shared/catalog/application/dtos.ts": {
+    "mtime": 1789267407.3370583,
+    "seen": 1789294218.047091,
+    "ast_hash": "36815ec62898a4a69ec483494107f56e",
+    "semantic_hash": ""
+  },
+  "src/shared/catalog/application/useCases/CatalogUseCases.ts": {
+    "mtime": 1789268345.3811333,
+    "seen": 1789294218.0470924,
+    "ast_hash": "2189d10c13e8348f806258de372f32a0",
+    "semantic_hash": ""
+  },
+  "src/shared/catalog/domain/models.ts": {
+    "mtime": 1789267405.1898937,
+    "seen": 1789294218.0470939,
+    "ast_hash": "6e3975ebc686d28b5b196d15fc8713ad",
+    "semantic_hash": ""
+  },
+  "src/shared/catalog/index.ts": {
+    "mtime": 1789268290.8694124,
+    "seen": 1789294218.0471091,
+    "ast_hash": "029e0f63ad2eae62f4660ad68d7c55af",
+    "semantic_hash": ""
+  },
+  "src/shared/catalog/infrastructure/DrizzleCatalogRepository.ts": {
+    "mtime": 1789268240.0384028,
+    "seen": 1789294218.0471103,
+    "ast_hash": "607df3fd5ef151589f1583c9c2b21bab",
+    "semantic_hash": ""
+  },
+  "src/shared/catalog/infrastructure/schema.ts": {
+    "mtime": 1789267069.8986542,
+    "seen": 1789294218.0471115,
+    "ast_hash": "817149ad626046898b02c35936efb243",
+    "semantic_hash": ""
+  },
+  "src/shared/database/migrations/meta/0001_snapshot.json": {
+    "mtime": 1789262613.535494,
+    "seen": 1789294218.0476365,
+    "ast_hash": "10a5a3a6c7138155ca269d31eb5b8f63",
+    "semantic_hash": ""
+  },
+  "src/shared/database/migrations/meta/0002_snapshot.json": {
+    "mtime": 1789267098.75469,
+    "seen": 1789294218.047638,
+    "ast_hash": "8ce66dc2051e1faedf5dca05a1c587d8",
+    "semantic_hash": ""
+  },
+  "src/shared/database/migrations/meta/0003_snapshot.json": {
+    "mtime": 1789284100.5646024,
+    "seen": 1789294218.0476391,
+    "ast_hash": "99fcdce127903d4981d16d8432534b02",
+    "semantic_hash": ""
+  },
+  "test_zod.ts": {
+    "mtime": 1789281174.965937,
+    "seen": 1789294218.0487032,
+    "ast_hash": "e467201371e18b0db20bd5c54c97dacb",
+    "semantic_hash": ""
+  },
+  "vitest.config.ts": {
+    "mtime": 1789262613.535494,
+    "seen": 1789294218.0488703,
+    "ast_hash": "5366376bfe243d7f490b7b16c29943d5",
+    "semantic_hash": ""
+  },
+  "naaguru_student/test_output.txt": {
+    "mtime": 1789277794.7055323,
+    "seen": 1789294218.0511003,
+    "ast_hash": "d08bbc0ecfd6ec200b37f238128daecd",
     "semantic_hash": ""
   }
 }

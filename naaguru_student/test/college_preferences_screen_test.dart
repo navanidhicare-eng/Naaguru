@@ -3,6 +3,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:naaguru_student/core/api_client.dart';
 import 'package:naaguru_student/features/college/data/college_api_client.dart';
 import 'package:naaguru_student/features/college/presentation/college_preferences_screen.dart';
+import 'package:naaguru_student/features/college/presentation/college_review_and_confirm_screen.dart';
+import 'package:naaguru_student/features/student/data/student_api_client.dart';
 
 class MockApiClient extends ApiClient {
   @override
@@ -18,6 +20,17 @@ class MockApiClient extends ApiClient {
       };
     }
     return {'data': []};
+  }
+}
+
+class MockStudentApiClientForPref extends StudentApiClient {
+  Map<String, dynamic>? intentToReturn;
+
+  MockStudentApiClientForPref() : super(apiClient: ApiClient());
+
+  @override
+  Future<Map<String, dynamic>?> getCurrentCollegeIntent() async {
+    return intentToReturn;
   }
 }
 
@@ -59,5 +72,36 @@ void main() {
     expect(find.text('ఇంటర్మీడియట్'), findsOneWidget);
     expect(find.text('కొనసాగించండి →'), findsOneWidget);
     expect(find.text('త్వరలో'), findsNWidgets(3));
+  });
+
+  testWidgets('CollegePreferencesScreen redirects to Review & Confirm when Version 2 intent already exists', (WidgetTester tester) async {
+    final client = CollegeApiClient(apiClient: MockApiClient());
+    final studentClient = MockStudentApiClientForPref();
+    studentClient.intentToReturn = {
+      'id': 'intent-v2',
+      'versionNumber': 2,
+      'remainingChanges': 0,
+      'pathwayCode': 'INTERMEDIATE',
+      'programCode': 'MPC',
+      'requiresHostel': true,
+      'maxAnnualFee': 100000,
+      'status': 'ACTIVE',
+    };
+
+    await tester.pumpWidget(MaterialApp(
+      home: CollegePreferencesScreen(
+        collegeApiClient: client,
+        studentApiClient: studentClient,
+        isTelugu: false,
+        onLanguageChanged: (val) {},
+      ),
+    ));
+    await tester.pumpAndSettle();
+
+    // Directly routed to Review & Confirm screen, NOT allowing editing
+    expect(find.byType(CollegeReviewAndConfirmScreen), findsOneWidget);
+    expect(find.text('FINAL PREFERENCES'), findsOneWidget);
+    expect(find.text('Final'), findsNWidgets(5));
+    expect(find.text('Edit'), findsNothing);
   });
 }

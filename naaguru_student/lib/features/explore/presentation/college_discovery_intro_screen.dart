@@ -2,17 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:naaguru_student/core/theme.dart';
 import 'package:naaguru_student/features/college/data/college_api_client.dart';
+import 'package:naaguru_student/features/college/presentation/college_list_screen.dart';
 import 'package:naaguru_student/features/college/presentation/college_preferences_screen.dart';
 import 'package:naaguru_student/features/explore/presentation/explore_paths_screen.dart';
+import 'package:naaguru_student/features/student/data/catalog_api_client.dart';
+import 'package:naaguru_student/features/student/data/student_api_client.dart';
 
 class CollegeDiscoveryIntroScreen extends StatelessWidget {
   final CollegeApiClient? collegeApiClient;
+  final CatalogApiClient? catalogApiClient;
+  final StudentApiClient? studentApiClient;
   final bool isTelugu;
   final ValueChanged<bool> onLanguageChanged;
 
   const CollegeDiscoveryIntroScreen({
     super.key,
     this.collegeApiClient,
+    this.catalogApiClient,
+    this.studentApiClient,
     required this.isTelugu,
     required this.onLanguageChanged,
   });
@@ -134,21 +141,48 @@ class CollegeDiscoveryIntroScreen extends StatelessWidget {
             
             // Primary CTA
             ElevatedButton(
-              onPressed: () {
-                if (collegeApiClient != null) {
+              onPressed: () async {
+                if (collegeApiClient == null) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('College discovery is initializing...')),
+                  );
+                  return;
+                }
+
+                Map<String, dynamic>? intent;
+                if (studentApiClient != null) {
+                  try {
+                    intent = await studentApiClient!.getCurrentCollegeIntent();
+                  } catch (_) {}
+                }
+
+                if (!context.mounted) return;
+
+                if (intent != null && intent.isNotEmpty) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => CollegeListScreen(
+                        collegeApiClient: collegeApiClient!,
+                        pathway: intent!['pathwayCode'] as String? ?? 'INTERMEDIATE',
+                        streamCode: intent['programCode'] as String?,
+                        requiresHostel: intent['requiresHostel'] == true,
+                        maxFee: intent['maxAnnualFee'] as int?,
+                      ),
+                    ),
+                  );
+                } else {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder: (_) => CollegePreferencesScreen(
                         collegeApiClient: collegeApiClient!,
+                        catalogApiClient: catalogApiClient,
+                        studentApiClient: studentApiClient,
                         isTelugu: isTelugu,
                         onLanguageChanged: onLanguageChanged,
                       ),
                     ),
-                  );
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('College discovery is initializing...')),
                   );
                 }
               },

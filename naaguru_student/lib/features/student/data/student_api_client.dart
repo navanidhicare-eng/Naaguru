@@ -30,22 +30,26 @@ class StudentApiClient {
   /// Creates a new student profile.
   Future<Map<String, dynamic>> createProfile({
     required String fullName,
+    required String gender,
     required String educationStage,
     String? board,
-    String? state,
-    String? district,
-    String? city,
+    String? residenceLocationId,
+    String? schoolId,
+    String? pincode,
+    String? landmark,
     String? guardianName,
     String? guardianPhone,
   }) async {
     final body = <String, dynamic>{
       'fullName': fullName,
+      'gender': gender,
       'educationStage': educationStage,
     };
     if (board != null && board.isNotEmpty) body['board'] = board;
-    if (state != null && state.isNotEmpty) body['state'] = state;
-    if (district != null && district.isNotEmpty) body['district'] = district;
-    if (city != null && city.isNotEmpty) body['city'] = city;
+    if (residenceLocationId != null && residenceLocationId.isNotEmpty) body['residenceLocationId'] = residenceLocationId;
+    if (schoolId != null && schoolId.isNotEmpty) body['schoolId'] = schoolId;
+    if (pincode != null && pincode.isNotEmpty) body['pincode'] = pincode;
+    if (landmark != null && landmark.isNotEmpty) body['landmark'] = landmark;
     if (guardianName != null && guardianName.isNotEmpty) {
       body['guardianName'] = guardianName;
     }
@@ -59,24 +63,58 @@ class StudentApiClient {
   /// Updates the current student's profile.
   Future<Map<String, dynamic>> updateProfile({
     String? fullName,
+    String? gender,
     String? educationStage,
     String? board,
-    String? state,
-    String? district,
-    String? city,
+    String? residenceLocationId,
+    String? schoolId,
+    String? pincode,
+    String? landmark,
     String? guardianName,
     String? guardianPhone,
   }) async {
     final body = <String, dynamic>{};
     if (fullName != null) body['fullName'] = fullName;
+    if (gender != null) body['gender'] = gender;
     if (educationStage != null) body['educationStage'] = educationStage;
     if (board != null) body['board'] = board;
-    if (state != null) body['state'] = state;
-    if (district != null) body['district'] = district;
-    if (city != null) body['city'] = city;
+    if (residenceLocationId != null) body['residenceLocationId'] = residenceLocationId;
+    if (schoolId != null) body['schoolId'] = schoolId;
+    if (pincode != null) body['pincode'] = pincode;
+    if (landmark != null) body['landmark'] = landmark;
     if (guardianName != null) body['guardianName'] = guardianName;
     if (guardianPhone != null) body['guardianPhone'] = guardianPhone;
 
     return await _apiClient.patch('/students/me', body: body);
+  }
+
+  /// Submits the student's college intent (POST /students/me/college-intent).
+  Future<Map<String, dynamic>> submitCollegeIntent({
+    required String pathwayCode,
+    String? programCode,
+    String? preferredLocationId,
+    required bool requiresHostel,
+    String? hostelGender,
+    int? maxAnnualFee,
+  }) async {
+    final body = <String, dynamic>{
+      'pathwayCode': pathwayCode,
+      'programCode': programCode,
+      'preferredLocationId': preferredLocationId,
+      'requiresHostel': requiresHostel,
+      'hostelGender': hostelGender,
+      'maxAnnualFee': maxAnnualFee,
+    };
+    return await _apiClient.post('/students/me/college-intent', body: body);
+  }
+
+  /// Fetches the current active college intent for the student.
+  Future<Map<String, dynamic>?> getCurrentCollegeIntent() async {
+    try {
+      return await _apiClient.get('/students/me/college-intent');
+    } on ApiException catch (e) {
+      if (e.statusCode == 404) return null;
+      rethrow;
+    }
   }
 }

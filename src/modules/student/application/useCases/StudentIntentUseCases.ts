@@ -18,7 +18,7 @@ export class StudentIntentUseCases {
     const intent = await this.intentRepository.submitInitialIntent(studentId, {
       pathwayCode: dto.pathwayCode,
       programCode: dto.programCode,
-      areaId: dto.areaId,
+      preferredLocationId: dto.preferredLocationId,
       requiresHostel: dto.requiresHostel,
       hostelGender: dto.hostelGender,
       maxAnnualFee: dto.maxAnnualFee,
@@ -33,7 +33,7 @@ export class StudentIntentUseCases {
     const intent = await this.intentRepository.reviseIntent(studentId, {
       pathwayCode: dto.pathwayCode,
       programCode: dto.programCode,
-      areaId: dto.areaId,
+      preferredLocationId: dto.preferredLocationId,
       requiresHostel: dto.requiresHostel,
       hostelGender: dto.hostelGender,
       maxAnnualFee: dto.maxAnnualFee,
@@ -58,10 +58,10 @@ export class StudentIntentUseCases {
     }
 
     // Validate Area if provided
-    if (dto.areaId) {
-      const isAreaValid = await CatalogModule.validateArea(dto.areaId);
+    if (dto.preferredLocationId) {
+      const isAreaValid = await CatalogModule.validateArea(dto.preferredLocationId);
       if (!isAreaValid) {
-        throw new AppError(`Invalid or inactive service area ID: ${dto.areaId}`, 400, 'BAD_REQUEST');
+        throw new AppError(`Invalid or inactive service area ID: ${dto.preferredLocationId}`, 400, 'BAD_REQUEST');
       }
     }
 
@@ -85,7 +85,7 @@ export class StudentIntentUseCases {
       versionNumber: intent.props.versionNumber,
       pathwayCode: intent.props.pathwayCode,
       programCode: intent.props.programCode,
-      areaId: intent.props.areaId,
+      preferredLocationId: intent.props.preferredLocationId,
       requiresHostel: intent.props.requiresHostel,
       hostelGender: intent.props.hostelGender,
       maxAnnualFee: intent.props.maxAnnualFee,

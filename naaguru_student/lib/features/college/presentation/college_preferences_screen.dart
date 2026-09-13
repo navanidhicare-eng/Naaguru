@@ -4,16 +4,26 @@ import 'package:naaguru_student/core/ui/buttons.dart';
 import 'package:naaguru_student/core/ui/language_toggle.dart';
 import 'package:naaguru_student/features/college/data/college_api_client.dart';
 
+import 'package:naaguru_student/features/college/presentation/college_discovery_wizard_state.dart';
+import 'package:naaguru_student/features/college/presentation/college_review_and_confirm_screen.dart';
 import 'package:naaguru_student/features/college/presentation/college_stream_selection_screen.dart';
+import 'package:naaguru_student/features/student/data/catalog_api_client.dart';
+import 'package:naaguru_student/features/student/data/student_api_client.dart';
 
 class CollegePreferencesScreen extends StatefulWidget {
   final CollegeApiClient collegeApiClient;
+  final CatalogApiClient? catalogApiClient;
+  final StudentApiClient? studentApiClient;
+  final CollegeDiscoveryWizardState? wizardState;
   final bool isTelugu;
   final ValueChanged<bool> onLanguageChanged;
 
   const CollegePreferencesScreen({
     super.key,
     required this.collegeApiClient,
+    this.catalogApiClient,
+    this.studentApiClient,
+    this.wizardState,
     required this.isTelugu,
     required this.onLanguageChanged,
   });
@@ -23,6 +33,7 @@ class CollegePreferencesScreen extends StatefulWidget {
 }
 
 class _CollegePreferencesScreenState extends State<CollegePreferencesScreen> {
+  late final CollegeDiscoveryWizardState _wizard;
   List<Map<String, dynamic>> _pathways = [];
   bool _isLoading = true;
   String? _selectedPathway;
@@ -32,7 +43,55 @@ class _CollegePreferencesScreenState extends State<CollegePreferencesScreen> {
   void initState() {
     super.initState();
     _isTelugu = widget.isTelugu;
+    _wizard = widget.wizardState ?? CollegeDiscoveryWizardState();
+    _selectedPathway = _wizard.pathwayCode;
+    _checkExistingIntent();
     _fetchPathways();
+  }
+
+  Future<void> _checkExistingIntent() async {
+    if (widget.studentApiClient == null) return;
+    try {
+      final intent = await widget.studentApiClient!.getCurrentCollegeIntent();
+      if (!mounted) return;
+      if (intent != null) {
+        final version = intent['versionNumber'] as int?;
+        _wizard.versionNumber = version;
+        if (version != null && version >= 2) {
+          // Version 2 is already reached: lock editing before entering edit screens!
+          // Populate wizard state with the saved final intent and route directly to Review & Confirm
+          if (intent['pathwayCode'] != null) {
+            _wizard.selectPathway(code: intent['pathwayCode'] as String);
+          }
+          if (intent['programCode'] != null) {
+            _wizard.selectProgram(code: intent['programCode'] as String);
+          }
+          if (intent['requiresHostel'] != null) {
+            _wizard.selectHostel(intent['requiresHostel'] == true ? 'YES' : 'NO');
+          }
+          if (intent['maxAnnualFee'] != null) {
+            final fee = intent['maxAnnualFee'] as int;
+            _wizard.selectBudget(fee == 50000 ? 'UNDER_50K' : 'UP_TO_1L');
+          } else {
+            _wizard.selectBudget('NOT_SURE');
+          }
+
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(
+              builder: (_) => CollegeReviewAndConfirmScreen(
+                wizardState: _wizard,
+                collegeApiClient: widget.collegeApiClient,
+                studentApiClient: widget.studentApiClient!,
+                isTelugu: _isTelugu,
+                onLanguageChanged: widget.onLanguageChanged,
+              ),
+            ),
+          );
+        }
+      }
+    } catch (_) {
+      // Do not block flow if check fails
+    }
   }
 
   Future<void> _fetchPathways() async {
@@ -42,7 +101,7 @@ class _CollegePreferencesScreenState extends State<CollegePreferencesScreen> {
         _pathways = pathways;
         _isLoading = false;
         final active = pathways.where((p) => p['status'] == 'ACTIVE').toList();
-        if (active.isNotEmpty) {
+        if (_selectedPathway == null && active.isNotEmpty) {
           _selectedPathway = active.first['code'] as String;
         }
       });
@@ -83,15 +142,24 @@ class _CollegePreferencesScreenState extends State<CollegePreferencesScreen> {
   void _onContinue() {
     if (_selectedPathway == null) return;
     
-    // Pass the active programs of the selected pathway to Screen 3
     final selectedPathwayObj = _pathways.firstWhere((p) => p['code'] == _selectedPathway);
     final programs = selectedPathwayObj['programs'] as List;
+
+    _wizard.selectPathway(
+      code: _selectedPathway!,
+      nameEn: selectedPathwayObj['nameEn'] as String?,
+      nameTe: selectedPathwayObj['nameTe'] as String?,
+      programs: programs.cast<Map<String, dynamic>>(),
+    );
 
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (_) => CollegeStreamSelectionScreen(
           collegeApiClient: widget.collegeApiClient,
+          catalogApiClient: widget.catalogApiClient,
+          studentApiClient: widget.studentApiClient,
+          wizardState: _wizard,
           programs: programs.cast<Map<String, dynamic>>(),
           pathwayCode: _selectedPathway!,
           isTelugu: _isTelugu,

@@ -1,11 +1,20 @@
+export const StudentGender = {
+  MALE: 'MALE',
+  FEMALE: 'FEMALE',
+} as const;
+
+export type StudentGender = (typeof StudentGender)[keyof typeof StudentGender];
+
 export interface StudentProps {
   userId: string;
   fullName: string;
+  gender?: StudentGender | null;
   educationStage: string;
   board?: string | null;
-  state?: string | null;
-  district?: string | null;
-  city?: string | null;
+  residenceLocationId?: string | null;
+  schoolId?: string | null;
+  pincode?: string | null;
+  landmark?: string | null;
   latitude?: number | null;
   longitude?: number | null;
   guardianName?: string | null;
@@ -28,11 +37,13 @@ export class Student {
 
   get userId(): string { return this.props.userId; }
   get fullName(): string { return this.props.fullName; }
+  get gender(): StudentGender | null | undefined { return this.props.gender; }
   get educationStage(): string { return this.props.educationStage; }
   get board(): string | null | undefined { return this.props.board; }
-  get state(): string | null | undefined { return this.props.state; }
-  get district(): string | null | undefined { return this.props.district; }
-  get city(): string | null | undefined { return this.props.city; }
+  get residenceLocationId(): string | null | undefined { return this.props.residenceLocationId; }
+  get schoolId(): string | null | undefined { return this.props.schoolId; }
+  get pincode(): string | null | undefined { return this.props.pincode; }
+  get landmark(): string | null | undefined { return this.props.landmark; }
   get latitude(): number | null | undefined { return this.props.latitude; }
   get longitude(): number | null | undefined { return this.props.longitude; }
   get guardianName(): string | null | undefined { return this.props.guardianName; }
