@@ -7,7 +7,7 @@ import 'package:naaguru_student/features/assessment/presentation/results_screen.
 import 'package:naaguru_student/features/auth/auth_service.dart';
 import 'package:naaguru_student/features/college/data/college_api_client.dart';
 import 'package:naaguru_student/features/college/presentation/college_preferences_screen.dart';
-import 'package:naaguru_student/features/explore/presentation/explore_paths_screen.dart';
+import 'package:naaguru_student/features/explore/presentation/college_discovery_intro_screen.dart';
 import 'package:naaguru_student/features/student/data/student_api_client.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -130,7 +130,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 index: _currentIndex,
                 children: [
                   _buildHomeView(context),
-                  const ExplorePathsScreen(),
+                  CollegeDiscoveryIntroScreen(
+                    collegeApiClient: widget.collegeApiClient,
+                    isTelugu: _isTelugu,
+                  ),
                   const Center(
                     child: Text(
                       'Journey - Coming Soon',

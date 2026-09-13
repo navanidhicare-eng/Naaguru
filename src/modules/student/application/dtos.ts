@@ -40,3 +40,25 @@ export interface StudentProfileDto {
   createdAt?: string;
   updatedAt?: string;
 }
+
+export interface IntentRequestDto {
+  pathwayCode: string;
+  programCode: string | null;
+  areaId: string | null;
+  requiresHostel: boolean;
+  hostelGender: 'BOYS' | 'GIRLS' | null;
+  maxAnnualFee: number | null;
+}
+
+export interface IntentResponseDto {
+  id: string;
+  versionNumber: number;
+  pathwayCode: string;
+  programCode: string | null;
+  areaId: string | null;
+  requiresHostel: boolean;
+  hostelGender: 'BOYS' | 'GIRLS' | null;
+  maxAnnualFee: number | null;
+  status: 'ACTIVE' | 'SUPERSEDED';
+  remainingChanges: number;
+}
