@@ -978,9 +978,9 @@
     "semantic_hash": ""
   },
   "naaguru_student/lib/features/college/presentation/college_preferences_screen.dart": {
-    "mtime": 1789293603.78123,
-    "seen": 1789294218.0227554,
-    "ast_hash": "7313595970c8197c99ff815efbb4e196",
+    "mtime": 1789295603.0214026,
+    "seen": 1789295840.1753876,
+    "ast_hash": "da2ab96325c5b0851207578c6abb3db1",
     "semantic_hash": ""
   },
   "naaguru_student/lib/features/explore/presentation/explore_paths_screen.dart": {
@@ -1014,9 +1014,9 @@
     "semantic_hash": ""
   },
   "naaguru_student/test/college_preferences_screen_test.dart": {
-    "mtime": 1789266290.384797,
-    "seen": 1789294218.0285165,
-    "ast_hash": "7ca6188027a4f0801ea477961305c385",
+    "mtime": 1789295698.0928051,
+    "seen": 1789295840.1812687,
+    "ast_hash": "f74204443a28e17a0f49b51f9fb01919",
     "semantic_hash": ""
   },
   "naaguru_student/test/results_screen_test.dart": {
@@ -1794,9 +1794,9 @@
     "semantic_hash": ""
   },
   "naaguru_student/lib/features/college/presentation/college_discovery_wizard_state.dart": {
-    "mtime": 1789293498.8887382,
-    "seen": 1789294218.0227478,
-    "ast_hash": "c87e99c9bddb0d2155d668f7784b177f",
+    "mtime": 1789295484.7991214,
+    "seen": 1789295840.1750283,
+    "ast_hash": "4a89c3e433d83bc04f7d68933b2312cf",
     "semantic_hash": ""
   },
   "naaguru_student/lib/features/college/presentation/college_location_preferences_screen.dart": {
@@ -1806,9 +1806,9 @@
     "semantic_hash": ""
   },
   "naaguru_student/lib/features/college/presentation/college_review_and_confirm_screen.dart": {
-    "mtime": 1789293778.6558268,
-    "seen": 1789294218.0227573,
-    "ast_hash": "e54e638838017a05a3fe07ebf6661d3c",
+    "mtime": 1789295587.5816405,
+    "seen": 1789295840.1753893,
+    "ast_hash": "90244af42d8cf2409c46f70329673f14",
     "semantic_hash": ""
   },
   "naaguru_student/lib/features/college/presentation/college_stream_selection_screen.dart": {
@@ -1872,9 +1872,9 @@
     "semantic_hash": ""
   },
   "naaguru_student/test/college_review_and_confirm_screen_test.dart": {
-    "mtime": 1789293950.2652073,
-    "seen": 1789294218.0285184,
-    "ast_hash": "ef9796f81d81afaf9c63a8ab9b345a64",
+    "mtime": 1789295735.1678505,
+    "seen": 1789295840.1812706,
+    "ast_hash": "d30ba5a69d4b91ab30f7a642f36492f2",
     "semantic_hash": ""
   },
   "naaguru_student/test/college_stream_selection_screen_test.dart": {
