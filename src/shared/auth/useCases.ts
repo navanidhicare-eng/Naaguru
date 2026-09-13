@@ -50,6 +50,22 @@ export class AuthUseCases {
   async verifyOtp(phoneNumber: string, code: string): Promise<{ accessToken: string; refreshToken: string }> {
     const codeHash = hashValue(code);
     const now = new Date().toISOString();
+    const maskedPhone = phoneNumber.length >= 7 
+      ? phoneNumber.slice(0, 3) + '***' + phoneNumber.slice(-4) 
+      : '***';
+
+    console.log(`[DIAGNOSTIC] verifyOtp requested for phone: ${maskedPhone}`);
+
+    // Pre-check: Inspect DB row for this phone regardless of expiry for diagnostic clarity
+    const [existingRow] = await db.select()
+      .from(otpRequestsTable)
+      .where(eq(otpRequestsTable.phoneNumber, phoneNumber));
+
+    if (!existingRow) {
+      console.log(`[DIAGNOSTIC] Branch REJECT: No OTP record found for phone: ${maskedPhone}`);
+    } else {
+      console.log(`[DIAGNOSTIC] OTP record found: { id: "${existingRow.id}", attempts: ${existingRow.attempts}, expiresAt: "${existingRow.expiresAt}", serverNow: "${now}", isExpiredQueryCondition: "${existingRow.expiresAt <= now}", hashMatches: ${existingRow.codeHash === codeHash} }`);
+    }
 
     // 1. Find valid OTP request
     const [otpRequest] = await db.select()
@@ -62,24 +78,29 @@ export class AuthUseCases {
       );
 
     if (!otpRequest) {
+      console.log(`[DIAGNOSTIC] Branch REJECT: gt(expiresAt, now) query returned no row for ${maskedPhone}`);
       throw new Error('Invalid or expired OTP');
     }
 
     // 2. Check max attempts (3)
     const attempts = parseInt(otpRequest.attempts, 10);
     if (attempts >= 3) {
+      console.log(`[DIAGNOSTIC] Branch REJECT: Max attempts (${attempts}) exceeded for ${maskedPhone}`);
       await db.delete(otpRequestsTable).where(eq(otpRequestsTable.id, otpRequest.id));
       throw new Error('Maximum verification attempts exceeded. Please request a new OTP.');
     }
 
     // 3. Verify hash
     if (otpRequest.codeHash !== codeHash) {
+      console.log(`[DIAGNOSTIC] Branch REJECT: Hash comparison failed for ${maskedPhone}. Incrementing attempts to ${attempts + 1}`);
       // Increment attempts
       await db.update(otpRequestsTable)
         .set({ attempts: (attempts + 1).toString() })
         .where(eq(otpRequestsTable.id, otpRequest.id));
       throw new Error('Invalid OTP');
     }
+
+    console.log(`[DIAGNOSTIC] Verification successful for ${maskedPhone}`);
 
     // 4. Delete the OTP record so it can't be reused
     await db.delete(otpRequestsTable).where(eq(otpRequestsTable.id, otpRequest.id));
