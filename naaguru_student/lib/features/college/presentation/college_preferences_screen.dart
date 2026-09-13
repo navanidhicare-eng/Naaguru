@@ -91,6 +91,7 @@ class _CollegePreferencesScreenState extends State<CollegePreferencesScreen> {
       context,
       MaterialPageRoute(
         builder: (_) => CollegeStreamSelectionScreen(
+          collegeApiClient: widget.collegeApiClient,
           programs: programs.cast<Map<String, dynamic>>(),
           pathwayCode: _selectedPathway!,
           isTelugu: _isTelugu,

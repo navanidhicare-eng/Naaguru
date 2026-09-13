@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:naaguru_student/core/theme.dart';
 import 'package:naaguru_student/core/ui/buttons.dart';
 import 'package:naaguru_student/core/ui/language_toggle.dart';
+import 'package:naaguru_student/features/college/presentation/college_location_preferences_screen.dart';
+import 'package:naaguru_student/features/college/data/college_api_client.dart';
 
 class CollegeStreamSelectionScreen extends StatefulWidget {
+  final CollegeApiClient collegeApiClient;
   final List<Map<String, dynamic>> programs;
   final String pathwayCode;
   final bool isTelugu;
@@ -11,6 +14,7 @@ class CollegeStreamSelectionScreen extends StatefulWidget {
 
   const CollegeStreamSelectionScreen({
     super.key,
+    required this.collegeApiClient,
     required this.programs,
     required this.pathwayCode,
     required this.isTelugu,
@@ -77,22 +81,15 @@ class _CollegeStreamSelectionScreenState extends State<CollegeStreamSelectionScr
   void _onContinue() {
     if (_selectedStream == null) return;
     
-    // Navigate to dummy Screen 4 (Location + Preferences)
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (_) => Scaffold(
-          appBar: AppBar(
-            backgroundColor: Colors.white,
-            elevation: 0,
-            leading: IconButton(
-              icon: const Icon(Icons.arrow_back_ios, color: NaaguruTheme.primaryDark, size: 20),
-              onPressed: () => Navigator.of(context).pop(),
-            ),
-          ),
-          body: Center(
-            child: Text(_isTelugu ? 'స్క్రీన్ 4 - త్వరలో' : 'Screen 4 - Coming Soon'),
-          ),
+        builder: (_) => CollegeLocationPreferencesScreen(
+          collegeApiClient: widget.collegeApiClient,
+          pathwayCode: widget.pathwayCode,
+          programCode: _selectedStream!,
+          isTelugu: _isTelugu,
+          onLanguageChanged: widget.onLanguageChanged,
         ),
       ),
     );

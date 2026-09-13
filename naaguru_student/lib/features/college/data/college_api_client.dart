@@ -74,6 +74,17 @@ class CollegeApiClient {
     return [];
   }
 
+  /// Fetches the service areas from the catalog API
+  Future<List<Map<String, dynamic>>> getCatalogAreas() async {
+    final response = await _apiClient.get('/catalog/areas');
+    if (response['data'] is List) {
+      return (response['data'] as List)
+          .map((e) => Map<String, dynamic>.from(e as Map))
+          .toList();
+    }
+    return [];
+  }
+
   /// Fetches a single college's public profile by its UUID.
   Future<Map<String, dynamic>> getCollegeById(String id) async {
     return await _apiClient.get('/colleges/$id');

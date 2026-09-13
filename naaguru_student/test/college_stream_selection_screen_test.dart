@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:naaguru_student/features/college/presentation/college_stream_selection_screen.dart';
+import 'package:naaguru_student/features/college/data/college_api_client.dart';
+
+class FakeCollegeApiClient implements CollegeApiClient {
+  @override
+  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+}
 
 void main() {
   final List<Map<String, dynamic>> mockPrograms = [
@@ -11,8 +17,10 @@ void main() {
   ];
 
   testWidgets('CollegeStreamSelectionScreen renders options and allows selecting stream', (WidgetTester tester) async {
+    final fakeClient = FakeCollegeApiClient();
     await tester.pumpWidget(MaterialApp(
       home: CollegeStreamSelectionScreen(
+        collegeApiClient: fakeClient,
         programs: mockPrograms,
         pathwayCode: 'INTERMEDIATE',
         isTelugu: false,
@@ -33,8 +41,10 @@ void main() {
   });
 
   testWidgets('CollegeStreamSelectionScreen renders in Telugu', (WidgetTester tester) async {
+    final fakeClient = FakeCollegeApiClient();
     await tester.pumpWidget(MaterialApp(
       home: CollegeStreamSelectionScreen(
+        collegeApiClient: fakeClient,
         programs: mockPrograms,
         pathwayCode: 'INTERMEDIATE',
         isTelugu: true,
