@@ -1,8 +1,28 @@
 @import "tailwindcss";
 
+@plugin "@tailwindcss/forms";
+@plugin "@tailwindcss/container-queries";
+
+@theme {
+  --color-primary: #006454;
+  --color-primary-dark: #054e42;
+  --color-primary-deep: #004d40;
+  --color-primary-light: #e6f5f1;
+  --color-primary-container: #087f6c;
+  --color-secondary-container: #fec24a;
+  --color-on-secondary-container: #715000;
+  --color-surface-canvas: #f8fafc;
+  --color-surface-card: #ffffff;
+  --color-border-subtle: #e2e8f0;
+  --color-border-input: #cbd5e1;
+  --color-on-surface: #0f172a;
+  --color-neutral-muted: #64748b;
+  --color-brand-emerald: #064e3b;
+}
+
 :root {
-  --background: #ffffff;
-  --foreground: #0f172a;
+  --background: #f8fafc; /* surface-canvas */
+  --foreground: #0f172a; /* on-surface */
 }
 
 html,
@@ -21,6 +41,37 @@ body {
 
 * {
   box-sizing: border-box;
-  padding: 0;
-  margin: 0;
+}
+
+::-webkit-scrollbar { display: none; }
+.card-hover {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px -5px rgba(0, 100, 84, 0.08), 0 8px 10px -6px rgba(0, 100, 84, 0.04);
+}
+.tab-btn.active {
+  background-color: #006454;
+  color: #ffffff;
+  font-weight: 700;
+  box-shadow: 0 4px 12px rgba(0, 100, 84, 0.25);
+}
+.tab-btn:not(.active):hover {
+  background-color: #f1f5f9;
+  color: #0f172a;
+}
+.toast {
+  animation: slideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+@keyframes slideIn {
+  from { transform: translateY(100%); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+.phone-notch {
+  width: 90px;
+  height: 18px;
+  background-color: #0f172a;
+  border-radius: 0 0 12px 12px;
+  margin: 0 auto;
 }
