@@ -18,6 +18,18 @@
   --color-on-surface: #0f172a;
   --color-neutral-muted: #64748b;
   --color-brand-emerald: #064e3b;
+  --color-brand-teal: #087F6C;
+  --color-brand-teal-dark: #056052;
+  --color-brand-teal-light: #E6F5F1;
+  --color-brand-amber: #F4B942;
+  --color-brand-bg: #F8FAF9;
+  --color-brand-surface: #FFFFFF;
+  --color-brand-text: #172321;
+  --color-brand-muted: #647572;
+  --color-brand-success: #2E8B57;
+  --color-brand-error: #D64545;
+  --shadow-subtle: 0 1px 2px 0 rgba(0, 0, 0, 0.04);
+  --shadow-card: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
 }
 
 :root {
@@ -75,3 +87,89 @@ body {
   border-radius: 0 0 12px 12px;
   margin: 0 auto;
 }
+
+/* Company Admin Custom Scrollbar Override */
+.company-admin-shell ::-webkit-scrollbar {
+  display: block;
+  width: 6px;
+  height: 6px;
+}
+.company-admin-shell ::-webkit-scrollbar-track {
+  background: transparent;
+}
+.company-admin-shell ::-webkit-scrollbar-thumb {
+  background: #D1D5DB;
+  border-radius: 3px;
+}
+.company-admin-shell ::-webkit-scrollbar-thumb:hover {
+  background: #9CA3AF;
+}
+
+/* Animations for SignIn Page */
+@keyframes fadeSlideIn {
+  from {
+    opacity: 0;
+    filter: blur(10px);
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0px);
+    transform: translateY(0px);
+  }
+}
+
+@keyframes slideRightIn {
+  from {
+    opacity: 0;
+    filter: blur(10px);
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0px);
+    transform: translateX(0px);
+  }
+}
+
+@keyframes testimonialIn {
+  from {
+    opacity: 0;
+    filter: blur(5px);
+    transform: translateY(15px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0px);
+    transform: translateY(0px) scale(1);
+  }
+}
+
+.animate-element {
+  animation: fadeSlideIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  opacity: 0; /* Keep hidden before animation */
+}
+
+.animate-slide-right {
+  animation: slideRightIn 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  opacity: 0;
+}
+
+.animate-testimonial {
+  animation: testimonialIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  opacity: 0;
+}
+
+/* Animation Delays */
+.animate-delay-100 { animation-delay: 100ms; }
+.animate-delay-200 { animation-delay: 200ms; }
+.animate-delay-300 { animation-delay: 300ms; }
+.animate-delay-400 { animation-delay: 400ms; }
+.animate-delay-500 { animation-delay: 500ms; }
+.animate-delay-600 { animation-delay: 600ms; }
+.animate-delay-700 { animation-delay: 700ms; }
+.animate-delay-800 { animation-delay: 800ms; }
+.animate-delay-900 { animation-delay: 900ms; }
+.animate-delay-1000 { animation-delay: 1000ms; }
+.animate-delay-1200 { animation-delay: 1200ms; }
+.animate-delay-1400 { animation-delay: 1400ms; }

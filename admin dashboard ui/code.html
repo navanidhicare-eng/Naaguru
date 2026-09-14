@@ -1,0 +1,1098 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-[#F8FAF9]">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Naaguru — Company Admin Control Plane</title>
+  <!-- Inter Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+Telugu:wght@400;500;600&display=swap" rel="stylesheet">
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'Noto Sans Telugu', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              teal: '#087F6C',
+              'teal-dark': '#056052',
+              'teal-light': '#E6F5F1',
+              amber: '#F4B942',
+              bg: '#F8FAF9',
+              surface: '#FFFFFF',
+              text: '#172321',
+              muted: '#647572',
+              success: '#2E8B57',
+              error: '#D64545',
+            }
+          },
+          boxShadow: {
+            subtle: '0 1px 2px 0 rgba(0, 0, 0, 0.04)',
+            card: '0 1px 3px 0 rgba(0, 0, 0, 0.05)',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    /* Custom scrollbar for high-density operations UI */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #D1D5DB;
+      border-radius: 3px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #9CA3AF;
+    }
+  </style>
+</head>
+<body class="h-full font-sans text-brand-text antialiased flex overflow-hidden bg-brand-bg">
+
+  <!-- ============================================================
+       SIDEBAR: 256px wide, fixed height, independent scroll
+       ============================================================ -->
+  <aside class="w-64 flex-shrink-0 bg-white border-r border-zinc-200 flex flex-col h-full z-20 select-none">
+    
+    <!-- Workspace Branding Header -->
+    <div class="h-16 px-5 border-b border-zinc-200 flex items-center justify-between">
+      <div class="flex items-center gap-2.5">
+        <div class="w-8 h-8 rounded bg-brand-teal flex items-center justify-center text-white font-bold text-base tracking-tight shadow-sm">
+          N
+        </div>
+        <div>
+          <div class="font-bold text-zinc-900 text-sm tracking-tight leading-tight flex items-center gap-1.5">
+            Naaguru
+            <span class="text-[10px] px-1.5 py-0.2 bg-zinc-100 text-zinc-600 rounded font-semibold border border-zinc-200">v1.2</span>
+          </div>
+          <div class="text-[11px] font-semibold text-brand-teal tracking-wide uppercase">
+            Company Admin
+          </div>
+        </div>
+      </div>
+      <div class="w-2 h-2 rounded-full bg-emerald-500" title="Platform Control Active"></div>
+    </div>
+
+    <!-- Scrollable Navigation Groups -->
+    <nav class="flex-1 overflow-y-auto px-3 py-4 space-y-5 text-sm">
+      
+      <!-- GROUP 1: OVERVIEW -->
+      <div>
+        <div class="px-2 pb-1.5 text-[11px] font-semibold text-zinc-400 uppercase tracking-wider">Overview</div>
+        <div class="space-y-0.5">
+          <button onclick="switchView('dashboard')" id="nav-dashboard" class="w-full flex items-center gap-2.5 px-2.5 py-1.5 rounded-md font-medium text-xs transition-colors bg-brand-teal-light text-brand-teal font-semibold">
+            <svg class="w-4 h-4 text-brand-teal" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+            <span>Dashboard</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- GROUP 2: MANAGEMENT -->
+      <div>
+        <div class="px-2 pb-1.5 text-[11px] font-semibold text-zinc-400 uppercase tracking-wider">Management</div>
+        <div class="space-y-0.5">
+          <button onclick="switchView('colleges')" id="nav-colleges" class="w-full flex items-center justify-between px-2.5 py-1.5 rounded-md font-medium text-xs text-zinc-700 hover:bg-zinc-100 hover:text-zinc-900 transition-colors">
+            <div class="flex items-center gap-2.5">
+              <svg class="w-4 h-4 text-zinc-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+              <span>Colleges</span>
+            </div>
+            <span class="text-[10px] px-1.5 py-0.5 rounded-full bg-amber-50 text-amber-700 font-semibold border border-amber-200">23 pend</span>
+          </button>
+
+          <button onclick="switchView('students')" id="nav-students" class="w-full flex items-center justify-between px-2.5 py-1.5 rounded-md font-medium text-xs text-zinc-700 hover:bg-zinc-100 hover:text-zinc-900 transition-colors">
+            <div class="flex items-center gap-2.5">
+              <svg class="w-4 h-4 text-zinc-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+              <span>Students</span>
+            </div>
+            <span class="text-[10px] text-zinc-400 font-mono">12.4k</span>
+          </button>
+
+          <button onclick="switchView('leads')" id="nav-leads" class="w-full flex items-center justify-between px-2.5 py-1.5 rounded-md font-medium text-xs text-zinc-700 hover:bg-zinc-100 hover:text-zinc-900 transition-colors">
+            <div class="flex items-center gap-2.5">
+              <svg class="w-4 h-4 text-zinc-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path></svg>
+              <span>Leads</span>
+            </div>
+            <span class="text-[10px] text-zinc-400">342</span>
+          </button>
+
+          <button onclick="switchView('admissions')" id="nav-admissions" class="w-full flex items-center justify-between px-2.5 py-1.5 rounded-md font-medium text-xs text-zinc-700 hover:bg-zinc-100 hover:text-zinc-900 transition-colors">
+            <div class="flex items-center gap-2.5">
+              <svg class="w-4 h-4 text-zinc-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222"></path></svg>
+              <span>Admissions</span>
+            </div>
+            <span class="text-[10px] text-zinc-400">96</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- GROUP 3: CATALOG (Collapsible / Multi-item) -->
+      <div>
+        <div class="flex items-center justify-between px-2 pb-1.5 text-[11px] font-semibold text-zinc-400 uppercase tracking-wider">
+          <span>Catalog</span>
+          <svg class="w-3 h-3 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+        </div>
+        <div class="space-y-0.5">
+          <button onclick="switchView('locations')" id="nav-locations" class="w-full flex items-center gap-2.5 px-2.5 py-1.5 rounded-md font-medium text-xs text-zinc-700 hover:bg-zinc-100 hover:text-zinc-900 transition-colors">
+            <svg class="w-4 h-4 text-zinc-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+            <span>Locations</span>
+          </button>
+
+          <button onclick="switchView('schools')" id="nav-schools" class="w-full flex items-center gap-2.5 px-2.5 py-1.5 rounded-md font-medium text-xs text-zinc-700 hover:bg-zinc-100 hover:text-zinc-900 transition-colors">
+            <svg class="w-4 h-4 text-zinc-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z"></path></svg>
+            <span>Schools</span>
+          </button>
+
+          <button onclick="switchView('pathways')" id="nav-pathways" class="w-full flex items-center gap-2.5 px-2.5 py-1.5 rounded-md font-medium text-xs text-zinc-700 hover:bg-zinc-100 hover:text-zinc-900 transition-colors">
+            <svg class="w-4 h-4 text-zinc-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"></path></svg>
+            <span>Pathways & Streams</span>
+          </button>
+
+          <button onclick="switchView('career-areas')" id="nav-career-areas" class="w-full flex items-center gap-2.5 px-2.5 py-1.5 rounded-md font-medium text-xs text-zinc-700 hover:bg-zinc-100 hover:text-zinc-900 transition-colors">
+            <svg class="w-4 h-4 text-zinc-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+            <span>Career Areas</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- GROUP 4: ASSESSMENTS -->
+      <div>
+        <div class="px-2 pb-1.5 text-[11px] font-semibold text-zinc-400 uppercase tracking-wider">Assessments</div>
+        <div class="space-y-0.5">
+          <button onclick="switchView('assessments')" id="nav-assessments" class="w-full flex items-center justify-between px-2.5 py-1.5 rounded-md font-medium text-xs text-zinc-700 hover:bg-zinc-100 hover:text-zinc-900 transition-colors">
+            <div class="flex items-center gap-2.5">
+              <svg class="w-4 h-4 text-zinc-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
+              <span>Assessments Engine</span>
+            </div>
+            <span class="text-[10px] px-1.5 py-0.2 bg-emerald-50 text-emerald-700 font-semibold rounded border border-emerald-200">v2.1 live</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- GROUP 5: OPERATIONS -->
+      <div>
+        <div class="flex items-center justify-between px-2 pb-1.5 text-[11px] font-semibold text-zinc-400 uppercase tracking-wider">
+          <span>Operations</span>
+          <span class="text-[9px] font-medium text-zinc-400">Queue</span>
+        </div>
+        <div class="space-y-0.5">
+          <button onclick="switchView('lead-queue')" id="nav-lead-queue" class="w-full flex items-center justify-between px-2.5 py-1.5 rounded-md font-medium text-xs text-zinc-700 hover:bg-zinc-100 hover:text-zinc-900 transition-colors">
+            <div class="flex items-center gap-2.5">
+              <svg class="w-4 h-4 text-zinc-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
+              <span>Lead Queue</span>
+            </div>
+            <span class="text-[10px] text-zinc-500 font-mono">18 due</span>
+          </button>
+
+          <button onclick="switchView('verification')" id="nav-verification" class="w-full flex items-center justify-between px-2.5 py-1.5 rounded-md font-medium text-xs text-zinc-700 hover:bg-zinc-100 hover:text-zinc-900 transition-colors">
+            <div class="flex items-center gap-2.5">
+              <svg class="w-4 h-4 text-zinc-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+              <span>Verification</span>
+            </div>
+            <span class="text-[10px] text-amber-700 bg-amber-50 px-1.5 py-0.2 rounded border border-amber-200">7</span>
+          </button>
+
+          <button onclick="switchView('disputes')" id="nav-disputes" class="w-full flex items-center justify-between px-2.5 py-1.5 rounded-md font-medium text-xs text-zinc-700 hover:bg-zinc-100 hover:text-zinc-900 transition-colors">
+            <div class="flex items-center gap-2.5">
+              <svg class="w-4 h-4 text-zinc-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+              <span>Attribution / Disputes</span>
+            </div>
+            <span class="text-[10px] text-zinc-400">4</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- GROUP 6: ORGANIZATION -->
+      <div>
+        <div class="px-2 pb-1.5 text-[11px] font-semibold text-zinc-400 uppercase tracking-wider">Organization</div>
+        <div class="space-y-0.5">
+          <button onclick="switchView('staff')" id="nav-staff" class="w-full flex items-center gap-2.5 px-2.5 py-1.5 rounded-md font-medium text-xs text-zinc-700 hover:bg-zinc-100 hover:text-zinc-900 transition-colors">
+            <svg class="w-4 h-4 text-zinc-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+            <span>Staff & Telecallers</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- GROUP 7: INSIGHTS & GOVERNANCE -->
+      <div>
+        <div class="px-2 pb-1.5 text-[11px] font-semibold text-zinc-400 uppercase tracking-wider">Insights & System</div>
+        <div class="space-y-0.5">
+          <button onclick="switchView('analytics')" id="nav-analytics" class="w-full flex items-center gap-2.5 px-2.5 py-1.5 rounded-md font-medium text-xs text-zinc-700 hover:bg-zinc-100 hover:text-zinc-900 transition-colors">
+            <svg class="w-4 h-4 text-zinc-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+            <span>Platform Analytics</span>
+          </button>
+
+          <button onclick="switchView('audit')" id="nav-audit" class="w-full flex items-center gap-2.5 px-2.5 py-1.5 rounded-md font-medium text-xs text-zinc-700 hover:bg-zinc-100 hover:text-zinc-900 transition-colors">
+            <svg class="w-4 h-4 text-zinc-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+            <span>Audit Log</span>
+          </button>
+
+          <button onclick="switchView('settings')" id="nav-settings" class="w-full flex items-center gap-2.5 px-2.5 py-1.5 rounded-md font-medium text-xs text-zinc-700 hover:bg-zinc-100 hover:text-zinc-900 transition-colors">
+            <svg class="w-4 h-4 text-zinc-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+            <span>Platform Settings</span>
+          </button>
+        </div>
+      </div>
+
+    </nav>
+
+    <!-- Bottom Admin Identity Section -->
+    <div class="p-3 border-t border-zinc-200 bg-zinc-50/70">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-2.5 min-w-0">
+          <div class="w-8 h-8 rounded-full bg-zinc-800 text-white flex items-center justify-center text-xs font-semibold flex-shrink-0">
+            JP
+          </div>
+          <div class="min-w-0 flex-1">
+            <div class="text-xs font-semibold text-zinc-900 truncate">J. Prabhakar</div>
+            <div class="text-[11px] text-zinc-500 truncate">admin@naaguru.com</div>
+          </div>
+        </div>
+        <button class="p-1 text-zinc-400 hover:text-zinc-600 rounded transition-colors" title="Account Menu">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"></path></svg>
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ============================================================
+       APPLICATION AREA: flex-1, min-w-0, height 100vh
+       ============================================================ -->
+  <div class="flex-1 min-w-0 flex flex-col h-full overflow-hidden">
+    
+    <!-- 64px Fixed Application Header -->
+    <header class="h-16 px-8 bg-white border-b border-zinc-200 flex items-center justify-between flex-shrink-0 z-10">
+      
+      <!-- Left: Breadcrumbs / Title Context -->
+      <div class="flex items-center gap-3">
+        <div class="text-xs text-zinc-400 font-medium flex items-center gap-1.5" id="header-breadcrumbs">
+          <span>Platform Control</span>
+          <span class="text-zinc-300">/</span>
+          <span class="text-zinc-700 font-semibold" id="crumb-current">Dashboard</span>
+        </div>
+      </div>
+
+      <!-- Center-Right: Search Naaguru & Quick Operations Controls -->
+      <div class="flex items-center gap-4">
+        
+        <!-- Global Platform Search -->
+        <div class="relative w-80">
+          <div class="absolute inset-y-0 left-0 pl-2.5 flex items-center pointer-events-none">
+            <svg class="w-3.5 h-3.5 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+          </div>
+          <input type="text" placeholder="Search Naaguru (Colleges, Students, Districts)..." class="w-full pl-8 pr-8 py-1.5 bg-zinc-50 border border-zinc-200 rounded-md text-xs text-zinc-800 placeholder-zinc-400 focus:outline-none focus:ring-1 focus:ring-brand-teal focus:bg-white transition-all">
+          <div class="absolute inset-y-0 right-0 pr-2 flex items-center pointer-events-none">
+            <kbd class="text-[10px] font-mono text-zinc-400 border border-zinc-200 px-1 rounded bg-white">⌘K</kbd>
+          </div>
+        </div>
+
+        <!-- Environment / State Indicator -->
+        <div class="flex items-center gap-2 pl-2 border-l border-zinc-200">
+          <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[11px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+            AP & TS Production
+          </span>
+
+          <!-- Notifications -->
+          <button class="relative p-1.5 text-zinc-500 hover:text-zinc-700 rounded-md hover:bg-zinc-100 transition-colors" title="Pending Operational Alerts">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
+            <span class="absolute top-1 right-1 w-2 h-2 rounded-full bg-amber-500 ring-2 ring-white"></span>
+          </button>
+
+          <!-- Refresh Action -->
+          <button class="p-1.5 text-zinc-500 hover:text-zinc-700 rounded-md hover:bg-zinc-100 transition-colors" title="Refresh Live Data">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+          </button>
+        </div>
+
+      </div>
+    </header>
+
+    <!-- Main Scrollable Content Canvas -->
+    <main class="flex-1 overflow-y-auto p-8" id="main-content-area">
+      
+      <!-- ========================================================
+           VIEW 1: COMPANY ADMIN DASHBOARD (DEFAULT ACTIVE)
+           ======================================================== -->
+      <section id="view-dashboard" class="space-y-7 block">
+        
+        <!-- Top Title & Operational Health Row -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <h1 class="text-[26px] font-bold text-zinc-900 tracking-tight leading-tight">Platform Control Dashboard</h1>
+            <p class="text-xs text-brand-muted mt-0.5">Real-time operational health, institutional verification queues, and admission funnel.</p>
+          </div>
+          <div class="flex items-center gap-2.5">
+            <div class="inline-flex items-center text-xs text-zinc-500 bg-white border border-zinc-200 px-2.5 py-1.5 rounded-md">
+              <span class="w-2 h-2 rounded-full bg-emerald-500 mr-1.5"></span>
+              Live Sync: Today, 11:42 IST
+            </div>
+            <button onclick="switchView('colleges')" class="px-3 py-1.5 bg-brand-teal hover:bg-brand-teal-dark text-white text-xs font-semibold rounded-md shadow-sm transition-colors flex items-center gap-1.5">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+              <span>Verify Colleges (23)</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- TOP KPI ROW: 5 Clean Compact Operational Metrics -->
+        <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-3.5">
+          
+          <div class="bg-white border border-zinc-200 rounded-lg p-3.5 shadow-card hover:border-zinc-300 transition-colors">
+            <div class="flex items-center justify-between text-xs text-zinc-500 font-medium mb-1">
+              <span>Total Students</span>
+              <svg class="w-3.5 h-3.5 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+            </div>
+            <div class="text-2xl font-bold text-zinc-900 tracking-tight">12,480</div>
+            <div class="mt-1 flex items-center gap-1.5 text-[11px]">
+              <span class="text-emerald-700 font-medium">+8.4%</span>
+              <span class="text-zinc-400">vs last 30 days</span>
+            </div>
+          </div>
+
+          <div class="bg-white border border-zinc-200 rounded-lg p-3.5 shadow-card hover:border-zinc-300 transition-colors">
+            <div class="flex items-center justify-between text-xs text-zinc-500 font-medium mb-1">
+              <span>Active Colleges</span>
+              <svg class="w-3.5 h-3.5 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+            </div>
+            <div class="text-2xl font-bold text-zinc-900 tracking-tight">184</div>
+            <div class="mt-1 flex items-center gap-1.5 text-[11px]">
+              <span class="text-zinc-600 font-medium">across 26 districts</span>
+            </div>
+          </div>
+
+          <div class="bg-white border border-amber-300/80 bg-amber-50/20 rounded-lg p-3.5 shadow-card hover:border-amber-400 transition-colors">
+            <div class="flex items-center justify-between text-xs text-amber-800 font-medium mb-1">
+              <span>Pending Verification</span>
+              <span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
+            </div>
+            <div class="text-2xl font-bold text-amber-900 tracking-tight">23</div>
+            <div class="mt-1 flex items-center gap-1.5 text-[11px]">
+              <span class="text-amber-800 font-semibold">Requires BIEAP audit</span>
+            </div>
+          </div>
+
+          <div class="bg-white border border-zinc-200 rounded-lg p-3.5 shadow-card hover:border-zinc-300 transition-colors">
+            <div class="flex items-center justify-between text-xs text-zinc-500 font-medium mb-1">
+              <span>New Enquiries</span>
+              <svg class="w-3.5 h-3.5 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
+            </div>
+            <div class="text-2xl font-bold text-zinc-900 tracking-tight">342</div>
+            <div class="mt-1 flex items-center gap-1.5 text-[11px]">
+              <span class="text-emerald-700 font-medium">94% routed &lt;2 hrs</span>
+            </div>
+          </div>
+
+          <div class="bg-white border border-zinc-200 rounded-lg p-3.5 shadow-card hover:border-zinc-300 transition-colors">
+            <div class="flex items-center justify-between text-xs text-zinc-500 font-medium mb-1">
+              <span>Confirmed Admissions</span>
+              <svg class="w-3.5 h-3.5 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            </div>
+            <div class="text-2xl font-bold text-zinc-900 tracking-tight">96</div>
+            <div class="mt-1 flex items-center gap-1.5 text-[11px]">
+              <span class="text-zinc-600 font-medium">AY 2024-25 Batch</span>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- OPERATIONAL ATTENTION QUEUE -->
+        <div class="bg-white border border-zinc-200 rounded-lg overflow-hidden shadow-card">
+          <div class="px-5 py-3.5 border-b border-zinc-200 bg-zinc-50/50 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-amber-500"></span>
+              <h2 class="text-sm font-semibold text-zinc-900">Needs Attention</h2>
+              <span class="text-[11px] text-zinc-500">Platform queues requiring administrative intervention</span>
+            </div>
+            <span class="text-xs text-brand-teal font-medium hover:underline cursor-pointer">View All Tasks (52)</span>
+          </div>
+
+          <div class="divide-y divide-zinc-100 text-xs">
+            <div class="px-5 py-3 flex items-center justify-between hover:bg-zinc-50/80 transition-colors">
+              <div class="flex items-center gap-3">
+                <span class="px-2 py-0.5 text-[10px] font-semibold bg-amber-100 text-amber-800 rounded border border-amber-200">VERIFICATION</span>
+                <span class="font-medium text-zinc-900">23 colleges awaiting profile & accreditation verification</span>
+                <span class="text-zinc-400">· Includes 6 Govt Jr Colleges & 17 Private Aided</span>
+              </div>
+              <div class="flex items-center gap-3">
+                <span class="text-zinc-400 font-mono">Oldest: 4.2 hrs ago</span>
+                <button onclick="switchView('colleges')" class="px-2.5 py-1 text-xs font-semibold bg-white border border-zinc-200 hover:bg-zinc-50 text-zinc-700 rounded transition-colors">Review Queue →</button>
+              </div>
+            </div>
+
+            <div class="px-5 py-3 flex items-center justify-between hover:bg-zinc-50/80 transition-colors">
+              <div class="flex items-center gap-3">
+                <span class="px-2 py-0.5 text-[10px] font-semibold bg-rose-100 text-rose-800 rounded border border-rose-200">TELECALLER</span>
+                <span class="font-medium text-zinc-900">18 enquiries without initial college contact &gt;24h</span>
+                <span class="text-zinc-400">· Visakhapatnam & Vijayawada districts</span>
+              </div>
+              <div class="flex items-center gap-3">
+                <span class="text-zinc-400 font-mono">Oldest: 28 hrs ago</span>
+                <button class="px-2.5 py-1 text-xs font-semibold bg-white border border-zinc-200 hover:bg-zinc-50 text-zinc-700 rounded transition-colors">Assign Telecaller</button>
+              </div>
+            </div>
+
+            <div class="px-5 py-3 flex items-center justify-between hover:bg-zinc-50/80 transition-colors">
+              <div class="flex items-center gap-3">
+                <span class="px-2 py-0.5 text-[10px] font-semibold bg-blue-100 text-blue-800 rounded border border-blue-200">ADMISSIONS</span>
+                <span class="font-medium text-zinc-900">7 admission confirmation slips submitted for verification</span>
+                <span class="text-zinc-400">· Student hall ticket match required</span>
+              </div>
+              <div class="flex items-center gap-3">
+                <span class="text-zinc-400 font-mono">Oldest: 1.5 hrs ago</span>
+                <button class="px-2.5 py-1 text-xs font-semibold bg-white border border-zinc-200 hover:bg-zinc-50 text-zinc-700 rounded transition-colors">Audit Slips</button>
+              </div>
+            </div>
+
+            <div class="px-5 py-3 flex items-center justify-between hover:bg-zinc-50/80 transition-colors">
+              <div class="flex items-center gap-3">
+                <span class="px-2 py-0.5 text-[10px] font-semibold bg-purple-100 text-purple-800 rounded border border-purple-200">ATTRIBUTION</span>
+                <span class="font-medium text-zinc-900">4 college attribution disputes filed</span>
+                <span class="text-zinc-400">· Overlapping lead claims (direct vs platform enquiry)</span>
+              </div>
+              <div class="flex items-center gap-3">
+                <span class="text-zinc-400 font-mono">Oldest: 6.1 hrs ago</span>
+                <button class="px-2.5 py-1 text-xs font-semibold bg-white border border-zinc-200 hover:bg-zinc-50 text-zinc-700 rounded transition-colors">Open Case</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- PLATFORM BUSINESS FUNNEL: Clean, restrained horizontal progress flow -->
+        <div class="bg-white border border-zinc-200 rounded-lg p-5 shadow-card">
+          <div class="flex items-center justify-between mb-4">
+            <div>
+              <h2 class="text-sm font-semibold text-zinc-900">Naaguru Operational Admission Funnel</h2>
+              <p class="text-xs text-zinc-500">Student lifecycle conversion through assessment, discovery, inquiry, and enrollment</p>
+            </div>
+            <span class="text-xs font-medium text-zinc-500">AP & TS Aggregate</span>
+          </div>
+
+          <div class="grid grid-cols-5 gap-3 relative">
+            
+            <div class="p-3 bg-zinc-50 border border-zinc-200 rounded-md">
+              <div class="text-[11px] font-semibold text-zinc-500 uppercase tracking-wider">1. Students</div>
+              <div class="text-xl font-bold text-zinc-900 mt-1">12,480</div>
+              <div class="text-[11px] text-zinc-500 mt-0.5">Verified Class 10</div>
+              <div class="mt-2 text-[10px] text-emerald-700 font-medium">100% Top of Funnel</div>
+            </div>
+
+            <div class="p-3 bg-zinc-50 border border-zinc-200 rounded-md">
+              <div class="text-[11px] font-semibold text-zinc-500 uppercase tracking-wider">2. Assessments</div>
+              <div class="text-xl font-bold text-zinc-900 mt-1">9,842</div>
+              <div class="text-[11px] text-zinc-500 mt-0.5">Completed 40-Q test</div>
+              <div class="mt-2 text-[10px] text-zinc-600 font-medium">78.8% Assessment Rate</div>
+            </div>
+
+            <div class="p-3 bg-zinc-50 border border-zinc-200 rounded-md">
+              <div class="text-[11px] font-semibold text-zinc-500 uppercase tracking-wider">3. Enquiries</div>
+              <div class="text-xl font-bold text-zinc-900 mt-1">3,420</div>
+              <div class="text-[11px] text-zinc-500 mt-0.5">Sent to Colleges</div>
+              <div class="mt-2 text-[10px] text-zinc-600 font-medium">34.7% of Assessed</div>
+            </div>
+
+            <div class="p-3 bg-zinc-50 border border-zinc-200 rounded-md">
+              <div class="text-[11px] font-semibold text-zinc-500 uppercase tracking-wider">4. Applications</div>
+              <div class="text-xl font-bold text-zinc-900 mt-1">612</div>
+              <div class="text-[11px] text-zinc-500 mt-0.5">Campus forms filed</div>
+              <div class="mt-2 text-[10px] text-zinc-600 font-medium">17.9% of Enquiries</div>
+            </div>
+
+            <div class="p-3 bg-brand-teal-light/50 border border-brand-teal/30 rounded-md">
+              <div class="text-[11px] font-semibold text-brand-teal uppercase tracking-wider">5. Admissions</div>
+              <div class="text-xl font-bold text-brand-teal-dark mt-1">96</div>
+              <div class="text-[11px] text-zinc-600 mt-0.5">Verified Enrollments</div>
+              <div class="mt-2 text-[10px] text-brand-teal-dark font-semibold">15.7% Closed Ratio</div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- RECENT ACTIVITY TABLE: Compact Forensic Audit List -->
+        <div class="bg-white border border-zinc-200 rounded-lg overflow-hidden shadow-card">
+          <div class="px-5 py-3.5 border-b border-zinc-200 bg-zinc-50/50 flex items-center justify-between">
+            <h2 class="text-sm font-semibold text-zinc-900">Recent Platform Operations Activity</h2>
+            <button onclick="switchView('audit')" class="text-xs text-brand-teal font-medium hover:underline">View Forensic Audit Log →</button>
+          </div>
+          <table class="w-full text-left text-xs border-collapse">
+            <thead>
+              <tr class="border-b border-zinc-200 bg-zinc-50/70 text-zinc-500 font-semibold uppercase text-[11px] tracking-wider">
+                <th class="py-2.5 px-5">Timestamp</th>
+                <th class="py-2.5 px-4">Activity</th>
+                <th class="py-2.5 px-4">Entity</th>
+                <th class="py-2.5 px-4">Actor</th>
+                <th class="py-2.5 px-5 text-right">Status</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-zinc-100 text-zinc-700">
+              <tr class="hover:bg-zinc-50/60 transition-colors">
+                <td class="py-2.5 px-5 font-mono text-zinc-400">11:38 IST</td>
+                <td class="py-2.5 px-4 font-medium text-zinc-900">College Accreditation Verified</td>
+                <td class="py-2.5 px-4 text-zinc-600 font-mono">Aditya Jr College (MVP Colony)</td>
+                <td class="py-2.5 px-4 text-zinc-500">J. Prabhakar (Admin)</td>
+                <td class="py-2.5 px-5 text-right"><span class="inline-flex px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">Verified</span></td>
+              </tr>
+              <tr class="hover:bg-zinc-50/60 transition-colors">
+                <td class="py-2.5 px-5 font-mono text-zinc-400">11:15 IST</td>
+                <td class="py-2.5 px-4 font-medium text-zinc-900">Student Enquiry Routed</td>
+                <td class="py-2.5 px-4 text-zinc-600">Kiran Kumar M. → Sri Chaitanya</td>
+                <td class="py-2.5 px-4 text-zinc-500">System (Auto-Dispatch)</td>
+                <td class="py-2.5 px-5 text-right"><span class="inline-flex px-2 py-0.5 rounded text-[10px] font-semibold bg-zinc-100 text-zinc-700 border border-zinc-200">Delivered</span></td>
+              </tr>
+              <tr class="hover:bg-zinc-50/60 transition-colors">
+                <td class="py-2.5 px-5 font-mono text-zinc-400">10:50 IST</td>
+                <td class="py-2.5 px-4 font-medium text-zinc-900">Catalog School Canonicalized</td>
+                <td class="py-2.5 px-4 text-zinc-600">ZPHS Anandapuram (#BSE-5302)</td>
+                <td class="py-2.5 px-4 text-zinc-500">R. Varma (Ops)</td>
+                <td class="py-2.5 px-5 text-right"><span class="inline-flex px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">Published</span></td>
+              </tr>
+              <tr class="hover:bg-zinc-50/60 transition-colors">
+                <td class="py-2.5 px-5 font-mono text-zinc-400">10:22 IST</td>
+                <td class="py-2.5 px-4 font-medium text-zinc-900">Assessment Version v2.1 Activated</td>
+                <td class="py-2.5 px-4 text-zinc-600 font-mono">Bilingual Class 10 RIASEC</td>
+                <td class="py-2.5 px-4 text-zinc-500">S. Anusha (Curriculum)</td>
+                <td class="py-2.5 px-5 text-right"><span class="inline-flex px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">Active</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </section>
+
+      <!-- ========================================================
+           VIEW 2: COLLEGES MANAGEMENT (Table System + Status Engine)
+           ======================================================== -->
+      <section id="view-colleges" class="space-y-5 hidden">
+        
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <h1 class="text-[26px] font-bold text-zinc-900 tracking-tight leading-tight">Colleges Directory & Compliance</h1>
+            <p class="text-xs text-brand-muted mt-0.5">Manage institutional profiles, BIEAP accreditation audits, and lead routing availability.</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <button class="px-3 py-1.5 bg-white border border-zinc-200 hover:bg-zinc-50 text-zinc-700 text-xs font-semibold rounded-md shadow-xs transition-colors flex items-center gap-1.5">
+              <svg class="w-3.5 h-3.5 text-zinc-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+              <span>Export CSV</span>
+            </button>
+            <button class="px-3.5 py-1.5 bg-brand-teal hover:bg-brand-teal-dark text-white text-xs font-semibold rounded-md shadow-sm transition-colors flex items-center gap-1.5">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+              <span>+ Add College</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Filter Row -->
+        <div class="bg-white border border-zinc-200 rounded-lg p-3 flex flex-wrap items-center justify-between gap-3 shadow-card">
+          <div class="flex items-center gap-2 flex-1 min-w-[240px]">
+            <div class="relative w-full max-w-xs">
+              <input type="text" placeholder="Filter by college name or code..." class="w-full pl-8 pr-3 py-1.5 bg-zinc-50 border border-zinc-200 rounded-md text-xs text-zinc-800 placeholder-zinc-400 focus:outline-none focus:ring-1 focus:ring-brand-teal">
+              <svg class="w-3.5 h-3.5 text-zinc-400 absolute left-2.5 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+            </div>
+            <select class="px-2.5 py-1.5 bg-zinc-50 border border-zinc-200 rounded-md text-xs text-zinc-700 focus:outline-none">
+              <option>All Districts (26)</option>
+              <option>Visakhapatnam</option>
+              <option>Krishna / Vijayawada</option>
+              <option>Guntur</option>
+              <option>Hyderabad</option>
+            </select>
+            <select class="px-2.5 py-1.5 bg-zinc-50 border border-zinc-200 rounded-md text-xs text-zinc-700 focus:outline-none">
+              <option>Verification: All</option>
+              <option>Verified (BIEAP)</option>
+              <option>Pending Audit (23)</option>
+              <option>Unverified</option>
+            </select>
+            <select class="px-2.5 py-1.5 bg-zinc-50 border border-zinc-200 rounded-md text-xs text-zinc-700 focus:outline-none">
+              <option>Streams: Any</option>
+              <option>MPC</option>
+              <option>BiPC</option>
+              <option>MEC / CEC</option>
+            </select>
+          </div>
+          <div class="text-xs text-zinc-500 font-medium">
+            Showing <strong class="text-zinc-800">184</strong> institutional campuses
+          </div>
+        </div>
+
+        <!-- Table View -->
+        <div class="bg-white border border-zinc-200 rounded-lg overflow-hidden shadow-card">
+          <table class="w-full text-left text-xs border-collapse">
+            <thead>
+              <tr class="border-b border-zinc-200 bg-zinc-50/70 text-zinc-500 font-semibold uppercase text-[11px] tracking-wider">
+                <th class="py-3 px-5">College & Campus</th>
+                <th class="py-3 px-4">Location</th>
+                <th class="py-3 px-4">Offered Streams</th>
+                <th class="py-3 px-4">Operational Status</th>
+                <th class="py-3 px-4">Accreditation</th>
+                <th class="py-3 px-4 text-center">Leads YTD</th>
+                <th class="py-3 px-4 font-mono">Last Sync</th>
+                <th class="py-3 px-5 text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-zinc-100 text-zinc-700">
+              
+              <tr class="hover:bg-zinc-50/70 transition-colors">
+                <td class="py-3 px-5">
+                  <div class="font-semibold text-zinc-900 text-xs">Aditya Junior College</div>
+                  <div class="text-[11px] text-zinc-400 font-mono">MVP Colony Campus · ID: AJC-VSP-01</div>
+                </td>
+                <td class="py-3 px-4">
+                  <div>Visakhapatnam, AP</div>
+                  <div class="text-[11px] text-zinc-400">PIN 530017 · Transit Verified</div>
+                </td>
+                <td class="py-3 px-4">
+                  <div class="flex items-center gap-1">
+                    <span class="px-1.5 py-0.2 bg-zinc-100 text-zinc-700 rounded text-[10px] font-mono">MPC</span>
+                    <span class="px-1.5 py-0.2 bg-zinc-100 text-zinc-700 rounded text-[10px] font-mono">BiPC</span>
+                  </div>
+                </td>
+                <td class="py-3 px-4">
+                  <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                    ACTIVE
+                  </span>
+                </td>
+                <td class="py-3 px-4">
+                  <span class="inline-flex px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                    BIEAP VERIFIED
+                  </span>
+                </td>
+                <td class="py-3 px-4 text-center font-mono font-semibold text-zinc-800">142</td>
+                <td class="py-3 px-4 font-mono text-zinc-400 text-[11px]">Today 11:20</td>
+                <td class="py-3 px-5 text-right space-x-1.5">
+                  <button class="px-2 py-1 text-[11px] font-medium text-brand-teal hover:bg-brand-teal-light rounded transition-colors">View</button>
+                  <button class="px-2 py-1 text-[11px] font-medium text-zinc-600 hover:bg-zinc-100 rounded transition-colors">Edit</button>
+                  <button class="px-1.5 py-1 text-zinc-400 hover:text-zinc-600 rounded">•••</button>
+                </td>
+              </tr>
+
+              <tr class="hover:bg-zinc-50/70 transition-colors">
+                <td class="py-3 px-5">
+                  <div class="font-semibold text-zinc-900 text-xs">Sri Chaitanya Junior College</div>
+                  <div class="text-[11px] text-zinc-400 font-mono">Benz Circle Campus · ID: SC-BZA-04</div>
+                </td>
+                <td class="py-3 px-4">
+                  <div>Vijayawada, AP</div>
+                  <div class="text-[11px] text-zinc-400">PIN 520008 · Transit Verified</div>
+                </td>
+                <td class="py-3 px-4">
+                  <div class="flex items-center gap-1">
+                    <span class="px-1.5 py-0.2 bg-zinc-100 text-zinc-700 rounded text-[10px] font-mono">MPC</span>
+                    <span class="px-1.5 py-0.2 bg-zinc-100 text-zinc-700 rounded text-[10px] font-mono">BiPC</span>
+                    <span class="px-1.5 py-0.2 bg-zinc-100 text-zinc-700 rounded text-[10px] font-mono">MEC</span>
+                  </div>
+                </td>
+                <td class="py-3 px-4">
+                  <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                    ACTIVE
+                  </span>
+                </td>
+                <td class="py-3 px-4">
+                  <span class="inline-flex px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                    BIEAP VERIFIED
+                  </span>
+                </td>
+                <td class="py-3 px-4 text-center font-mono font-semibold text-zinc-800">289</td>
+                <td class="py-3 px-4 font-mono text-zinc-400 text-[11px]">Today 09:44</td>
+                <td class="py-3 px-5 text-right space-x-1.5">
+                  <button class="px-2 py-1 text-[11px] font-medium text-brand-teal hover:bg-brand-teal-light rounded transition-colors">View</button>
+                  <button class="px-2 py-1 text-[11px] font-medium text-zinc-600 hover:bg-zinc-100 rounded transition-colors">Edit</button>
+                  <button class="px-1.5 py-1 text-zinc-400 hover:text-zinc-600 rounded">•••</button>
+                </td>
+              </tr>
+
+              <tr class="hover:bg-zinc-50/70 transition-colors bg-amber-50/15">
+                <td class="py-3 px-5">
+                  <div class="font-semibold text-zinc-900 text-xs">Narayana Junior College</div>
+                  <div class="text-[11px] text-zinc-400 font-mono">Gajuwaka Campus · ID: NAR-VSP-09</div>
+                </td>
+                <td class="py-3 px-4">
+                  <div>Visakhapatnam, AP</div>
+                  <div class="text-[11px] text-zinc-400">PIN 530026 · Pending Pin</div>
+                </td>
+                <td class="py-3 px-4">
+                  <div class="flex items-center gap-1">
+                    <span class="px-1.5 py-0.2 bg-zinc-100 text-zinc-700 rounded text-[10px] font-mono">MPC</span>
+                  </div>
+                </td>
+                <td class="py-3 px-4">
+                  <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-semibold bg-amber-50 text-amber-700 border border-amber-200">
+                    <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+                    PENDING AUDIT
+                  </span>
+                </td>
+                <td class="py-3 px-4">
+                  <span class="inline-flex px-2 py-0.5 rounded text-[10px] font-semibold bg-amber-50 text-amber-700 border border-amber-200">
+                    DOCS SUBMITTED
+                  </span>
+                </td>
+                <td class="py-3 px-4 text-center font-mono font-semibold text-zinc-400">--</td>
+                <td class="py-3 px-4 font-mono text-zinc-400 text-[11px]">Yesterday</td>
+                <td class="py-3 px-5 text-right space-x-1.5">
+                  <button class="px-2 py-1 text-[11px] font-semibold text-amber-800 bg-amber-100/80 hover:bg-amber-200 rounded transition-colors">Verify Now</button>
+                  <button class="px-2 py-1 text-[11px] font-medium text-zinc-600 hover:bg-zinc-100 rounded transition-colors">Inspect</button>
+                </td>
+              </tr>
+
+              <tr class="hover:bg-zinc-50/70 transition-colors">
+                <td class="py-3 px-5">
+                  <div class="font-semibold text-zinc-900 text-xs">Govt Junior College for Girls</div>
+                  <div class="text-[11px] text-zinc-400 font-mono">Anandapuram · ID: GJC-AND-01</div>
+                </td>
+                <td class="py-3 px-4">
+                  <div>Visakhapatnam, AP</div>
+                  <div class="text-[11px] text-zinc-400">PIN 530052 · Govt Catalog</div>
+                </td>
+                <td class="py-3 px-4">
+                  <div class="flex items-center gap-1">
+                    <span class="px-1.5 py-0.2 bg-zinc-100 text-zinc-700 rounded text-[10px] font-mono">CEC</span>
+                    <span class="px-1.5 py-0.2 bg-zinc-100 text-zinc-700 rounded text-[10px] font-mono">HEC</span>
+                  </div>
+                </td>
+                <td class="py-3 px-4">
+                  <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                    ACTIVE
+                  </span>
+                </td>
+                <td class="py-3 px-4">
+                  <span class="inline-flex px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                    BIEAP DIRECT
+                  </span>
+                </td>
+                <td class="py-3 px-4 text-center font-mono font-semibold text-zinc-800">48</td>
+                <td class="py-3 px-4 font-mono text-zinc-400 text-[11px]">3 days ago</td>
+                <td class="py-3 px-5 text-right space-x-1.5">
+                  <button class="px-2 py-1 text-[11px] font-medium text-brand-teal hover:bg-brand-teal-light rounded transition-colors">View</button>
+                  <button class="px-2 py-1 text-[11px] font-medium text-zinc-600 hover:bg-zinc-100 rounded transition-colors">Edit</button>
+                  <button class="px-1.5 py-1 text-zinc-400 hover:text-zinc-600 rounded">•••</button>
+                </td>
+              </tr>
+
+            </tbody>
+          </table>
+
+          <!-- Pagination Bar -->
+          <div class="px-5 py-3 border-t border-zinc-200 bg-zinc-50/50 flex items-center justify-between text-xs text-zinc-500">
+            <div>Page 1 of 19 · Showing 1–10 of 184 registered campuses</div>
+            <div class="flex items-center gap-1">
+              <button class="px-2.5 py-1 border border-zinc-200 rounded bg-white text-zinc-400 cursor-not-allowed">Previous</button>
+              <button class="px-2.5 py-1 border border-brand-teal bg-brand-teal text-white rounded font-medium">1</button>
+              <button class="px-2.5 py-1 border border-zinc-200 bg-white hover:bg-zinc-100 rounded">2</button>
+              <button class="px-2.5 py-1 border border-zinc-200 bg-white hover:bg-zinc-100 rounded">3</button>
+              <span class="px-1">...</span>
+              <button class="px-2.5 py-1 border border-zinc-200 bg-white hover:bg-zinc-100 rounded">19</button>
+              <button class="px-2.5 py-1 border border-zinc-200 rounded bg-white hover:bg-zinc-100 text-zinc-700">Next</button>
+            </div>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- ========================================================
+           VIEW 3: STUDENTS MANAGEMENT (Platform-wide Read-First)
+           ======================================================== -->
+      <section id="view-students" class="space-y-5 hidden">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <h1 class="text-[26px] font-bold text-zinc-900 tracking-tight leading-tight">Students Directory</h1>
+            <p class="text-xs text-brand-muted mt-0.5">Platform-wide records of registered 10th-pass candidates, assessment standing, and college intent.</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="text-xs text-zinc-400 italic">Read-first audit boundary</span>
+            <button class="px-3 py-1.5 bg-white border border-zinc-200 hover:bg-zinc-50 text-zinc-700 text-xs font-semibold rounded-md shadow-xs transition-colors flex items-center gap-1.5">
+              <span>Filter View</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="bg-white border border-zinc-200 rounded-lg overflow-hidden shadow-card">
+          <table class="w-full text-left text-xs border-collapse">
+            <thead>
+              <tr class="border-b border-zinc-200 bg-zinc-50/70 text-zinc-500 font-semibold uppercase text-[11px] tracking-wider">
+                <th class="py-3 px-5">Student Identity</th>
+                <th class="py-3 px-4">Class 10 School</th>
+                <th class="py-3 px-4">Residence (Mandal/Dist)</th>
+                <th class="py-3 px-4">Assessment Status</th>
+                <th class="py-3 px-4">Recommended Pathway</th>
+                <th class="py-3 px-4">College Intent</th>
+                <th class="py-3 px-5 text-right">Profile Detail</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-zinc-100 text-zinc-700">
+              <tr class="hover:bg-zinc-50/70 transition-colors">
+                <td class="py-3 px-5">
+                  <div class="font-semibold text-zinc-900 text-xs">Kiran Kumar M.</div>
+                  <div class="text-[11px] text-zinc-400 font-mono">+91 98480 ••••4 · ID: STU-8491</div>
+                </td>
+                <td class="py-3 px-4">
+                  <div class="font-medium text-zinc-800">ZPHS Anandapuram</div>
+                  <div class="text-[11px] text-zinc-400">BSEAP Board Verified</div>
+                </td>
+                <td class="py-3 px-4">
+                  <div>Anandapuram, Visakhapatnam</div>
+                  <div class="text-[11px] text-zinc-400">PIN 530052</div>
+                </td>
+                <td class="py-3 px-4">
+                  <span class="inline-flex px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">COMPLETED (40/40)</span>
+                </td>
+                <td class="py-3 px-4">
+                  <span class="font-semibold text-brand-teal">Engineering (MPC)</span>
+                </td>
+                <td class="py-3 px-4">
+                  <span class="text-zinc-600">2 Enquiries sent</span>
+                </td>
+                <td class="py-3 px-5 text-right">
+                  <button class="px-2 py-1 text-xs font-semibold text-brand-teal hover:bg-brand-teal-light rounded">View Record →</button>
+                </td>
+              </tr>
+              <tr class="hover:bg-zinc-50/70 transition-colors">
+                <td class="py-3 px-5">
+                  <div class="font-semibold text-zinc-900 text-xs">Sneha Reddy P.</div>
+                  <div class="text-[11px] text-zinc-400 font-mono">+91 94401 ••••9 · ID: STU-8492</div>
+                </td>
+                <td class="py-3 px-4">
+                  <div class="font-medium text-zinc-800">St. Mary’s High School</div>
+                  <div class="text-[11px] text-zinc-400">Guntur Central</div>
+                </td>
+                <td class="py-3 px-4">
+                  <div>Guntur Urban</div>
+                  <div class="text-[11px] text-zinc-400">PIN 522002</div>
+                </td>
+                <td class="py-3 px-4">
+                  <span class="inline-flex px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">COMPLETED (40/40)</span>
+                </td>
+                <td class="py-3 px-4">
+                  <span class="font-semibold text-brand-teal">Medical / Biotech (BiPC)</span>
+                </td>
+                <td class="py-3 px-4">
+                  <span class="text-zinc-600">3 Enquiries sent</span>
+                </td>
+                <td class="py-3 px-5 text-right">
+                  <button class="px-2 py-1 text-xs font-semibold text-brand-teal hover:bg-brand-teal-light rounded">View Record →</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ========================================================
+           VIEW 4: LOCATIONS MANAGEMENT (Hierarchy-aware State/Dist/Mandal)
+           ======================================================== -->
+      <section id="view-locations" class="space-y-5 hidden">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <h1 class="text-[26px] font-bold text-zinc-900 tracking-tight leading-tight">Canonical Location Catalog</h1>
+            <p class="text-xs text-brand-muted mt-0.5">Hierarchical master data governing State → District → Mandal → Habitation mapping across AP & Telangana.</p>
+          </div>
+          <button class="px-3.5 py-1.5 bg-brand-teal hover:bg-brand-teal-dark text-white text-xs font-semibold rounded-md shadow-sm transition-colors flex items-center gap-1.5">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+            <span>+ Add Location Node</span>
+          </button>
+        </div>
+
+        <!-- Hierarchy Breadcrumb Selector Tabs -->
+        <div class="flex items-center gap-2 border-b border-zinc-200 pb-2">
+          <button class="px-3 py-1.5 text-xs font-semibold rounded-md bg-brand-teal-light text-brand-teal">1. States (2)</button>
+          <span class="text-zinc-300">›</span>
+          <button class="px-3 py-1.5 text-xs font-medium rounded-md bg-zinc-100 text-zinc-700 hover:bg-zinc-200">2. Districts (59 total)</button>
+          <span class="text-zinc-300">›</span>
+          <button class="px-3 py-1.5 text-xs font-medium rounded-md bg-zinc-100 text-zinc-700 hover:bg-zinc-200">3. Mandals (1,238)</button>
+          <span class="text-zinc-300">›</span>
+          <button class="px-3 py-1.5 text-xs font-medium rounded-md bg-zinc-100 text-zinc-700 hover:bg-zinc-200">4. Habitations & Wards</button>
+        </div>
+
+        <div class="bg-white border border-zinc-200 rounded-lg p-5 shadow-card">
+          <h2 class="text-sm font-semibold text-zinc-900 mb-3">Active State Operational Boundaries</h2>
+          <div class="grid grid-cols-2 gap-4">
+            <div class="p-4 border border-zinc-200 rounded-lg hover:border-brand-teal transition-colors">
+              <div class="flex items-center justify-between">
+                <span class="font-bold text-sm text-zinc-900">Andhra Pradesh (AP)</span>
+                <span class="px-2 py-0.5 text-[10px] font-semibold bg-emerald-50 text-emerald-700 rounded border border-emerald-200">ACTIVE V1</span>
+              </div>
+              <div class="text-xs text-zinc-500 mt-2">26 Districts · 679 Mandals · 14,200+ Villages</div>
+              <div class="mt-3 flex items-center gap-2">
+                <button class="text-xs text-brand-teal font-semibold hover:underline">Explore Districts (26) →</button>
+              </div>
+            </div>
+
+            <div class="p-4 border border-zinc-200 rounded-lg hover:border-brand-teal transition-colors">
+              <div class="flex items-center justify-between">
+                <span class="font-bold text-sm text-zinc-900">Telangana (TS)</span>
+                <span class="px-2 py-0.5 text-[10px] font-semibold bg-emerald-50 text-emerald-700 rounded border border-emerald-200">ACTIVE V1</span>
+              </div>
+              <div class="text-xs text-zinc-500 mt-2">33 Districts · 589 Mandals · 12,800+ Villages</div>
+              <div class="mt-3 flex items-center gap-2">
+                <button class="text-xs text-brand-teal font-semibold hover:underline">Explore Districts (33) →</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================================
+           VIEW 5: ASSESSMENT VERSIONING ENGINE
+           ======================================================== -->
+      <section id="view-assessments" class="space-y-5 hidden">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <h1 class="text-[26px] font-bold text-zinc-900 tracking-tight leading-tight">Assessment Engine & Versioning</h1>
+            <p class="text-xs text-brand-muted mt-0.5">Manage RIASEC question banks, scoring logic, and version lifecycles for Class 10 assessment.</p>
+          </div>
+          <button class="px-3.5 py-1.5 bg-brand-teal hover:bg-brand-teal-dark text-white text-xs font-semibold rounded-md shadow-sm transition-colors flex items-center gap-1.5">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+            <span>Create Draft Version</span>
+          </button>
+        </div>
+
+        <div class="grid grid-cols-3 gap-4">
+          <!-- Live Version -->
+          <div class="bg-white border-2 border-brand-teal rounded-lg p-4 shadow-card">
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-sm text-zinc-900">Version 2.1 (Live)</span>
+              <span class="px-2 py-0.5 text-[10px] font-semibold bg-emerald-50 text-emerald-700 rounded border border-emerald-200">PUBLISHED</span>
+            </div>
+            <div class="text-xs text-zinc-500 mt-2">40 Questions · Bilingual EN + TE · Real-time RIASEC Scoring</div>
+            <div class="mt-2 text-[11px] text-zinc-400">9,842 attempts recorded on this version.</div>
+            <div class="mt-4 pt-3 border-t border-zinc-100 flex items-center justify-between text-xs">
+              <span class="text-zinc-500 font-mono">Immutable production</span>
+              <button class="text-brand-teal font-semibold hover:underline">Inspect Questions →</button>
+            </div>
+          </div>
+
+          <!-- Draft Version -->
+          <div class="bg-white border border-zinc-200 rounded-lg p-4 shadow-card">
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-sm text-zinc-900">Version 2.2 (Staging)</span>
+              <span class="px-2 py-0.5 text-[10px] font-semibold bg-zinc-100 text-zinc-700 rounded border border-zinc-200">DRAFT</span>
+            </div>
+            <div class="text-xs text-zinc-500 mt-2">Refined Telugu phrasing for questions 18 & 24 · Updated Agritech branch weights.</div>
+            <div class="mt-2 text-[11px] text-zinc-400">Last edited 2 hrs ago by Curriculum Lead.</div>
+            <div class="mt-4 pt-3 border-t border-zinc-100 flex items-center justify-between text-xs">
+              <button class="text-zinc-600 hover:text-zinc-900 font-medium">Edit Draft</button>
+              <button class="px-2 py-1 bg-brand-teal text-white rounded text-xs font-semibold">Publish v2.2</button>
+            </div>
+          </div>
+
+          <!-- Retired Version -->
+          <div class="bg-white border border-zinc-200 rounded-lg p-4 shadow-card opacity-75">
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-sm text-zinc-900">Version 1.0 (Legacy)</span>
+              <span class="px-2 py-0.5 text-[10px] font-semibold bg-zinc-100 text-zinc-500 rounded border border-zinc-200">RETIRED</span>
+            </div>
+            <div class="text-xs text-zinc-500 mt-2">Archived initial beta assessment. 30 Questions monolingual.</div>
+            <div class="mt-2 text-[11px] text-zinc-400">Preserved for historical student attempt audits.</div>
+            <div class="mt-4 pt-3 border-t border-zinc-100 flex items-center justify-between text-xs">
+              <span class="text-zinc-400">Read-only Archive</span>
+              <button class="text-zinc-600 font-medium hover:underline">Audit Logs</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================================
+           VIEW 6: FORENSIC AUDIT LOG
+           ======================================================== -->
+      <section id="view-audit" class="space-y-5 hidden">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <h1 class="text-[26px] font-bold text-zinc-900 tracking-tight leading-tight">Platform Audit & Governance</h1>
+            <p class="text-xs text-brand-muted mt-0.5">Tamper-evident system log tracking administrative actions, college verification changes, and access events.</p>
+          </div>
+          <button class="px-3 py-1.5 bg-white border border-zinc-200 hover:bg-zinc-50 text-zinc-700 text-xs font-semibold rounded-md shadow-xs">
+            Export Cryptographic Log (JSON)
+          </button>
+        </div>
+
+        <div class="bg-white border border-zinc-200 rounded-lg overflow-hidden shadow-card">
+          <table class="w-full text-left text-xs border-collapse">
+            <thead>
+              <tr class="border-b border-zinc-200 bg-zinc-50/70 text-zinc-500 font-semibold uppercase text-[11px] tracking-wider">
+                <th class="py-3 px-5">Timestamp (UTC/IST)</th>
+                <th class="py-3 px-4">Actor</th>
+                <th class="py-3 px-4">Action</th>
+                <th class="py-3 px-4">Resource Domain</th>
+                <th class="py-3 px-4">Target Resource ID</th>
+                <th class="py-3 px-5 text-right">Result</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-zinc-100 font-mono text-[12px] text-zinc-700">
+              <tr class="hover:bg-zinc-50/60">
+                <td class="py-2.5 px-5 text-zinc-400">2024-05-18 06:08:12 UTC</td>
+                <td class="py-2.5 px-4 font-sans font-medium text-zinc-900">J. Prabhakar (admin)</td>
+                <td class="py-2.5 px-4 text-emerald-700 font-semibold">COLLEGE_ACCREDITATION_VERIFY</td>
+                <td class="py-2.5 px-4 font-sans text-zinc-600">Colleges</td>
+                <td class="py-2.5 px-4 text-zinc-500">clg_aditya_vsp_01</td>
+                <td class="py-2.5 px-5 text-right"><span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-50 text-emerald-700">SUCCESS</span></td>
+              </tr>
+              <tr class="hover:bg-zinc-50/60">
+                <td class="py-2.5 px-5 text-zinc-400">2024-05-18 05:45:00 UTC</td>
+                <td class="py-2.5 px-4 font-sans font-medium text-zinc-900">System Dispatch</td>
+                <td class="py-2.5 px-4 text-zinc-800">LEAD_AUTO_ROUTED</td>
+                <td class="py-2.5 px-4 font-sans text-zinc-600">Leads</td>
+                <td class="py-2.5 px-4 text-zinc-500">enq_98410298</td>
+                <td class="py-2.5 px-5 text-right"><span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-50 text-emerald-700">SUCCESS</span></td>
+              </tr>
+              <tr class="hover:bg-zinc-50/60">
+                <td class="py-2.5 px-5 text-zinc-400">2024-05-18 05:22:19 UTC</td>
+                <td class="py-2.5 px-4 font-sans font-medium text-zinc-900">R. Varma (ops)</td>
+                <td class="py-2.5 px-4 text-blue-700">SCHOOL_CATALOG_SYNC</td>
+                <td class="py-2.5 px-4 font-sans text-zinc-600">Schools</td>
+                <td class="py-2.5 px-4 text-zinc-500">sch_bseap_5302</td>
+                <td class="py-2.5 px-5 text-right"><span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-50 text-emerald-700">SUCCESS</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- Interactive View Switching Script -->
+  <script>
+    function switchView(viewName) {
+      // List of all views
+      const views = ['dashboard', 'colleges', 'students', 'locations', 'assessments', 'audit'];
+      
+      views.forEach(v => {
+        const sec = document.getElementById('view-' + v);
+        const nav = document.getElementById('nav-' + v);
+        
+        if (sec) {
+          if (v === viewName) {
+            sec.classList.remove('hidden');
+            sec.classList.add('block');
+          } else {
+            sec.classList.add('hidden');
+            sec.classList.remove('block');
+          }
+        }
+
+        if (nav) {
+          if (v === viewName) {
+            nav.className = "w-full flex items-center justify-between px-2.5 py-1.5 rounded-md font-semibold text-xs transition-colors bg-brand-teal-light text-brand-teal";
+          } else {
+            nav.className = "w-full flex items-center justify-between px-2.5 py-1.5 rounded-md font-medium text-xs text-zinc-700 hover:bg-zinc-100 hover:text-zinc-900 transition-colors";
+          }
+        }
+      });
+
+      // Update Crumb Title
+      const crumb = document.getElementById('crumb-current');
+      if (crumb) {
+        crumb.textContent = viewName.charAt(0).toUpperCase() + viewName.slice(1);
+      }
+    }
+  </script>
+</body>
+</html>

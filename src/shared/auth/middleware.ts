@@ -153,7 +153,111 @@ export async function getServerStaffAuthContext(): Promise<StaffAuthContext | nu
     await authService.verifyContext(decoded);
 
     return decoded;
-  } catch (error) {
+  } catch {
+    return null;
+  }
+}
+
+export interface AdminAuthContext {
+  userId: string;
+  role: 'ADMIN';
+}
+
+type AdminRouteHandler = (
+  request: Request,
+  context: unknown,
+  adminAuthContext: AdminAuthContext
+) => Promise<NextResponse> | NextResponse;
+
+export function withAdminAuth(handler: AdminRouteHandler) {
+  return async (request: Request, context: unknown) => {
+    let adminAuthContext: AdminAuthContext;
+
+    try {
+      let token: string | undefined;
+
+      // 1. Check Authorization header
+      const authHeader = request.headers.get('authorization');
+      if (authHeader?.startsWith('Bearer ')) {
+        token = authHeader.substring(7);
+      }
+
+      // 2. Check cookies
+      if (!token) {
+        const cookieStore = await cookies();
+        token = cookieStore.get('accessToken')?.value;
+      }
+
+      if (!token) {
+        throw new AppError('Unauthorized: No token provided', 401, 'UNAUTHORIZED');
+      }
+
+      // 3. Verify token
+      const decoded = await tokenService.verifyAccessToken<AuthContext>(token);
+
+      // 4. Require ADMIN role in token
+      if (decoded.role !== 'ADMIN') {
+        throw new AppError('Forbidden: Insufficient permissions', 403, 'FORBIDDEN');
+      }
+
+      // 5. Database Verification
+      let dbUser;
+      try {
+        dbUser = await authUseCases.getMe(decoded.userId);
+      } catch {
+        throw new AppError('Forbidden: User not found', 403, 'FORBIDDEN');
+      }
+
+      if (dbUser.role !== 'ADMIN') {
+        throw new AppError('Forbidden: Admin role revoked', 403, 'FORBIDDEN');
+      }
+
+      adminAuthContext = {
+        userId: decoded.userId,
+        role: 'ADMIN'
+      };
+    } catch (error) {
+      if (error instanceof AppError) {
+        throw error;
+      }
+      throw new AppError('Unauthorized: Invalid or expired token', 401, 'UNAUTHORIZED');
+    }
+
+    return await handler(request, context, adminAuthContext);
+  };
+}
+
+export async function getServerAdminAuthContext(): Promise<AdminAuthContext | null> {
+  try {
+    const cookieStore = await cookies();
+    const token = cookieStore.get('accessToken')?.value;
+
+    if (!token) {
+      return null;
+    }
+
+    const decoded = await tokenService.verifyAccessToken<AuthContext>(token);
+
+    if (decoded.role !== 'ADMIN') {
+      return null;
+    }
+
+    let dbUser;
+    try {
+      dbUser = await authUseCases.getMe(decoded.userId);
+    } catch {
+      return null;
+    }
+
+    if (dbUser.role !== 'ADMIN') {
+      return null;
+    }
+
+    return {
+      userId: decoded.userId,
+      role: 'ADMIN'
+    };
+  } catch {
     return null;
   }
 }

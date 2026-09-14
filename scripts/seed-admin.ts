@@ -26,6 +26,12 @@ async function seedAdmin() {
       role: 'COLLEGE',
     }).onConflictDoNothing({ target: usersTable.email });
 
+    await db.insert(usersTable).values({
+      email: 'admin@naaguru.in',
+      passwordHash: hashValue('12345678'),
+      role: 'ADMIN',
+    }).onConflictDoNothing({ target: usersTable.email });
+
     console.log('✅ Dummy admin user created!');
     console.log('Email: psdgandepalli@gmail.com');
     console.log('Password: Psd@1986');
