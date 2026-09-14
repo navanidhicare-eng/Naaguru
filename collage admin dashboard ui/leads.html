@@ -1,0 +1,2856 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>Apex Junior College - Admissions CRM &amp; Lead Pipeline</title>
+  <link href="https://fonts.googleapis.com" rel="preconnect"/>
+  <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "surface-dim": "#cfddd9",
+            "surface-container-lowest": "#ffffff",
+            "on-primary-fixed-variant": "#005144",
+            "secondary-deep": "#7c5800",
+            "secondary-container": "#fec24a",
+            "on-secondary": "#ffffff",
+            "on-secondary-container": "#715000",
+            "tertiary-container": "#317d6e",
+            "neutral-muted": "#647572",
+            "on-primary-container": "#d4fff2",
+            "surface-bright": "#effcf9",
+            "on-tertiary": "#ffffff",
+            "primary-container": "#087f6c",
+            "inverse-on-surface": "#e6f4f0",
+            "primary-light": "#e6f5f1",
+            "surface-canvas": "#f8faf9",
+            "primary-dark": "#056052",
+            "outline": "#6e7a75",
+            "inverse-surface": "#273331",
+            "on-primary": "#ffffff",
+            "surface-variant": "#d8e5e2",
+            "outline-variant": "#bdc9c4",
+            "background": "#effcf9",
+            "primary-fixed-dim": "#78d7c1",
+            "on-tertiary-fixed": "#00201a",
+            "on-tertiary-container": "#d7fff3",
+            "inverse-primary": "#78d7c1",
+            "success": "#2e8b57",
+            "error": "#d64545",
+            "on-surface-variant": "#3e4946",
+            "secondary-fixed-dim": "#f8bd45",
+            "surface": "#effcf9",
+            "on-surface": "#121e1c",
+            "surface-container": "#e3f1ed",
+            "secondary": "#7c5800",
+            "surface-container-low": "#e9f7f3",
+            "on-error": "#ffffff",
+            "on-secondary-fixed-variant": "#5e4200",
+            "on-tertiary-fixed-variant": "#005144",
+            "surface-card": "#ffffff",
+            "tertiary-fixed-dim": "#8ad4c3",
+            "border-input": "#d1dcd8",
+            "tertiary": "#0e6456",
+            "secondary-fixed": "#ffdea7",
+            "on-error-container": "#93000a",
+            "error-container": "#ffdad6",
+            "primary-deep": "#006454",
+            "border-subtle": "#e4ebe8",
+            "primary": "#006454",
+            "on-secondary-fixed": "#271900",
+            "on-background": "#121e1c",
+            "surface-container-highest": "#d8e5e2",
+            "primary-fixed": "#95f4dd",
+            "surface-container-high": "#ddebe7",
+            "tertiary-fixed": "#a6f1df",
+            "on-primary-fixed": "#00201a",
+            "surface-tint": "#006b5a"
+          },
+          fontFamily: {
+            sans: ["Inter", "sans-serif"]
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #f1f5f9; }
+    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    .card-hover {
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .card-hover:hover {
+      transform: translateY(-2px);
+    }
+    .kanban-col {
+      min-height: 480px;
+    }
+    .kanban-card {
+      cursor: grab;
+      user-select: none;
+    }
+    .kanban-card:active {
+      cursor: grabbing;
+    }
+    .kanban-card.dragging {
+      opacity: 0.4;
+      transform: scale(0.98);
+    }
+    .kanban-col.drag-over {
+      background-color: rgba(6, 78, 59, 0.08);
+      border-color: #006454;
+    }
+    .toast {
+      animation: slideIn 0.3s ease-out forwards;
+    }
+    @keyframes slideIn {
+      from { transform: translateY(100%); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+  </style>
+</head>
+<body class="bg-background text-on-surface antialiased min-h-screen">
+
+  <!-- Unified Sidebar (Rock solid, identical across all pages) -->
+  <aside class="fixed left-0 top-0 h-screen w-64 bg-primary-deep text-white z-50 flex flex-col justify-between p-5 border-r border-[#005144] shadow-lg select-none">
+    <div class="flex flex-col gap-6">
+      <!-- Apex Brand -->
+      <a href="dashboard.html" class="flex items-center gap-3 px-1 transition-opacity hover:opacity-90">
+        <div class="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center border border-white/20 shadow-inner">
+          <span class="material-symbols-outlined text-secondary-container text-[24px]">account_balance</span>
+        </div>
+        <div class="flex flex-col">
+          <span class="text-[17px] font-bold tracking-tight text-white leading-tight">Apex</span>
+          <span class="text-[10px] uppercase font-bold tracking-widest text-secondary-container">JUNIOR COLLEGE</span>
+        </div>
+      </a>
+
+      <!-- Navigation Links -->
+      <div class="flex flex-col gap-1">
+        <div class="text-[10px] font-bold uppercase tracking-wider text-on-primary-container/70 mb-2 px-3">Navigation</div>
+        <nav class="flex flex-col gap-1.5" id="sidebarNav">
+          <!-- 1. College Dashboard -->
+          <a class="nav-item flex items-center justify-between px-3.5 py-2.5 rounded-xl text-white/80 hover:bg-white/10 hover:text-white transition-all text-sm font-medium" href="dashboard.html">
+            <div class="flex items-center gap-2.5 min-w-0">
+              <span class="material-symbols-outlined text-[20px] shrink-0">dashboard</span>
+              <span class="truncate">College Dashboard</span>
+            </div>
+          </a>
+
+          <!-- 2. College Profile -->
+          <a class="nav-item flex items-center justify-between px-3.5 py-2.5 rounded-xl text-white/80 hover:bg-white/10 hover:text-white transition-all text-sm font-medium" href="index.html">
+            <div class="flex items-center gap-2.5 min-w-0">
+              <span class="material-symbols-outlined text-[20px] shrink-0">school</span>
+              <span class="truncate">College Profile</span>
+            </div>
+          </a>
+
+          <!-- 3. Leads & Admissions (Active) -->
+          <a class="nav-item flex items-center justify-between px-3.5 py-2.5 rounded-xl bg-white text-primary font-bold shadow-sm text-sm transition-all" href="leads.html">
+            <div class="flex items-center gap-2.5 min-w-0">
+              <span class="material-symbols-outlined text-[20px] shrink-0">group</span>
+              <span class="truncate">Leads &amp; Admissions</span>
+            </div>
+            <span class="px-2 py-0.5 rounded-full bg-amber-500 text-white text-[10px] font-bold whitespace-nowrap shrink-0 shadow-sm" id="sidebarLeadsBadge">184 Total</span>
+          </a>
+
+          <!-- 4. Analytics -->
+          <a class="nav-item flex items-center justify-between px-3.5 py-2.5 rounded-xl text-white/80 hover:bg-white/10 hover:text-white transition-all text-sm font-medium" href="analytics.html">
+            <div class="flex items-center gap-2.5 min-w-0">
+              <span class="material-symbols-outlined text-[20px] shrink-0">insights</span>
+              <span class="truncate">Analytics</span>
+            </div>
+            <span class="flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 text-[10px] font-bold whitespace-nowrap shrink-0">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> Live
+            </span>
+          </a>
+
+          <!-- 5. Settings -->
+          <a class="nav-item flex items-center justify-between px-3.5 py-2.5 rounded-xl text-white/80 hover:bg-white/10 hover:text-white transition-all text-sm font-medium" href="settings.html">
+            <div class="flex items-center gap-2.5 min-w-0">
+              <span class="material-symbols-outlined text-[20px] shrink-0">settings</span>
+              <span class="truncate">Settings</span>
+            </div>
+          </a>
+        </nav>
+      </div>
+    </div>
+
+    <!-- Academic Session Footer -->
+    <div class="p-3.5 rounded-xl bg-white/5 border border-white/10 flex items-center justify-between">
+      <div class="flex items-center gap-2.5">
+        <span class="material-symbols-outlined text-secondary-container text-[20px]">calendar_month</span>
+        <div class="flex flex-col">
+          <span class="text-[10px] text-white/70 font-medium">Academic Year</span>
+          <span class="text-[12px] font-bold text-secondary-container leading-tight">2025–2026</span>
+        </div>
+      </div>
+      <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 text-[10px] font-semibold">
+        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> Active
+      </span>
+    </div>
+  </aside>
+
+  <!-- Main Content Wrapper (pl-64) -->
+  <div class="pl-64">
+
+    <!-- Top System Header -->
+    <header class="fixed top-0 left-64 right-0 h-16 bg-white/90 backdrop-blur-md border-b border-border-subtle z-40 flex items-center justify-between px-8">
+      <div class="flex items-center gap-2 text-neutral-muted text-xs font-medium">
+        <span class="material-symbols-outlined text-[18px] text-primary">group</span>
+        <span>Apex Portal</span>
+        <span class="text-neutral-muted/40">/</span>
+        <span class="text-on-surface font-semibold">Admissions CRM &amp; Lead Pipeline</span>
+      </div>
+
+      <div class="flex items-center gap-4">
+        <!-- Quick Global Search -->
+        <div class="relative w-64">
+          <span class="material-symbols-outlined absolute left-3 top-2.5 text-neutral-muted text-[18px]">search</span>
+          <input type="text" id="topSearchInput" oninput="syncGlobalSearch(this.value)" placeholder="Quick search inquiries..." class="w-full bg-surface-canvas text-xs pl-9 pr-3 py-2 rounded-xl border border-border-input focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"/>
+        </div>
+
+        <button onclick="notify('🔔 14 follow-up callbacks due today across 4 counselors!')" class="w-9 h-9 rounded-xl border border-border-subtle bg-surface-canvas hover:bg-surface-container flex items-center justify-center text-neutral-muted hover:text-primary relative transition-colors" title="Follow-up Reminders">
+          <span class="material-symbols-outlined text-[20px]">notifications</span>
+          <span class="absolute top-2 right-2 w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
+        </button>
+
+        <button onclick="openLeadModal()" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-[#064E3B] hover:bg-emerald-950 text-white text-xs font-bold shadow-sm transition-colors">
+          <span class="material-symbols-outlined text-[16px]">person_add</span>
+          <span>+ Add Lead</span>
+        </button>
+
+        <div class="flex items-center gap-3 pl-2 border-l border-border-subtle">
+          <div class="w-9 h-9 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center text-primary font-bold text-xs">
+            AP
+          </div>
+          <div class="flex flex-col text-left">
+            <span class="text-xs font-bold text-on-surface">Dr. A. Prabhakar</span>
+            <span class="text-[10px] text-neutral-muted">Principal &amp; Director</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Leads Workspace Body -->
+    <main class="pt-20 pb-16 px-8 max-w-[1520px] mx-auto flex flex-col gap-6">
+
+      <!-- ================= 1. KPI SUMMARY RIBBON (TOP 4 METRIC CARDS) ================= -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        
+        <!-- Metric 1: Total Inquiries -->
+        <div class="bg-surface-card p-5 rounded-2xl border border-border-subtle shadow-sm flex flex-col justify-between gap-3 card-hover relative overflow-hidden">
+          <div class="flex items-start justify-between">
+            <div class="flex flex-col">
+              <span class="text-[11px] font-bold text-neutral-muted uppercase tracking-wider">Total Inquiries</span>
+              <h2 class="text-2xl font-black text-slate-900 mt-1" id="kpiTotalInquiries">184</h2>
+            </div>
+            <div class="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
+              <span class="material-symbols-outlined text-[22px]">contact_phone</span>
+            </div>
+          </div>
+          <div class="flex items-center justify-between text-[11px] pt-2 border-t border-slate-100">
+            <span class="text-emerald-700 font-bold flex items-center gap-0.5">
+              <span class="material-symbols-outlined text-[14px]">trending_up</span> +18 this week
+            </span>
+            <span class="text-neutral-muted">From Walk-ins &amp; Web</span>
+          </div>
+        </div>
+
+        <!-- Metric 2: Pending Follow-ups -->
+        <div class="bg-surface-card p-5 rounded-2xl border border-border-subtle shadow-sm flex flex-col justify-between gap-3 card-hover relative overflow-hidden">
+          <div class="flex items-start justify-between">
+            <div class="flex flex-col">
+              <span class="text-[11px] font-bold text-neutral-muted uppercase tracking-wider">Pending Follow-ups</span>
+              <h2 class="text-2xl font-black text-amber-700 mt-1" id="kpiPendingFollowups">42</h2>
+            </div>
+            <div class="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-600 flex items-center justify-center">
+              <span class="material-symbols-outlined text-[22px]">phone_callback</span>
+            </div>
+          </div>
+          <div class="flex items-center justify-between text-[11px] pt-2 border-t border-slate-100">
+            <span class="text-amber-800 font-bold bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200">
+              14 Urgent Today
+            </span>
+            <span class="text-neutral-muted">Assigned to Staff</span>
+          </div>
+        </div>
+
+        <!-- Metric 3: Visits Scheduled -->
+        <div class="bg-surface-card p-5 rounded-2xl border border-border-subtle shadow-sm flex flex-col justify-between gap-3 card-hover relative overflow-hidden">
+          <div class="flex items-start justify-between">
+            <div class="flex flex-col">
+              <span class="text-[11px] font-bold text-neutral-muted uppercase tracking-wider">Visits Scheduled</span>
+              <h2 class="text-2xl font-black text-indigo-700 mt-1" id="kpiVisitsScheduled">28</h2>
+            </div>
+            <div class="w-10 h-10 rounded-xl bg-indigo-500/10 text-indigo-600 flex items-center justify-center">
+              <span class="material-symbols-outlined text-[22px]">tour</span>
+            </div>
+          </div>
+          <div class="flex items-center justify-between text-[11px] pt-2 border-t border-slate-100">
+            <span class="text-indigo-800 font-bold bg-indigo-50 px-2 py-0.5 rounded-full border border-indigo-200">
+              8 Campus Tours Tomorrow
+            </span>
+            <span class="text-neutral-muted">Hostel + Labs</span>
+          </div>
+        </div>
+
+        <!-- Metric 4: Confirmed Admissions -->
+        <div class="bg-surface-card p-5 rounded-2xl border border-border-subtle shadow-sm flex flex-col justify-between gap-3 card-hover relative overflow-hidden">
+          <div class="flex items-start justify-between">
+            <div class="flex flex-col">
+              <span class="text-[11px] font-bold text-neutral-muted uppercase tracking-wider">Confirmed Admissions</span>
+              <h2 class="text-2xl font-black text-[#064E3B] mt-1" id="kpiConfirmedAdmissions">86</h2>
+            </div>
+            <div class="w-10 h-10 rounded-xl bg-emerald-500/10 text-[#064E3B] flex items-center justify-center">
+              <span class="material-symbols-outlined text-[22px]">verified</span>
+            </div>
+          </div>
+          <div class="flex items-center justify-between text-[11px] pt-2 border-t border-slate-100">
+            <span class="text-emerald-900 font-bold bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+              ₹1.08 Cr Token Pool
+            </span>
+            <span class="text-neutral-muted">46.7% Conversion</span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ================= 2. PIPELINE HEADER & VIEW SWITCHER ================= -->
+      <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 bg-surface-card p-6 rounded-2xl border border-border-subtle shadow-sm">
+        <div>
+          <div class="flex items-center gap-2.5 flex-wrap">
+            <h1 class="text-xl font-black text-slate-900 tracking-tight">Admissions CRM &amp; Lead Pipeline</h1>
+            <span class="px-2.5 py-0.5 rounded-full bg-emerald-100 text-[#064E3B] text-xs font-bold border border-emerald-200" id="livePipelineBadge">
+              184 Total Inquiries Active
+            </span>
+          </div>
+          <p class="text-xs text-neutral-muted mt-1">Real-time parent walk-ins, digital inquiries, counselor assignments, WhatsApp prospectuses, and seat allotment tokens.</p>
+        </div>
+
+        <!-- View Switcher & Action Buttons -->
+        <div class="flex items-center gap-3 flex-wrap">
+          <!-- View Switcher Toggle: [Table View] | [Kanban Pipeline View] -->
+          <div class="p-1 bg-surface-canvas rounded-xl border border-border-subtle flex items-center gap-1 text-xs font-bold">
+            <button onclick="switchView('table')" id="viewBtn-table" class="px-3 py-1.5 rounded-lg bg-white text-primary shadow-xs flex items-center gap-1.5 transition-all">
+              <span class="material-symbols-outlined text-[16px]">table_rows</span>
+              <span>Table View</span>
+            </button>
+            <button onclick="switchView('kanban')" id="viewBtn-kanban" class="px-3 py-1.5 rounded-lg text-neutral-muted hover:text-slate-900 flex items-center gap-1.5 transition-all">
+              <span class="material-symbols-outlined text-[16px]">view_kanban</span>
+              <span>Kanban Pipeline</span>
+            </button>
+          </div>
+
+          <button onclick="exportLeadsCsv()" class="px-3.5 py-2 rounded-xl bg-surface-canvas hover:bg-slate-100 border border-border-subtle text-xs font-bold text-slate-700 flex items-center gap-1.5 transition-colors shadow-xs">
+            <span class="material-symbols-outlined text-[16px] text-primary">download</span>
+            Export Leads (.CSV)
+          </button>
+          <button onclick="openLeadModal()" class="px-4 py-2 rounded-xl bg-[#064E3B] hover:bg-emerald-950 text-white text-xs font-bold shadow-sm transition-all flex items-center gap-1.5">
+            <span class="material-symbols-outlined text-[18px]">person_add</span>
+            + New Admission Inquiry
+          </button>
+        </div>
+      </div>
+
+      <!-- ================= 3. STAGE CATEGORY PILLS ================= -->
+      <div class="flex flex-wrap items-center gap-2 bg-surface-canvas p-2 rounded-2xl border border-border-subtle text-xs font-semibold">
+        <button onclick="filterByStage('all', this)" class="stage-filter-btn px-4 py-2 rounded-xl bg-[#064E3B] text-white font-bold shadow-xs">
+          All Leads (184)
+        </button>
+        <button onclick="filterByStage('inquiry', this)" class="stage-filter-btn px-4 py-2 rounded-xl text-neutral-muted hover:text-on-surface hover:bg-white transition-all">
+          📥 New Inquiries (28)
+        </button>
+        <button onclick="filterByStage('callback', this)" class="stage-filter-btn px-4 py-2 rounded-xl text-neutral-muted hover:text-on-surface hover:bg-white transition-all">
+          📞 Callback Scheduled (42)
+        </button>
+        <button onclick="filterByStage('visit', this)" class="stage-filter-btn px-4 py-2 rounded-xl text-neutral-muted hover:text-on-surface hover:bg-white transition-all">
+          🏫 Campus Tour Booked (28)
+        </button>
+        <button onclick="filterByStage('scholarship', this)" class="stage-filter-btn px-4 py-2 rounded-xl text-neutral-muted hover:text-on-surface hover:bg-white transition-all">
+          ⭐ Merit Evaluation (14)
+        </button>
+        <button onclick="filterByStage('confirmed', this)" class="stage-filter-btn px-4 py-2 rounded-xl text-neutral-muted hover:text-on-surface hover:bg-white transition-all">
+          ✅ Confirmed Admissions (72)
+        </button>
+      </div>
+
+      <!-- ================= 4. SEARCH, FILTER & BULK ACTIONS BAR ================= -->
+      <div class="bg-surface-card p-4 rounded-2xl border border-border-subtle shadow-sm flex flex-col gap-3">
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
+          
+          <!-- Search Bar -->
+          <div class="relative flex-1">
+            <span class="material-symbols-outlined absolute left-3.5 top-2.5 text-neutral-muted text-[18px]">search</span>
+            <input type="text" id="leadSearchInput" oninput="handleSearchFilter()" placeholder="Search by student name, phone, or feeder school..." class="w-full bg-surface-canvas text-xs pl-10 pr-4 py-2.5 rounded-xl border border-border-input focus:outline-none focus:border-[#064E3B] font-medium text-slate-800"/>
+          </div>
+
+          <!-- Filter Dropdowns: Stream, Counselor, Status -->
+          <div class="flex items-center gap-2 flex-wrap">
+            <!-- Stream Dropdown -->
+            <div class="flex items-center gap-1 bg-surface-canvas px-3 py-1.5 rounded-xl border border-border-input text-xs">
+              <span class="text-neutral-muted text-[11px] font-bold">Stream:</span>
+              <select id="filterStream" onchange="handleSearchFilter()" class="bg-transparent text-xs font-semibold text-slate-800 focus:outline-none border-none py-0 pl-1 pr-6 cursor-pointer">
+                <option value="all">All Streams</option>
+                <option value="MPC">MPC (IIT-JEE)</option>
+                <option value="BiPC">BiPC (NEET Special)</option>
+                <option value="MEC">MEC (CA Foundation)</option>
+                <option value="CEC">CEC (Civils / Law)</option>
+              </select>
+            </div>
+
+            <!-- Counselor Dropdown -->
+            <div class="flex items-center gap-1 bg-surface-canvas px-3 py-1.5 rounded-xl border border-border-input text-xs">
+              <span class="text-neutral-muted text-[11px] font-bold">Counselor:</span>
+              <select id="filterCounselor" onchange="handleSearchFilter()" class="bg-transparent text-xs font-semibold text-slate-800 focus:outline-none border-none py-0 pl-1 pr-6 cursor-pointer">
+                <option value="all">All Counselors</option>
+                <option value="Mrs. Anitha Rao">Mrs. Anitha Rao</option>
+                <option value="Mr. Rajesh Kumar">Mr. Rajesh Kumar</option>
+                <option value="Dr. M. Venkat">Dr. M. Venkat</option>
+                <option value="Mrs. Sujatha Reddy">Mrs. Sujatha Reddy</option>
+              </select>
+            </div>
+
+            <!-- Stage Dropdown -->
+            <div class="flex items-center gap-1 bg-surface-canvas px-3 py-1.5 rounded-xl border border-border-input text-xs">
+              <span class="text-neutral-muted text-[11px] font-bold">Stage:</span>
+              <select id="filterStage" onchange="handleSearchFilter()" class="bg-transparent text-xs font-semibold text-slate-800 focus:outline-none border-none py-0 pl-1 pr-6 cursor-pointer">
+                <option value="all">All Stages</option>
+                <option value="inquiry">New Inquiry</option>
+                <option value="callback">Callback Scheduled</option>
+                <option value="visit">Campus Tour Booked</option>
+                <option value="scholarship">Merit Scholarship</option>
+                <option value="confirmed">Seat Confirmed</option>
+              </select>
+            </div>
+
+            <!-- Reset Filters -->
+            <button onclick="resetFilters()" class="p-2 rounded-xl text-neutral-muted hover:text-slate-900 hover:bg-slate-100 transition-colors" title="Reset All Filters">
+              <span class="material-symbols-outlined text-[18px]">restart_alt</span>
+            </button>
+          </div>
+
+        </div>
+
+        <!-- Bulk Action Bar (Appears when 1+ checkboxes are selected) -->
+        <div id="bulkActionBar" class="hidden p-3 rounded-xl bg-gradient-to-r from-emerald-900 via-[#064E3B] to-emerald-950 text-white flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-md">
+          <div class="flex items-center gap-2.5">
+            <span class="w-6 h-6 rounded-full bg-white/20 text-white text-xs font-black flex items-center justify-center" id="bulkSelectedCountBadge">
+              0
+            </span>
+            <span class="text-xs font-bold" id="bulkSelectedLabel">Leads Selected for Batch Processing</span>
+          </div>
+          <div class="flex items-center gap-2 flex-wrap">
+            <button onclick="triggerBulkWhatsApp()" class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold flex items-center gap-1.5 shadow-xs transition-colors">
+              <span class="material-symbols-outlined text-[16px]">chat</span>
+              Send Bulk WhatsApp
+            </button>
+            <button onclick="triggerBulkReassign()" class="px-3 py-1.5 rounded-lg bg-white/20 hover:bg-white/30 text-white text-xs font-bold flex items-center gap-1.5 shadow-xs transition-colors">
+              <span class="material-symbols-outlined text-[16px]">manage_accounts</span>
+              Reassign Counselor
+            </button>
+            <button onclick="triggerBulkExport()" class="px-3 py-1.5 rounded-lg bg-white/20 hover:bg-white/30 text-white text-xs font-bold flex items-center gap-1.5 shadow-xs transition-colors">
+              <span class="material-symbols-outlined text-[16px]">download</span>
+              Export Selected
+            </button>
+            <button onclick="deselectAllLeads()" class="px-2.5 py-1.5 rounded-lg text-white/70 hover:text-white text-xs font-semibold">
+              Deselect All
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ================= 5. DATA VIEW 1: INTERACTIVE TABLE VIEW ================= -->
+      <div id="tableViewContainer" class="bg-surface-card rounded-2xl border border-border-subtle shadow-sm overflow-hidden flex flex-col">
+        <div class="p-4 bg-surface-canvas border-b border-border-subtle flex items-center justify-between flex-wrap gap-2">
+          <div class="flex items-center gap-2">
+            <span class="font-bold text-xs text-slate-900">Active Student Inquiries Pipeline</span>
+            <span class="px-2 py-0.5 rounded-full bg-slate-200 text-slate-700 text-[10px] font-bold" id="tableFilterCountBadge">Showing 8 leads</span>
+          </div>
+          <span class="text-xs text-neutral-muted">Multi-select enabled • Real-time status sync</span>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs" id="leadsTable">
+            <thead class="bg-slate-50 border-b border-border-subtle text-neutral-muted font-bold uppercase tracking-wider">
+              <tr>
+                <th class="p-4 w-12 text-center">
+                  <input type="checkbox" id="selectAllCheckbox" onchange="toggleSelectAll(this)" class="w-4 h-4 text-[#064E3B] rounded border-slate-300 focus:ring-emerald-500 cursor-pointer"/>
+                </th>
+                <th class="p-4">Student &amp; Feeder School</th>
+                <th class="p-4">Target Stream</th>
+                <th class="p-4">10th Score / Marks</th>
+                <th class="p-4">Parent Phone</th>
+                <th class="p-4">Assigned Counselor</th>
+                <th class="p-4">Stage Status</th>
+                <th class="p-4 text-right">Quick CRM Actions</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-border-subtle" id="leadsTbody">
+              <!-- Dynamically populated via renderLeadsTable() -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ================= 6. DATA VIEW 2: KANBAN PIPELINE VIEW ================= -->
+      <div id="kanbanViewContainer" class="hidden flex flex-col gap-4">
+        <div class="flex items-center justify-between bg-surface-card p-4 rounded-2xl border border-border-subtle shadow-sm">
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-[20px] text-[#064E3B]">view_kanban</span>
+            <span class="font-bold text-xs text-slate-900">Interactive Kanban Pipeline</span>
+            <span class="text-[11px] text-neutral-muted">— Drag &amp; drop student cards between stages to auto-update CRM status</span>
+          </div>
+          <span class="text-[11px] font-bold text-emerald-800 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200">
+            5 Pipeline Stages Active
+          </span>
+        </div>
+
+        <!-- 5 Kanban Columns Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-5 gap-4 items-start" id="kanbanBoard">
+          
+          <!-- Column 1: New Inquiries -->
+          <div class="bg-surface-canvas rounded-2xl p-3 border border-border-subtle flex flex-col gap-3 kanban-col transition-colors" data-stage-col="inquiry" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event, 'inquiry')">
+            <div class="flex items-center justify-between pb-2 border-b border-slate-200">
+              <span class="font-bold text-xs text-slate-800 flex items-center gap-1.5">
+                <span class="w-2.5 h-2.5 rounded-full bg-blue-500"></span> New Inquiries
+              </span>
+              <span class="px-2 py-0.5 rounded-full bg-blue-100 text-blue-900 text-[10px] font-bold" id="kanbanCount-inquiry">0</span>
+            </div>
+            <div class="flex flex-col gap-2.5 min-h-[400px]" id="kanbanList-inquiry"></div>
+          </div>
+
+          <!-- Column 2: Callback Scheduled -->
+          <div class="bg-surface-canvas rounded-2xl p-3 border border-border-subtle flex flex-col gap-3 kanban-col transition-colors" data-stage-col="callback" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event, 'callback')">
+            <div class="flex items-center justify-between pb-2 border-b border-slate-200">
+              <span class="font-bold text-xs text-slate-800 flex items-center gap-1.5">
+                <span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span> Callbacks
+              </span>
+              <span class="px-2 py-0.5 rounded-full bg-amber-100 text-amber-900 text-[10px] font-bold" id="kanbanCount-callback">0</span>
+            </div>
+            <div class="flex flex-col gap-2.5 min-h-[400px]" id="kanbanList-callback"></div>
+          </div>
+
+          <!-- Column 3: Campus Tour Booked -->
+          <div class="bg-surface-canvas rounded-2xl p-3 border border-border-subtle flex flex-col gap-3 kanban-col transition-colors" data-stage-col="visit" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event, 'visit')">
+            <div class="flex items-center justify-between pb-2 border-b border-slate-200">
+              <span class="font-bold text-xs text-slate-800 flex items-center gap-1.5">
+                <span class="w-2.5 h-2.5 rounded-full bg-indigo-500"></span> Campus Visits
+              </span>
+              <span class="px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-900 text-[10px] font-bold" id="kanbanCount-visit">0</span>
+            </div>
+            <div class="flex flex-col gap-2.5 min-h-[400px]" id="kanbanList-visit"></div>
+          </div>
+
+          <!-- Column 4: Merit Scholarship Evaluation -->
+          <div class="bg-surface-canvas rounded-2xl p-3 border border-border-subtle flex flex-col gap-3 kanban-col transition-colors" data-stage-col="scholarship" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event, 'scholarship')">
+            <div class="flex items-center justify-between pb-2 border-b border-slate-200">
+              <span class="font-bold text-xs text-slate-800 flex items-center gap-1.5">
+                <span class="w-2.5 h-2.5 rounded-full bg-purple-500"></span> Merit Waiver
+              </span>
+              <span class="px-2 py-0.5 rounded-full bg-purple-100 text-purple-900 text-[10px] font-bold" id="kanbanCount-scholarship">0</span>
+            </div>
+            <div class="flex flex-col gap-2.5 min-h-[400px]" id="kanbanList-scholarship"></div>
+          </div>
+
+          <!-- Column 5: Confirmed Admissions -->
+          <div class="bg-surface-canvas rounded-2xl p-3 border border-border-subtle flex flex-col gap-3 kanban-col transition-colors" data-stage-col="confirmed" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event, 'confirmed')">
+            <div class="flex items-center justify-between pb-2 border-b border-slate-200">
+              <span class="font-bold text-xs text-slate-800 flex items-center gap-1.5">
+                <span class="w-2.5 h-2.5 rounded-full bg-emerald-600"></span> Confirmed
+              </span>
+              <span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-900 text-[10px] font-bold" id="kanbanCount-confirmed">0</span>
+            </div>
+            <div class="flex flex-col gap-2.5 min-h-[400px]" id="kanbanList-confirmed"></div>
+          </div>
+
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- ================= UNIVERSAL CRM MODAL DIALOGS ================= -->
+
+  <!-- Modal: Edit Student Profile -->
+  <div id="editProfileModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[60] hidden items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-3xl w-full p-6 shadow-2xl flex flex-col gap-4 max-h-[90vh] overflow-y-auto">
+      <div class="flex items-center justify-between border-b border-border-subtle pb-3">
+        <div class="flex items-center gap-2.5">
+          <div class="w-9 h-9 rounded-xl bg-amber-500/10 text-amber-600 flex items-center justify-center">
+            <span class="material-symbols-outlined text-[20px]">edit_square</span>
+          </div>
+          <div>
+            <h3 class="font-bold text-base text-slate-900">Edit Student Profile</h3>
+            <p class="text-[11px] text-neutral-muted">Update personal, academic, and preference details</p>
+          </div>
+        </div>
+        <button onclick="closeEditProfileModal()" class="text-neutral-muted hover:text-slate-900 p-1 rounded-lg hover:bg-slate-100">
+          <span class="material-symbols-outlined text-[20px]">close</span>
+        </button>
+      </div>
+
+      <form id="editProfileForm" onsubmit="saveProfileEdits(event)" class="flex flex-col gap-4 mt-2">
+        <!-- Section 1: Personal Info -->
+        <h4 class="font-bold text-xs text-[#064E3B] border-b border-emerald-100 pb-1 mb-1">Personal &amp; Parent Information</h4>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+          <div><label class="font-bold text-slate-700 block mb-1">Student Name *</label><input type="text" id="editStudentName" required class="w-full bg-surface-canvas p-2.5 rounded-xl border border-border-input font-medium text-slate-800"/></div>
+          <div><label class="font-bold text-slate-700 block mb-1">Primary Phone *</label><input type="text" id="editPrimaryPhone" required class="w-full bg-surface-canvas p-2.5 rounded-xl border border-border-input font-medium text-slate-800"/></div>
+          <div><label class="font-bold text-slate-700 block mb-1">Alternate Phone</label><input type="text" id="editAltPhone" class="w-full bg-surface-canvas p-2.5 rounded-xl border border-border-input font-medium text-slate-800"/></div>
+          <div><label class="font-bold text-slate-700 block mb-1">Email Address</label><input type="email" id="editEmail" class="w-full bg-surface-canvas p-2.5 rounded-xl border border-border-input font-medium text-slate-800"/></div>
+          <div><label class="font-bold text-slate-700 block mb-1">DOB &amp; Gender</label><input type="text" id="editDobGender" placeholder="e.g. 14 Aug 2008 • Male" class="w-full bg-surface-canvas p-2.5 rounded-xl border border-border-input font-medium text-slate-800"/></div>
+          <div><label class="font-bold text-slate-700 block mb-1">Father / Guardian Name</label><input type="text" id="editFatherName" class="w-full bg-surface-canvas p-2.5 rounded-xl border border-border-input font-medium text-slate-800"/></div>
+          <div><label class="font-bold text-slate-700 block mb-1">Father Occupation</label><input type="text" id="editFatherOcc" class="w-full bg-surface-canvas p-2.5 rounded-xl border border-border-input font-medium text-slate-800"/></div>
+          <div><label class="font-bold text-slate-700 block mb-1">Mother Name</label><input type="text" id="editMotherName" class="w-full bg-surface-canvas p-2.5 rounded-xl border border-border-input font-medium text-slate-800"/></div>
+          <div><label class="font-bold text-slate-700 block mb-1">Mother Occupation</label><input type="text" id="editMotherOcc" class="w-full bg-surface-canvas p-2.5 rounded-xl border border-border-input font-medium text-slate-800"/></div>
+          <div class="sm:col-span-2"><label class="font-bold text-slate-700 block mb-1">Residential Address</label><textarea id="editAddress" rows="2" class="w-full bg-surface-canvas p-2.5 rounded-xl border border-border-input font-medium text-slate-800"></textarea></div>
+        </div>
+
+        <!-- Section 2: Academic Info -->
+        <h4 class="font-bold text-xs text-[#064E3B] border-b border-emerald-100 pb-1 mt-2 mb-1">Academic Credentials</h4>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+          <div class="sm:col-span-2"><label class="font-bold text-slate-700 block mb-1">Previous School Name</label><input type="text" id="editSchoolName" class="w-full bg-surface-canvas p-2.5 rounded-xl border border-border-input font-medium text-slate-800"/></div>
+          <div><label class="font-bold text-slate-700 block mb-1">School Location</label><input type="text" id="editSchoolLoc" class="w-full bg-surface-canvas p-2.5 rounded-xl border border-border-input font-medium text-slate-800"/></div>
+          <div><label class="font-bold text-slate-700 block mb-1">Marks / Score</label><input type="text" id="editGpa" placeholder="e.g. 595 Marks" class="w-full bg-surface-canvas p-2.5 rounded-xl border border-border-input font-medium text-slate-800"/></div>
+          <div><label class="font-bold text-slate-700 block mb-1">SSC Hall Ticket No.</label><input type="text" id="editSsc" class="w-full bg-surface-canvas p-2.5 rounded-xl border border-border-input font-medium text-slate-800"/></div>
+          <div><label class="font-bold text-slate-700 block mb-1">Merit Bracket</label><input type="text" id="editMeritBracket" class="w-full bg-surface-canvas p-2.5 rounded-xl border border-border-input font-medium text-slate-800"/></div>
+        </div>
+
+        <!-- Section 3: Preferences -->
+        <h4 class="font-bold text-xs text-[#064E3B] border-b border-emerald-100 pb-1 mt-2 mb-1">Admission Preferences</h4>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+          <div><label class="font-bold text-slate-700 block mb-1">Interested Stream</label><input type="text" id="editInterestedStream" class="w-full bg-surface-canvas p-2.5 rounded-xl border border-border-input font-medium text-slate-800"/></div>
+          <div><label class="font-bold text-slate-700 block mb-1">Second Choice</label><input type="text" id="editSecondChoice" class="w-full bg-surface-canvas p-2.5 rounded-xl border border-border-input font-medium text-slate-800"/></div>
+          <div><label class="font-bold text-slate-700 block mb-1">Preferred Accommodation</label><input type="text" id="editAccommodation" class="w-full bg-surface-canvas p-2.5 rounded-xl border border-border-input font-medium text-slate-800"/></div>
+          <div><label class="font-bold text-slate-700 block mb-1">Expected Joining Batch</label><input type="text" id="editJoiningBatch" class="w-full bg-surface-canvas p-2.5 rounded-xl border border-border-input font-medium text-slate-800"/></div>
+        </div>
+
+        <div class="flex items-center justify-end gap-2 pt-4 border-t border-border-subtle mt-2">
+          <button type="button" onclick="closeEditProfileModal()" class="px-4 py-2.5 rounded-xl text-xs font-bold text-slate-600 bg-slate-100 hover:bg-slate-200">Cancel</button>
+          <button type="submit" class="px-5 py-2.5 rounded-xl text-xs font-bold text-white bg-amber-500 hover:bg-amber-600 shadow-sm flex items-center gap-1.5">
+            <span class="material-symbols-outlined text-[16px]">save</span>
+            Save Changes
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal 1: Register New Student Lead -->
+  <div id="leadModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl flex flex-col gap-4 max-h-[90vh] overflow-y-auto">
+      <div class="flex items-center justify-between border-b border-border-subtle pb-3">
+        <div class="flex items-center gap-2.5">
+          <div class="w-9 h-9 rounded-xl bg-emerald-500/10 text-[#064E3B] flex items-center justify-center">
+            <span class="material-symbols-outlined text-[20px]">person_add</span>
+          </div>
+          <div>
+            <h3 class="font-bold text-base text-slate-900">Register New Student Lead</h3>
+            <p class="text-[11px] text-neutral-muted">Record parent walk-in or phone admission inquiry</p>
+          </div>
+        </div>
+        <button onclick="closeLeadModal()" class="text-neutral-muted hover:text-slate-900 p-1 rounded-lg hover:bg-slate-100">
+          <span class="material-symbols-outlined text-[20px]">close</span>
+        </button>
+      </div>
+
+      <form onsubmit="submitNewLead(event)" class="flex flex-col gap-3.5 text-xs">
+        <div>
+          <label class="font-bold text-slate-700 block mb-1">Student Full Name <span class="text-rose-500">*</span></label>
+          <input type="text" id="modalStudentName" required placeholder="e.g. Rahul Varma" class="w-full bg-surface-canvas p-2.5 rounded-xl border border-border-input focus:outline-none focus:border-[#064E3B] font-semibold"/>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="font-bold text-slate-700 block mb-1">Target Stream <span class="text-rose-500">*</span></label>
+            <select id="modalStream" class="w-full bg-surface-canvas p-2.5 rounded-xl border border-border-input focus:outline-none focus:border-[#064E3B] font-semibold text-slate-800">
+              <option value="MPC">MPC (IIT-JEE Focus)</option>
+              <option value="BiPC">BiPC (NEET Special)</option>
+              <option value="MEC">MEC (CA Foundation)</option>
+              <option value="CEC">CEC (Civils / Law)</option>
+            </select>
+          </div>
+          <div>
+            <label class="font-bold text-slate-700 block mb-1">10th GPA / Marks</label>
+            <input type="text" id="modalGpa" placeholder="e.g. 9.8 GPA or 95%" class="w-full bg-surface-canvas p-2.5 rounded-xl border border-border-input focus:outline-none focus:border-[#064E3B] font-bold text-emerald-800"/>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="font-bold text-slate-700 block mb-1">Parent Contact Phone <span class="text-rose-500">*</span></label>
+            <input type="tel" id="modalPhone" required placeholder="+91 98765 43210" class="w-full bg-surface-canvas p-2.5 rounded-xl border border-border-input focus:outline-none focus:border-[#064E3B] font-medium"/>
+          </div>
+          <div>
+            <label class="font-bold text-slate-700 block mb-1">Assigned Counselor</label>
+            <select id="modalCounselor" class="w-full bg-surface-canvas p-2.5 rounded-xl border border-border-input focus:outline-none focus:border-[#064E3B]">
+              <option value="Mrs. Anitha Rao">Mrs. Anitha Rao</option>
+              <option value="Mr. Rajesh Kumar">Mr. Rajesh Kumar</option>
+              <option value="Dr. M. Venkat">Dr. M. Venkat</option>
+              <option value="Mrs. Sujatha Reddy">Mrs. Sujatha Reddy</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label class="font-bold text-slate-700 block mb-1">Feeder School / City</label>
+          <input type="text" id="modalSchool" placeholder="e.g. Hyderabad Public School, Begumpet" class="w-full bg-surface-canvas p-2.5 rounded-xl border border-border-input focus:outline-none focus:border-[#064E3B]"/>
+        </div>
+
+        <div>
+          <label class="font-bold text-slate-700 block mb-1">Initial Pipeline Stage</label>
+          <select id="modalStage" class="w-full bg-surface-canvas p-2.5 rounded-xl border border-border-input focus:outline-none focus:border-[#064E3B] font-semibold text-slate-800">
+            <option value="inquiry">📥 New Inquiry</option>
+            <option value="callback">📞 Callback Scheduled</option>
+            <option value="visit">🏫 Campus Tour Booked</option>
+            <option value="scholarship">⭐ Merit Scholarship Evaluation</option>
+            <option value="confirmed">✅ Seat Confirmed (Token Paid)</option>
+          </select>
+        </div>
+
+        <div class="flex items-center justify-end gap-2 pt-3 border-t border-border-subtle">
+          <button type="button" onclick="closeLeadModal()" class="px-4 py-2 rounded-xl text-neutral-muted hover:bg-slate-100 font-semibold">Cancel</button>
+          <button type="submit" class="px-5 py-2.5 rounded-xl bg-[#064E3B] text-white font-bold hover:bg-emerald-950 shadow-sm transition-all">Save Lead to CRM</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal 2: Quick Call Dialog with "Log Notes & Outcome" -->
+  <div id="callLogModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl flex flex-col gap-4">
+      <div class="flex items-center justify-between border-b border-border-subtle pb-3">
+        <div class="flex items-center gap-2.5">
+          <div class="w-9 h-9 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
+            <span class="material-symbols-outlined text-[20px]">phone_in_talk</span>
+          </div>
+          <div>
+            <h3 class="font-bold text-base text-slate-900" id="callModalStudentName">Call Parent</h3>
+            <p class="text-[11px] text-neutral-muted" id="callModalPhone">+91 98490 12345</p>
+          </div>
+        </div>
+        <button onclick="closeModal('callLogModal')" class="text-neutral-muted hover:text-slate-900 p-1 rounded-lg hover:bg-slate-100">
+          <span class="material-symbols-outlined text-[20px]">close</span>
+        </button>
+      </div>
+
+      <div class="flex flex-col gap-3.5 text-xs">
+        <input type="hidden" id="callLogLeadId" value=""/>
+
+        <div class="p-3 rounded-xl bg-emerald-50 border border-emerald-200 flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping"></span>
+            <span class="font-bold text-emerald-900">Dialing Call via Portal VoIP...</span>
+          </div>
+          <span class="text-[11px] font-mono text-emerald-800">00:42</span>
+        </div>
+
+        <div>
+          <label class="font-bold text-slate-700 block mb-1">Call Outcome / Disposition <span class="text-rose-500">*</span></label>
+          <select id="callOutcomeSelect" class="w-full bg-surface-canvas p-2.5 rounded-xl border border-border-input focus:outline-none focus:border-primary font-semibold text-slate-800">
+            <option value="Interested - Campus Visit Scheduled">✅ Interested - Campus Visit Scheduled</option>
+            <option value="Requested Callback Tomorrow">📞 Requested Callback Tomorrow</option>
+            <option value="Fee Details / Prospectus Requested on WhatsApp">💬 Fee Details / Prospectus Requested on WhatsApp</option>
+            <option value="Seat Confirmed - Token Expected">🎉 Seat Confirmed - Token Expected</option>
+            <option value="Call Not Answered / Busy">⏳ Call Not Answered / Busy</option>
+            <option value="Not Interested / Joined Other College">❌ Not Interested</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="font-bold text-slate-700 block mb-1">Counselor Call Notes</label>
+          <textarea id="callNotesTextarea" rows="3" placeholder="Enter key conversation points, parent questions regarding hostel/labs/scholarship..." class="w-full bg-surface-canvas p-2.5 rounded-xl border border-border-input focus:outline-none focus:border-primary"></textarea>
+        </div>
+
+        <div class="flex items-center justify-end gap-2 pt-2 border-t border-border-subtle">
+          <button type="button" onclick="closeModal('callLogModal')" class="px-4 py-2 rounded-xl text-neutral-muted hover:bg-slate-100 font-semibold">Cancel</button>
+          <button type="button" onclick="saveCallLogOutcome()" class="px-5 py-2.5 rounded-xl bg-[#064E3B] text-white font-bold hover:bg-emerald-950 shadow-sm transition-all">Save Call Log &amp; Update Stage</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 3: WhatsApp Prospectus Direct Dispatch Modal -->
+  <div id="whatsAppModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl flex flex-col gap-4">
+      <div class="flex items-center justify-between border-b border-border-subtle pb-3">
+        <div class="flex items-center gap-2.5">
+          <div class="w-9 h-9 rounded-xl bg-emerald-500/10 text-emerald-700 flex items-center justify-center">
+            <span class="material-symbols-outlined text-[20px]">chat</span>
+          </div>
+          <div>
+            <h3 class="font-bold text-base text-slate-900">Dispatch Official WhatsApp Prospectus</h3>
+            <p class="text-[11px] text-neutral-muted" id="whatsAppModalTarget">To: Parent of Rohan Sharma</p>
+          </div>
+        </div>
+        <button onclick="closeModal('whatsAppModal')" class="text-neutral-muted hover:text-slate-900 p-1 rounded-lg hover:bg-slate-100">
+          <span class="material-symbols-outlined text-[20px]">close</span>
+        </button>
+      </div>
+
+      <div class="flex flex-col gap-3.5 text-xs">
+        <input type="hidden" id="whatsAppLeadId" value=""/>
+
+        <div>
+          <label class="font-bold text-slate-700 block mb-1">Parent Mobile Number</label>
+          <input type="text" id="whatsAppPhoneInput" readonly class="w-full bg-slate-100 p-2.5 rounded-xl border border-border-input font-bold text-slate-800"/>
+        </div>
+
+        <div>
+          <label class="font-bold text-slate-700 block mb-1">Official Message Template</label>
+          <textarea id="whatsAppMessageInput" rows="4" class="w-full bg-surface-canvas p-2.5 rounded-xl border border-border-input focus:outline-none focus:border-primary text-slate-800 leading-relaxed"></textarea>
+        </div>
+
+        <div class="p-3 rounded-xl bg-slate-50 border border-slate-200 flex items-center gap-2.5">
+          <span class="material-symbols-outlined text-rose-500 text-[22px]">picture_as_pdf</span>
+          <div class="flex-1 min-w-0">
+            <strong class="text-slate-800 font-bold block truncate">Apex_College_Prospectus_2025_26.pdf</strong>
+            <span class="text-[10px] text-neutral-muted">Includes Fee Structure, Hostel &amp; Rankers Brochure (4.2 MB)</span>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-end gap-2 pt-2 border-t border-border-subtle">
+          <button type="button" onclick="closeModal('whatsAppModal')" class="px-4 py-2 rounded-xl text-neutral-muted hover:bg-slate-100 font-semibold">Cancel</button>
+          <button type="button" onclick="sendWhatsAppProspectus()" class="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold shadow-sm transition-all flex items-center gap-1.5">
+            <span class="material-symbols-outlined text-[16px]">send</span>
+            Send WhatsApp Brochure
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 4: Issue Admission Allotment Slip Modal -->
+  <div id="seatSlipModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl flex flex-col gap-4 max-h-[90vh] overflow-y-auto">
+      <div class="flex items-center justify-between border-b border-border-subtle pb-3">
+        <div class="flex items-center gap-2.5">
+          <div class="w-9 h-9 rounded-xl bg-[#064E3B]/10 text-[#064E3B] flex items-center justify-center">
+            <span class="material-symbols-outlined text-[20px]">receipt_long</span>
+          </div>
+          <div>
+            <h3 class="font-bold text-base text-slate-900">Issue Admission Allotment Slip</h3>
+            <p class="text-[11px] text-neutral-muted">Generate official provisional admission slip &amp; seat token</p>
+          </div>
+        </div>
+        <button onclick="closeModal('seatSlipModal')" class="text-neutral-muted hover:text-slate-900 p-1 rounded-lg hover:bg-slate-100">
+          <span class="material-symbols-outlined text-[20px]">close</span>
+        </button>
+      </div>
+
+      <div class="flex flex-col gap-3.5 text-xs">
+        <input type="hidden" id="seatSlipLeadId" value=""/>
+
+        <div class="p-4 rounded-2xl bg-gradient-to-r from-emerald-50 via-teal-50 to-white border border-emerald-200 flex flex-col gap-2">
+          <div class="flex items-center justify-between">
+            <span class="text-[10px] font-extrabold uppercase tracking-wider text-emerald-900">Seat Token No:</span>
+            <span class="font-mono font-black text-sm text-[#064E3B]" id="slipTokenNo">APEX-2025-084</span>
+          </div>
+          <div class="flex items-center justify-between">
+            <span class="text-slate-600">Student Candidate:</span>
+            <strong class="font-bold text-slate-900 text-sm" id="slipStudentName">Rohan Sharma</strong>
+          </div>
+          <div class="flex items-center justify-between">
+            <span class="text-slate-600">Allotted Academic Stream:</span>
+            <span class="px-2 py-0.5 rounded bg-primary text-white font-bold text-xs" id="slipStream">MPC (IIT-JEE)</span>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="font-bold text-slate-700 block mb-1">Token Advance Paid (₹) <span class="text-rose-500">*</span></label>
+            <input type="text" id="slipTokenAmount" value="₹25,000" class="w-full bg-surface-canvas p-2.5 rounded-xl border border-border-input font-bold text-emerald-800"/>
+          </div>
+          <div>
+            <label class="font-bold text-slate-700 block mb-1">Merit Scholarship Waiver (%)</label>
+            <input type="text" id="slipWaiver" value="25% Merit Waiver" class="w-full bg-surface-canvas p-2.5 rounded-xl border border-border-input font-semibold text-purple-800"/>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="font-bold text-slate-700 block mb-1">Payment Mode</label>
+            <select id="slipPaymentMode" class="w-full bg-surface-canvas p-2.5 rounded-xl border border-border-input font-semibold">
+              <option>UPI / QR Scan (GooglePay/PhonePe)</option>
+              <option>Debit / Credit Card</option>
+              <option>Net Banking / RTGS / NEFT</option>
+              <option>Cash Receipt at Counter</option>
+            </select>
+          </div>
+          <div>
+            <label class="font-bold text-slate-700 block mb-1">Batch Allocation</label>
+            <select id="slipBatch" class="w-full bg-surface-canvas p-2.5 rounded-xl border border-border-input font-semibold">
+              <option>MPC Super-60 (IIT Bombay Target)</option>
+              <option>BiPC Achievers (AIIMS Target)</option>
+              <option>MEC Elite (CA CPT Target)</option>
+              <option>Regular Integrated Batch</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-end gap-2 pt-3 border-t border-border-subtle">
+          <button type="button" onclick="closeModal('seatSlipModal')" class="px-4 py-2 rounded-xl text-neutral-muted hover:bg-slate-100 font-semibold">Cancel</button>
+          <button type="button" onclick="confirmIssueSeatSlip()" class="px-5 py-2.5 rounded-xl bg-[#064E3B] hover:bg-emerald-950 text-white font-bold shadow-sm transition-all flex items-center gap-1.5">
+            <span class="material-symbols-outlined text-[16px]">print</span>
+            Issue &amp; Confirm Admission
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= FULL-SCREEN STUDENT PROFILE VIEW (Dedicated Overlay Page) ================= -->
+  <div id="studentDrawer" class="fixed inset-0 z-50 w-screen h-screen bg-[#F8FAFC] overflow-y-auto flex-col hidden select-text" tabindex="-1">
+    
+    <!-- Full-Width Header Bar (100vw Emerald Brand Strip #064E3B) -->
+    <div class="w-full bg-[#064E3B] text-white px-6 sm:px-8 py-4 flex items-center justify-between shadow-md sticky top-0 z-30 flex-wrap gap-4 border-b border-emerald-800">
+      
+      <!-- Left Side: Back Arrow + Student Avatar + Name + Token ID + Status & Sub-Badges -->
+      <div class="flex items-center gap-3 sm:gap-4 min-w-0">
+        <!-- Back Arrow Button -->
+        <button onclick="closeStudentDrawer()" class="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs transition-colors border border-white/15 shrink-0 shadow-xs" title="Back to Admissions CRM">
+          <span class="material-symbols-outlined text-[18px]">arrow_back</span>
+          <span class="hidden sm:inline">Back to Leads</span>
+        </button>
+
+        <div class="h-8 w-[1px] bg-emerald-700/80 hidden sm:block"></div>
+
+        <!-- Student Initials Avatar -->
+        <div id="drawerInitials" class="w-11 h-11 rounded-2xl bg-emerald-900/90 border border-emerald-400/40 flex items-center justify-center font-black text-sm text-secondary-container tracking-wider shadow-inner shrink-0">
+          TK
+        </div>
+
+        <!-- Student Name & Info -->
+        <div class="flex flex-col min-w-0">
+          <div class="flex items-center gap-2.5 flex-wrap">
+            <h2 id="drawerStudentName" class="text-lg sm:text-xl font-bold text-white tracking-tight leading-tight truncate">
+              Tarun Reddy K.
+            </h2>
+            <span id="drawerTokenId" class="px-2.5 py-0.5 rounded-full bg-emerald-800/80 text-emerald-200 border border-emerald-400/30 text-[10px] sm:text-[11px] font-mono font-bold tracking-wide">
+              APEX-2025-0012
+            </span>
+            <span id="drawerStatusBadge" class="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-100 border border-emerald-400/30 text-[10px] sm:text-[11px] font-semibold">
+              Seat Confirmed / Paid
+            </span>
+          </div>
+          <!-- Sub-badges Row -->
+          <div class="flex items-center gap-2 flex-wrap text-[11px] font-medium text-emerald-100 mt-1">
+            <span id="drawerSubProgram" class="px-2 py-0.5 rounded-md bg-emerald-900/70 border border-emerald-700/60 font-semibold text-emerald-100">
+              MPC (Super 60)
+            </span>
+            <span id="drawerSubBoarding" class="px-2 py-0.5 rounded-md bg-emerald-900/70 border border-emerald-700/60 font-semibold text-emerald-100">
+              Day Scholar (Gachibowli)
+            </span>
+            <span id="drawerSubScholarship" class="px-2 py-0.5 rounded-md bg-amber-400/20 text-amber-200 border border-amber-400/30 font-bold">
+              50% Merit Schol.
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Side: Top Action Triggers -->
+      <div class="flex items-center gap-2.5 shrink-0">
+        <button onclick="openEditProfileModal()" class="px-3.5 py-2 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-100 font-bold text-xs border border-amber-400/30 flex items-center gap-1.5 transition-all">
+          <span class="material-symbols-outlined text-[16px]">edit_square</span>
+          <span class="hidden sm:inline">Edit Profile</span>
+        </button>
+        <button onclick="triggerDirectWhatsApp(currentDrawerLeadId)" class="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-sm flex items-center gap-1.5 transition-all">
+          <span class="material-symbols-outlined text-[16px]">chat</span>
+          <span class="hidden sm:inline">Send WhatsApp</span>
+        </button>
+        <button onclick="printStudentDossier()" class="px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs border border-white/20 flex items-center gap-1.5 transition-all">
+          <span class="material-symbols-outlined text-[16px]">print</span>
+          <span class="hidden sm:inline">Print Dossier</span>
+        </button>
+        <button onclick="closeStudentDrawer()" class="p-2 rounded-xl hover:bg-white/10 text-white/80 hover:text-white transition-colors flex items-center justify-center shrink-0" title="Close / Back to Leads (Esc)">
+          <span class="material-symbols-outlined text-[24px]">close</span>
+        </button>
+      </div>
+
+    </div>
+
+    <!-- Balanced 2-Column Responsive Body (max-w-7xl mx-auto) -->
+    <div class="max-w-7xl mx-auto w-full p-6 sm:p-8 grid grid-cols-1 lg:grid-cols-12 gap-6 flex-1">
+      
+      <!-- ================= LEFT COLUMN (7 COLS): ACADEMICS, PROFILE & FEES ================= -->
+      <div class="lg:col-span-7 flex flex-col gap-6">
+        
+        <!-- Card 1: Personal & Parent Information -->
+        <div id="section-personal" class="bg-white rounded-2xl border border-slate-200/90 shadow-xs p-5 sm:p-6 flex flex-col gap-4 transition-all hover:border-slate-300">
+          <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+            <div class="flex items-center gap-2 font-bold text-sm sm:text-base text-slate-900">
+              <span class="material-symbols-outlined text-[20px] text-[#064E3B]">family_restroom</span>
+              <span>Personal &amp; Parent Information</span>
+            </div>
+            <span class="text-[10px] font-bold tracking-wider text-emerald-800 bg-emerald-50 px-2.5 py-1 rounded border border-emerald-200 uppercase">
+              Verified In-State Profile
+            </span>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+            <!-- Father / Guardian -->
+            <div class="flex flex-col">
+              <span class="text-[10px] uppercase tracking-wider font-bold text-neutral-muted">Father / Guardian</span>
+              <span id="drawerFatherName" class="font-bold text-slate-900 text-sm mt-0.5">K. Raji Reddy</span>
+              <span id="drawerFatherOcc" class="text-xs text-slate-500">Senior Engineer (Tech Mahindra)</span>
+            </div>
+
+            <!-- Mother Name -->
+            <div class="flex flex-col">
+              <span class="text-[10px] uppercase tracking-wider font-bold text-neutral-muted">Mother Name</span>
+              <span id="drawerMotherName" class="font-bold text-slate-900 text-sm mt-0.5">M. Sharadha Rao</span>
+              <span id="drawerMotherOcc" class="text-xs text-slate-500">Homemaker</span>
+            </div>
+
+            <!-- Primary Mobile -->
+            <div class="flex flex-col">
+              <span class="text-[10px] uppercase tracking-wider font-bold text-neutral-muted">Primary Mobile (+91)</span>
+              <div class="flex items-center gap-2 mt-0.5">
+                <span id="drawerPrimaryPhone" class="font-bold text-slate-900 font-mono text-xs">+91 98490 55432</span>
+                <button onclick="triggerDirectWhatsApp(currentDrawerLeadId)" class="px-2 py-0.5 rounded-full bg-emerald-500 hover:bg-emerald-600 text-white text-[10px] font-bold flex items-center gap-1 shadow-xs transition-colors" title="Send WhatsApp">
+                  <span class="material-symbols-outlined text-[12px]">chat</span> WhatsApp
+                </button>
+              </div>
+            </div>
+
+            <!-- Alternate Emergency Contact -->
+            <div class="flex flex-col">
+              <span class="text-[10px] uppercase tracking-wider font-bold text-neutral-muted">Alternate Emergency Contact</span>
+              <span id="drawerAltPhone" class="font-medium text-slate-700 font-mono text-xs mt-0.5">+91 94401 65432 (Mother)</span>
+            </div>
+
+            <!-- Email Address -->
+            <div class="flex flex-col">
+              <span class="text-[10px] uppercase tracking-wider font-bold text-neutral-muted">Email Address</span>
+              <span id="drawerEmail" class="font-medium text-slate-700 text-xs mt-0.5">sai.pranav.rk@gmail.com</span>
+            </div>
+
+            <!-- DOB & Gender -->
+            <div class="flex flex-col">
+              <span class="text-[10px] uppercase tracking-wider font-bold text-neutral-muted">DOB &amp; Gender</span>
+              <span id="drawerDobGender" class="font-semibold text-slate-800 text-xs mt-0.5">14 Aug 2008 • Male</span>
+            </div>
+
+            <!-- Residential Address -->
+            <div class="flex flex-col sm:col-span-2 pt-2 border-t border-slate-50">
+              <span class="text-[10px] uppercase tracking-wider font-bold text-neutral-muted">Residential Address</span>
+              <span id="drawerAddress" class="font-medium text-slate-700 text-xs mt-0.5 leading-relaxed">Flat 402, Sri Teja Residency, Telecom Nagar, Gachibowli, Hyderabad, Telangana - 500032</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 2: Academic Credentials & 10th Record -->
+        <div id="section-academics" class="bg-white rounded-2xl border border-slate-200/90 shadow-xs p-5 sm:p-6 flex flex-col gap-4 transition-all hover:border-slate-300">
+          <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+            <div class="flex items-center gap-2 font-bold text-sm sm:text-base text-slate-900">
+              <span class="material-symbols-outlined text-[20px] text-[#064E3B]">school</span>
+              <span>Academic Credentials &amp; 10th Record</span>
+            </div>
+            <span id="drawerMeritBracket" class="text-[10px] font-bold tracking-wider text-amber-900 bg-amber-50 px-2.5 py-1 rounded border border-amber-200 uppercase">
+              75% Merit Bracket
+            </span>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
+            <!-- Previous School -->
+            <div class="flex flex-col">
+              <span class="text-[10px] uppercase tracking-wider font-bold text-neutral-muted">Previous School</span>
+              <span id="drawerSchoolName" class="font-bold text-slate-900 text-xs mt-0.5">St. Alphonsus High School</span>
+              <span id="drawerSchoolLoc" class="text-[11px] text-slate-500">Hyderabad, Telangana</span>
+            </div>
+
+            <!-- 10th Score / Marks -->
+            <div class="flex flex-col">
+              <span class="text-[10px] uppercase tracking-wider font-bold text-neutral-muted">10th Score / Marks</span>
+              <span id="drawerGpaScore" class="font-black text-[#064E3B] text-base mt-0.5">595 Marks <span class="text-xs font-semibold text-slate-600">(Max: 600)</span></span>
+            </div>
+
+            <!-- SSC Hall Ticket No -->
+            <div class="flex flex-col">
+              <span class="text-[10px] uppercase tracking-wider font-bold text-neutral-muted">SSC Hall Ticket No.</span>
+              <span id="drawerSscHallTicket" class="font-bold text-slate-800 font-mono text-xs mt-0.5">TS-2024-884931</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 3: Admission Preferences & Campus Visit -->
+        <div id="section-course" class="bg-white rounded-2xl border border-slate-200/90 shadow-xs p-5 sm:p-6 flex flex-col gap-4 transition-all hover:border-slate-300">
+          <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+            <div class="flex items-center gap-2 font-bold text-sm sm:text-base text-slate-900">
+              <span class="material-symbols-outlined text-[20px] text-[#064E3B]">domain_verification</span>
+              <span>Admission Preferences &amp; Campus Visit</span>
+            </div>
+            <span class="text-[10px] font-bold tracking-wider text-emerald-800 bg-emerald-50 px-2.5 py-1 rounded border border-emerald-200 uppercase">
+              Active Inquiry / Prospect
+            </span>
+          </div>
+
+          <!-- 2-Column Grid -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-5 text-xs">
+            
+            <!-- Left Column: Academic & Group Preference -->
+            <div class="p-4 rounded-xl bg-slate-50/80 border border-slate-200/80 flex flex-col gap-3.5">
+              <div class="flex items-center gap-1.5 pb-2 border-b border-slate-200/60">
+                <span class="material-symbols-outlined text-[16px] text-[#064E3B]">menu_book</span>
+                <h4 class="font-bold text-slate-900 text-xs uppercase tracking-wider">Academic &amp; Group Preference</h4>
+              </div>
+
+              <!-- Interested Stream -->
+              <div class="flex flex-col">
+                <span class="text-[10px] uppercase tracking-wider font-bold text-neutral-muted">Interested Stream</span>
+                <span id="drawerInterestedStream" class="font-bold text-slate-900 text-xs sm:text-sm mt-0.5">Intermediate MPC (Super 60 / IIT-JEE Focus)</span>
+              </div>
+
+              <!-- Second Choice / Fallback Group -->
+              <div class="flex flex-col">
+                <span class="text-[10px] uppercase tracking-wider font-bold text-neutral-muted">Second Choice / Fallback Group</span>
+                <span id="drawerSecondChoice" class="font-semibold text-slate-700 text-xs mt-0.5">BiPC (NEET Special Focus)</span>
+              </div>
+
+              <!-- Preferred Accommodation -->
+              <div class="flex flex-col">
+                <span class="text-[10px] uppercase tracking-wider font-bold text-neutral-muted">Preferred Accommodation</span>
+                <span id="drawerAccommodation" class="font-semibold text-slate-800 text-xs mt-0.5">Day Scholar (Requires AC Bus Service)</span>
+              </div>
+
+              <!-- Expected Joining Batch -->
+              <div class="flex flex-col">
+                <span class="text-[10px] uppercase tracking-wider font-bold text-neutral-muted">Expected Joining Batch</span>
+                <span id="drawerJoiningBatch" class="font-bold text-[#064E3B] text-xs mt-0.5">Academic Year 2026-2027</span>
+              </div>
+            </div>
+
+            <!-- Right Column: Campus Visit & Counseling Schedule -->
+            <div class="p-4 rounded-xl bg-slate-50/80 border border-slate-200/80 flex flex-col gap-3.5">
+              <div class="flex items-center gap-1.5 pb-2 border-b border-slate-200/60">
+                <span class="material-symbols-outlined text-[16px] text-[#064E3B]">calendar_month</span>
+                <h4 class="font-bold text-slate-900 text-xs uppercase tracking-wider">Campus Visit &amp; Counseling Schedule</h4>
+              </div>
+
+              <!-- Campus Visit Status -->
+              <div class="flex flex-col">
+                <span class="text-[10px] uppercase tracking-wider font-bold text-neutral-muted">Campus Visit Status</span>
+                <div class="mt-1">
+                  <span id="drawerVisitStatus" class="px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-900 border border-emerald-300 font-bold text-[11px] inline-flex items-center gap-1">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
+                    <span>Visited &amp; Counseling Done</span>
+                  </span>
+                </div>
+              </div>
+
+              <!-- Scheduled Visit Date & Time -->
+              <div class="flex flex-col">
+                <span class="text-[10px] uppercase tracking-wider font-bold text-neutral-muted">Scheduled Visit Date &amp; Time</span>
+                <span id="drawerVisitDateTime" class="font-bold text-slate-900 text-xs sm:text-sm mt-0.5 font-mono">14 Sept 2026, 10:30 AM</span>
+              </div>
+
+              <!-- Accompanying Members -->
+              <div class="flex flex-col">
+                <span class="text-[10px] uppercase tracking-wider font-bold text-neutral-muted">Accompanying Members</span>
+                <span id="drawerAccompanying" class="font-semibold text-slate-800 text-xs mt-0.5">Student + Both Parents</span>
+              </div>
+
+              <!-- Primary Inquiry Channel -->
+              <div class="flex flex-col">
+                <span class="text-[10px] uppercase tracking-wider font-bold text-neutral-muted">Primary Inquiry Channel</span>
+                <span id="drawerInquiryChannel" class="font-semibold text-slate-700 text-xs mt-0.5">Website Inquiry / Digital Campaign</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ================= RIGHT COLUMN (5 COLS): COUNSELING FORM & TIMELINE FEED ================= -->
+      <div class="lg:col-span-5 flex flex-col gap-6">
+        
+        <!-- Card 4: Log New Counseling Follow-up (Interactive Form) -->
+        <div id="section-followup" class="bg-white rounded-2xl border border-slate-200/90 shadow-xs p-5 sm:p-6 flex flex-col gap-4 transition-all hover:border-slate-300">
+          <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+            <div class="flex items-center gap-2 font-bold text-sm sm:text-base text-slate-900">
+              <span class="material-symbols-outlined text-[20px] text-[#064E3B]">edit_note</span>
+              <span>Log New Counseling Follow-up</span>
+            </div>
+            <span class="text-[10px] font-bold tracking-wider text-amber-900 bg-amber-50 px-2.5 py-1 rounded border border-amber-200 uppercase">
+              Quick Action
+            </span>
+          </div>
+
+          <form id="drawerFollowUpForm" onsubmit="saveDrawerFollowUp(event)" class="flex flex-col gap-3.5 text-xs">
+            <div id="formSuccessBanner" class="hidden bg-emerald-50 border border-emerald-200 text-emerald-800 p-3 rounded-xl font-medium text-xs mb-1"></div>
+            
+            <div id="formFieldsContainer" class="flex flex-col gap-3.5">
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label class="font-bold text-slate-700 block mb-1">Interaction Type <span class="text-rose-500">*</span></label>
+                  <select id="drawerInteractionType" onchange="handleInteractionChange()" class="w-full bg-surface-canvas p-2.5 rounded-xl border border-border-input font-medium text-slate-800 text-xs">
+                    <option value="Phone Call Interaction">📞 Phone Call Interaction</option>
+                    <option value="Campus Walk-in / Visit Completed">🏛️ Campus Walk-in / Visit Completed</option>
+                    <option value="WhatsApp Prospectus">💬 WhatsApp Prospectus</option>
+                    <option value="Parent Counseling">👨‍👩‍👦 Parent Counseling</option>
+                    <option value="Document Verification">📄 Document Verification</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="font-bold text-slate-700 block mb-1">Outcome / Stage <span class="text-rose-500">*</span></label>
+                  <select id="drawerOutcomeStage" onchange="handleOutcomeChange()" class="w-full bg-surface-canvas p-2.5 rounded-xl border border-border-input font-medium text-slate-800 text-xs">
+                    <option value="Callback Requested">Callback Requested</option>
+                    <option value="Interested">Interested</option>
+                    <option value="Planning Campus Visit">Planning Campus Visit</option>
+                    <option value="Not Interested">Not Interested</option>
+                    <option value="Admission Confirmed / Paid">Admission Confirmed / Paid</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div id="wrapperFollowUpDate">
+                  <label class="font-bold text-slate-700 block mb-1">Next Scheduled Follow-up</label>
+                  <input type="datetime-local" id="drawerFollowUpDate" class="w-full bg-surface-canvas p-2.5 rounded-xl border border-border-input font-medium text-slate-800 text-xs"/>
+                </div>
+                <div id="wrapperCampusVisitDate" class="hidden">
+                  <label class="font-bold text-slate-700 block mb-1">Scheduled Campus Visit Date &amp; Time</label>
+                  <input type="datetime-local" id="drawerCampusVisitDate" class="w-full bg-surface-canvas p-2.5 rounded-xl border border-border-input font-medium text-slate-800 text-xs"/>
+                </div>
+                <div id="wrapperAppNumber" class="hidden">
+                  <label class="font-bold text-slate-700 block mb-1">Application / Admission Form Number <span class="text-rose-500">*</span></label>
+                  <input type="text" id="drawerAppNumber" placeholder="e.g. APP-2026-891" class="w-full bg-surface-canvas p-2.5 rounded-xl border border-border-input font-medium text-slate-800 text-xs"/>
+                </div>
+                <div id="wrapperConfirmedGroup" class="hidden">
+                  <label class="font-bold text-slate-700 block mb-1">Confirmed Group / Stream <span class="text-rose-500">*</span></label>
+                  <select id="drawerConfirmedGroup" class="w-full bg-surface-canvas p-2.5 rounded-xl border border-border-input font-medium text-slate-800 text-xs">
+                    <option value="">Select Allotted Group</option>
+                    <option value="MPC (IIT-JEE Super 60)">MPC (IIT-JEE Super 60)</option>
+                    <option value="BiPC (NEET Achievers)">BiPC (NEET Achievers)</option>
+                    <option value="MEC (CA Elite)">MEC (CA Elite)</option>
+                    <option value="CEC (Civils / CLAT)">CEC (Civils / CLAT)</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="font-bold text-slate-700 block mb-1">Counselor In-Charge <span class="text-rose-500">*</span></label>
+                  <select id="drawerCounselorInCharge" class="w-full bg-surface-canvas p-2.5 rounded-xl border border-border-input font-medium text-slate-800 text-xs">
+                    <option value="Mrs. Anitha Rao">Counselor: Mrs. Anitha Rao</option>
+                    <option value="Mr. Rajesh Kumar">Counselor: Mr. Rajesh Kumar</option>
+                    <option value="Dr. M. Venkat">Dr. M. Venkat (Dean)</option>
+                    <option value="Mrs. Sujatha Reddy">Counselor: Mrs. Sujatha Reddy</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label id="labelCounselingNotes" class="font-bold text-slate-700 block mb-1">Discussion Notes &amp; Parent Reaction <span class="text-rose-500">*</span></label>
+                <textarea id="drawerCounselingNotes" rows="3" required placeholder="Enter detailed notes..." class="w-full bg-surface-canvas p-3 rounded-xl border border-border-input focus:outline-none focus:border-[#064E3B] text-slate-800 text-xs leading-relaxed"></textarea>
+              </div>
+            </div>
+
+            <div class="flex items-center justify-between gap-2 pt-1 flex-wrap">
+              <div class="flex items-center gap-1.5" id="formActionButtons">
+                <button type="button" onclick="triggerDirectWhatsApp(currentDrawerLeadId)" class="px-3 py-2 rounded-xl bg-emerald-50 text-emerald-900 border border-emerald-200 text-xs font-semibold hover:bg-emerald-100 flex items-center gap-1 transition-colors">
+                  <span class="material-symbols-outlined text-[15px]">chat</span>
+                  <span>WhatsApp</span>
+                </button>
+                <button type="button" onclick="triggerQuickCall(currentDrawerLeadId)" class="px-3 py-2 rounded-xl bg-slate-100 text-slate-700 hover:bg-slate-200 text-xs font-semibold flex items-center gap-1 transition-colors">
+                  <span class="material-symbols-outlined text-[15px]">call</span>
+                  <span>Call</span>
+                </button>
+              </div>
+              <button type="submit" id="btnSaveFollowUp" class="px-4 py-2.5 rounded-xl bg-[#064E3B] hover:bg-emerald-950 text-white font-bold text-xs shadow-sm hover:shadow flex items-center gap-1.5 transition-all">
+                <span class="material-symbols-outlined text-[16px]">save</span>
+                <span>Save Follow-up Entry</span>
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Card 5: Previous Counseling Interactions (Timeline Feed) -->
+        <div id="section-history" class="bg-white rounded-2xl border border-slate-200/90 shadow-xs p-5 sm:p-6 flex flex-col gap-4 transition-all hover:border-slate-300">
+          <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+            <div class="flex items-center gap-2 font-bold text-sm sm:text-base text-slate-900">
+              <span class="material-symbols-outlined text-[20px] text-[#064E3B]">history</span>
+              <span>Previous Counseling Interactions</span>
+            </div>
+            <span id="drawerHistoryBadge" class="text-[10px] font-bold tracking-wider text-slate-600 bg-slate-100 px-2.5 py-1 rounded border border-slate-200">
+              2 Logged Interactions
+            </span>
+          </div>
+
+          <div id="drawerTimelineList" class="flex flex-col gap-3.5">
+            <!-- Populated dynamically via renderDrawerTimeline() -->
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- Sticky Footer (Spanning 100vw Full Width) -->
+    <div class="sticky bottom-0 bg-white border-t border-slate-200 px-6 sm:px-8 py-3.5 flex items-center justify-between shadow-lg z-30 flex-wrap gap-3">
+      <div class="flex items-center gap-2 text-xs font-bold text-slate-700">
+        <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+        <span>Academic Year 2025-26 Pipeline</span>
+        <span class="text-neutral-muted font-normal hidden sm:inline">• Full Candidate Admissions Profile</span>
+      </div>
+
+      <div class="flex items-center gap-2.5">
+        <button onclick="closeStudentDrawer()" class="px-4 py-2 rounded-xl text-slate-600 hover:text-slate-900 text-xs font-bold hover:bg-slate-100 transition-all">
+          ← Back to CRM Table
+        </button>
+        <button onclick="focusFollowUpForm()" class="px-4 py-2 rounded-xl bg-amber-50 text-amber-900 border border-amber-200 text-xs font-bold hover:bg-amber-100 transition-all flex items-center gap-1.5">
+          <span class="material-symbols-outlined text-[16px]">add_circle</span>
+          <span>Add Follow-up</span>
+        </button>
+        <button onclick="printStudentDossier()" class="px-5 py-2 rounded-xl bg-[#064E3B] text-white hover:bg-emerald-950 font-bold text-xs shadow-sm hover:shadow transition-all flex items-center gap-1.5">
+          <span class="material-symbols-outlined text-[16px]">print</span>
+          <span>Print Dossier / PDF</span>
+        </button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div id="toastContainer" class="fixed bottom-6 right-6 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+  <!-- ================= CRM LOGIC ENGINE & INTERACTIVE PIPELINE ================= -->
+  <script>
+    // Master Leads State Data Model with Deep Student Profile Attributes
+    let leadsState = [
+      {
+        id: 'lead-1',
+        name: 'Tarun Reddy K.',
+        initials: 'TK',
+        tokenId: 'APEX-2025-0012',
+        school: 'St. Alphonsus High School',
+        schoolLocation: 'Hyderabad, Telangana',
+        stream: 'MPC',
+        streamFull: 'MPC (Super 60)',
+        subProgram: 'MPC (Super 60)',
+        subBoarding: 'Day Scholar (Gachibowli)',
+        subScholarship: '50% Merit Schol.',
+        gpa: '595 Marks',
+        gpaScoreDetail: '10.0 CGPA (595 / 600)',
+        sscHallTicket: 'TS-2024-884931',
+        meritBracket: '75% MERIT BRACKET',
+        phone: '+91 98490 55432',
+        altPhone: '+91 94401 65432 (Mother)',
+        email: 'sai.pranav.rk@gmail.com',
+        dobGender: '14 Aug 2008 • Male',
+        address: 'Flat 402, Sri Teja Residency, Telecom Nagar, Gachibowli, Hyderabad, Telangana - 500032',
+        fatherName: 'K. Raji Reddy',
+        fatherOcc: 'Senior Engineer (Tech Mahindra)',
+        motherName: 'M. Sharadha Rao',
+        motherOcc: 'Homemaker',
+        interestedStream: 'Intermediate MPC (Super 60 / IIT-JEE Focus)',
+        secondChoiceStream: 'BiPC (NEET Special Focus)',
+        preferredAccommodation: 'Day Scholar (Requires AC Bus Service)',
+        joiningBatch: 'Academic Year 2026-2027',
+        visitStatus: 'Visited & Counseling Done',
+        visitDateTime: '14 Sept 2026, 10:30 AM',
+        accompanyingMembers: 'Student + Both Parents',
+        inquiryChannel: 'Website Inquiry / Walk-in Referral',
+        counselor: 'Mrs. Anitha Rao',
+        stage: 'confirmed',
+        stageLabel: 'Seat Confirmed / Paid',
+        notes: 'Token ₹25,000 paid via UPI. Super 60 batch seat reserved.',
+        timelineHistory: [
+          {
+            type: 'phone',
+            title: 'Phone Call • Parent Counseling',
+            timestamp: 'Yesterday, 04:30 PM',
+            icon: 'call',
+            iconBg: 'bg-emerald-100 text-emerald-800',
+            notes: 'Spoke with father Mr. Venkateshwar Rao regarding Super 60 batch faculty and transport timings. Satisfied with demo class schedule and requested morning bus route confirmation.',
+            outcome: 'Outcome: Interested - Fee Breakdown Approved',
+            counselor: 'Logged by: Dr. M. Venkat (Dean)'
+          },
+          {
+            type: 'visit',
+            title: 'Campus Walk-in • Document Verification',
+            timestamp: '4 days ago, 11:15 AM',
+            icon: 'account_balance',
+            iconBg: 'bg-amber-100 text-amber-800',
+            notes: 'Student and parent visited Gachibowli campus oval. Verified 10.0 CGPA, SSC marks memo, original study certificates, and approved 50% merit scholarship grant concession.',
+            outcome: 'Outcome: Documents Verified & Seat Reserved',
+            counselor: 'Logged by: Admissions Desk (R. Kumar)'
+          }
+        ]
+      },
+      {
+        id: 'lead-2',
+        name: 'Ananya Kulkarni',
+        initials: 'AK',
+        tokenId: 'APEX-2025-0018',
+        school: 'Delhi Public School, Nacharam',
+        schoolLocation: 'Secunderabad, Telangana',
+        stream: 'BiPC',
+        streamFull: 'BiPC (NEET Special)',
+        subProgram: 'BiPC (Achievers Super-40)',
+        subBoarding: 'AC Campus Hostel',
+        subScholarship: '40% Merit Schol.',
+        gpa: '595 Marks',
+        gpaScoreDetail: '10.0 CGPA (598 / 600)',
+        sscHallTicket: 'TS-2024-912044',
+        meritBracket: '90%+ MERIT BAND',
+        phone: '+91 94401 67890',
+        altPhone: '+91 98480 11223 (Father)',
+        email: 'ananya.kulkarni@gmail.com',
+        dobGender: '22 Nov 2008 • Female',
+        address: 'Villa 18, Rainbow Vistas, Hitec City, Hyderabad, Telangana - 500018',
+        fatherName: 'Dr. S. Kulkarni',
+        fatherOcc: 'Consultant Neurosurgeon (Apollo Hospitals)',
+        motherName: 'Dr. Radhika K.',
+        motherOcc: 'Professor of Biochemistry (OU)',
+        interestedStream: 'Intermediate BiPC (NEET Achievers Focus)',
+        secondChoiceStream: 'None (Direct Medical Track)',
+        preferredAccommodation: 'Residential Hostel (AC Room - Block B)',
+        joiningBatch: 'Academic Year 2026-2027',
+        visitStatus: 'Visited & Counseling Done',
+        visitDateTime: '12 Sept 2026, 03:00 PM',
+        accompanyingMembers: 'Student + Father',
+        inquiryChannel: 'Hospital Doctor Referral / Walk-in',
+        counselor: 'Mr. Rajesh Kumar',
+        stage: 'confirmed',
+        stageLabel: 'Seat Confirmed (Token Paid)',
+        notes: 'Token ₹25,000 paid via UPI. BiPC Achievers Batch allotted.',
+        timelineHistory: [
+          {
+            type: 'phone',
+            title: 'Phone Call • Admission Finalization',
+            timestamp: '2 days ago, 02:15 PM',
+            icon: 'call',
+            iconBg: 'bg-emerald-100 text-emerald-800',
+            notes: 'Confirmed hostel room allocation with parents. Issued NEET foundation module package.',
+            outcome: 'Outcome: Seat Confirmed & Token Received',
+            counselor: 'Logged by: Mr. Rajesh Kumar'
+          }
+        ]
+      },
+      {
+        id: 'lead-3',
+        name: 'Varun Reddy',
+        initials: 'VR',
+        tokenId: 'APEX-2025-0045',
+        school: 'Bharatiya Vidya Bhavan, Jubilee Hills',
+        schoolLocation: 'Hyderabad, Telangana',
+        stream: 'MEC',
+        streamFull: 'MEC (CA Foundation)',
+        subProgram: 'MEC (CA / CMA Elite)',
+        subBoarding: 'Day Scholar (Banjara Hills)',
+        subScholarship: '30% Early Bird Schol.',
+        gpa: '564 Marks',
+        gpaScoreDetail: '9.4 CGPA (564 / 600)',
+        sscHallTicket: 'TS-2024-771290',
+        meritBracket: '60% MERIT BRACKET',
+        phone: '+91 99887 54321',
+        altPhone: '+91 98491 22334 (Father)',
+        email: 'varun.reddy.ca@gmail.com',
+        dobGender: '05 Mar 2008 • Male',
+        address: 'Road No 12, Banjara Hills, Hyderabad, Telangana - 500034',
+        fatherName: 'V. Ramana Reddy',
+        fatherOcc: 'Chartered Accountant (Partner, VNR Associates)',
+        motherName: 'V. Lakshmi',
+        motherOcc: 'Architect',
+        interestedStream: 'Intermediate MEC (CA Foundation Focus)',
+        secondChoiceStream: 'CEC (Civils & CLAT Focus)',
+        preferredAccommodation: 'Day Scholar (Requires Bus Service)',
+        joiningBatch: 'Academic Year 2026-2027',
+        visitStatus: 'Visit Booked',
+        visitDateTime: '15 Sept 2026, 11:00 AM',
+        accompanyingMembers: 'Student + Both Parents',
+        inquiryChannel: 'Website Inquiry / Google Search',
+        counselor: 'Mrs. Anitha Rao',
+        stage: 'visit',
+        stageLabel: 'Campus Tour Booked (Tomorrow)',
+        notes: 'Hostel accommodation tour scheduled at 10:30 AM with parents.',
+        timelineHistory: [
+          {
+            type: 'visit',
+            title: 'Campus Tour Scheduled',
+            timestamp: '3 days ago, 10:00 AM',
+            icon: 'schedule',
+            iconBg: 'bg-indigo-100 text-indigo-800',
+            notes: 'Parents requested personal meeting with Commerce Head of Department regarding CA coaching batch.',
+            outcome: 'Outcome: Campus Tour Booked',
+            counselor: 'Logged by: Mrs. Anitha Rao'
+          }
+        ]
+      },
+      {
+        id: 'lead-4',
+        name: 'Sai Teja Chowdary',
+        initials: 'SC',
+        tokenId: 'APEX-2025-0072',
+        school: "St. Paul's High School, Hyderguda",
+        schoolLocation: 'Hyderabad, Telangana',
+        stream: 'MPC',
+        streamFull: 'MPC (IIT-JEE)',
+        subProgram: 'MPC (IIT-JEE Super 60)',
+        subBoarding: 'Campus Resident',
+        subScholarship: '50% Merit Waiver',
+        gpa: '594 Marks',
+        gpaScoreDetail: '9.9 CGPA (594 / 600)',
+        sscHallTicket: 'TS-2024-662319',
+        meritBracket: 'STATE TOP 1% TALENT',
+        phone: '+91 97001 23456',
+        altPhone: '+91 97001 65432 (Mother)',
+        email: 'sai.teja.chowdary@gmail.com',
+        dobGender: '19 Sep 2008 • Male',
+        address: 'Plot 88, Madhapur Main Road, Hyderabad, Telangana - 500081',
+        fatherName: 'S. Nageshwar Rao',
+        fatherOcc: 'Government Officer (Irrigation Dept)',
+        motherName: 'S. Padmavati',
+        motherOcc: 'School Principal',
+        interestedStream: 'Intermediate MPC (Super 60 / IIT-JEE Focus)',
+        secondChoiceStream: 'None (IIT Target Only)',
+        preferredAccommodation: 'Residential Hostel (AC Double Sharing)',
+        joiningBatch: 'Academic Year 2026-2027',
+        visitStatus: 'Visited & Counseling Done',
+        visitDateTime: '10 Sept 2026, 04:30 PM',
+        accompanyingMembers: 'Student + Father',
+        inquiryChannel: 'State Talent Search Exam Portal',
+        counselor: 'Dr. M. Venkat',
+        stage: 'scholarship',
+        stageLabel: '50% Merit Waiver Granted',
+        notes: 'Scored 99.4% in State Talent Test. Merit waiver sanctioned.',
+        timelineHistory: [
+          {
+            type: 'note',
+            title: 'Merit Evaluation Committee Clearance',
+            timestamp: '5 days ago, 04:00 PM',
+            icon: 'workspace_premium',
+            iconBg: 'bg-purple-100 text-purple-800',
+            notes: 'Evaluated State Talent Search Test scorecard (99.4%). Committee sanctioned 50% tuition fee waiver.',
+            outcome: 'Outcome: Merit Waiver Sanctioned',
+            counselor: 'Logged by: Dr. M. Venkat'
+          }
+        ]
+      },
+      {
+        id: 'lead-5',
+        name: 'Kavya Srikanth',
+        initials: 'KS',
+        tokenId: 'APEX-2025-0105',
+        school: 'Chirec International School, Kondapur',
+        schoolLocation: 'Hyderabad, Telangana',
+        stream: 'BiPC',
+        streamFull: 'BiPC (NEET Special)',
+        subProgram: 'BiPC (NEET Regular)',
+        subBoarding: 'Day Scholar (Kondapur)',
+        subScholarship: '25% Merit Schol.',
+        gpa: '576 Marks',
+        gpaScoreDetail: '9.6 CGPA (576 / 600)',
+        sscHallTicket: 'TS-2024-551980',
+        meritBracket: 'MERIT ELIGIBLE',
+        phone: '+91 91234 56780',
+        altPhone: '+91 91234 56781 (Father)',
+        email: 'kavya.srikanth@outlook.com',
+        dobGender: '11 Jan 2009 • Female',
+        address: 'Tower B - 902, My Home Bhooja, Silpa Gram Craft Village, Hyderabad - 500081',
+        fatherName: 'K. Srikanth Sharma',
+        fatherOcc: 'VP of Engineering (Microsoft)',
+        motherName: 'K. Sunitha',
+        motherOcc: 'Financial Analyst',
+        interestedStream: 'Intermediate BiPC (NEET Excellence Focus)',
+        secondChoiceStream: 'MPC (AI & Data Science Focus)',
+        preferredAccommodation: 'Day Scholar (Requires AC Bus Service)',
+        joiningBatch: 'Academic Year 2026-2027',
+        visitStatus: 'Visit Booked',
+        visitDateTime: '16 Sept 2026, 02:00 PM',
+        accompanyingMembers: 'Student + Mother',
+        inquiryChannel: 'Website Campaign / WhatsApp Ad',
+        counselor: 'Mrs. Sujatha Reddy',
+        stage: 'callback',
+        stageLabel: 'Callback Scheduled',
+        notes: 'Interested in AIIMS integrated syllabus & biology botany labs.',
+        timelineHistory: [
+          {
+            type: 'phone',
+            title: 'Initial Parent Callback',
+            timestamp: '1 day ago, 11:30 AM',
+            icon: 'call',
+            iconBg: 'bg-amber-100 text-amber-800',
+            notes: 'Mother enquired about biology faculty qualifications and lab infrastructure. Scheduled callback.',
+            outcome: 'Outcome: Callback Scheduled',
+            counselor: 'Logged by: Mrs. Sujatha Reddy'
+          }
+        ]
+      },
+      {
+        id: 'lead-6',
+        name: 'Aditya Varma',
+        initials: 'AV',
+        tokenId: 'APEX-2025-0133',
+        school: 'Oakridge International, Gachibowli',
+        schoolLocation: 'Hyderabad, Telangana',
+        stream: 'MPC',
+        streamFull: 'MPC (IIT-JEE)',
+        subProgram: 'MPC (JEE Mains + Adv)',
+        subBoarding: 'Day Scholar (Nanakramguda)',
+        subScholarship: 'Standard Fee',
+        gpa: '582 Marks',
+        gpaScoreDetail: '9.7 CGPA (582 / 600)',
+        sscHallTicket: 'TS-2024-441298',
+        meritBracket: 'A1 GRADE HOLDER',
+        phone: '+91 98850 33445',
+        altPhone: '+91 98850 33446 (Mother)',
+        email: 'aditya.varma@gmail.com',
+        dobGender: '30 Jul 2008 • Male',
+        address: 'B-304, Financial District, Gachibowli, Hyderabad, Telangana - 500075',
+        fatherName: 'A. Bhupal Varma',
+        fatherOcc: 'Real Estate Developer',
+        motherName: 'A. Usha Varma',
+        motherOcc: 'Interior Designer',
+        interestedStream: 'Intermediate MPC (JEE Focus)',
+        secondChoiceStream: 'MEC (CA Foundation Focus)',
+        preferredAccommodation: 'Day Scholar (Self Transport)',
+        joiningBatch: 'Academic Year 2026-2027',
+        visitStatus: 'Not Scheduled',
+        visitDateTime: 'Pending Parent Schedule',
+        accompanyingMembers: 'Student + Both Parents',
+        inquiryChannel: 'Website Prospectus Download',
+        counselor: 'Mr. Rajesh Kumar',
+        stage: 'inquiry',
+        stageLabel: 'New Web Inquiry',
+        notes: 'Downloaded campus prospectus from digital campaign.',
+        timelineHistory: [
+          {
+            type: 'chat',
+            title: 'WhatsApp Prospectus Dispatched',
+            timestamp: '3 days ago, 09:15 AM',
+            icon: 'chat',
+            iconBg: 'bg-blue-100 text-blue-800',
+            notes: 'Dispatched automated 2025-26 brochure and fee schedule following digital website registration.',
+            outcome: 'Outcome: Prospectus Delivered',
+            counselor: 'Logged by: CRM Automations'
+          }
+        ]
+      },
+      {
+        id: 'lead-7',
+        name: 'Pooja Sundaram',
+        initials: 'PS',
+        tokenId: 'APEX-2025-0092',
+        school: 'Little Flower High School, Abids',
+        schoolLocation: 'Hyderabad, Telangana',
+        stream: 'CEC',
+        streamFull: 'CEC (Civils / Law)',
+        subProgram: 'CEC (Integrated Civils & CLAT)',
+        subBoarding: 'Day Scholar (Mehdipatnam)',
+        subScholarship: '35% Merit Schol.',
+        gpa: '570 Marks',
+        gpaScoreDetail: '9.5 CGPA (570 / 600)',
+        sscHallTicket: 'TS-2024-332014',
+        meritBracket: 'HUMANITIES MERIT',
+        phone: '+91 94412 88990',
+        altPhone: '+91 94412 88991 (Father)',
+        email: 'pooja.sundaram@gmail.com',
+        dobGender: '08 Dec 2008 • Female',
+        address: 'House #4-1-820, King Koti Road, Abids, Hyderabad, Telangana - 500001',
+        fatherName: 'T. Sundaram',
+        fatherOcc: 'Advocate (High Court of Telangana)',
+        motherName: 'T. Meenakshi',
+        motherOcc: 'Associate Professor of History',
+        interestedStream: 'Intermediate CEC (Civils & CLAT Academy)',
+        secondChoiceStream: 'MEC (Commerce Focus)',
+        preferredAccommodation: 'Day Scholar (Requires Bus Service)',
+        joiningBatch: 'Academic Year 2026-2027',
+        visitStatus: 'Visited & Counseling Done',
+        visitDateTime: '08 Sept 2026, 02:30 PM',
+        accompanyingMembers: 'Student + Both Parents',
+        inquiryChannel: 'Walk-in / Direct Campus Visit',
+        counselor: 'Mrs. Sujatha Reddy',
+        stage: 'confirmed',
+        stageLabel: 'Seat Confirmed',
+        notes: 'Full year tuition fee paid. Roll #APEX-2025-092.',
+        timelineHistory: [
+          {
+            type: 'visit',
+            title: 'Campus Admission & Fee Payment',
+            timestamp: '1 week ago, 03:00 PM',
+            icon: 'check_circle',
+            iconBg: 'bg-emerald-100 text-emerald-800',
+            notes: 'Parent visited campus accounts section. Full annual tuition fee paid via RTGS. Admission confirmed.',
+            outcome: 'Outcome: Admission Confirmed',
+            counselor: 'Logged by: Mrs. Sujatha Reddy'
+          }
+        ]
+      },
+      {
+        id: 'lead-8',
+        name: 'Harsha Vardhan',
+        initials: 'HV',
+        tokenId: 'APEX-2025-0144',
+        school: 'Johnson Grammar School, Habsiguda',
+        schoolLocation: 'Hyderabad, Telangana',
+        stream: 'MPC',
+        streamFull: 'MPC (IIT-JEE)',
+        subProgram: 'MPC (Super-60 IIT Focus)',
+        subBoarding: 'Hostel Resident',
+        subScholarship: '40% Merit Schol.',
+        gpa: '576 Marks',
+        gpaScoreDetail: '9.6 CGPA (576 / 600)',
+        sscHallTicket: 'TS-2024-220199',
+        meritBracket: 'SCIENCE TALENT BAND',
+        phone: '+91 99081 77665',
+        altPhone: '+91 99081 77666 (Father)',
+        email: 'harsha.vardhan.iit@gmail.com',
+        dobGender: '17 May 2008 • Male',
+        address: 'Plot 45, Street No 8, Habsiguda, Hyderabad, Telangana - 500007',
+        fatherName: 'H. Srinivas Rao',
+        fatherOcc: 'Senior Manager (BHEL)',
+        motherName: 'H. Anuradha',
+        motherOcc: 'Bank Manager (SBI)',
+        interestedStream: 'Intermediate MPC (Super 60 IIT-JEE)',
+        secondChoiceStream: 'BiPC (NEET Focus)',
+        preferredAccommodation: 'Residential Hostel (Non-AC)',
+        joiningBatch: 'Academic Year 2026-2027',
+        visitStatus: 'Visited & Counseling Done',
+        visitDateTime: '11 Sept 2026, 11:45 AM',
+        accompanyingMembers: 'Student + Father',
+        inquiryChannel: 'Education Fair / Expo Stall',
+        counselor: 'Dr. M. Venkat',
+        stage: 'visit',
+        stageLabel: 'Lab Practical Tour',
+        notes: 'Visited robotics and physics optics laboratory on Sunday.',
+        timelineHistory: [
+          {
+            type: 'visit',
+            title: 'Campus Walk-in & Physics Lab Tour',
+            timestamp: 'Sunday, 11:45 AM',
+            icon: 'science',
+            iconBg: 'bg-indigo-100 text-indigo-800',
+            notes: 'Student participated in physics optics demo and interacted with senior physics faculty.',
+            outcome: 'Outcome: Lab Practical Tour Completed',
+            counselor: 'Logged by: Dr. M. Venkat'
+          }
+        ]
+      }
+    ];
+
+    let selectedLeadIds = new Set();
+    let currentViewMode = 'table'; // 'table' | 'kanban'
+    let currentActiveStageFilter = 'all';
+    let currentDrawerLeadId = 'lead-1';
+
+    // Toast Notification System
+    function notify(message) {
+      const container = document.getElementById('toastContainer');
+      if (!container) return;
+      const toast = document.createElement('div');
+      toast.className = 'toast pointer-events-auto bg-slate-900 text-white px-4 py-3 rounded-xl shadow-2xl flex items-center gap-2.5 text-xs font-medium border border-white/10';
+      toast.innerHTML = `<span class="material-symbols-outlined text-secondary-container text-[18px]">check_circle</span><span>${message}</span>`;
+      container.appendChild(toast);
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateY(10px)';
+        toast.style.transition = 'all 0.3s ease-out';
+        setTimeout(() => toast.remove(), 300);
+      }, 3500);
+    }
+
+    // Modal Helpers
+    function openModal(id) {
+      const m = document.getElementById(id);
+      if (m) {
+        m.classList.remove('hidden');
+        m.classList.add('flex');
+      }
+    }
+
+    function closeModal(id) {
+      const m = document.getElementById(id);
+      if (m) {
+        m.classList.add('hidden');
+        m.classList.remove('flex');
+      }
+    }
+
+    function openLeadModal() {
+      openModal('leadModal');
+    }
+
+    function closeLeadModal() {
+      closeModal('leadModal');
+    }
+
+    // Initialize on Load
+    document.addEventListener('DOMContentLoaded', () => {
+      renderAllViews();
+      
+      // Setup ESC key listener to close drawer & modals
+      window.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          closeStudentDrawer();
+        }
+      });
+    });
+
+    // Helper: Stream Badge Class
+    function getStreamBadge(stream) {
+      switch (stream) {
+        case 'MPC':
+          return 'bg-emerald-50 text-emerald-900 border border-emerald-200';
+        case 'BiPC':
+          return 'bg-teal-50 text-teal-900 border border-teal-200';
+        case 'MEC':
+          return 'bg-indigo-50 text-indigo-900 border border-indigo-200';
+        case 'CEC':
+          return 'bg-purple-50 text-purple-900 border border-purple-200';
+        default:
+          return 'bg-slate-100 text-slate-800 border border-slate-200';
+      }
+    }
+
+    // Helper: Stage Badge Class
+    function getStageBadge(stage) {
+      switch (stage) {
+        case 'inquiry':
+          return 'bg-blue-100 text-blue-900 border border-blue-200';
+        case 'callback':
+          return 'bg-amber-100 text-amber-900 border border-amber-300';
+        case 'visit':
+          return 'bg-indigo-100 text-indigo-900 border border-indigo-200';
+        case 'scholarship':
+          return 'bg-purple-100 text-purple-900 border border-purple-200';
+        case 'confirmed':
+          return 'bg-emerald-100 text-emerald-900 border border-emerald-300';
+        default:
+          return 'bg-slate-100 text-slate-800';
+      }
+    }
+
+    // Filter Predicate
+    function getFilteredLeads() {
+      const query = (document.getElementById('leadSearchInput')?.value || '').toLowerCase().trim();
+      const streamFilter = document.getElementById('filterStream')?.value || 'all';
+      const counselorFilter = document.getElementById('filterCounselor')?.value || 'all';
+      const stageSelectFilter = document.getElementById('filterStage')?.value || 'all';
+
+      return leadsState.filter(item => {
+        const matchQuery = !query || 
+          item.name.toLowerCase().includes(query) ||
+          item.school.toLowerCase().includes(query) ||
+          item.phone.toLowerCase().includes(query) ||
+          item.counselor.toLowerCase().includes(query);
+
+        const matchStream = (streamFilter === 'all') || (item.stream === streamFilter);
+        const matchCounselor = (counselorFilter === 'all') || (item.counselor === counselorFilter);
+        const effectiveStage = stageSelectFilter !== 'all' ? stageSelectFilter : currentActiveStageFilter;
+        const matchStage = (effectiveStage === 'all') || (item.stage === effectiveStage);
+
+        return matchQuery && matchStream && matchCounselor && matchStage;
+      });
+    }
+
+    // Render Table View with View Profile Action Trigger
+    function renderLeadsTable() {
+      const tbody = document.getElementById('leadsTbody');
+      const countBadge = document.getElementById('tableFilterCountBadge');
+      if (!tbody) return;
+
+      const filtered = getFilteredLeads();
+      if (countBadge) countBadge.innerText = `Showing ${filtered.length} of ${leadsState.length} leads`;
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="8" class="p-10 text-center text-neutral-muted">
+              <span class="material-symbols-outlined text-4xl text-slate-300">search_off</span>
+              <p class="font-bold text-sm text-slate-700 mt-2">No admission leads matched your filter criteria.</p>
+              <button onclick="resetFilters()" class="mt-3 px-3 py-1.5 rounded-lg bg-primary text-white text-xs font-bold">Reset Filters</button>
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      tbody.innerHTML = filtered.map(lead => {
+        const isChecked = selectedLeadIds.has(lead.id);
+        const streamClass = getStreamBadge(lead.stream);
+        const stageClass = getStageBadge(lead.stage);
+
+        return `
+          <tr class="hover:bg-slate-50/80 transition-colors ${isChecked ? 'bg-emerald-50/40' : ''}" id="row-${lead.id}">
+            <!-- 1. Selection Checkbox -->
+            <td class="p-4 text-center">
+              <input type="checkbox" ${isChecked ? 'checked' : ''} onchange="toggleLeadSelection('${lead.id}', this)" class="w-4 h-4 text-[#064E3B] rounded border-slate-300 focus:ring-emerald-500 cursor-pointer"/>
+            </td>
+
+            <!-- 2. Student Name & Feeder School -->
+            <td class="p-4 cursor-pointer" onclick="openStudentDrawer('${lead.id}')">
+              <div class="flex items-center gap-2.5">
+                <div class="w-8 h-8 rounded-xl bg-emerald-950 text-white font-bold text-xs flex items-center justify-center shrink-0 shadow-2xs">
+                  ${lead.initials || lead.name.split(' ').map(n=>n[0]).join('').substring(0,2)}
+                </div>
+                <div class="flex flex-col min-w-0">
+                  <strong class="text-slate-900 font-bold text-xs hover:text-[#064E3B] transition-colors">${lead.name}</strong>
+                  <span class="text-[11px] text-neutral-muted truncate max-w-[200px]" title="${lead.school}">${lead.school}</span>
+                </div>
+              </div>
+            </td>
+
+            <!-- 3. Target Stream -->
+            <td class="p-4">
+              <span class="px-2.5 py-1 rounded-lg text-[11px] font-bold ${streamClass}">
+                ${lead.streamFull}
+              </span>
+            </td>
+
+            <!-- 4. GPA / Score -->
+            <td class="p-4 font-black text-emerald-800 text-xs">
+              ${lead.gpa}
+            </td>
+
+            <!-- 5. Parent Phone -->
+            <td class="p-4 font-medium text-slate-800 text-xs font-mono">
+              ${lead.phone}
+            </td>
+
+            <!-- 6. Assigned Counselor -->
+            <td class="p-4 font-semibold text-slate-700 text-xs">
+              <div class="flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                <span>${lead.counselor}</span>
+              </div>
+            </td>
+
+            <!-- 7. Stage Status Badge -->
+            <td class="p-4">
+              <span class="px-2.5 py-1 rounded-full font-bold text-[10px] ${stageClass}">
+                ${lead.stageLabel || lead.stage}
+              </span>
+            </td>
+
+            <!-- 8. Quick Action Column Updates with View Profile Trigger -->
+            <td class="p-4 text-right">
+              <div class="flex items-center justify-end gap-1.5">
+                <!-- PRIMARY TRIGGER: View Student Profile Drawer -->
+                <button onclick="openStudentDrawer('${lead.id}')" class="px-2.5 py-1.5 rounded-lg bg-emerald-50 text-[#064E3B] hover:bg-[#064E3B] hover:text-white border border-emerald-300 font-bold text-xs flex items-center gap-1.5 transition-all shadow-2xs group" title="View Student Detail Profile Drawer">
+                  <span class="material-symbols-outlined text-[16px] group-hover:scale-110 transition-transform">visibility</span>
+                  <span>View Profile</span>
+                </button>
+
+                <!-- Phone Call Trigger -->
+                <button onclick="openCallModal('${lead.id}')" class="p-1.5 rounded-lg bg-primary/10 text-primary hover:bg-primary/20 transition-colors" title="Call Parent & Log Notes">
+                  <span class="material-symbols-outlined text-[16px]">call</span>
+                </button>
+
+                <!-- WhatsApp Brochure Trigger -->
+                <button onclick="openWhatsAppModal('${lead.id}')" class="p-1.5 rounded-lg bg-emerald-100 text-emerald-800 hover:bg-emerald-200 transition-colors" title="Send WhatsApp Prospectus">
+                  <span class="material-symbols-outlined text-[16px]">chat</span>
+                </button>
+
+                <!-- Issue Seat Token Trigger -->
+                <button onclick="openSeatSlipModal('${lead.id}')" class="p-1.5 rounded-lg bg-amber-100 text-amber-900 hover:bg-amber-200 transition-colors" title="Issue Admission Allotment Slip">
+                  <span class="material-symbols-outlined text-[16px]">receipt_long</span>
+                </button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    // Render Kanban Pipeline View
+    function renderKanbanBoard() {
+      const stages = ['inquiry', 'callback', 'visit', 'scholarship', 'confirmed'];
+      const filtered = getFilteredLeads();
+
+      stages.forEach(stage => {
+        const listEl = document.getElementById(`kanbanList-${stage}`);
+        const countEl = document.getElementById(`kanbanCount-${stage}`);
+        if (!listEl) return;
+
+        const stageItems = filtered.filter(item => item.stage === stage);
+        if (countEl) countEl.innerText = stageItems.length;
+
+        if (stageItems.length === 0) {
+          listEl.innerHTML = `
+            <div class="p-4 rounded-xl border border-dashed border-slate-200 text-center text-[11px] text-neutral-muted italic bg-white/50">
+              No leads in this stage
+            </div>
+          `;
+          return;
+        }
+
+        listEl.innerHTML = stageItems.map(lead => {
+          const streamClass = getStreamBadge(lead.stream);
+
+          return `
+            <div draggable="true" ondragstart="handleDragStart(event, '${lead.id}')" ondragend="handleDragEnd(event)" class="kanban-card p-3 rounded-xl border border-border-subtle bg-white shadow-2xs hover:shadow-md transition-all flex flex-col gap-2 relative">
+              <div class="flex items-start justify-between gap-1">
+                <span class="px-2 py-0.5 rounded-md text-[9px] font-bold ${streamClass}">
+                  ${lead.stream}
+                </span>
+                <span class="text-[10px] font-black text-emerald-800">${lead.gpa}</span>
+              </div>
+
+              <div class="flex flex-col cursor-pointer" onclick="openStudentDrawer('${lead.id}')">
+                <h4 class="font-bold text-xs text-slate-900 leading-tight hover:text-[#064E3B] transition-colors">${lead.name}</h4>
+                <span class="text-[10px] text-neutral-muted truncate mt-0.5">${lead.school}</span>
+              </div>
+
+              <div class="flex items-center justify-between text-[10px] pt-1.5 border-t border-slate-100 text-slate-600">
+                <span class="font-medium truncate max-w-[100px]">${lead.counselor}</span>
+                <span class="font-mono text-slate-500">${lead.phone.split(' ')[2] || lead.phone}</span>
+              </div>
+
+              <!-- Quick Card Action Bar -->
+              <div class="flex items-center justify-between pt-1 border-t border-slate-50 text-xs">
+                <span class="text-[9px] text-neutral-muted italic truncate max-w-[90px]" title="${lead.notes || ''}">
+                  ${lead.notes || 'No call notes'}
+                </span>
+                <div class="flex items-center gap-1">
+                  <button onclick="openStudentDrawer('${lead.id}')" class="p-1 rounded bg-emerald-50 text-[#064E3B] hover:bg-emerald-200 transition-colors" title="View Full Profile">
+                    <span class="material-symbols-outlined text-[14px]">visibility</span>
+                  </button>
+                  <button onclick="openCallModal('${lead.id}')" class="p-1 rounded bg-primary/10 text-primary hover:bg-primary/20" title="Call">
+                    <span class="material-symbols-outlined text-[14px]">call</span>
+                  </button>
+                  <button onclick="openWhatsAppModal('${lead.id}')" class="p-1 rounded bg-emerald-100 text-emerald-800 hover:bg-emerald-200" title="WhatsApp">
+                    <span class="material-symbols-outlined text-[14px]">chat</span>
+                  </button>
+                  <button onclick="openSeatSlipModal('${lead.id}')" class="p-1 rounded bg-amber-100 text-amber-900 hover:bg-amber-200" title="Seat Token">
+                    <span class="material-symbols-outlined text-[14px]">receipt_long</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          `;
+        }).join('');
+      });
+    }
+
+    function renderAllViews() {
+      renderLeadsTable();
+      renderKanbanBoard();
+      updateBulkActionBar();
+    }
+
+    // ================= STUDENT DETAIL PROFILE DRAWER CONTROLLER =================
+
+    // Open Student Profile Drawer
+    function openStudentDrawer(leadId) {
+      const lead = leadsState.find(l => l.id === leadId) || leadsState[0];
+      if (!lead) return;
+
+      currentDrawerLeadId = lead.id;
+
+      // 1. Populate Header
+      document.getElementById('drawerInitials').innerText = lead.initials || lead.name.split(' ').map(n=>n[0]).join('').substring(0,2);
+      document.getElementById('drawerStudentName').innerText = lead.name;
+      document.getElementById('drawerTokenId').innerText = lead.tokenId || 'APEX-2025-0012';
+      document.getElementById('drawerStatusBadge').innerText = lead.stageLabel || lead.stage;
+
+      document.getElementById('drawerSubProgram').innerText = lead.subProgram || lead.streamFull;
+      document.getElementById('drawerSubBoarding').innerText = lead.subBoarding || 'Day Scholar (Gachibowli)';
+      document.getElementById('drawerSubScholarship').innerText = lead.subScholarship || '50% Merit Schol.';
+
+      // 2. Populate Card 1: Personal & Parent Info
+      document.getElementById('drawerFatherName').innerText = lead.fatherName || 'K. Raji Reddy';
+      document.getElementById('drawerFatherOcc').innerText = lead.fatherOcc || 'Senior Engineer (Tech Mahindra)';
+      document.getElementById('drawerMotherName').innerText = lead.motherName || 'M. Sharadha Rao';
+      document.getElementById('drawerMotherOcc').innerText = lead.motherOcc || 'Homemaker';
+      document.getElementById('drawerPrimaryPhone').innerText = lead.phone;
+      document.getElementById('drawerAltPhone').innerText = lead.altPhone || '+91 94401 65432 (Mother)';
+      document.getElementById('drawerEmail').innerText = lead.email || 'sai.pranav.rk@gmail.com';
+      document.getElementById('drawerDobGender').innerText = lead.dobGender || '14 Aug 2008 • Male';
+      document.getElementById('drawerAddress').innerText = lead.address || 'Flat 402, Sri Teja Residency, Telecom Nagar, Gachibowli, Hyderabad, Telangana - 500032';
+
+      // 3. Populate Card 2: Academic Credentials
+      document.getElementById('drawerMeritBracket').innerText = lead.meritBracket || '75% MERIT BRACKET';
+      document.getElementById('drawerSchoolName').innerText = lead.school;
+      document.getElementById('drawerSchoolLoc').innerText = lead.schoolLocation || 'Hyderabad, Telangana';
+      document.getElementById('drawerGpaScore').innerHTML = `${lead.gpa} <span class="text-xs font-semibold text-slate-600">(Max: 600)</span>`;
+      document.getElementById('drawerSscHallTicket').innerText = lead.sscHallTicket || 'TS-2024-884931';
+
+      // 4. Populate Card 3: Admission Preferences & Campus Visit
+      const streamEl = document.getElementById('drawerInterestedStream');
+      if (streamEl) streamEl.innerText = lead.interestedStream || `${lead.streamFull || lead.stream} (Focus Batch)`;
+      
+      const secondChoiceEl = document.getElementById('drawerSecondChoice');
+      if (secondChoiceEl) secondChoiceEl.innerText = lead.secondChoiceStream || 'BiPC (NEET Special Focus)';
+      
+      const accomEl = document.getElementById('drawerAccommodation');
+      if (accomEl) accomEl.innerText = lead.preferredAccommodation || lead.subBoarding || 'Day Scholar (Requires Bus Service)';
+      
+      const batchEl = document.getElementById('drawerJoiningBatch');
+      if (batchEl) batchEl.innerText = lead.joiningBatch || 'Academic Year 2026-2027';
+
+      const visitStatusEl = document.getElementById('drawerVisitStatus');
+      if (visitStatusEl) {
+        const vStatus = lead.visitStatus || (lead.stage === 'visit' ? 'Visit Booked' : lead.stage === 'confirmed' ? 'Visited & Counseling Done' : 'Not Scheduled');
+        let pillClass = 'bg-emerald-100 text-emerald-900 border-emerald-300';
+        let dotClass = 'bg-emerald-600';
+        if (vStatus.includes('Not Scheduled')) {
+          pillClass = 'bg-slate-100 text-slate-700 border-slate-300';
+          dotClass = 'bg-slate-500';
+        } else if (vStatus.includes('Booked') || vStatus.includes('Scheduled')) {
+          pillClass = 'bg-indigo-100 text-indigo-900 border-indigo-300';
+          dotClass = 'bg-indigo-600';
+        } else if (vStatus.includes('Visited')) {
+          pillClass = 'bg-emerald-100 text-emerald-900 border-emerald-300';
+          dotClass = 'bg-emerald-600';
+        }
+        visitStatusEl.className = `px-2.5 py-1 rounded-full ${pillClass} border font-bold text-[11px] inline-flex items-center gap-1.5`;
+        visitStatusEl.innerHTML = `<span class="w-1.5 h-1.5 rounded-full ${dotClass}"></span><span>${vStatus}</span>`;
+      }
+
+      const visitDateEl = document.getElementById('drawerVisitDateTime');
+      if (visitDateEl) visitDateEl.innerText = lead.visitDateTime || '14 Sept 2026, 10:30 AM';
+
+      const accEl = document.getElementById('drawerAccompanying');
+      if (accEl) accEl.innerText = lead.accompanyingMembers || 'Student + Both Parents';
+
+      const channelEl = document.getElementById('drawerInquiryChannel');
+      if (channelEl) channelEl.innerText = lead.inquiryChannel || 'Website Inquiry / Walk-in';
+
+      // 5. Populate Card 4: Form defaults
+      const counselorSelect = document.getElementById('drawerCounselorInCharge');
+      if (counselorSelect && lead.counselor) {
+        for (let i = 0; i < counselorSelect.options.length; i++) {
+          if (counselorSelect.options[i].value.includes(lead.counselor) || lead.counselor.includes(counselorSelect.options[i].value)) {
+            counselorSelect.selectedIndex = i;
+            break;
+          }
+        }
+      }
+      const outcomeSelect = document.getElementById('drawerOutcomeStage');
+      if (outcomeSelect) {
+        outcomeSelect.value = lead.stage === 'confirmed' ? 'Admission Confirmed / Paid' : lead.stage === 'visit' ? 'Planning Campus Visit' : 'Interested';
+      }
+      const followUpDateInput = document.getElementById('drawerFollowUpDate');
+      if (followUpDateInput) {
+        const tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        tomorrow.setHours(11, 0, 0, 0);
+        const year = tomorrow.getFullYear();
+        const month = String(tomorrow.getMonth() + 1).padStart(2, '0');
+        const day = String(tomorrow.getDate()).padStart(2, '0');
+        const hours = String(tomorrow.getHours()).padStart(2, '0');
+        const minutes = String(tomorrow.getMinutes()).padStart(2, '0');
+        followUpDateInput.value = `${year}-${month}-${day}T${hours}:${minutes}`;
+      }
+      document.getElementById('drawerCounselingNotes').value = '';
+
+      // Reset Dynamic form state
+      const banner = document.getElementById('formSuccessBanner');
+      if (banner) banner.classList.add('hidden');
+      const fieldsContainer = document.getElementById('formFieldsContainer');
+      if (fieldsContainer) fieldsContainer.classList.remove('hidden');
+      const btnSave = document.getElementById('btnSaveFollowUp');
+      if (btnSave) btnSave.classList.remove('hidden');
+      const formActions = document.getElementById('formActionButtons');
+      if (formActions) formActions.classList.remove('hidden');
+      
+      if (typeof handleInteractionChange === 'function') handleInteractionChange();
+      if (typeof handleOutcomeChange === 'function') handleOutcomeChange();
+
+      // If already confirmed, just show the banner and hide the form
+      if (lead.stage === 'confirmed') {
+        if (banner) {
+          banner.innerHTML = `✅ Lead converted: Student officially enrolled.`;
+          banner.classList.remove('hidden');
+        }
+        if (fieldsContainer) fieldsContainer.classList.add('hidden');
+        if (btnSave) btnSave.classList.add('hidden');
+        if (formActions) formActions.classList.add('hidden');
+      }
+
+      // 6. Populate Card 5: Timeline history
+      renderDrawerTimeline(lead);
+
+      // 7. Show Full-Screen Profile View
+      const overlay = document.getElementById('studentDrawer');
+      overlay.classList.remove('hidden');
+      overlay.classList.add('flex');
+      overlay.scrollTop = 0;
+      document.body.style.overflow = 'hidden';
+    }
+
+    // Close Full-Screen Profile View
+    function closeStudentDrawer() {
+      const overlay = document.getElementById('studentDrawer');
+      overlay.classList.add('hidden');
+      overlay.classList.remove('flex');
+      document.body.style.overflow = '';
+    }
+
+    // Tab Switching inside Drawer
+    function switchDrawerTab(tabKey, shouldScroll = true) {
+      const tabs = ['overview', 'followup', 'history'];
+      tabs.forEach(t => {
+        const btn = document.getElementById(`tabBtn-${t}`);
+        if (!btn) return;
+        if (t === tabKey) {
+          btn.className = 'drawer-tab-btn px-3 py-1.5 rounded-lg bg-emerald-950 text-white shadow-xs border border-emerald-700/50 flex items-center gap-1.5 transition-all';
+        } else {
+          btn.className = 'drawer-tab-btn px-3 py-1.5 rounded-lg text-emerald-200 hover:text-white hover:bg-emerald-900/60 flex items-center gap-1.5 transition-all';
+        }
+      });
+
+      if (!shouldScroll) return;
+
+      if (tabKey === 'overview') {
+        document.getElementById('section-personal')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      } else if (tabKey === 'followup') {
+        document.getElementById('section-followup')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      } else if (tabKey === 'history') {
+        document.getElementById('section-history')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
+
+    // Render Timeline Feed for Lead
+    function renderDrawerTimeline(lead) {
+      const listEl = document.getElementById('drawerTimelineList');
+      const badgeEl = document.getElementById('drawerHistoryBadge');
+      if (!listEl) return;
+
+      const history = lead.timelineHistory || [];
+      if (badgeEl) badgeEl.innerText = `${history.length} Logged Interaction${history.length === 1 ? '' : 's'}`;
+
+      if (history.length === 0) {
+        listEl.innerHTML = `
+          <div class="p-4 rounded-xl border border-dashed border-slate-200 text-center text-xs text-slate-500 italic bg-slate-50/50">
+            No counseling interactions logged yet for this candidate.
+          </div>
+        `;
+        return;
+      }
+
+      listEl.innerHTML = history.map((entry, idx) => `
+        <div class="p-3.5 rounded-xl border border-slate-200 bg-slate-50/70 hover:bg-slate-50 hover:border-slate-300 transition-all flex flex-col gap-2 relative">
+          <!-- Top Row: Icon, Title & Timestamp -->
+          <div class="flex items-center justify-between gap-2">
+            <div class="flex items-center gap-2">
+              <div class="w-7 h-7 rounded-lg ${entry.iconBg || 'bg-emerald-100 text-emerald-800'} flex items-center justify-center shrink-0">
+                <span class="material-symbols-outlined text-[16px]">${entry.icon || 'chat'}</span>
+              </div>
+              <h4 class="font-bold text-xs text-slate-900">${entry.title}</h4>
+            </div>
+            <span class="text-[11px] font-medium text-slate-500 font-mono">${entry.timestamp}</span>
+          </div>
+
+          <!-- Notes Quote -->
+          <div class="p-2.5 rounded-lg bg-white border border-slate-200/80 text-xs text-slate-700 leading-relaxed italic">
+            "${entry.notes}"
+          </div>
+
+          <!-- Footer Badges -->
+          <div class="flex items-center justify-between flex-wrap gap-1.5 pt-1 text-[10px]">
+            <span class="px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-800 font-semibold border border-emerald-200">
+              ${entry.outcome}
+            </span>
+            <span class="text-slate-500 font-medium">
+              ${entry.counselor}
+            </span>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // Form Interaction Handlers
+    function handleInteractionChange() {
+      const type = document.getElementById('drawerInteractionType').value;
+      const notesLabel = document.getElementById('labelCounselingNotes');
+
+      if (type === 'Phone Call Interaction') {
+        notesLabel.innerHTML = 'Discussion Notes &amp; Parent Reaction <span class="text-rose-500">*</span>';
+      } else if (type === 'Campus Walk-in / Visit Completed') {
+        notesLabel.innerHTML = 'Visit Summary &amp; Parent Feedback <span class="text-rose-500">*</span>';
+      } else {
+        notesLabel.innerHTML = 'Counseling Notes <span class="text-rose-500">*</span>';
+      }
+    }
+
+    function handleOutcomeChange() {
+      const outcome = document.getElementById('drawerOutcomeStage').value;
+      const wrapperVisit = document.getElementById('wrapperCampusVisitDate');
+      const wrapperApp = document.getElementById('wrapperAppNumber');
+      const wrapperGroup = document.getElementById('wrapperConfirmedGroup');
+
+      if (outcome === 'Planning Campus Visit') {
+        wrapperVisit.classList.remove('hidden');
+      } else {
+        wrapperVisit.classList.add('hidden');
+      }
+
+      if (outcome === 'Admission Confirmed / Paid') {
+        wrapperApp.classList.remove('hidden');
+        if (wrapperGroup) wrapperGroup.classList.remove('hidden');
+      } else {
+        wrapperApp.classList.add('hidden');
+        if (wrapperGroup) wrapperGroup.classList.add('hidden');
+      }
+    }
+
+    // Save Follow-up Form in Drawer
+    function saveDrawerFollowUp(e) {
+      e.preventDefault();
+      const lead = leadsState.find(l => l.id === currentDrawerLeadId);
+      if (!lead) return;
+
+      const type = document.getElementById('drawerInteractionType').value;
+      const followUpDate = document.getElementById('drawerFollowUpDate').value.trim();
+      const outcome = document.getElementById('drawerOutcomeStage').value;
+      const counselor = document.getElementById('drawerCounselorInCharge').value;
+      const notes = document.getElementById('drawerCounselingNotes').value.trim();
+      const appNumber = document.getElementById('drawerAppNumber').value.trim();
+      const confirmedGroupEl = document.getElementById('drawerConfirmedGroup');
+      const confirmedGroup = confirmedGroupEl ? confirmedGroupEl.value : '';
+
+      if (!notes) return;
+      if (outcome.includes('Admission Confirmed')) {
+        if (!appNumber) {
+          alert('Please enter Application / Admission Form Number.');
+          return;
+        }
+        if (!confirmedGroup) {
+          alert('Please select the Allotted Group / Stream.');
+          return;
+        }
+      }
+
+      // Determine appropriate icon & style
+      let icon = 'rate_review';
+      let iconBg = 'bg-emerald-100 text-emerald-800';
+      if (type.includes('Phone')) { icon = 'call'; iconBg = 'bg-teal-100 text-teal-800'; }
+      else if (type.includes('Walk') || type.includes('Campus')) { icon = 'account_balance'; iconBg = 'bg-amber-100 text-amber-800'; }
+      else if (type.includes('WhatsApp')) { icon = 'chat'; iconBg = 'bg-emerald-100 text-emerald-800'; }
+
+      let fullNotes = notes;
+      if (outcome.includes('Admission Confirmed')) {
+          fullNotes += `\n(Application Form Number: ${appNumber} | Allotted Group: ${confirmedGroup})`;
+      }
+
+      const newEntry = {
+        type,
+        title: `${type} • Counseling Follow-up`,
+        timestamp: 'Just now',
+        icon,
+        iconBg,
+        notes: fullNotes,
+        outcome: `Outcome: ${outcome}`,
+        counselor: `Logged by: ${counselor.replace('Counselor: ', '')}`
+      };
+
+      if (!lead.timelineHistory) lead.timelineHistory = [];
+      lead.timelineHistory.unshift(newEntry);
+
+      // Update lead metadata
+      lead.notes = notes;
+      lead.counselor = counselor.replace('Counselor: ', '');
+      if (outcome.includes('Admission Confirmed')) {
+        lead.stage = 'confirmed';
+        lead.stageLabel = 'Joined in College (Confirmed)';
+        
+        // Disable form elements or show success banner
+        const banner = document.getElementById('formSuccessBanner');
+        if (banner) {
+          banner.innerHTML = `✅ Lead converted: Student officially enrolled in ${confirmedGroup} under Application #${appNumber}.`;
+          banner.classList.remove('hidden');
+        }
+        document.getElementById('formFieldsContainer').classList.add('hidden');
+        document.getElementById('btnSaveFollowUp').classList.add('hidden');
+        document.getElementById('formActionButtons').classList.add('hidden');
+
+      } else if (outcome.includes('Planning Campus Visit')) {
+        lead.stage = 'visit';
+        lead.stageLabel = 'Campus Tour Booked';
+      } else if (outcome.includes('Callback')) {
+        lead.stage = 'callback';
+        lead.stageLabel = 'Callback Scheduled';
+      } else {
+        lead.stage = outcome;
+        lead.stageLabel = outcome;
+      }
+
+      document.getElementById('drawerCounselingNotes').value = '';
+      document.getElementById('drawerStatusBadge').innerText = lead.stageLabel || lead.stage;
+
+      renderDrawerTimeline(lead);
+      renderAllViews();
+      notify(`📝 Saved new follow-up interaction note for "${lead.name}"!`);
+      
+      // Smooth scroll to history section to view newly added entry
+      document.getElementById('section-history')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    // Direct WhatsApp Trigger from Profile
+    function triggerDirectWhatsApp(leadId) {
+      const lead = leadsState.find(l => l.id === leadId) || leadsState.find(l => l.id === currentDrawerLeadId);
+      if (!lead) return;
+      openWhatsAppModal(lead.id);
+    }
+
+    // Quick Call Trigger
+    function triggerQuickCall(leadId) {
+      const lead = leadsState.find(l => l.id === leadId) || leadsState.find(l => l.id === currentDrawerLeadId);
+      if (!lead) return;
+      openCallModal(lead.id);
+    }
+
+    // Focus on Follow-up Form
+    function focusFollowUpForm() {
+      const formSection = document.getElementById('section-followup');
+      if (formSection) {
+        formSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+      setTimeout(() => {
+        document.getElementById('drawerCounselingNotes')?.focus();
+      }, 200);
+    }
+
+    // Print Student Dossier / PDF Preview
+    function printStudentDossier() {
+      const lead = leadsState.find(l => l.id === currentDrawerLeadId) || leadsState[0];
+      notify(`🖨️ Generating Printable Admissions Dossier PDF for ${lead.name} (${lead.tokenId || 'APEX-2025'})...`);
+      setTimeout(() => {
+        window.print();
+      }, 400);
+    }
+
+    // View Switcher (Table View | Kanban View)
+    function switchView(mode) {
+      currentViewMode = mode;
+      const tableBtn = document.getElementById('viewBtn-table');
+      const kanbanBtn = document.getElementById('viewBtn-kanban');
+      const tableContainer = document.getElementById('tableViewContainer');
+      const kanbanContainer = document.getElementById('kanbanViewContainer');
+
+      if (mode === 'table') {
+        tableBtn.className = 'px-3 py-1.5 rounded-lg bg-white text-primary shadow-xs flex items-center gap-1.5 transition-all';
+        kanbanBtn.className = 'px-3 py-1.5 rounded-lg text-neutral-muted hover:text-slate-900 flex items-center gap-1.5 transition-all';
+        tableContainer.classList.remove('hidden');
+        kanbanContainer.classList.add('hidden');
+      } else {
+        kanbanBtn.className = 'px-3 py-1.5 rounded-lg bg-white text-primary shadow-xs flex items-center gap-1.5 transition-all';
+        tableBtn.className = 'px-3 py-1.5 rounded-lg text-neutral-muted hover:text-slate-900 flex items-center gap-1.5 transition-all';
+        kanbanContainer.classList.remove('hidden');
+        tableContainer.classList.add('hidden');
+      }
+      renderAllViews();
+    }
+
+    // HTML5 Drag & Drop for Kanban Pipeline
+    let draggedLeadId = null;
+
+    function handleDragStart(e, leadId) {
+      draggedLeadId = leadId;
+      e.target.classList.add('dragging');
+      e.dataTransfer.setData('text/plain', leadId);
+    }
+
+    function handleDragEnd(e) {
+      e.target.classList.remove('dragging');
+      document.querySelectorAll('.kanban-col').forEach(col => col.classList.remove('drag-over'));
+    }
+
+    function handleDragOver(e) {
+      e.preventDefault();
+      const col = e.currentTarget;
+      col.classList.add('drag-over');
+    }
+
+    function handleDragLeave(e) {
+      const col = e.currentTarget;
+      col.classList.remove('drag-over');
+    }
+
+    function handleDrop(e, targetStage) {
+      e.preventDefault();
+      const col = e.currentTarget;
+      col.classList.remove('drag-over');
+
+      if (!draggedLeadId) return;
+      const lead = leadsState.find(l => l.id === draggedLeadId);
+      if (lead && lead.stage !== targetStage) {
+        lead.stage = targetStage;
+        lead.stageLabel = getStageDefaultLabel(targetStage);
+        notify(`🚀 Moved ${lead.name} to "${lead.stageLabel}" stage!`);
+        renderAllViews();
+      }
+      draggedLeadId = null;
+    }
+
+    function getStageDefaultLabel(stage) {
+      switch (stage) {
+        case 'inquiry': return 'New Inquiry';
+        case 'callback': return 'Callback Scheduled';
+        case 'visit': return 'Campus Tour Booked';
+        case 'scholarship': return 'Merit Scholarship Evaluation';
+        case 'confirmed': return 'Seat Confirmed (Token Paid)';
+        default: return stage;
+      }
+    }
+
+    // Multi-Select & Checkbox Logic
+    function toggleLeadSelection(leadId, checkbox) {
+      if (checkbox.checked) {
+        selectedLeadIds.add(leadId);
+      } else {
+        selectedLeadIds.delete(leadId);
+      }
+      updateBulkActionBar();
+      renderLeadsTable();
+    }
+
+    function toggleSelectAll(masterCheckbox) {
+      const filtered = getFilteredLeads();
+      if (masterCheckbox.checked) {
+        filtered.forEach(lead => selectedLeadIds.add(lead.id));
+      } else {
+        filtered.forEach(lead => selectedLeadIds.delete(lead.id));
+      }
+      updateBulkActionBar();
+      renderLeadsTable();
+    }
+
+    function deselectAllLeads() {
+      selectedLeadIds.clear();
+      const selectAll = document.getElementById('selectAllCheckbox');
+      if (selectAll) selectAll.checked = false;
+      updateBulkActionBar();
+      renderLeadsTable();
+    }
+
+    function updateBulkActionBar() {
+      const bar = document.getElementById('bulkActionBar');
+      const countBadge = document.getElementById('bulkSelectedCountBadge');
+      const count = selectedLeadIds.size;
+
+      if (!bar) return;
+
+      if (count > 0) {
+        bar.classList.remove('hidden');
+        bar.classList.add('flex');
+        if (countBadge) countBadge.innerText = count;
+      } else {
+        bar.classList.add('hidden');
+        bar.classList.remove('flex');
+      }
+    }
+
+    // Top Stage Category Buttons Filter
+    function filterByStage(stage, btn) {
+      currentActiveStageFilter = stage;
+      document.querySelectorAll('.stage-filter-btn').forEach(b => {
+        b.className = 'stage-filter-btn px-4 py-2 rounded-xl text-neutral-muted hover:text-on-surface hover:bg-white transition-all';
+      });
+      btn.className = 'stage-filter-btn px-4 py-2 rounded-xl bg-[#064E3B] text-white font-bold shadow-xs';
+
+      const filterStageSelect = document.getElementById('filterStage');
+      if (filterStageSelect) filterStageSelect.value = stage;
+
+      renderAllViews();
+    }
+
+    function handleSearchFilter() {
+      renderAllViews();
+    }
+
+    function syncGlobalSearch(val) {
+      const mainSearch = document.getElementById('leadSearchInput');
+      if (mainSearch) {
+        mainSearch.value = val;
+        renderAllViews();
+      }
+    }
+
+    function resetFilters() {
+      const search = document.getElementById('leadSearchInput');
+      const topSearch = document.getElementById('topSearchInput');
+      const stream = document.getElementById('filterStream');
+      const counselor = document.getElementById('filterCounselor');
+      const stage = document.getElementById('filterStage');
+
+      if (search) search.value = '';
+      if (topSearch) topSearch.value = '';
+      if (stream) stream.value = 'all';
+      if (counselor) counselor.value = 'all';
+      if (stage) stage.value = 'all';
+
+      currentActiveStageFilter = 'all';
+      document.querySelectorAll('.stage-filter-btn').forEach((b, i) => {
+        b.className = i === 0 
+          ? 'stage-filter-btn px-4 py-2 rounded-xl bg-[#064E3B] text-white font-bold shadow-xs'
+          : 'stage-filter-btn px-4 py-2 rounded-xl text-neutral-muted hover:text-on-surface hover:bg-white transition-all';
+      });
+
+      renderAllViews();
+      notify('🔄 Reset all search and dropdown filters');
+    }
+
+    // ================= Edit Student Profile Methods =================
+    function openEditProfileModal() {
+      const lead = leadsState.find(l => l.id === currentDrawerLeadId);
+      if (!lead) return;
+
+      // Populate personal info
+      document.getElementById('editStudentName').value = lead.name || '';
+      document.getElementById('editPrimaryPhone').value = lead.phone || '';
+      document.getElementById('editAltPhone').value = lead.altPhone || '';
+      document.getElementById('editEmail').value = lead.email || '';
+      document.getElementById('editDobGender').value = lead.dobGender || '';
+      document.getElementById('editFatherName').value = lead.fatherName || '';
+      document.getElementById('editFatherOcc').value = lead.fatherOcc || '';
+      document.getElementById('editMotherName').value = lead.motherName || '';
+      document.getElementById('editMotherOcc').value = lead.motherOcc || '';
+      document.getElementById('editAddress').value = lead.address || '';
+
+      // Populate academic info
+      document.getElementById('editSchoolName').value = lead.school || '';
+      document.getElementById('editSchoolLoc').value = lead.schoolLocation || '';
+      document.getElementById('editGpa').value = lead.gpa || '';
+      document.getElementById('editSsc').value = lead.sscHallTicket || '';
+      document.getElementById('editMeritBracket').value = lead.meritBracket || '';
+
+      // Populate preference info
+      document.getElementById('editInterestedStream').value = lead.interestedStream || lead.streamFull || '';
+      document.getElementById('editSecondChoice').value = lead.secondChoiceStream || '';
+      document.getElementById('editAccommodation').value = lead.preferredAccommodation || lead.subBoarding || '';
+      document.getElementById('editJoiningBatch').value = lead.joiningBatch || '';
+
+      openModal('editProfileModal');
+    }
+
+    function closeEditProfileModal() {
+      closeModal('editProfileModal');
+    }
+
+    function saveProfileEdits(e) {
+      e.preventDefault();
+      const leadIndex = leadsState.findIndex(l => l.id === currentDrawerLeadId);
+      if (leadIndex === -1) return;
+
+      const lead = leadsState[leadIndex];
+
+      // Update personal info
+      lead.name = document.getElementById('editStudentName').value.trim();
+      lead.phone = document.getElementById('editPrimaryPhone').value.trim();
+      lead.altPhone = document.getElementById('editAltPhone').value.trim();
+      lead.email = document.getElementById('editEmail').value.trim();
+      lead.dobGender = document.getElementById('editDobGender').value.trim();
+      lead.fatherName = document.getElementById('editFatherName').value.trim();
+      lead.fatherOcc = document.getElementById('editFatherOcc').value.trim();
+      lead.motherName = document.getElementById('editMotherName').value.trim();
+      lead.motherOcc = document.getElementById('editMotherOcc').value.trim();
+      lead.address = document.getElementById('editAddress').value.trim();
+
+      // Update academic info
+      lead.school = document.getElementById('editSchoolName').value.trim();
+      lead.schoolLocation = document.getElementById('editSchoolLoc').value.trim();
+      lead.gpa = document.getElementById('editGpa').value.trim();
+      lead.sscHallTicket = document.getElementById('editSsc').value.trim();
+      lead.meritBracket = document.getElementById('editMeritBracket').value.trim();
+
+      // Update preference info
+      lead.interestedStream = document.getElementById('editInterestedStream').value.trim();
+      lead.secondChoiceStream = document.getElementById('editSecondChoice').value.trim();
+      lead.preferredAccommodation = document.getElementById('editAccommodation').value.trim();
+      lead.joiningBatch = document.getElementById('editJoiningBatch').value.trim();
+
+      closeEditProfileModal();
+      renderAllViews();
+      openStudentDrawer(lead.id); // Refresh drawer UI
+      notify(`✅ Profile for ${lead.name} successfully updated!`);
+    }
+    function openCallModal(leadId) {
+      const lead = leadsState.find(l => l.id === leadId);
+      if (!lead) return;
+
+      document.getElementById('callLogLeadId').value = lead.id;
+      document.getElementById('callModalStudentName').innerText = `Calling Parent of ${lead.name}`;
+      document.getElementById('callModalPhone').innerText = `${lead.phone} • Stream: ${lead.streamFull}`;
+      document.getElementById('callNotesTextarea').value = lead.notes || '';
+
+      openModal('callLogModal');
+    }
+
+    function saveCallLogOutcome() {
+      const leadId = document.getElementById('callLogLeadId').value;
+      const outcome = document.getElementById('callOutcomeSelect').value;
+      const notes = document.getElementById('callNotesTextarea').value.trim();
+
+      const lead = leadsState.find(l => l.id === leadId);
+      if (lead) {
+        lead.notes = notes || outcome;
+        if (outcome.includes('Campus Visit Scheduled')) lead.stage = 'visit';
+        if (outcome.includes('Seat Confirmed')) lead.stage = 'confirmed';
+        if (outcome.includes('Callback Tomorrow')) lead.stage = 'callback';
+        lead.stageLabel = outcome;
+        notify(`📞 Logged call outcome for ${lead.name}: "${outcome}"`);
+      }
+
+      closeModal('callLogModal');
+      renderAllViews();
+    }
+
+    // Quick Action 2: WhatsApp Prospectus Direct Dispatch
+    function openWhatsAppModal(leadId) {
+      const lead = leadsState.find(l => l.id === leadId);
+      if (!lead) return;
+
+      document.getElementById('whatsAppLeadId').value = lead.id;
+      document.getElementById('whatsAppModalTarget').innerText = `To: Parent of ${lead.name} (${lead.streamFull})`;
+      document.getElementById('whatsAppPhoneInput').value = lead.phone;
+      document.getElementById('whatsAppMessageInput').value = `Namaste! Greetings from Apex Junior College. Here is our official 2025–26 Academic Prospectus, Hostel Tour & Integrated IIT-JEE/NEET Fee details for ${lead.name}. Please review and let us know your preferred campus visit slot.`;
+
+      openModal('whatsAppModal');
+    }
+
+    function sendWhatsAppProspectus() {
+      const leadId = document.getElementById('whatsAppLeadId').value;
+      const phone = document.getElementById('whatsAppPhoneInput').value;
+      const lead = leadsState.find(l => l.id === leadId);
+
+      closeModal('whatsAppModal');
+      notify(`💬 WhatsApp Brochure PDF dispatched to ${phone} (${lead ? lead.name : 'Candidate'})!`);
+    }
+
+    // Quick Action 3: Issue Admission Allotment Slip Modal
+    function openSeatSlipModal(leadId) {
+      const lead = leadsState.find(l => l.id === leadId);
+      if (!lead) return;
+
+      document.getElementById('seatSlipLeadId').value = lead.id;
+      document.getElementById('slipTokenNo').innerText = `APEX-2025-${Math.floor(100 + Math.random() * 900)}`;
+      document.getElementById('slipStudentName').innerText = lead.name;
+      document.getElementById('slipStream').innerText = lead.streamFull;
+
+      openModal('seatSlipModal');
+    }
+
+    function confirmIssueSeatSlip() {
+      const leadId = document.getElementById('seatSlipLeadId').value;
+      const amount = document.getElementById('slipTokenAmount').value;
+      const lead = leadsState.find(l => l.id === leadId);
+
+      if (lead) {
+        lead.stage = 'confirmed';
+        lead.stageLabel = `Seat Confirmed (Token ${amount})`;
+      }
+
+      closeModal('seatSlipModal');
+      renderAllViews();
+      notify(`🎉 Provisional Allotment Slip generated! Seat confirmed with advance token of ${amount}.`);
+    }
+
+    // Bulk Actions: WhatsApp, Reassign, Export
+    function triggerBulkWhatsApp() {
+      const count = selectedLeadIds.size;
+      notify(`💬 Dispatched batch WhatsApp prospectus to ${count} selected parent contacts!`);
+      deselectAllLeads();
+    }
+
+    function triggerBulkReassign() {
+      openModal('bulkReassignModal');
+    }
+
+    function confirmBulkReassign() {
+      const newCounselor = document.getElementById('bulkNewCounselorSelect').value;
+      const count = selectedLeadIds.size;
+
+      selectedLeadIds.forEach(id => {
+        const lead = leadsState.find(l => l.id === id);
+        if (lead) lead.counselor = newCounselor.split(' (')[0];
+      });
+
+      closeModal('bulkReassignModal');
+      deselectAllLeads();
+      renderAllViews();
+      notify(`👥 Reassigned ${count} leads to ${newCounselor}!`);
+    }
+
+    function triggerBulkExport() {
+      exportLeadsCsv();
+      deselectAllLeads();
+    }
+
+    function exportLeadsCsv() {
+      notify('📥 Exporting Admissions CRM dataset to Apex_Leads_2025.csv!');
+    }
+
+    // Add New Lead Submission
+    function submitNewLead(e) {
+      e.preventDefault();
+      const name = document.getElementById('modalStudentName').value.trim();
+      const stream = document.getElementById('modalStream').value;
+      const gpa = document.getElementById('modalGpa').value.trim() || '9.6 GPA';
+      const phone = document.getElementById('modalPhone').value.trim();
+      const counselor = document.getElementById('modalCounselor').value;
+      const school = document.getElementById('modalSchool').value.trim() || 'Walk-in Inquiry';
+      const stage = document.getElementById('modalStage').value;
+
+      const newLead = {
+        id: 'lead-' + Date.now(),
+        name,
+        initials: name.split(' ').map(n=>n[0]).join('').substring(0,2).toUpperCase(),
+        tokenId: `APEX-2025-${Math.floor(1000 + Math.random() * 9000)}`,
+        school,
+        schoolLocation: 'Hyderabad, Telangana',
+        stream,
+        streamFull: `${stream} (${stream === 'MPC' ? 'IIT-JEE Focus' : stream === 'BiPC' ? 'NEET Special' : stream === 'MEC' ? 'CA Foundation' : 'Civils'})`,
+        subProgram: `${stream} Standard`,
+        subBoarding: 'Day Scholar',
+        subScholarship: 'General Admission',
+        gpa,
+        gpaScoreDetail: `${gpa} (Verified)`,
+        sscHallTicket: `TS-2024-${Math.floor(100000 + Math.random() * 900000)}`,
+        meritBracket: 'STATE BOARD',
+        phone,
+        altPhone: phone,
+        email: `${name.toLowerCase().replace(/\s+/g, '.')}@gmail.com`,
+        dobGender: '10 Aug 2008 • Applicant',
+        address: 'Hyderabad, Telangana',
+        fatherName: 'Parent of ' + name,
+        fatherOcc: 'Guardian',
+        motherName: 'Mother of ' + name,
+        motherOcc: 'Guardian',
+        targetProgram: `Intermediate ${stream}`,
+        programDesc: 'Standard curriculum with regular mock assessments.',
+        boardingDesc: 'Day Scholar',
+        transportRoute: 'City Route',
+        feeStandard: '₹1,50,000',
+        feeConcession: '₹0',
+        feeNet: '₹1,50,000',
+        feeBadge: 'STANDARD',
+        feeStatusText: 'Pending Admission Verification',
+        counselor,
+        stage,
+        stageLabel: getStageDefaultLabel(stage),
+        notes: 'Newly registered admission inquiry.',
+        timelineHistory: [
+          {
+            type: 'inquiry',
+            title: 'New Admission Inquiry Registered',
+            timestamp: 'Just now',
+            icon: 'person_add',
+            iconBg: 'bg-blue-100 text-blue-800',
+            notes: 'Registered candidate details through CRM new lead form.',
+            outcome: 'Outcome: Inquiry Created',
+            counselor: `Logged by: ${counselor}`
+          }
+        ]
+      };
+
+      leadsState.unshift(newLead);
+      closeLeadModal();
+      renderAllViews();
+      notify(`✅ New admission inquiry for "${name}" registered successfully!`);
+    }
+  </script>
+</body>
+</html>

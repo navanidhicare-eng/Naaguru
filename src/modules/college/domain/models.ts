@@ -87,4 +87,67 @@ export class College {
   isPubliclyDiscoverable(): boolean {
     return this.status === 'ACTIVE' && this.verificationStatus === 'VERIFIED';
   }
+
+  updateProfile(data: {
+    shortName?: string | null;
+    description?: string | null;
+    website?: string | null;
+    contactPhone?: string | null;
+    contactEmail?: string | null;
+    location?: Partial<LocationProps>;
+    hostelSummary?: Partial<HostelSummaryProps>;
+  }): void {
+    if (data.shortName !== undefined) this.props.shortName = data.shortName;
+    if (data.description !== undefined) this.props.description = data.description;
+    if (data.website !== undefined) this.props.website = data.website;
+    if (data.contactPhone !== undefined) this.props.contactPhone = data.contactPhone;
+    if (data.contactEmail !== undefined) this.props.contactEmail = data.contactEmail;
+
+    if (data.location) {
+      this.props.location = { ...this.props.location, ...data.location };
+    }
+
+    if (data.hostelSummary) {
+      this.props.hostelSummary = { ...this.props.hostelSummary, ...data.hostelSummary };
+    }
+
+    this.props.updatedAt = new Date().toISOString();
+  }
+}
+
+export type StaffRole = 'COLLEGE_ADMIN' | 'COLLEGE_STAFF';
+export type StaffStatus = 'ACTIVE' | 'INACTIVE' | 'SUSPENDED';
+
+export interface StaffMembershipProps {
+  id: string;
+  userId: string;
+  collegeId: string;
+  role: StaffRole;
+  status: StaffStatus;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export class StaffMembership {
+  private constructor(public readonly props: StaffMembershipProps) {}
+
+  static create(props: StaffMembershipProps): StaffMembership {
+    return new StaffMembership(props);
+  }
+
+  get id() { return this.props.id; }
+  get userId() { return this.props.userId; }
+  get collegeId() { return this.props.collegeId; }
+  get role() { return this.props.role; }
+  get status() { return this.props.status; }
+  get createdAt() { return this.props.createdAt; }
+  get updatedAt() { return this.props.updatedAt; }
+
+  isActive(): boolean {
+    return this.status === 'ACTIVE';
+  }
+
+  isAdmin(): boolean {
+    return this.role === 'COLLEGE_ADMIN';
+  }
 }

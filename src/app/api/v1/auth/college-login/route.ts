@@ -5,6 +5,8 @@ import { usersTable, sessionsTable } from '@/shared/auth/schema';
 import { eq } from 'drizzle-orm';
 import { createHash } from 'crypto';
 import { TokenService } from '@/shared/auth/TokenService';
+import { StaffUseCases } from '@/modules/staff/application/StaffUseCases';
+import { DrizzleStaffMembershipRepository } from '@/modules/staff/infrastructure/DrizzleStaffMembershipRepository';
 
 const hashValue = (val: string) => createHash('sha256').update(val).digest('hex');
 
@@ -29,9 +31,28 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
     }
 
+    // Check staff memberships
+    const staffUseCases = new StaffUseCases(new DrizzleStaffMembershipRepository());
+    const memberships = await staffUseCases.getActiveMembershipsForUser(user.id);
+
+    if (memberships.length === 0) {
+      return NextResponse.json({ error: 'No active staff membership found for this user.' }, { status: 403 });
+    }
+
+    if (memberships.length > 1) {
+      return NextResponse.json({ error: 'Multiple active memberships found. Explicit college selection is required.' }, { status: 403 });
+    }
+
+    const membership = memberships[0];
+
     // Issue tokens
     const tokenService = new TokenService(); // Need proper DI or instantiation if the app uses it
-    const tokens = await tokenService.issueTokens({ userId: user.id, role: user.role });
+    const tokens = await tokenService.issueTokens({
+      userId: user.id,
+      staffMembershipId: membership.id,
+      collegeId: membership.collegeId,
+      role: membership.role,
+    });
 
     const refreshTokenHash = hashValue(tokens.refreshToken);
     const refreshTokenExpiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString();
@@ -47,13 +68,24 @@ export async function POST(request: Request) {
       accessToken: tokens.accessToken,
     });
 
+    // Set access token in httpOnly cookie
+    response.cookies.set({
+      name: 'accessToken',
+      value: tokens.accessToken,
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 15 * 60, // 15 mins (matching token expiry)
+      path: '/',
+    });
+
     // Set refresh token in httpOnly cookie
     response.cookies.set({
       name: 'refreshToken',
       value: tokens.refreshToken,
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
+      sameSite: 'lax',
       maxAge: 30 * 24 * 60 * 60, // 30 days
       path: '/api/v1/auth',
     });

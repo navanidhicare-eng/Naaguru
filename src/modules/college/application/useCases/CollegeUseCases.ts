@@ -1,5 +1,5 @@
 import { ICollegeRepository, CollegeSearchCriteria } from '../../domain/ICollegeRepository';
-import { PublicCollegeDto } from '../dtos';
+import { PublicCollegeDto, StaffCollegeProfileDto, UpdateCollegeProfileDto } from '../dtos';
 import { AppError } from '../../../../shared/errors';
 import { College } from '../../domain/models';
 
@@ -18,6 +18,39 @@ export class CollegeUseCases {
     }
 
     return this.mapToPublicDto(college);
+  }
+
+  async getStaffCollegeProfile(id: string): Promise<StaffCollegeProfileDto> {
+    const college = await this.collegeRepository.findById(id);
+    
+    if (!college) {
+      throw new AppError('College not found', 404);
+    }
+
+    // Bypass isPubliclyDiscoverable() for staff
+
+    return {
+      ...this.mapToPublicDto(college),
+      status: college.status,
+      verificationStatus: college.verificationStatus,
+    };
+  }
+
+  async updateStaffCollegeProfile(id: string, data: UpdateCollegeProfileDto): Promise<StaffCollegeProfileDto> {
+    const college = await this.collegeRepository.findById(id);
+    
+    if (!college) {
+      throw new AppError('College not found', 404);
+    }
+
+    college.updateProfile(data);
+    await this.collegeRepository.save(college);
+
+    return {
+      ...this.mapToPublicDto(college),
+      status: college.status,
+      verificationStatus: college.verificationStatus,
+    };
   }
 
   async searchActiveColleges(criteria: CollegeSearchCriteria): Promise<PublicCollegeDto[]> {

@@ -74,6 +74,9 @@ Use labels:
 🟡 **UNDERSTAND** — Explain the concept, but deep knowledge is not currently required.
 🔴 **IMPLEMENT** — AI can handle most implementation; developer only needs to understand the purpose.
 
+## Rule 14 — UI Architecture
+New UI should use the existing Naaguru semantic design tokens and shared UI primitives whenever an applicable primitive exists. Do not introduce arbitrary colors or duplicate common controls when an existing semantic token/component is available.
+
 <!-- BEGIN:nextjs-agent-rules -->
 
 # This is NOT the Next.js you know

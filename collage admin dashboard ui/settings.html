@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>Apex Junior College - Portal Settings</title>
+  <link href="https://fonts.googleapis.com" rel="preconnect"/>
+  <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "surface-dim": "#cfddd9",
+            "surface-container-lowest": "#ffffff",
+            "on-primary-fixed-variant": "#005144",
+            "secondary-deep": "#7c5800",
+            "secondary-container": "#fec24a",
+            "on-secondary": "#ffffff",
+            "on-secondary-container": "#715000",
+            "tertiary-container": "#317d6e",
+            "neutral-muted": "#647572",
+            "on-primary-container": "#d4fff2",
+            "surface-bright": "#effcf9",
+            "on-tertiary": "#ffffff",
+            "primary-container": "#087f6c",
+            "inverse-on-surface": "#e6f4f0",
+            "primary-light": "#e6f5f1",
+            "surface-canvas": "#f8faf9",
+            "primary-dark": "#056052",
+            "outline": "#6e7a75",
+            "inverse-surface": "#273331",
+            "on-primary": "#ffffff",
+            "surface-variant": "#d8e5e2",
+            "outline-variant": "#bdc9c4",
+            "background": "#effcf9",
+            "primary-fixed-dim": "#78d7c1",
+            "on-tertiary-fixed": "#00201a",
+            "on-tertiary-container": "#d7fff3",
+            "inverse-primary": "#78d7c1",
+            "success": "#2e8b57",
+            "error": "#d64545",
+            "on-surface-variant": "#3e4946",
+            "secondary-fixed-dim": "#f8bd45",
+            "surface": "#effcf9",
+            "on-surface": "#121e1c",
+            "surface-container": "#e3f1ed",
+            "secondary": "#7c5800",
+            "surface-container-low": "#e9f7f3",
+            "on-error": "#ffffff",
+            "on-secondary-fixed-variant": "#5e4200",
+            "on-tertiary-fixed-variant": "#005144",
+            "surface-card": "#ffffff",
+            "tertiary-fixed-dim": "#8ad4c3",
+            "border-input": "#d1dcd8",
+            "tertiary": "#0e6456",
+            "secondary-fixed": "#ffdea7",
+            "on-error-container": "#93000a",
+            "error-container": "#ffdad6",
+            "primary-deep": "#006454",
+            "border-subtle": "#e4ebe8",
+            "primary": "#006454",
+            "on-secondary-fixed": "#271900",
+            "on-background": "#121e1c",
+            "surface-container-highest": "#d8e5e2",
+            "primary-fixed": "#95f4dd",
+            "surface-container-high": "#ddebe7",
+            "tertiary-fixed": "#a6f1df",
+            "on-primary-fixed": "#00201a",
+            "surface-tint": "#006b5a"
+          },
+          fontFamily: {
+            sans: ["Inter", "sans-serif"]
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    ::-webkit-scrollbar { display: none; }
+    .card-hover {
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .card-hover:hover {
+      transform: translateY(-2px);
+    }
+    .toast {
+      animation: slideIn 0.3s ease-out forwards;
+    }
+    @keyframes slideIn {
+      from { transform: translateY(100%); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+  </style>
+</head>
+<body class="bg-background text-on-surface antialiased min-h-screen">
+
+  <!-- Unified Sidebar (Rock solid, identical across all pages) -->
+  <aside class="fixed left-0 top-0 h-screen w-64 bg-primary-deep text-white z-50 flex flex-col justify-between p-5 border-r border-[#005144] shadow-lg select-none">
+    <div class="flex flex-col gap-6">
+      <!-- Apex Brand -->
+      <a href="dashboard.html" class="flex items-center gap-3 px-1 transition-opacity hover:opacity-90">
+        <div class="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center border border-white/20 shadow-inner">
+          <span class="material-symbols-outlined text-secondary-container text-[24px]">account_balance</span>
+        </div>
+        <div class="flex flex-col">
+          <span class="text-[17px] font-bold tracking-tight text-white leading-tight">Apex</span>
+          <span class="text-[10px] uppercase font-bold tracking-widest text-secondary-container">JUNIOR COLLEGE</span>
+        </div>
+      </a>
+
+      <!-- Navigation Links -->
+      <div class="flex flex-col gap-1">
+        <div class="text-[10px] font-bold uppercase tracking-wider text-on-primary-container/70 mb-2 px-3">Navigation</div>
+        <nav class="flex flex-col gap-1.5" id="sidebarNav">
+          <!-- 1. College Dashboard -->
+          <a class="nav-item flex items-center justify-between px-3.5 py-2.5 rounded-xl text-white/80 hover:bg-white/10 hover:text-white transition-all text-sm font-medium" href="dashboard.html">
+            <div class="flex items-center gap-2.5 min-w-0">
+              <span class="material-symbols-outlined text-[20px] shrink-0">dashboard</span>
+              <span class="truncate">College Dashboard</span>
+            </div>
+          </a>
+
+          <!-- 2. College Profile -->
+          <a class="nav-item flex items-center justify-between px-3.5 py-2.5 rounded-xl text-white/80 hover:bg-white/10 hover:text-white transition-all text-sm font-medium" href="index.html">
+            <div class="flex items-center gap-2.5 min-w-0">
+              <span class="material-symbols-outlined text-[20px] shrink-0">school</span>
+              <span class="truncate">College Profile</span>
+            </div>
+          </a>
+
+          <!-- 3. Leads & Admissions -->
+          <a class="nav-item flex items-center justify-between px-3.5 py-2.5 rounded-xl text-white/80 hover:bg-white/10 hover:text-white transition-all text-sm font-medium" href="leads.html">
+            <div class="flex items-center gap-2.5 min-w-0">
+              <span class="material-symbols-outlined text-[20px] shrink-0">group</span>
+              <span class="truncate">Leads &amp; Admissions</span>
+            </div>
+            <span class="px-2 py-0.5 rounded-full bg-amber-400/20 text-amber-300 text-[10px] font-bold whitespace-nowrap shrink-0 border border-amber-400/30">28 New</span>
+          </a>
+
+          <!-- 4. Analytics -->
+          <a class="nav-item flex items-center justify-between px-3.5 py-2.5 rounded-xl text-white/80 hover:bg-white/10 hover:text-white transition-all text-sm font-medium" href="analytics.html">
+            <div class="flex items-center gap-2.5 min-w-0">
+              <span class="material-symbols-outlined text-[20px] shrink-0">insights</span>
+              <span class="truncate">Analytics</span>
+            </div>
+            <span class="flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 text-[10px] font-bold whitespace-nowrap shrink-0">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> Live
+            </span>
+          </a>
+
+          <!-- 5. Settings (Active) -->
+          <a class="nav-item flex items-center justify-between px-3.5 py-2.5 rounded-xl bg-white text-primary font-bold shadow-sm text-sm transition-all" href="settings.html">
+            <div class="flex items-center gap-2.5 min-w-0">
+              <span class="material-symbols-outlined text-[20px] shrink-0">settings</span>
+              <span class="truncate">Settings</span>
+            </div>
+          </a>
+        </nav>
+      </div>
+    </div>
+
+    <!-- Academic Session Footer -->
+    <div class="p-3.5 rounded-xl bg-white/5 border border-white/10 flex items-center justify-between">
+      <div class="flex items-center gap-2.5">
+        <span class="material-symbols-outlined text-secondary-container text-[20px]">calendar_month</span>
+        <div class="flex flex-col">
+          <span class="text-[10px] text-white/70 font-medium">Academic Year</span>
+          <span class="text-[12px] font-bold text-secondary-container leading-tight">2025–2026</span>
+        </div>
+      </div>
+      <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 text-[10px] font-semibold">
+        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> Active
+      </span>
+    </div>
+  </aside>
+
+  <!-- Main Content Wrapper (pl-64) -->
+  <div class="pl-64">
+
+    <!-- Top System Header -->
+    <header class="fixed top-0 left-64 right-0 h-16 bg-white/90 backdrop-blur-md border-b border-border-subtle z-40 flex items-center justify-between px-8">
+      <div class="flex items-center gap-2 text-neutral-muted text-xs font-medium">
+        <span class="material-symbols-outlined text-[18px] text-primary">settings</span>
+        <span>Apex Portal</span>
+        <span class="text-neutral-muted/40">/</span>
+        <span class="text-on-surface font-semibold">Institution &amp; Portal Settings</span>
+      </div>
+
+      <div class="flex items-center gap-4">
+        <button onclick="notify('⚙️ Settings saved successfully!')" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-primary hover:bg-primary-dark text-white text-xs font-semibold shadow-sm transition-colors">
+          <span class="material-symbols-outlined text-[16px]">save</span>
+          <span>Save Changes</span>
+        </button>
+
+        <div class="flex items-center gap-3 pl-2 border-l border-border-subtle">
+          <div class="w-8 h-8 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center text-primary font-bold text-xs">
+            AP
+          </div>
+          <div class="flex flex-col text-left">
+            <span class="text-xs font-bold text-on-surface">Dr. A. Prabhakar</span>
+            <span class="text-[10px] text-neutral-muted">Principal &amp; Director</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Settings Body -->
+    <main class="pt-20 pb-16 px-8 max-w-[1440px] mx-auto flex flex-col gap-6">
+
+      <!-- Settings Header -->
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-surface-card p-6 rounded-2xl border border-border-subtle shadow-sm">
+        <div>
+          <h1 class="text-xl font-bold text-on-surface">Apex System Control Center</h1>
+          <p class="text-xs text-neutral-muted mt-1">Configure campus branches, fee slabs, staff permissions, and automated WhatsApp/SMS bots.</p>
+        </div>
+        <button onclick="notify('🚀 Cloud backup created and configurations updated!')" class="px-4 py-2 rounded-xl bg-primary text-white text-xs font-bold shadow-sm hover:bg-primary-dark transition-colors flex items-center gap-1.5">
+          <span class="material-symbols-outlined text-[18px]">cloud_sync</span>
+          Sync All Campuses
+        </button>
+      </div>
+
+      <!-- Settings 4 Panels Grid -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+        <!-- Panel 1: Institution Details -->
+        <div class="bg-surface-card rounded-2xl p-6 border border-border-subtle shadow-sm flex flex-col gap-4">
+          <div class="flex items-center gap-2 pb-3 border-b border-border-subtle">
+            <span class="material-symbols-outlined text-primary text-[22px]">domain</span>
+            <h2 class="text-base font-bold text-on-surface">Institution &amp; Affiliation Profile</h2>
+          </div>
+
+          <div class="flex flex-col gap-3 text-xs">
+            <div>
+              <label class="font-bold text-neutral-muted">Institution Official Name</label>
+              <input type="text" value="Apex Junior College" class="w-full mt-1 p-2.5 rounded-lg border border-border-input bg-surface-canvas font-medium"/>
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="font-bold text-neutral-muted">TSBIE College Code</label>
+                <input type="text" value="TS-500081" class="w-full mt-1 p-2.5 rounded-lg border border-border-input bg-surface-canvas font-medium"/>
+              </div>
+              <div>
+                <label class="font-bold text-neutral-muted">Principal Name</label>
+                <input type="text" value="Dr. A. Prabhakar, Ph.D" class="w-full mt-1 p-2.5 rounded-lg border border-border-input bg-surface-canvas font-medium"/>
+              </div>
+            </div>
+            <div>
+              <label class="font-bold text-neutral-muted">Official Helpdesk Email</label>
+              <input type="email" value="admissions@apexjuniorcollege.edu.in" class="w-full mt-1 p-2.5 rounded-lg border border-border-input bg-surface-canvas font-medium"/>
+            </div>
+          </div>
+        </div>
+
+        <!-- Panel 2: Multi-Campus Branch Management -->
+        <div class="bg-surface-card rounded-2xl p-6 border border-border-subtle shadow-sm flex flex-col gap-4">
+          <div class="flex items-center justify-between pb-3 border-b border-border-subtle">
+            <div class="flex items-center gap-2">
+              <span class="material-symbols-outlined text-primary text-[22px]">location_city</span>
+              <h2 class="text-base font-bold text-on-surface">Campus Branches</h2>
+            </div>
+            <button onclick="notify('➕ Add Campus Branch modal!')" class="px-2.5 py-1 rounded-lg bg-primary/10 text-primary font-bold text-xs">+ Add Branch</button>
+          </div>
+
+          <div class="flex flex-col gap-2.5 text-xs">
+            <div class="p-3 rounded-xl bg-surface-canvas border border-border-subtle flex items-center justify-between">
+              <div>
+                <div class="flex items-center gap-2">
+                  <span class="font-bold text-on-surface">1. Madhapur Knowledge City Campus</span>
+                  <span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold text-[10px]">Main Campus</span>
+                </div>
+                <p class="text-[11px] text-neutral-muted mt-0.5">Capacity: 600 Students • MPC, BiPC, MEC, CEC</p>
+              </div>
+              <span class="text-success font-bold">Active</span>
+            </div>
+
+            <div class="p-3 rounded-xl bg-surface-canvas border border-border-subtle flex items-center justify-between">
+              <div>
+                <div class="flex items-center gap-2">
+                  <span class="font-bold text-on-surface">2. Secunderabad West Marredpally Campus</span>
+                  <span class="px-2 py-0.5 rounded bg-primary-light text-primary font-bold text-[10px]">Day Scholar</span>
+                </div>
+                <p class="text-[11px] text-neutral-muted mt-0.5">Capacity: 450 Students • MPC, BiPC Focus</p>
+              </div>
+              <span class="text-success font-bold">Active</span>
+            </div>
+
+            <div class="p-3 rounded-xl bg-surface-canvas border border-border-subtle flex items-center justify-between">
+              <div>
+                <div class="flex items-center gap-2">
+                  <span class="font-bold text-on-surface">3. Vijayawada Benz Circle Campus</span>
+                  <span class="px-2 py-0.5 rounded bg-amber-100 text-amber-800 font-bold text-[10px]">AP Branch</span>
+                </div>
+                <p class="text-[11px] text-neutral-muted mt-0.5">Capacity: 350 Students • Integrated Coaching</p>
+              </div>
+              <span class="text-success font-bold">Active</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Panel 3: Stream Fee Management -->
+        <div class="bg-surface-card rounded-2xl p-6 border border-border-subtle shadow-sm flex flex-col gap-4">
+          <div class="flex items-center gap-2 pb-3 border-b border-border-subtle">
+            <span class="material-symbols-outlined text-primary text-[22px]">payments</span>
+            <h2 class="text-base font-bold text-on-surface">Academic Streams &amp; Annual Fee Slabs</h2>
+          </div>
+
+          <div class="flex flex-col gap-2.5 text-xs">
+            <div class="p-3 rounded-xl bg-surface-canvas border border-border-subtle flex items-center justify-between">
+              <div>
+                <span class="font-bold text-primary">MPC (IIT-JEE Main + Adv Track)</span>
+                <p class="text-[11px] text-neutral-muted">Includes coaching materials &amp; weekly national mock tests</p>
+              </div>
+              <span class="font-black text-on-surface">₹1,10,000 / yr</span>
+            </div>
+
+            <div class="p-3 rounded-xl bg-surface-canvas border border-border-subtle flex items-center justify-between">
+              <div>
+                <span class="font-bold text-emerald-700">BiPC (NEET Medical Track)</span>
+                <p class="text-[11px] text-neutral-muted">Includes specialized biology dissection labs &amp; test series</p>
+              </div>
+              <span class="font-black text-on-surface">₹1,15,000 / yr</span>
+            </div>
+
+            <div class="p-3 rounded-xl bg-surface-canvas border border-border-subtle flex items-center justify-between">
+              <div>
+                <span class="font-bold text-amber-700">MEC (CA Foundation Track)</span>
+                <p class="text-[11px] text-neutral-muted">Includes CPT accounting modules &amp; mercantile law classes</p>
+              </div>
+              <span class="font-black text-on-surface">₹85,000 / yr</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Panel 4: WhatsApp Automation & Alerts -->
+        <div class="bg-surface-card rounded-2xl p-6 border border-border-subtle shadow-sm flex flex-col gap-4">
+          <div class="flex items-center gap-2 pb-3 border-b border-border-subtle">
+            <span class="material-symbols-outlined text-primary text-[22px]">sms</span>
+            <h2 class="text-base font-bold text-on-surface">WhatsApp Bot &amp; Parent Notifications</h2>
+          </div>
+
+          <div class="flex flex-col gap-3 text-xs">
+            <div class="p-3 rounded-xl bg-surface-canvas border border-border-subtle flex items-center justify-between">
+              <div>
+                <p class="font-bold text-on-surface">Instant WhatsApp Prospectus Sender</p>
+                <p class="text-[11px] text-neutral-muted">Auto-reply with college PDF brochure when parent texts on WhatsApp.</p>
+              </div>
+              <input type="checkbox" checked class="rounded text-primary focus:ring-primary w-4 h-4 cursor-pointer"/>
+            </div>
+
+            <div class="p-3 rounded-xl bg-surface-canvas border border-border-subtle flex items-center justify-between">
+              <div>
+                <p class="font-bold text-on-surface">Daily 10:00 AM Attendance Alert SMS</p>
+                <p class="text-[11px] text-neutral-muted">Auto-trigger notification to registered parent number if student is absent.</p>
+              </div>
+              <input type="checkbox" checked class="rounded text-primary focus:ring-primary w-4 h-4 cursor-pointer"/>
+            </div>
+
+            <div class="p-3 rounded-xl bg-surface-canvas border border-border-subtle flex items-center justify-between">
+              <div>
+                <p class="font-bold text-on-surface">Counselor Real-time WhatsApp Notification</p>
+                <p class="text-[11px] text-neutral-muted">Send lead details directly to assigned counselor's mobile.</p>
+              </div>
+              <input type="checkbox" checked class="rounded text-primary focus:ring-primary w-4 h-4 cursor-pointer"/>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </main>
+  </div>
+
+  <div id="toastContainer" class="fixed bottom-6 right-6 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+  <script>
+    function notify(message) {
+      const container = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
+      toast.className = 'toast pointer-events-auto bg-on-surface text-surface px-4 py-3 rounded-xl shadow-xl flex items-center gap-2 text-xs font-medium border border-white/10';
+      toast.innerHTML = `<span class="material-symbols-outlined text-secondary-container text-[18px]">check_circle</span><span>${message}</span>`;
+      container.appendChild(toast);
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateY(10px)';
+        toast.style.transition = 'all 0.3s ease-out';
+        setTimeout(() => toast.remove(), 300);
+      }, 3500);
+    }
+  </script>
+</body>
+</html>

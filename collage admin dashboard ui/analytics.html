@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>Apex Junior College - Campus Analytics</title>
+  <link href="https://fonts.googleapis.com" rel="preconnect"/>
+  <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "surface-dim": "#cfddd9",
+            "surface-container-lowest": "#ffffff",
+            "on-primary-fixed-variant": "#005144",
+            "secondary-deep": "#7c5800",
+            "secondary-container": "#fec24a",
+            "on-secondary": "#ffffff",
+            "on-secondary-container": "#715000",
+            "tertiary-container": "#317d6e",
+            "neutral-muted": "#647572",
+            "on-primary-container": "#d4fff2",
+            "surface-bright": "#effcf9",
+            "on-tertiary": "#ffffff",
+            "primary-container": "#087f6c",
+            "inverse-on-surface": "#e6f4f0",
+            "primary-light": "#e6f5f1",
+            "surface-canvas": "#f8faf9",
+            "primary-dark": "#056052",
+            "outline": "#6e7a75",
+            "inverse-surface": "#273331",
+            "on-primary": "#ffffff",
+            "surface-variant": "#d8e5e2",
+            "outline-variant": "#bdc9c4",
+            "background": "#effcf9",
+            "primary-fixed-dim": "#78d7c1",
+            "on-tertiary-fixed": "#00201a",
+            "on-tertiary-container": "#d7fff3",
+            "inverse-primary": "#78d7c1",
+            "success": "#2e8b57",
+            "error": "#d64545",
+            "on-surface-variant": "#3e4946",
+            "secondary-fixed-dim": "#f8bd45",
+            "surface": "#effcf9",
+            "on-surface": "#121e1c",
+            "surface-container": "#e3f1ed",
+            "secondary": "#7c5800",
+            "surface-container-low": "#e9f7f3",
+            "on-error": "#ffffff",
+            "on-secondary-fixed-variant": "#5e4200",
+            "on-tertiary-fixed-variant": "#005144",
+            "surface-card": "#ffffff",
+            "tertiary-fixed-dim": "#8ad4c3",
+            "border-input": "#d1dcd8",
+            "tertiary": "#0e6456",
+            "secondary-fixed": "#ffdea7",
+            "on-error-container": "#93000a",
+            "error-container": "#ffdad6",
+            "primary-deep": "#006454",
+            "border-subtle": "#e4ebe8",
+            "primary": "#006454",
+            "on-secondary-fixed": "#271900",
+            "on-background": "#121e1c",
+            "surface-container-highest": "#d8e5e2",
+            "primary-fixed": "#95f4dd",
+            "surface-container-high": "#ddebe7",
+            "tertiary-fixed": "#a6f1df",
+            "on-primary-fixed": "#00201a",
+            "surface-tint": "#006b5a"
+          },
+          fontFamily: {
+            sans: ["Inter", "sans-serif"]
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    ::-webkit-scrollbar { display: none; }
+    .card-hover {
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .card-hover:hover {
+      transform: translateY(-2px);
+    }
+    .toast {
+      animation: slideIn 0.3s ease-out forwards;
+    }
+    @keyframes slideIn {
+      from { transform: translateY(100%); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+  </style>
+</head>
+<body class="bg-background text-on-surface antialiased min-h-screen">
+
+  <!-- Unified Sidebar (Rock solid, identical across all pages) -->
+  <aside class="fixed left-0 top-0 h-screen w-64 bg-primary-deep text-white z-50 flex flex-col justify-between p-5 border-r border-[#005144] shadow-lg select-none">
+    <div class="flex flex-col gap-6">
+      <!-- Apex Brand -->
+      <a href="dashboard.html" class="flex items-center gap-3 px-1 transition-opacity hover:opacity-90">
+        <div class="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center border border-white/20 shadow-inner">
+          <span class="material-symbols-outlined text-secondary-container text-[24px]">account_balance</span>
+        </div>
+        <div class="flex flex-col">
+          <span class="text-[17px] font-bold tracking-tight text-white leading-tight">Apex</span>
+          <span class="text-[10px] uppercase font-bold tracking-widest text-secondary-container">JUNIOR COLLEGE</span>
+        </div>
+      </a>
+
+      <!-- Navigation Links -->
+      <div class="flex flex-col gap-1">
+        <div class="text-[10px] font-bold uppercase tracking-wider text-on-primary-container/70 mb-2 px-3">Navigation</div>
+        <nav class="flex flex-col gap-1.5" id="sidebarNav">
+          <!-- 1. College Dashboard -->
+          <a class="nav-item flex items-center justify-between px-3.5 py-2.5 rounded-xl text-white/80 hover:bg-white/10 hover:text-white transition-all text-sm font-medium" href="dashboard.html">
+            <div class="flex items-center gap-2.5 min-w-0">
+              <span class="material-symbols-outlined text-[20px] shrink-0">dashboard</span>
+              <span class="truncate">College Dashboard</span>
+            </div>
+          </a>
+
+          <!-- 2. College Profile -->
+          <a class="nav-item flex items-center justify-between px-3.5 py-2.5 rounded-xl text-white/80 hover:bg-white/10 hover:text-white transition-all text-sm font-medium" href="index.html">
+            <div class="flex items-center gap-2.5 min-w-0">
+              <span class="material-symbols-outlined text-[20px] shrink-0">school</span>
+              <span class="truncate">College Profile</span>
+            </div>
+          </a>
+
+          <!-- 3. Leads & Admissions -->
+          <a class="nav-item flex items-center justify-between px-3.5 py-2.5 rounded-xl text-white/80 hover:bg-white/10 hover:text-white transition-all text-sm font-medium" href="leads.html">
+            <div class="flex items-center gap-2.5 min-w-0">
+              <span class="material-symbols-outlined text-[20px] shrink-0">group</span>
+              <span class="truncate">Leads &amp; Admissions</span>
+            </div>
+            <span class="px-2 py-0.5 rounded-full bg-amber-400/20 text-amber-300 text-[10px] font-bold whitespace-nowrap shrink-0 border border-amber-400/30">28 New</span>
+          </a>
+
+          <!-- 4. Analytics (Active) -->
+          <a class="nav-item flex items-center justify-between px-3.5 py-2.5 rounded-xl bg-white text-primary font-bold shadow-sm text-sm transition-all" href="analytics.html">
+            <div class="flex items-center gap-2.5 min-w-0">
+              <span class="material-symbols-outlined text-[20px] shrink-0">insights</span>
+              <span class="truncate">Analytics</span>
+            </div>
+            <span class="flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-bold whitespace-nowrap shrink-0 border border-emerald-200">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-600 animate-pulse"></span> Live
+            </span>
+          </a>
+
+          <!-- 5. Settings -->
+          <a class="nav-item flex items-center justify-between px-3.5 py-2.5 rounded-xl text-white/80 hover:bg-white/10 hover:text-white transition-all text-sm font-medium" href="settings.html">
+            <div class="flex items-center gap-2.5 min-w-0">
+              <span class="material-symbols-outlined text-[20px] shrink-0">settings</span>
+              <span class="truncate">Settings</span>
+            </div>
+          </a>
+        </nav>
+      </div>
+    </div>
+
+    <!-- Academic Session Footer -->
+    <div class="p-3.5 rounded-xl bg-white/5 border border-white/10 flex items-center justify-between">
+      <div class="flex items-center gap-2.5">
+        <span class="material-symbols-outlined text-secondary-container text-[20px]">calendar_month</span>
+        <div class="flex flex-col">
+          <span class="text-[10px] text-white/70 font-medium">Academic Year</span>
+          <span class="text-[12px] font-bold text-secondary-container leading-tight">2025–2026</span>
+        </div>
+      </div>
+      <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 text-[10px] font-semibold">
+        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> Active
+      </span>
+    </div>
+  </aside>
+
+  <!-- Main Content Wrapper (pl-64) -->
+  <div class="pl-64">
+
+    <!-- Fixed Top System Header -->
+    <header class="fixed top-0 left-64 right-0 h-16 bg-white/90 backdrop-blur-md border-b border-border-subtle z-40 flex items-center justify-between px-8">
+      <div class="flex items-center gap-2 text-neutral-muted text-xs font-medium">
+        <span class="material-symbols-outlined text-[18px] text-primary">insights</span>
+        <span>Apex Portal</span>
+        <span class="text-neutral-muted/40">/</span>
+        <span class="text-on-surface font-semibold">Campus Traffic &amp; Admissions Analytics</span>
+      </div>
+
+      <div class="flex items-center gap-4">
+        <div class="relative w-64">
+          <span class="material-symbols-outlined absolute left-3 top-2.5 text-neutral-muted text-[18px]">search</span>
+          <input type="text" placeholder="Search analytics metrics..." class="w-full bg-surface-canvas text-xs pl-9 pr-3 py-2 rounded-lg border border-border-input focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"/>
+        </div>
+
+        <button onclick="notify('🔔 Analytics sync: 100% updated in real-time!')" class="w-9 h-9 rounded-lg border border-border-subtle bg-surface-canvas hover:bg-surface-container flex items-center justify-center text-neutral-muted hover:text-primary relative transition-colors">
+          <span class="material-symbols-outlined text-[20px]">notifications</span>
+          <span class="absolute top-2 right-2 w-2 h-2 rounded-full bg-secondary-container"></span>
+        </button>
+
+        <button onclick="notify('📊 Full PDF report exported!')" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-primary hover:bg-primary-dark text-white text-xs font-semibold shadow-sm transition-colors">
+          <span class="material-symbols-outlined text-[16px]">download</span>
+          <span>Export Report</span>
+        </button>
+
+        <div class="flex items-center gap-3 pl-2 border-l border-border-subtle">
+          <div class="w-8 h-8 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center text-primary font-bold text-xs">
+            AP
+          </div>
+          <div class="flex flex-col text-left">
+            <span class="text-xs font-bold text-on-surface">Dr. A. Prabhakar</span>
+            <span class="text-[10px] text-neutral-muted">Principal &amp; Director</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Analytics Body -->
+    <main class="pt-20 pb-16 px-8 max-w-[1440px] mx-auto flex flex-col gap-6">
+
+      <!-- Action Controls & Time Range Selector -->
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-surface-card p-6 rounded-2xl border border-border-subtle shadow-sm">
+        <div>
+          <h1 class="text-xl font-bold text-on-surface">Campus Analytics &amp; Demographics Engine</h1>
+          <p class="text-xs text-neutral-muted mt-1">Real-time telemetry on parent inquiries, feeder high school rankings, and GPA distributions.</p>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-2 bg-surface-canvas p-1 rounded-xl border border-border-subtle text-xs">
+          <button onclick="selectTime(this)" class="px-3 py-1.5 rounded-lg bg-primary text-white font-bold shadow-xs">Today (Live)</button>
+          <button onclick="selectTime(this)" class="px-3 py-1.5 rounded-lg text-neutral-muted hover:text-on-surface font-semibold">Last 7 Days</button>
+          <button onclick="selectTime(this)" class="px-3 py-1.5 rounded-lg text-neutral-muted hover:text-on-surface font-semibold">Last 30 Days</button>
+          <button onclick="selectTime(this)" class="px-3 py-1.5 rounded-lg text-neutral-muted hover:text-on-surface font-semibold">AY 2025–26</button>
+        </div>
+      </div>
+
+      <!-- Top 4 KPI Metrics Row -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="bg-surface-card rounded-2xl p-5 border border-border-subtle shadow-sm card-hover flex flex-col justify-between">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-semibold text-neutral-muted uppercase">Total Profile Views</span>
+            <div class="w-9 h-9 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
+              <span class="material-symbols-outlined text-[20px]">visibility</span>
+            </div>
+          </div>
+          <div class="my-2">
+            <span class="text-2xl font-black text-on-surface">14,820</span>
+            <p class="text-[11px] text-success font-bold mt-1 flex items-center gap-0.5">
+              <span class="material-symbols-outlined text-[14px]">arrow_upward</span> +24.8% vs last week
+            </p>
+          </div>
+          <p class="text-[11px] text-neutral-muted pt-2 border-t border-border-subtle">Mobile App: 78% • Web: 22%</p>
+        </div>
+
+        <div class="bg-surface-card rounded-2xl p-5 border border-border-subtle shadow-sm card-hover flex flex-col justify-between">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-semibold text-neutral-muted uppercase">Unique Prospective Students</span>
+            <div class="w-9 h-9 rounded-xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center">
+              <span class="material-symbols-outlined text-[20px]">person_pin_circle</span>
+            </div>
+          </div>
+          <div class="my-2">
+            <span class="text-2xl font-black text-on-surface">3,490</span>
+            <p class="text-[11px] text-emerald-700 font-bold mt-1 flex items-center gap-0.5">
+              <span class="material-symbols-outlined text-[14px]">trending_up</span> 84% from Hyderabad Urban
+            </p>
+          </div>
+          <p class="text-[11px] text-neutral-muted pt-2 border-t border-border-subtle">Avg. Time on Studio: 4m 12s</p>
+        </div>
+
+        <div class="bg-surface-card rounded-2xl p-5 border border-border-subtle shadow-sm card-hover flex flex-col justify-between">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-semibold text-neutral-muted uppercase">Brochure Downloads</span>
+            <div class="w-9 h-9 rounded-xl bg-amber-500/10 text-amber-600 flex items-center justify-center">
+              <span class="material-symbols-outlined text-[20px]">file_download</span>
+            </div>
+          </div>
+          <div class="my-2">
+            <span class="text-2xl font-black text-on-surface">1,124</span>
+            <p class="text-[11px] text-amber-700 font-bold mt-1 flex items-center gap-0.5">
+              <span class="material-symbols-outlined text-[14px]">bolt</span> High intent conversions
+            </p>
+          </div>
+          <p class="text-[11px] text-neutral-muted pt-2 border-t border-border-subtle">WhatsApp Direct: 620</p>
+        </div>
+
+        <div class="bg-surface-card rounded-2xl p-5 border border-border-subtle shadow-sm card-hover flex flex-col justify-between">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-semibold text-neutral-muted uppercase">Inquiry to Seat Rate</span>
+            <div class="w-9 h-9 rounded-xl bg-indigo-500/10 text-indigo-600 flex items-center justify-center">
+              <span class="material-symbols-outlined text-[20px]">conversion_path</span>
+            </div>
+          </div>
+          <div class="my-2">
+            <span class="text-2xl font-black text-on-surface">32.4%</span>
+            <p class="text-[11px] text-indigo-700 font-bold mt-1 flex items-center gap-0.5">
+              <span class="material-symbols-outlined text-[14px]">verified</span> Industry Top Decile
+            </p>
+          </div>
+          <p class="text-[11px] text-neutral-muted pt-2 border-t border-border-subtle">528 Admitted / 1,630 Leads</p>
+        </div>
+      </div>
+
+      <!-- Feeder Schools & GPA Analytics Grid -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+        <!-- Top Feeder High Schools -->
+        <div class="bg-surface-card rounded-2xl p-6 border border-border-subtle shadow-sm flex flex-col gap-4">
+          <div class="flex items-center justify-between">
+            <div>
+              <h2 class="text-base font-bold text-on-surface">Top Feeder High Schools (Admissions Source)</h2>
+              <p class="text-xs text-neutral-muted">Top 5 institutions where applicants completed 10th standard</p>
+            </div>
+            <span class="text-xs font-bold text-primary">AY 2025–26</span>
+          </div>
+
+          <div class="flex flex-col gap-4 text-xs">
+            <div class="flex flex-col gap-1.5">
+              <div class="flex justify-between font-bold">
+                <span>1. Hyderabad Public School (Begumpet)</span>
+                <span class="text-primary font-black">84 Inquiries (32 Confirmed)</span>
+              </div>
+              <div class="w-full bg-surface-container h-2.5 rounded-full overflow-hidden">
+                <div class="bg-primary h-full rounded-full" style="width: 88%"></div>
+              </div>
+            </div>
+
+            <div class="flex flex-col gap-1.5">
+              <div class="flex justify-between font-bold">
+                <span>2. Delhi Public School (Nacharam / Khajaguda)</span>
+                <span class="text-primary font-black">68 Inquiries (28 Confirmed)</span>
+              </div>
+              <div class="w-full bg-surface-container h-2.5 rounded-full overflow-hidden">
+                <div class="bg-primary h-full rounded-full" style="width: 72%"></div>
+              </div>
+            </div>
+
+            <div class="flex flex-col gap-1.5">
+              <div class="flex justify-between font-bold">
+                <span>3. Bharatiya Vidya Bhavan (Jubilee Hills)</span>
+                <span class="text-primary font-black">54 Inquiries (21 Confirmed)</span>
+              </div>
+              <div class="w-full bg-surface-container h-2.5 rounded-full overflow-hidden">
+                <div class="bg-primary h-full rounded-full" style="width: 58%"></div>
+              </div>
+            </div>
+
+            <div class="flex flex-col gap-1.5">
+              <div class="flex justify-between font-bold">
+                <span>4. Chirec International School (Kondapur)</span>
+                <span class="text-primary font-black">46 Inquiries (18 Confirmed)</span>
+              </div>
+              <div class="w-full bg-surface-container h-2.5 rounded-full overflow-hidden">
+                <div class="bg-primary h-full rounded-full" style="width: 48%"></div>
+              </div>
+            </div>
+
+            <div class="flex flex-col gap-1.5">
+              <div class="flex justify-between font-bold">
+                <span>5. St. Paul's High School (Hyderguda)</span>
+                <span class="text-primary font-black">38 Inquiries (15 Confirmed)</span>
+              </div>
+              <div class="w-full bg-surface-container h-2.5 rounded-full overflow-hidden">
+                <div class="bg-primary h-full rounded-full" style="width: 40%"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 10th GPA Distribution & Scholarships -->
+        <div class="bg-surface-card rounded-2xl p-6 border border-border-subtle shadow-sm flex flex-col gap-4">
+          <div class="flex items-center justify-between">
+            <div>
+              <h2 class="text-base font-bold text-on-surface">10th Class Marks Distribution of Applicants</h2>
+              <p class="text-xs text-neutral-muted">Merit scholarship eligibility tier breakdown</p>
+            </div>
+            <span class="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-xs font-bold">48% High Merit</span>
+          </div>
+
+          <div class="flex flex-col gap-4 text-xs">
+            <div class="p-3.5 rounded-xl bg-emerald-50 border border-emerald-200 flex flex-col gap-2">
+              <div class="flex justify-between font-bold text-emerald-900">
+                <span>570 – 600 Marks (50% Apex Merit Scholarship)</span>
+                <span>48% of applicants (782 Students)</span>
+              </div>
+              <div class="w-full bg-emerald-200 h-2.5 rounded-full overflow-hidden">
+                <div class="bg-emerald-600 h-full rounded-full" style="width: 48%"></div>
+              </div>
+            </div>
+
+            <div class="p-3.5 rounded-xl bg-indigo-50 border border-indigo-200 flex flex-col gap-2">
+              <div class="flex justify-between font-bold text-indigo-900">
+                <span>510 – 569 Marks (25% Merit Waiver)</span>
+                <span>38% of applicants (620 Students)</span>
+              </div>
+              <div class="w-full bg-indigo-200 h-2.5 rounded-full overflow-hidden">
+                <div class="bg-indigo-600 h-full rounded-full" style="width: 38%"></div>
+              </div>
+            </div>
+
+            <div class="p-3.5 rounded-xl bg-amber-50 border border-amber-200 flex flex-col gap-2">
+              <div class="flex justify-between font-bold text-amber-900">
+                <span>450 – 509 Marks (Standard Admission)</span>
+                <span>14% of applicants (228 Students)</span>
+              </div>
+              <div class="w-full bg-amber-200 h-2.5 rounded-full overflow-hidden">
+                <div class="bg-amber-500 h-full rounded-full" style="width: 14%"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Demographics & Stream Analytics Grid -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+
+        <!-- Gender Demographics -->
+        <div class="bg-surface-card rounded-2xl p-6 border border-border-subtle shadow-sm flex flex-col gap-4">
+          <div class="flex items-center justify-between">
+            <div>
+              <h2 class="text-base font-bold text-on-surface">Applicant Demographics (Gender)</h2>
+              <p class="text-xs text-neutral-muted">Breakdown of leads by boys vs girls</p>
+            </div>
+            <span class="px-2.5 py-0.5 rounded-full bg-blue-100 text-blue-800 text-xs font-bold">Total: 1,630</span>
+          </div>
+
+          <div class="flex flex-col gap-5 mt-2 text-xs flex-1 justify-center">
+            <!-- Boys -->
+            <div class="flex flex-col gap-2">
+              <div class="flex justify-between font-bold text-blue-900">
+                <span class="flex items-center gap-1.5"><span class="material-symbols-outlined text-[16px]">male</span> Boys</span>
+                <span>65% (1,060 Leads)</span>
+              </div>
+              <div class="w-full bg-blue-100 h-3 rounded-full overflow-hidden">
+                <div class="bg-blue-600 h-full rounded-full" style="width: 65%"></div>
+              </div>
+            </div>
+
+            <!-- Girls -->
+            <div class="flex flex-col gap-2">
+              <div class="flex justify-between font-bold text-pink-900">
+                <span class="flex items-center gap-1.5"><span class="material-symbols-outlined text-[16px]">female</span> Girls</span>
+                <span>35% (570 Leads)</span>
+              </div>
+              <div class="w-full bg-pink-100 h-3 rounded-full overflow-hidden">
+                <div class="bg-pink-500 h-full rounded-full" style="width: 35%"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Target Stream Popularity -->
+        <div class="bg-surface-card rounded-2xl p-6 border border-border-subtle shadow-sm flex flex-col gap-4">
+          <div class="flex items-center justify-between">
+            <div>
+              <h2 class="text-base font-bold text-on-surface">Target Stream / Group Demand</h2>
+              <p class="text-xs text-neutral-muted">Inquiry distribution across academic groups</p>
+            </div>
+          </div>
+
+          <div class="flex flex-col gap-4 text-xs">
+            <div class="flex flex-col gap-1.5">
+              <div class="flex justify-between font-bold">
+                <span>1. MPC (IIT-JEE Focus)</span>
+                <span class="text-emerald-700 font-black">45% (733 Leads)</span>
+              </div>
+              <div class="w-full bg-surface-container h-2.5 rounded-full overflow-hidden">
+                <div class="bg-emerald-600 h-full rounded-full" style="width: 45%"></div>
+              </div>
+            </div>
+
+            <div class="flex flex-col gap-1.5">
+              <div class="flex justify-between font-bold">
+                <span>2. BiPC (NEET Focus)</span>
+                <span class="text-teal-700 font-black">30% (489 Leads)</span>
+              </div>
+              <div class="w-full bg-surface-container h-2.5 rounded-full overflow-hidden">
+                <div class="bg-teal-600 h-full rounded-full" style="width: 30%"></div>
+              </div>
+            </div>
+
+            <div class="flex flex-col gap-1.5">
+              <div class="flex justify-between font-bold">
+                <span>3. MEC (CA Foundation)</span>
+                <span class="text-indigo-700 font-black">15% (245 Leads)</span>
+              </div>
+              <div class="w-full bg-surface-container h-2.5 rounded-full overflow-hidden">
+                <div class="bg-indigo-600 h-full rounded-full" style="width: 15%"></div>
+              </div>
+            </div>
+
+            <div class="flex flex-col gap-1.5">
+              <div class="flex justify-between font-bold">
+                <span>4. CEC (Civils / Law)</span>
+                <span class="text-purple-700 font-black">10% (163 Leads)</span>
+              </div>
+              <div class="w-full bg-surface-container h-2.5 rounded-full overflow-hidden">
+                <div class="bg-purple-600 h-full rounded-full" style="width: 10%"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </main>
+  </div>
+
+  <div id="toastContainer" class="fixed bottom-6 right-6 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+  <script>
+    function notify(message) {
+      const container = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
+      toast.className = 'toast pointer-events-auto bg-on-surface text-surface px-4 py-3 rounded-xl shadow-xl flex items-center gap-2 text-xs font-medium border border-white/10';
+      toast.innerHTML = `<span class="material-symbols-outlined text-secondary-container text-[18px]">check_circle</span><span>${message}</span>`;
+      container.appendChild(toast);
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateY(10px)';
+        toast.style.transition = 'all 0.3s ease-out';
+        setTimeout(() => toast.remove(), 300);
+      }, 3500);
+    }
+
+    function selectTime(btn) {
+      btn.parentElement.querySelectorAll('button').forEach(b => {
+        b.className = 'px-3 py-1.5 rounded-lg text-neutral-muted hover:text-on-surface font-semibold';
+      });
+      btn.className = 'px-3 py-1.5 rounded-lg bg-primary text-white font-bold shadow-xs';
+      notify(`📅 Time range switched to: ${btn.innerText.trim()}`);
+    }
+  </script>
+</body>
+</html>
