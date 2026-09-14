@@ -62,7 +62,7 @@ const navGroups: NavGroup[] = [
     collapsible: true,
     items: [
       { name: 'Locations', path: '/admin/locations', icon: IconLocations },
-      { name: 'Schools', path: '/admin/schools', icon: IconSchools },
+      { name: 'Schools', path: '/admin/schools', icon: IconSchools, badge: { text: '3,428', color: 'teal' } },
       { name: 'Pathways & Streams', path: '/admin/pathways', icon: IconPathways },
       { name: 'Career Areas', path: '/admin/career-areas', icon: IconCareerAreas }
     ]
@@ -110,6 +110,9 @@ export function CompanyAdminSidebar() {
     }
     if (badge.color === 'amber-solid') {
       return <span className="text-[10px] text-amber-700 bg-amber-50 px-1.5 py-0.5 rounded border border-amber-200">{badge.text}</span>;
+    }
+    if (badge.color === 'teal') {
+      return <span className="text-[10px] px-1.5 py-0.5 font-semibold bg-white text-brand-teal rounded-full shadow-sm border border-brand-teal/10">{badge.text}</span>;
     }
     return <span className="text-[10px] text-zinc-400 font-mono">{badge.text}</span>;
   };
