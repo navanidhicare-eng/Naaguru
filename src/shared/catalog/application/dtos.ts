@@ -42,6 +42,9 @@ export interface LocationDto {
 export interface SchoolDto {
   id: string;
   locationId: string;
+  locationName?: string;
+  districtName?: string;
+  mandalName?: string;
   nameEn: string;
   nameTe: string;
   partnershipStatus: string | null;

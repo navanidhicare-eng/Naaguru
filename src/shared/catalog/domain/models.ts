@@ -67,6 +67,9 @@ export class Location {
 export interface SchoolProps {
   id: string;
   locationId: string;
+  locationName?: string;
+  districtName?: string;
+  mandalName?: string;
   nameEn: string;
   nameTe: string;
   partnershipStatus: string | null;

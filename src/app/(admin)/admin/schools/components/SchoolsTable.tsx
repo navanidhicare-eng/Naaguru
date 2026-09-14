@@ -1,17 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { MoreVertical, Pencil, Ban, CheckCircle } from 'lucide-react';
-import { MockSchool } from '../hooks/useSchoolsMock';
+import { SchoolDto } from '@/shared/catalog';
+import { ConfirmDialog } from '../../../../../components/ui/confirm-dialog';
 
 interface SchoolsTableProps {
-  schools: MockSchool[];
+  schools: SchoolDto[];
   totalSchools: number;
-  onEdit: (school: MockSchool) => void;
+  onEdit: (school: SchoolDto) => void;
   onDeactivate: (id: string) => void;
   onActivate: (id: string) => void;
 }
 
 export function SchoolsTable({ schools, totalSchools, onEdit, onDeactivate, onActivate }: SchoolsTableProps) {
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
+  const [confirmAction, setConfirmAction] = useState<{ type: 'activate' | 'deactivate', schoolId: string, schoolName: string } | null>(null);
 
   useEffect(() => {
     const handleClickOutside = () => setOpenMenuId(null);
@@ -34,7 +36,6 @@ export function SchoolsTable({ schools, totalSchools, onEdit, onDeactivate, onAc
               <th scope="col" className="py-3.5 px-4 font-semibold w-[30%]">Canonical Location</th>
               <th scope="col" className="py-3.5 px-4 font-semibold w-[14%]">Partnership</th>
               <th scope="col" className="py-3.5 px-4 font-semibold w-[12%]">Status</th>
-              <th scope="col" className="py-3.5 px-4 font-semibold w-[12%]">Last Updated</th>
               <th scope="col" className="py-3.5 pl-4 pr-6 text-right font-semibold w-[4%]">Actions</th>
             </tr>
           </thead>
@@ -46,11 +47,11 @@ export function SchoolsTable({ schools, totalSchools, onEdit, onDeactivate, onAc
                   <div className="font-telugu text-[13px] text-brand-muted mt-0.5">{school.nameTe}</div>
                 </td>
                 <td className="py-4 px-4">
-                  <div className="text-brand-text font-medium text-[13px]">{school.locality}</div>
-                  <div className="text-[12px] text-brand-muted mt-0.5">{school.district} &middot; {school.mandal}</div>
+                  <div className="text-brand-text font-medium text-[13px]">{school.locationName || 'Unknown Locality'}</div>
+                  <div className="text-[12px] text-brand-muted mt-0.5">{school.districtName || 'Unknown'} &middot; {school.mandalName || 'Unknown'}</div>
                 </td>
                 <td className="py-4 px-4">
-                  {school.partnership === 'Partner' ? (
+                  {school.partnershipStatus === 'PARTNER' ? (
                     <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[12px] font-medium bg-teal-50 text-teal-700 border border-teal-200">
                       <span className="w-1.5 h-1.5 rounded-full bg-teal-600"></span>
                       Partner
@@ -62,7 +63,7 @@ export function SchoolsTable({ schools, totalSchools, onEdit, onDeactivate, onAc
                   )}
                 </td>
                 <td className="py-4 px-4">
-                  {school.status === 'Active' ? (
+                  {school.status === 'ACTIVE' ? (
                     <span className="inline-flex items-center gap-1.5 text-[13px] font-medium text-emerald-700">
                       <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
                       Active
@@ -73,9 +74,6 @@ export function SchoolsTable({ schools, totalSchools, onEdit, onDeactivate, onAc
                       Inactive
                     </span>
                   )}
-                </td>
-                <td className="py-4 px-4 text-brand-muted text-[13px]">
-                  {school.lastUpdated}
                 </td>
                 <td className="py-4 pl-4 pr-6 text-right relative">
                   <button 
@@ -92,16 +90,16 @@ export function SchoolsTable({ schools, totalSchools, onEdit, onDeactivate, onAc
                       >
                         <Pencil size={14} className="text-gray-500" /> Edit
                       </button>
-                      {school.status === 'Active' ? (
+                      {school.status === 'ACTIVE' ? (
                         <button 
-                          onClick={(e) => { e.stopPropagation(); onDeactivate(school.id); setOpenMenuId(null); }} 
+                          onClick={(e) => { e.stopPropagation(); setConfirmAction({ type: 'deactivate', schoolId: school.id, schoolName: school.nameEn }); setOpenMenuId(null); }} 
                           className="w-full px-3 py-1.5 text-[13px] text-rose-600 hover:bg-rose-50 flex items-center gap-2 cursor-pointer"
                         >
                           <Ban size={14} /> Deactivate
                         </button>
                       ) : (
                         <button 
-                          onClick={(e) => { e.stopPropagation(); onActivate(school.id); setOpenMenuId(null); }} 
+                          onClick={(e) => { e.stopPropagation(); setConfirmAction({ type: 'activate', schoolId: school.id, schoolName: school.nameEn }); setOpenMenuId(null); }} 
                           className="w-full px-3 py-1.5 text-[13px] text-emerald-600 hover:bg-emerald-50 flex items-center gap-2 cursor-pointer"
                         >
                           <CheckCircle size={14} /> Activate
@@ -121,22 +119,28 @@ export function SchoolsTable({ schools, totalSchools, onEdit, onDeactivate, onAc
         <div>
           Showing <span className="font-medium text-brand-text">1–{Math.min(schools.length, 6)}</span> of <span className="font-medium text-brand-text">{totalSchools.toLocaleString()}</span> schools
         </div>
-        <div className="flex items-center gap-2">
-          <button className="px-3 py-1.5 border border-gray-200 rounded-lg text-gray-400 bg-white cursor-not-allowed text-xs font-medium" disabled>
-            Previous
-          </button>
-          <div className="flex items-center gap-1">
-            <button className="w-7 h-7 rounded-md bg-teal-600 text-white text-xs font-semibold cursor-pointer">1</button>
-            <button className="w-7 h-7 rounded-md hover:bg-gray-100 text-gray-700 text-xs font-medium transition cursor-pointer">2</button>
-            <button className="w-7 h-7 rounded-md hover:bg-gray-100 text-gray-700 text-xs font-medium transition cursor-pointer">3</button>
-            <span className="text-gray-400 px-1">...</span>
-            <button className="w-7 h-7 rounded-md hover:bg-gray-100 text-gray-700 text-xs font-medium transition cursor-pointer">572</button>
-          </div>
-          <button className="px-3 py-1.5 border border-gray-200 rounded-lg text-gray-700 bg-white hover:bg-gray-50 text-xs font-medium transition cursor-pointer">
-            Next
-          </button>
-        </div>
       </div>
+      
+      <ConfirmDialog
+        isOpen={confirmAction !== null}
+        title={confirmAction?.type === 'deactivate' ? 'Deactivate School' : 'Activate School'}
+        description={
+          confirmAction?.type === 'deactivate'
+            ? <>Are you sure you want to deactivate <strong>{confirmAction?.schoolName}</strong>? This will hide it from active catalogs but preserve historical data.</>
+            : <>Are you sure you want to activate <strong>{confirmAction?.schoolName}</strong>? This will make it visible in active catalogs.</>
+        }
+        confirmText={confirmAction?.type === 'deactivate' ? 'Deactivate' : 'Activate'}
+        variant={confirmAction?.type === 'deactivate' ? 'danger' : 'success'}
+        onConfirm={() => {
+          if (confirmAction?.type === 'deactivate') {
+            onDeactivate(confirmAction.schoolId);
+          } else if (confirmAction?.type === 'activate') {
+            onActivate(confirmAction.schoolId);
+          }
+          setConfirmAction(null);
+        }}
+        onCancel={() => setConfirmAction(null)}
+      />
     </div>
   );
 }

@@ -1,7 +1,9 @@
 'use client';
 
-import React, { useState } from 'react';
-import { useSchoolsMock, MockSchool } from './hooks/useSchoolsMock';
+import React, { useState, useEffect } from 'react';
+import { useSchools } from './hooks/useSchools';
+import { useLocationHierarchy } from './hooks/useLocationHierarchy';
+import { SchoolDto } from '@/shared/catalog';
 import { SchoolsTable } from './components/SchoolsTable';
 import { SchoolsDrawer, EditSchoolPayload } from './components/SchoolsDrawer';
 import { Search, ChevronDown, RotateCcw, Plus } from 'lucide-react';
@@ -9,37 +11,77 @@ import { Search, ChevronDown, RotateCcw, Plus } from 'lucide-react';
 export default function SchoolsPage() {
   const {
     schools,
-    totalSchools,
+    loading,
+    error,
     search,
     setSearch,
-    filterState,
-    setFilterState,
-    filterDistrict,
-    setFilterDistrict,
-    filterMandal,
-    setFilterMandal,
-    filterLocality,
-    setFilterLocality,
     filterPartner,
     setFilterPartner,
     filterStatus,
     setFilterStatus,
-    resetFilters,
-    handleDeactivate,
-    handleActivate,
-  } = useSchoolsMock();
+    setFilterLocationId,
+    refresh
+  } = useSchools();
+
+  const {
+    states, districts, mandals, localities,
+    selectedState, setSelectedState,
+    selectedDistrict, setSelectedDistrict,
+    selectedMandal, setSelectedMandal,
+    selectedLocality, setSelectedLocality,
+    resetLocations
+  } = useLocationHierarchy();
+
+  // Sync selected locality to the school fetcher
+  useEffect(() => {
+    setFilterLocationId(selectedLocality);
+  }, [selectedLocality, setFilterLocationId]);
+
+  const resetFilters = () => {
+    setSearch('');
+    setFilterPartner('');
+    setFilterStatus('');
+    resetLocations();
+  };
+
+  const handleDeactivate = async (id: string) => {
+    try {
+      const res = await fetch(`/api/v1/admin/schools/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: 'INACTIVE' })
+      });
+      if (res.ok) refresh();
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const handleActivate = async (id: string) => {
+    try {
+      const res = await fetch(`/api/v1/admin/schools/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: 'ACTIVE' })
+      });
+      if (res.ok) refresh();
+    } catch (e) {
+      console.error(e);
+    }
+  };
 
   const [drawerState, setDrawerState] = useState<'closed' | 'add' | 'edit'>('closed');
   const [editingSchool, setEditingSchool] = useState<EditSchoolPayload | null>(null);
 
   const openAddDrawer = () => setDrawerState('add');
-  const openEditDrawer = (school: MockSchool) => {
+  const openEditDrawer = (school: SchoolDto) => {
     setEditingSchool({
+      id: school.id,
       nameEn: school.nameEn,
       nameTe: school.nameTe,
-      locationDisplay: `${school.district} · ${school.mandal} · ${school.locality}`,
-      partnership: school.partnership,
-      status: school.status,
+      locationDisplay: `${school.districtName} · ${school.mandalName} · ${school.locationName}`,
+      partnership: school.partnershipStatus === 'PARTNER' ? 'Partner' : 'Non-partner',
+      status: school.status as 'Active' | 'Inactive' | 'Coming Soon',
     });
     setDrawerState('edit');
   };
@@ -61,9 +103,9 @@ export default function SchoolsPage() {
           </div>
           <div className="flex items-center gap-3 self-start sm:self-auto">
             <div className="text-right hidden md:block">
-              <div className="text-[13px] font-semibold text-brand-text">{totalSchools.toLocaleString()} schools</div>
+              <div className="text-[13px] font-semibold text-brand-text">{schools.length.toLocaleString()} schools</div>
               <div className="text-[12px] text-brand-muted">
-                Showing 1–{Math.min(schools.length, 8)} of {totalSchools.toLocaleString()}
+                Showing {schools.length > 0 ? '1' : '0'}–{Math.min(schools.length, 8)} of {schools.length.toLocaleString()}
               </div>
             </div>
             <button 
@@ -94,12 +136,12 @@ export default function SchoolsPage() {
 
             {/* Cascading Location & Status Filter Selectors */}
             <div className="flex flex-wrap items-center gap-2.5">
-              <FilterSelect value={filterState} onChange={setFilterState} options={[{value: 'AP', label: 'Andhra Pradesh (AP)'}, {value: 'TS', label: 'Telangana (TS)'}]} defaultOption="All States" />
-              <FilterSelect value={filterDistrict} onChange={setFilterDistrict} options={[{value: 'Krishna', label: 'Krishna'}, {value: 'Guntur', label: 'Guntur'}, {value: 'Visakhapatnam', label: 'Visakhapatnam'}, {value: 'Srikakulam', label: 'Srikakulam'}, {value: 'Chittoor', label: 'Chittoor'}]} defaultOption="All Districts" />
-              <FilterSelect value={filterMandal} onChange={setFilterMandal} options={[{value: 'Vijayawada Urban', label: 'Vijayawada Urban'}, {value: 'Tenali', label: 'Tenali'}, {value: 'Gajuwaka', label: 'Gajuwaka'}, {value: 'Tekkali', label: 'Tekkali'}]} defaultOption="All Mandals" />
-              <FilterSelect value={filterLocality} onChange={setFilterLocality} options={[{value: 'Moghalrajpuram', label: 'Moghalrajpuram'}, {value: 'Morrispet Ward 4', label: 'Morrispet Ward 4'}, {value: 'MVP Colony Sector 3', label: 'MVP Colony Sector 3'}, {value: 'Old Gajuwaka', label: 'Old Gajuwaka'}]} defaultOption="All Localities" />
-              <FilterSelect value={filterPartner} onChange={setFilterPartner} options={[{value: 'Partner', label: 'Partner'}, {value: 'Non-partner', label: 'Non-partner'}]} defaultOption="All Partnerships" />
-              <FilterSelect value={filterStatus} onChange={setFilterStatus} options={[{value: 'Active', label: 'Active'}, {value: 'Inactive', label: 'Inactive'}]} defaultOption="All Status" />
+              <FilterSelect value={selectedState} onChange={setSelectedState} options={states.map(s => ({ value: s.id, label: s.nameEn }))} defaultOption="All States" />
+              <FilterSelect value={selectedDistrict} onChange={setSelectedDistrict} options={districts.map(d => ({ value: d.id, label: d.nameEn }))} defaultOption="All Districts" />
+              <FilterSelect value={selectedMandal} onChange={setSelectedMandal} options={mandals.map(m => ({ value: m.id, label: m.nameEn }))} defaultOption="All Mandals" />
+              <FilterSelect value={selectedLocality} onChange={setSelectedLocality} options={localities.map(l => ({ value: l.id, label: l.nameEn }))} defaultOption="All Localities" />
+              <FilterSelect value={filterPartner} onChange={setFilterPartner} options={[{value: 'PARTNER', label: 'Partner'}, {value: 'Non-partner', label: 'Non-partner'}]} defaultOption="All Partnerships" />
+              <FilterSelect value={filterStatus} onChange={setFilterStatus} options={[{value: 'ACTIVE', label: 'Active'}, {value: 'INACTIVE', label: 'Inactive'}]} defaultOption="All Status" />
 
               <button 
                 onClick={resetFilters} 
@@ -113,10 +155,20 @@ export default function SchoolsPage() {
         </div>
 
         {/* MAIN TABLE or EMPTY STATE */}
-        {schools.length > 0 ? (
+        {loading ? (
+          <div className="bg-white border border-zinc-200 rounded-xl p-16 text-center shadow-sm">
+            <div className="animate-spin w-8 h-8 border-4 border-teal-600 border-t-transparent rounded-full mx-auto mb-4"></div>
+            <h3 className="text-[15px] font-medium text-brand-text">Loading schools...</h3>
+          </div>
+        ) : error ? (
+          <div className="bg-white border border-zinc-200 rounded-xl p-16 text-center shadow-sm">
+            <h3 className="text-[17px] font-semibold text-red-600">Failed to load</h3>
+            <p className="text-[14px] text-brand-muted mt-1.5">{error}</p>
+          </div>
+        ) : schools.length > 0 ? (
           <SchoolsTable 
             schools={schools}
-            totalSchools={totalSchools}
+            totalSchools={schools.length}
             onEdit={openEditDrawer}
             onDeactivate={handleDeactivate}
             onActivate={handleActivate}
@@ -145,6 +197,7 @@ export default function SchoolsPage() {
         state={drawerState} 
         onClose={closeDrawer} 
         editingSchool={editingSchool} 
+        refreshSchools={refresh}
       />
     </div>
   );

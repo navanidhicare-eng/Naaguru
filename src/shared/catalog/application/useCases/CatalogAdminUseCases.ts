@@ -117,6 +117,9 @@ export class CatalogAdminUseCases {
     return schools.map(s => ({
       id: s.props.id,
       locationId: s.props.locationId,
+      locationName: s.props.locationName,
+      mandalName: s.props.mandalName,
+      districtName: s.props.districtName,
       nameEn: s.props.nameEn,
       nameTe: s.props.nameTe,
       partnershipStatus: s.props.partnershipStatus,

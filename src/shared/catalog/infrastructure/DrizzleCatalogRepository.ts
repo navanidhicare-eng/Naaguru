@@ -1,4 +1,5 @@
 import { eq, inArray, and, ne, ilike, sql, isNull } from 'drizzle-orm';
+import { alias } from 'drizzle-orm/pg-core';
 import { db } from '../../database/db';
 import { educationPathwaysTable, educationProgramsTable, locationsTable, schoolsTable } from './schema';
 import { Pathway, Program, ServiceArea, Location, School } from '../domain/models';
@@ -277,19 +278,34 @@ export class DrizzleCatalogRepository {
       }
     }
 
+    const localityTable = alias(locationsTable, 'locality');
+    const mandalTable = alias(locationsTable, 'mandal');
+    const districtTable = alias(locationsTable, 'district');
+
     const rows = await db
-      .select()
+      .select({
+        school: schoolsTable,
+        locationName: localityTable.nameEn,
+        mandalName: mandalTable.nameEn,
+        districtName: districtTable.nameEn,
+      })
       .from(schoolsTable)
+      .leftJoin(localityTable, eq(schoolsTable.locationId, localityTable.id))
+      .leftJoin(mandalTable, eq(localityTable.parentId, mandalTable.id))
+      .leftJoin(districtTable, eq(mandalTable.parentId, districtTable.id))
       .where(conditions.length > 0 ? and(...conditions) : undefined)
       .orderBy(schoolsTable.nameEn);
 
     return rows.map(r => School.create({
-      id: r.id,
-      locationId: r.locationId,
-      nameEn: r.nameEn,
-      nameTe: r.nameTe,
-      partnershipStatus: r.partnershipStatus,
-      status: r.status as any,
+      id: r.school.id,
+      locationId: r.school.locationId,
+      locationName: r.locationName || undefined,
+      mandalName: r.mandalName || undefined,
+      districtName: r.districtName || undefined,
+      nameEn: r.school.nameEn,
+      nameTe: r.school.nameTe,
+      partnershipStatus: r.school.partnershipStatus,
+      status: r.school.status as any,
     }));
   }
 

@@ -1,72 +1,135 @@
 import React, { useEffect, useState } from 'react';
-import { X, ChevronDown, Lock, CheckCircle } from 'lucide-react';
-import { PartnershipStatus, SchoolStatus } from '../hooks/useSchoolsMock';
+import { X, ChevronDown, CheckCircle, Lock } from 'lucide-react';
 
 export interface EditSchoolPayload {
+  id: string;
   nameEn: string;
   nameTe: string;
   locationDisplay: string;
-  partnership: PartnershipStatus;
-  status: SchoolStatus;
+  partnership: 'Partner' | 'Non-partner';
+  status: 'Active' | 'Inactive' | 'Coming Soon';
 }
 
 interface SchoolsDrawerProps {
   state: 'closed' | 'add' | 'edit';
   onClose: () => void;
   editingSchool: EditSchoolPayload | null;
+  refreshSchools: () => void;
 }
 
-export function SchoolsDrawer({ state, onClose, editingSchool }: SchoolsDrawerProps) {
-  const [showToast, setShowToast] = useState(false);
-  const [toastMessage, setToastMessage] = useState('');
+import { useLocationHierarchy } from '../hooks/useLocationHierarchy';
+
+export function SchoolsDrawer({ state, onClose, editingSchool, refreshSchools }: SchoolsDrawerProps) {
+  const [successMessage, setSuccessMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Local state for Add School
-  const [addState, setAddState] = useState('AP');
-  const [addDistrict, setAddDistrict] = useState('Krishna');
-  const [addMandal, setAddMandal] = useState('Vijayawada Urban');
+  const [addNameEn, setAddNameEn] = useState('');
+  const [addNameTe, setAddNameTe] = useState('');
+  const [addPartnership, setAddPartnership] = useState('Partner');
+  const [addStatus, setAddStatus] = useState('Active');
+  
+  const {
+    states, districts, mandals, localities,
+    selectedState, setSelectedState,
+    selectedDistrict, setSelectedDistrict,
+    selectedMandal, setSelectedMandal,
+    selectedLocality, setSelectedLocality,
+    resetLocations
+  } = useLocationHierarchy();
   
   // Local state for Edit School
   const [editNameEn, setEditNameEn] = useState('');
   const [editNameTe, setEditNameTe] = useState('');
-  const [editPartnership, setEditPartnership] = useState<PartnershipStatus>('Partner');
-  const [editStatus, setEditStatus] = useState<SchoolStatus>('Active');
+  const [editPartnership, setEditPartnership] = useState<'Partner'|'Non-partner'>('Partner');
+  const [editStatus, setEditStatus] = useState<'Active'|'Inactive'|'Coming Soon'>('Active');
 
   useEffect(() => {
     if (state === 'edit' && editingSchool) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setEditNameEn(editingSchool.nameEn);
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setEditNameTe(editingSchool.nameTe);
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setEditPartnership(editingSchool.partnership);
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setEditStatus(editingSchool.status);
+      setTimeout(() => {
+        setEditNameEn(editingSchool.nameEn);
+        setEditNameTe(editingSchool.nameTe);
+        setEditPartnership(editingSchool.partnership);
+        setEditStatus(editingSchool.status);
+      }, 0);
     }
   }, [state, editingSchool]);
 
-  const displayToast = (msg: string) => {
-    setToastMessage(msg);
-    setShowToast(true);
-    setTimeout(() => setShowToast(false), 3000);
-  };
-
-  const handleAddSubmit = (e: React.FormEvent) => {
+  const handleAddSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    onClose();
-    displayToast('New school registered in catalog.');
+    if (!selectedLocality) {
+      setErrorMessage('Please select a valid locality.');
+      return;
+    }
+    setErrorMessage('');
+    setIsSubmitting(true);
+    try {
+      const res = await fetch('/api/v1/admin/schools', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          locationId: selectedLocality,
+          nameEn: addNameEn,
+          nameTe: addNameTe,
+          partnershipStatus: addPartnership === 'Partner' ? 'PARTNER' : null,
+          status: addStatus.toUpperCase()
+        })
+      });
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.error || 'Failed to create school');
+      }
+      setSuccessMessage('School successfully added.');
+      refreshSchools();
+      setTimeout(() => {
+        setSuccessMessage('');
+        resetLocations();
+        setAddNameEn('');
+        setAddNameTe('');
+        onClose();
+      }, 1500);
+    } catch (err: any) {
+      setErrorMessage(err.message);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
-  const handleEditSubmit = (e: React.FormEvent) => {
+  const handleEditSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    onClose();
-    displayToast('School updates saved.');
+    if (!editingSchool) return;
+    setErrorMessage('');
+    setIsSubmitting(true);
+    try {
+      const res = await fetch(`/api/v1/admin/schools/${editingSchool.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          nameEn: editNameEn,
+          nameTe: editNameTe,
+          partnershipStatus: editPartnership === 'Partner' ? 'PARTNER' : null,
+          status: editStatus.toUpperCase()
+        })
+      });
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.error || 'Failed to update school');
+      }
+      setSuccessMessage('School updates saved.');
+      refreshSchools();
+      setTimeout(() => {
+        setSuccessMessage('');
+        onClose();
+      }, 1500);
+    } catch (err: any) {
+      setErrorMessage(err.message);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
-  if (state === 'closed') return (
-    <>
-      <Toast show={showToast} message={toastMessage} />
-    </>
-  );
+  if (state === 'closed') return null;
 
   return (
     <div className="fixed inset-0 z-50 overflow-hidden flex">
@@ -93,7 +156,17 @@ export function SchoolsDrawer({ state, onClose, editingSchool }: SchoolsDrawerPr
             </div>
 
             {/* Drawer Form Body */}
-            <form onSubmit={handleAddSubmit} className="flex-1 overflow-y-auto custom-scrollbar p-6 space-y-6">
+            <form onSubmit={handleAddSubmit} className="flex-1 overflow-y-auto custom-scrollbar p-6 space-y-6 relative">
+              {successMessage && (
+                <div className="p-3 bg-emerald-50 text-emerald-700 text-sm rounded-lg mb-4 flex items-center gap-2">
+                  <CheckCircle size={16} /> {successMessage}
+                </div>
+              )}
+              {errorMessage && (
+                <div className="p-3 bg-rose-50 text-rose-700 text-sm rounded-lg mb-4">
+                  {errorMessage}
+                </div>
+              )}
               
               {/* Section 1: School Names */}
               <div className="space-y-4">
@@ -106,6 +179,8 @@ export function SchoolsDrawer({ state, onClose, editingSchool }: SchoolsDrawerPr
                   <input 
                     type="text" 
                     required 
+                    value={addNameEn}
+                    onChange={(e) => setAddNameEn(e.target.value)}
                     placeholder="e.g. Kendriya Vidyalaya Steel Plant" 
                     className="w-full px-3.5 py-2.5 bg-white border border-gray-200 rounded-lg text-[14px] text-brand-text placeholder:text-gray-400 focus:outline-none focus:border-teal-600 focus:ring-1 focus:ring-teal-600 transition"
                   />
@@ -117,6 +192,9 @@ export function SchoolsDrawer({ state, onClose, editingSchool }: SchoolsDrawerPr
                   </label>
                   <input 
                     type="text" 
+                    required
+                    value={addNameTe}
+                    onChange={(e) => setAddNameTe(e.target.value)}
                     placeholder="ఉదా: కేంద్రీయ విద్యాలయ స్టీల్ ప్లాంట్" 
                     className="w-full px-3.5 py-2.5 bg-white border border-gray-200 rounded-lg text-[14px] font-telugu text-brand-text placeholder:text-gray-400 focus:outline-none focus:border-teal-600 focus:ring-1 focus:ring-teal-600 transition"
                   />
@@ -141,12 +219,12 @@ export function SchoolsDrawer({ state, onClose, editingSchool }: SchoolsDrawerPr
                   </label>
                   <div className="relative">
                     <select 
-                      value={addState}
-                      onChange={e => setAddState(e.target.value)}
+                      value={selectedState}
+                      onChange={e => setSelectedState(e.target.value)}
                       className="w-full appearance-none px-3.5 py-2.5 bg-white border border-gray-200 rounded-lg text-[14px] text-brand-text cursor-pointer focus:outline-none focus:border-teal-600 transition"
                     >
-                      <option value="AP">Andhra Pradesh</option>
-                      <option value="TS">Telangana</option>
+                      <option value="">Select State</option>
+                      {states.map(s => <option key={s.id} value={s.id}>{s.nameEn}</option>)}
                     </select>
                     <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" size={14} />
                   </div>
@@ -159,15 +237,13 @@ export function SchoolsDrawer({ state, onClose, editingSchool }: SchoolsDrawerPr
                   </label>
                   <div className="relative">
                     <select 
-                      value={addDistrict}
-                      onChange={e => setAddDistrict(e.target.value)}
-                      className="w-full appearance-none px-3.5 py-2.5 bg-white border border-gray-200 rounded-lg text-[14px] text-brand-text cursor-pointer focus:outline-none focus:border-teal-600 transition"
+                      value={selectedDistrict}
+                      onChange={e => setSelectedDistrict(e.target.value)}
+                      disabled={!selectedState}
+                      className="w-full appearance-none px-3.5 py-2.5 bg-white border border-gray-200 rounded-lg text-[14px] text-brand-text cursor-pointer focus:outline-none focus:border-teal-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      <option value="Krishna">Krishna</option>
-                      <option value="Guntur">Guntur</option>
-                      <option value="Visakhapatnam">Visakhapatnam</option>
-                      <option value="Srikakulam">Srikakulam</option>
-                      <option value="Chittoor">Chittoor</option>
+                      <option value="">Select District</option>
+                      {districts.map(d => <option key={d.id} value={d.id}>{d.nameEn}</option>)}
                     </select>
                     <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" size={14} />
                   </div>
@@ -180,14 +256,13 @@ export function SchoolsDrawer({ state, onClose, editingSchool }: SchoolsDrawerPr
                   </label>
                   <div className="relative">
                     <select 
-                      value={addMandal}
-                      onChange={e => setAddMandal(e.target.value)}
-                      className="w-full appearance-none px-3.5 py-2.5 bg-white border border-gray-200 rounded-lg text-[14px] text-brand-text cursor-pointer focus:outline-none focus:border-teal-600 transition"
+                      value={selectedMandal}
+                      onChange={e => setSelectedMandal(e.target.value)}
+                      disabled={!selectedDistrict}
+                      className="w-full appearance-none px-3.5 py-2.5 bg-white border border-gray-200 rounded-lg text-[14px] text-brand-text cursor-pointer focus:outline-none focus:border-teal-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      <option value="Vijayawada Urban">Vijayawada Urban</option>
-                      <option value="Vijayawada Rural">Vijayawada Rural</option>
-                      <option value="Gannavaram">Gannavaram</option>
-                      <option value="Machilipatnam">Machilipatnam</option>
+                      <option value="">Select Mandal</option>
+                      {mandals.map(m => <option key={m.id} value={m.id}>{m.nameEn}</option>)}
                     </select>
                     <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" size={14} />
                   </div>
@@ -204,18 +279,18 @@ export function SchoolsDrawer({ state, onClose, editingSchool }: SchoolsDrawerPr
                   <div className="relative">
                     <select 
                       required
-                      className="w-full appearance-none px-3.5 py-2.5 bg-white border border-teal-600/40 rounded-lg text-[14px] text-brand-text cursor-pointer focus:outline-none focus:border-teal-600 ring-1 ring-teal-600/20 transition"
+                      value={selectedLocality}
+                      onChange={e => setSelectedLocality(e.target.value)}
+                      disabled={!selectedMandal}
+                      className="w-full appearance-none px-3.5 py-2.5 bg-white border border-teal-600/40 rounded-lg text-[14px] text-brand-text cursor-pointer focus:outline-none focus:border-teal-600 ring-1 ring-teal-600/20 transition disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      <option value="Moghalrajpuram">Moghalrajpuram</option>
-                      <option value="Governorpet">Governorpet</option>
-                      <option value="Benz Circle">Benz Circle Area</option>
-                      <option value="Gunadala">Gunadala</option>
-                      <option value="Patamata">Patamata</option>
+                      <option value="">Select Locality</option>
+                      {localities.map(l => <option key={l.id} value={l.id}>{l.nameEn}</option>)}
                     </select>
                     <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" size={14} />
                   </div>
                   <p className="text-[11px] text-brand-muted mt-1.5">
-                    Selected: <span className="font-medium text-gray-700">{addState === 'AP' ? 'Andhra Pradesh' : 'Telangana'} &rarr; {addDistrict} &rarr; {addMandal} &rarr; Moghalrajpuram</span>
+                    Select a fully qualified locality hierarchy above.
                   </p>
                 </div>
 
@@ -231,11 +306,11 @@ export function SchoolsDrawer({ state, onClose, editingSchool }: SchoolsDrawerPr
                   <label className="block text-[13px] font-medium text-brand-text mb-2">Partnership Designation</label>
                   <div className="grid grid-cols-2 gap-3">
                     <label className="flex items-center gap-2 p-3 border border-teal-600/40 bg-teal-50/50 rounded-lg cursor-pointer">
-                      <input type="radio" name="add_partner" value="Partner" defaultChecked className="text-teal-600 focus:ring-teal-600" />
+                      <input type="radio" name="add_partner" value="Partner" checked={addPartnership === 'Partner'} onChange={() => setAddPartnership('Partner')} className="text-teal-600 focus:ring-teal-600" />
                       <span className="text-[13px] font-medium text-teal-700">Partner School</span>
                     </label>
                     <label className="flex items-center gap-2 p-3 border border-gray-200 hover:bg-gray-50 rounded-lg cursor-pointer">
-                      <input type="radio" name="add_partner" value="Non-partner" className="text-teal-600 focus:ring-teal-600" />
+                      <input type="radio" name="add_partner" value="Non-partner" checked={addPartnership === 'Non-partner'} onChange={() => setAddPartnership('Non-partner')} className="text-teal-600 focus:ring-teal-600" />
                       <span className="text-[13px] font-medium text-gray-700">Non-partner</span>
                     </label>
                   </div>
@@ -245,31 +320,24 @@ export function SchoolsDrawer({ state, onClose, editingSchool }: SchoolsDrawerPr
                   <label className="block text-[13px] font-medium text-brand-text mb-2">Catalog Status</label>
                   <div className="grid grid-cols-2 gap-3">
                     <label className="flex items-center gap-2 p-3 border border-gray-200 bg-white rounded-lg cursor-pointer">
-                      <input type="radio" name="add_status" value="Active" defaultChecked className="text-teal-600 focus:ring-teal-600" />
+                      <input type="radio" name="add_status" value="Active" checked={addStatus === 'Active'} onChange={() => setAddStatus('Active')} className="text-teal-600 focus:ring-teal-600" />
                       <span className="text-[13px] font-medium text-emerald-700">Active</span>
                     </label>
-                    <label className="flex items-center gap-2 p-3 border border-gray-200 hover:bg-gray-50 rounded-lg cursor-pointer">
-                      <input type="radio" name="add_status" value="Inactive" className="text-teal-600 focus:ring-teal-600" />
-                      <span className="text-[13px] font-medium text-gray-600">Inactive</span>
+                    <label className="flex items-center gap-2 p-3 border border-gray-200 bg-white rounded-lg cursor-pointer">
+                      <input type="radio" name="add_status" value="Inactive" checked={addStatus === 'Inactive'} onChange={() => setAddStatus('Inactive')} className="text-teal-600 focus:ring-teal-600" />
+                      <span className="text-[13px] font-medium text-gray-500">Inactive</span>
                     </label>
                   </div>
                 </div>
               </div>
 
               {/* Submit Actions */}
-              <div className="pt-4 border-t border-zinc-200 flex items-center justify-end gap-3 sticky bottom-0 bg-white py-4">
-                <button 
-                  type="button" 
-                  onClick={onClose} 
-                  className="px-4 py-2.5 border border-gray-300 hover:bg-gray-50 rounded-lg text-[14px] font-medium text-gray-700 transition cursor-pointer"
-                >
+              <div className="p-6 border-t border-zinc-200 bg-gray-50 flex gap-3 justify-end">
+                <button type="button" onClick={onClose} disabled={isSubmitting} className="px-5 py-2.5 rounded-lg border border-gray-300 text-[14px] font-medium text-gray-700 hover:bg-gray-100 transition cursor-pointer disabled:opacity-50">
                   Cancel
                 </button>
-                <button 
-                  type="submit" 
-                  className="px-5 py-2.5 bg-teal-600 hover:bg-teal-700 text-white rounded-lg text-[14px] font-semibold shadow-xs transition cursor-pointer"
-                >
-                  Add School
+                <button type="submit" disabled={isSubmitting} className="px-5 py-2.5 rounded-lg bg-teal-600 hover:bg-teal-700 text-white text-[14px] font-medium shadow-sm transition active:scale-[0.98] cursor-pointer disabled:opacity-50 flex items-center gap-2">
+                  {isSubmitting ? 'Saving...' : 'Add School'}
                 </button>
               </div>
             </form>
@@ -291,7 +359,17 @@ export function SchoolsDrawer({ state, onClose, editingSchool }: SchoolsDrawerPr
             </div>
 
             {/* Drawer Form Body */}
-            <form onSubmit={handleEditSubmit} className="flex-1 overflow-y-auto custom-scrollbar p-6 space-y-6">
+            <form onSubmit={handleEditSubmit} className="flex-1 overflow-y-auto custom-scrollbar p-6 space-y-6 relative">
+              {successMessage && (
+                <div className="p-3 bg-emerald-50 text-emerald-700 text-sm rounded-lg mb-4 flex items-center gap-2">
+                  <CheckCircle size={16} /> {successMessage}
+                </div>
+              )}
+              {errorMessage && (
+                <div className="p-3 bg-rose-50 text-rose-700 text-sm rounded-lg mb-4">
+                  {errorMessage}
+                </div>
+              )}
               
               {/* School Names */}
               <div className="space-y-4">
@@ -408,19 +486,12 @@ export function SchoolsDrawer({ state, onClose, editingSchool }: SchoolsDrawerPr
               </div>
 
               {/* Submit Actions */}
-              <div className="pt-4 border-t border-zinc-200 flex items-center justify-end gap-3 sticky bottom-0 bg-white py-4">
-                <button 
-                  type="button" 
-                  onClick={onClose} 
-                  className="px-4 py-2.5 border border-gray-300 hover:bg-gray-50 rounded-lg text-[14px] font-medium text-gray-700 transition cursor-pointer"
-                >
+              <div className="p-6 border-t border-zinc-200 bg-gray-50 flex gap-3 justify-end">
+                <button type="button" onClick={onClose} disabled={isSubmitting} className="px-5 py-2.5 rounded-lg border border-gray-300 text-[14px] font-medium text-gray-700 hover:bg-gray-100 transition cursor-pointer disabled:opacity-50">
                   Cancel
                 </button>
-                <button 
-                  type="submit" 
-                  className="px-5 py-2.5 bg-teal-600 hover:bg-teal-700 text-white rounded-lg text-[14px] font-semibold shadow-xs transition cursor-pointer"
-                >
-                  Save Changes
+                <button type="submit" disabled={isSubmitting} className="px-5 py-2.5 rounded-lg bg-teal-600 hover:bg-teal-700 text-white text-[14px] font-medium shadow-sm transition active:scale-[0.98] cursor-pointer disabled:opacity-50 flex items-center gap-2">
+                  {isSubmitting ? 'Saving...' : 'Save Updates'}
                 </button>
               </div>
             </form>
@@ -428,20 +499,6 @@ export function SchoolsDrawer({ state, onClose, editingSchool }: SchoolsDrawerPr
         )}
 
       </div>
-
-      <Toast show={showToast} message={toastMessage} />
-    </div>
-  );
-}
-
-function Toast({ show, message }: { show: boolean; message: string }) {
-  return (
-    <div 
-      className={`fixed bottom-6 right-6 bg-app-text text-white px-4 py-3 rounded-lg shadow-lg text-xs font-medium flex items-center gap-2.5 transition-all duration-300 z-50
-      ${show ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4 pointer-events-none'}`}
-    >
-      <CheckCircle size={16} className="text-emerald-400" />
-      <span>{message}</span>
     </div>
   );
 }
