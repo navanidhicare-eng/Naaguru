@@ -8,19 +8,15 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Apex College Admin Portal - Naaguru",
-  description: "College Administration and Management Dashboard",
+  title: "Naaguru",
+  description: "Educational and Career Guidance Platform",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={inter.variable} suppressHydrationWarning>
       <head />
-
-      <body 
-        className="font-sans antialiased bg-[#F8FAFC] text-slate-800 selection:bg-emerald-600 selection:text-white"
-        suppressHydrationWarning
-      >
+      <body className="font-sans antialiased bg-slate-50 text-slate-900" suppressHydrationWarning>
         {children}
       </body>
     </html>

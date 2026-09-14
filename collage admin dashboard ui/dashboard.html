@@ -1,0 +1,1444 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>Apex Junior College - Management Portal</title>
+  <link href="https://fonts.googleapis.com" rel="preconnect"/>
+  <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "surface-dim": "#cfddd9",
+            "surface-container-lowest": "#ffffff",
+            "on-primary-fixed-variant": "#005144",
+            "secondary-deep": "#7c5800",
+            "secondary-container": "#fec24a",
+            "on-secondary": "#ffffff",
+            "on-secondary-container": "#715000",
+            "tertiary-container": "#317d6e",
+            "neutral-muted": "#647572",
+            "on-primary-container": "#d4fff2",
+            "surface-bright": "#effcf9",
+            "on-tertiary": "#ffffff",
+            "primary-container": "#087f6c",
+            "inverse-on-surface": "#e6f4f0",
+            "primary-light": "#e6f5f1",
+            "surface-canvas": "#f8faf9",
+            "primary-dark": "#056052",
+            "outline": "#6e7a75",
+            "inverse-surface": "#273331",
+            "on-primary": "#ffffff",
+            "surface-variant": "#d8e5e2",
+            "outline-variant": "#bdc9c4",
+            "background": "#effcf9",
+            "primary-fixed-dim": "#78d7c1",
+            "on-tertiary-fixed": "#00201a",
+            "on-tertiary-container": "#d7fff3",
+            "inverse-primary": "#78d7c1",
+            "success": "#2e8b57",
+            "error": "#d64545",
+            "on-surface-variant": "#3e4946",
+            "secondary-fixed-dim": "#f8bd45",
+            "surface": "#effcf9",
+            "on-surface": "#121e1c",
+            "surface-container": "#e3f1ed",
+            "secondary": "#7c5800",
+            "surface-container-low": "#e9f7f3",
+            "on-error": "#ffffff",
+            "on-secondary-fixed-variant": "#5e4200",
+            "on-tertiary-fixed-variant": "#005144",
+            "surface-card": "#ffffff",
+            "tertiary-fixed-dim": "#8ad4c3",
+            "border-input": "#d1dcd8",
+            "tertiary": "#0e6456",
+            "secondary-fixed": "#ffdea7",
+            "on-error-container": "#93000a",
+            "error-container": "#ffdad6",
+            "primary-deep": "#006454",
+            "border-subtle": "#e4ebe8",
+            "primary": "#006454",
+            "on-secondary-fixed": "#271900",
+            "on-background": "#121e1c",
+            "surface-container-highest": "#d8e5e2",
+            "primary-fixed": "#95f4dd",
+            "surface-container-high": "#ddebe7",
+            "tertiary-fixed": "#a6f1df",
+            "on-primary-fixed": "#00201a",
+            "surface-tint": "#006b5a"
+          },
+          fontFamily: {
+            sans: ["Inter", "sans-serif"]
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    ::-webkit-scrollbar { display: none; }
+    .card-hover {
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .card-hover:hover {
+      transform: translateY(-2px);
+    }
+    .page-view {
+      animation: fadeIn 0.15s ease-out;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(3px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .toast {
+      animation: slideIn 0.3s ease-out forwards;
+    }
+    @keyframes slideIn {
+      from { transform: translateY(100%); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+  </style>
+</head>
+<body class="bg-background text-on-surface antialiased min-h-screen">
+
+  <!-- Permanent Rock-Solid Static Sidebar (Never reloads, never shifts) -->
+  <aside id="appSidebar" class="fixed left-0 top-0 h-screen w-64 bg-primary-deep text-white z-50 flex flex-col justify-between p-5 border-r border-[#005144] shadow-lg select-none">
+    <div class="flex flex-col gap-6">
+      <!-- Apex Brand -->
+      <button onclick="switchTab('dashboard')" class="flex items-center gap-3 px-1 transition-opacity hover:opacity-90 text-left w-full">
+        <div class="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center border border-white/20 shadow-inner">
+          <span class="material-symbols-outlined text-secondary-container text-[24px]">account_balance</span>
+        </div>
+        <div class="flex flex-col">
+          <span class="text-[17px] font-bold tracking-tight text-white leading-tight">Apex</span>
+          <span class="text-[10px] uppercase font-bold tracking-widest text-secondary-container">JUNIOR COLLEGE</span>
+        </div>
+      </button>
+
+      <!-- Navigation Links -->
+      <div class="flex flex-col gap-1">
+        <div class="text-[10px] font-bold uppercase tracking-wider text-on-primary-container/70 mb-2 px-3">Navigation</div>
+        <nav class="flex flex-col gap-1.5" id="navLinks">
+          <!-- 1. College Dashboard (Active) -->
+          <a class="nav-item flex items-center justify-between px-3.5 py-2.5 rounded-xl bg-white text-primary font-bold shadow-sm text-sm transition-all" href="dashboard.html">
+            <div class="flex items-center gap-2.5 min-w-0">
+              <span class="material-symbols-outlined text-[20px] shrink-0">dashboard</span>
+              <span class="truncate">College Dashboard</span>
+            </div>
+          </a>
+
+          <!-- 2. College Profile -->
+          <a class="nav-item flex items-center justify-between px-3.5 py-2.5 rounded-xl text-white/80 hover:bg-white/10 hover:text-white transition-all text-sm font-medium" href="index.html">
+            <div class="flex items-center gap-2.5 min-w-0">
+              <span class="material-symbols-outlined text-[20px] shrink-0">school</span>
+              <span class="truncate">College Profile</span>
+            </div>
+          </a>
+
+          <!-- 3. Leads & Admissions -->
+          <a class="nav-item flex items-center justify-between px-3.5 py-2.5 rounded-xl text-white/80 hover:bg-white/10 hover:text-white transition-all text-sm font-medium" href="leads.html">
+            <div class="flex items-center gap-2.5 min-w-0">
+              <span class="material-symbols-outlined text-[20px] shrink-0">group</span>
+              <span class="truncate">Leads &amp; Admissions</span>
+            </div>
+            <span class="px-2 py-0.5 rounded-full bg-amber-400/20 text-amber-300 text-[10px] font-bold whitespace-nowrap shrink-0 border border-amber-400/30">28 New</span>
+          </a>
+
+          <!-- 4. Analytics -->
+          <a class="nav-item flex items-center justify-between px-3.5 py-2.5 rounded-xl text-white/80 hover:bg-white/10 hover:text-white transition-all text-sm font-medium" href="analytics.html">
+            <div class="flex items-center gap-2.5 min-w-0">
+              <span class="material-symbols-outlined text-[20px] shrink-0">insights</span>
+              <span class="truncate">Analytics</span>
+            </div>
+            <span class="flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 text-[10px] font-bold whitespace-nowrap shrink-0">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> Live
+            </span>
+          </a>
+
+          <!-- 5. Settings -->
+          <a class="nav-item flex items-center justify-between px-3.5 py-2.5 rounded-xl text-white/80 hover:bg-white/10 hover:text-white transition-all text-sm font-medium" href="settings.html">
+            <div class="flex items-center gap-2.5 min-w-0">
+              <span class="material-symbols-outlined text-[20px] shrink-0">settings</span>
+              <span class="truncate">Settings</span>
+            </div>
+          </a>
+        </nav>
+      </div>
+    </div>
+
+    <!-- Academic Session Footer -->
+    <div class="p-3.5 rounded-xl bg-white/5 border border-white/10 flex items-center justify-between">
+      <div class="flex items-center gap-2.5">
+        <span class="material-symbols-outlined text-secondary-container text-[20px]">calendar_month</span>
+        <div class="flex flex-col">
+          <span class="text-[10px] text-white/70 font-medium">Academic Year</span>
+          <span class="text-[12px] font-bold text-secondary-container leading-tight">2025–2026</span>
+        </div>
+      </div>
+      <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 text-[10px] font-semibold">
+        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> Active
+      </span>
+    </div>
+  </aside>
+
+  <!-- Main Content Wrapper (pl-64) -->
+  <div class="pl-64">
+
+    <!-- Fixed Top System Header -->
+    <header class="fixed top-0 left-64 right-0 h-16 bg-white/90 backdrop-blur-md border-b border-border-subtle z-40 flex items-center justify-between px-8">
+      <div class="flex items-center gap-2 text-neutral-muted text-xs font-medium">
+        <span class="material-symbols-outlined text-[18px] text-primary" id="breadcrumbIcon">dashboard</span>
+        <span>Apex Portal</span>
+        <span class="text-neutral-muted/40">/</span>
+        <span class="text-on-surface font-semibold" id="breadcrumbTitle">College Dashboard</span>
+      </div>
+
+      <!-- Header Actions -->
+      <div class="flex items-center gap-4">
+        <!-- Search bar -->
+        <div class="relative w-64">
+          <span class="material-symbols-outlined absolute left-3 top-2.5 text-neutral-muted text-[18px]">search</span>
+          <input type="text" id="globalSearchInput" placeholder="Search students, staff, batches..." class="w-full bg-surface-canvas text-xs pl-9 pr-3 py-2 rounded-lg border border-border-input focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"/>
+        </div>
+
+        <!-- Notification Bell -->
+        <button onclick="notify('🔔 3 new admission inquiries registered in the last hour!')" class="w-9 h-9 rounded-lg border border-border-subtle bg-surface-canvas hover:bg-surface-container flex items-center justify-center text-neutral-muted hover:text-primary relative transition-colors">
+          <span class="material-symbols-outlined text-[20px]">notifications</span>
+          <span class="absolute top-2 right-2 w-2 h-2 rounded-full bg-secondary-container"></span>
+        </button>
+
+        <!-- Quick Action Button -->
+        <button onclick="openLeadModal()" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-primary hover:bg-primary-dark text-white text-xs font-semibold shadow-sm transition-colors">
+          <span class="material-symbols-outlined text-[16px]">person_add</span>
+          <span>+ Add Lead</span>
+        </button>
+
+        <!-- Admin Profile -->
+        <div class="flex items-center gap-3 pl-2 border-l border-border-subtle">
+          <div class="w-8 h-8 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center text-primary font-bold text-xs">
+            AP
+          </div>
+          <div class="flex flex-col text-left">
+            <span class="text-xs font-bold text-on-surface">Dr. A. Prabhakar</span>
+            <span class="text-[10px] text-neutral-muted">Principal &amp; Director</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- TAB 1: COLLEGE DASHBOARD VIEW -->
+    <section id="view-dashboard" class="page-view pt-20 pb-16 px-8 max-w-[1440px] mx-auto flex flex-col gap-6">
+      <!-- Hero Banner -->
+      <div class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-primary-deep via-[#005144] to-[#087f6c] p-7 text-white shadow-md">
+        <div class="absolute -right-10 -bottom-10 w-64 h-64 rounded-full bg-white/5 blur-2xl pointer-events-none"></div>
+        <div class="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+          <div class="flex flex-col gap-2 max-w-2xl">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 w-fit text-xs font-semibold text-secondary-container">
+              <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+              Live Campus Command Center • Academic Session 2025–26
+            </div>
+            <h1 class="text-2xl lg:text-3xl font-extrabold tracking-tight">Apex Junior College Command Hub</h1>
+            <p class="text-sm text-white/80 leading-relaxed">
+              Real-time campus pulse, admissions progress, faculty schedules, and departmental metrics across MPC, BiPC, MEC &amp; CEC.
+            </p>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-3">
+            <button onclick="switchTab('profile')" class="px-4 py-2.5 rounded-xl bg-white text-primary font-bold text-xs hover:bg-slate-50 transition-all flex items-center gap-2 shadow-sm">
+              <span class="material-symbols-outlined text-[18px]">edit_document</span>
+              Edit Profile Studio
+            </button>
+            <button onclick="switchTab('analytics')" class="px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-white font-semibold text-xs transition-all flex items-center gap-2">
+              <span class="material-symbols-outlined text-[18px]">analytics</span>
+              View Analytics
+            </button>
+            <button onclick="broadcastAlert()" class="px-4 py-2.5 rounded-xl bg-secondary-container text-on-secondary-container font-bold text-xs hover:brightness-105 transition-all flex items-center gap-2 shadow-sm">
+              <span class="material-symbols-outlined text-[18px]">campaign</span>
+              Post Notice
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4 Key KPI Cards -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <!-- 1. Admissions -->
+        <div class="bg-surface-card rounded-2xl p-5 border border-border-subtle shadow-sm card-hover flex flex-col justify-between">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-semibold text-neutral-muted uppercase tracking-wider">Admissions Filled</span>
+            <div class="w-9 h-9 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
+              <span class="material-symbols-outlined text-[20px]">how_to_reg</span>
+            </div>
+          </div>
+          <div class="my-3">
+            <div class="flex items-baseline gap-2">
+              <span class="text-2xl font-black text-on-surface">528</span>
+              <span class="text-xs font-medium text-neutral-muted">/ 600 Seats</span>
+            </div>
+            <div class="w-full bg-surface-container h-2 rounded-full mt-2.5 overflow-hidden">
+              <div class="bg-primary h-full rounded-full transition-all duration-1000" style="width: 88%"></div>
+            </div>
+          </div>
+          <div class="flex items-center justify-between text-xs pt-2 border-t border-border-subtle">
+            <span class="text-success font-bold flex items-center gap-0.5">
+              <span class="material-symbols-outlined text-[16px]">trending_up</span> 88% Target
+            </span>
+            <span class="text-neutral-muted">72 Seats Left</span>
+          </div>
+        </div>
+
+        <!-- 2. Active Inquiries -->
+        <div class="bg-surface-card rounded-2xl p-5 border border-border-subtle shadow-sm card-hover flex flex-col justify-between">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-semibold text-neutral-muted uppercase tracking-wider">Active Inquiries</span>
+            <div class="w-9 h-9 rounded-xl bg-amber-500/10 text-amber-600 flex items-center justify-center">
+              <span class="material-symbols-outlined text-[20px]">contact_support</span>
+            </div>
+          </div>
+          <div class="my-3">
+            <div class="flex items-baseline gap-2">
+              <span class="text-2xl font-black text-on-surface">184</span>
+              <span class="text-xs font-bold text-amber-600 bg-amber-50 px-2 py-0.5 rounded-md">+28 Today</span>
+            </div>
+            <p class="text-xs text-neutral-muted mt-2">Counselor callbacks scheduled: 42</p>
+          </div>
+          <div class="flex items-center justify-between text-xs pt-2 border-t border-border-subtle">
+            <button onclick="switchTab('leads')" class="text-primary font-bold hover:underline flex items-center gap-1">
+              Open Pipeline <span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+            </button>
+            <span class="text-neutral-muted">67% Hot Leads</span>
+          </div>
+        </div>
+
+        <!-- 3. Attendance -->
+        <div class="bg-surface-card rounded-2xl p-5 border border-border-subtle shadow-sm card-hover flex flex-col justify-between">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-semibold text-neutral-muted uppercase tracking-wider">Today's Attendance</span>
+            <div class="w-9 h-9 rounded-xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center">
+              <span class="material-symbols-outlined text-[20px]">fact_check</span>
+            </div>
+          </div>
+          <div class="my-3">
+            <div class="flex items-baseline gap-2">
+              <span class="text-2xl font-black text-on-surface">96.4%</span>
+              <span class="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md">Normal</span>
+            </div>
+            <div class="w-full bg-surface-container h-2 rounded-full mt-2.5 overflow-hidden">
+              <div class="bg-emerald-500 h-full rounded-full" style="width: 96.4%"></div>
+            </div>
+          </div>
+          <div class="flex items-center justify-between text-xs pt-2 border-t border-border-subtle">
+            <span class="text-neutral-muted">1,368 / 1,420 Present</span>
+            <span class="text-rose-500 font-semibold">52 Absent</span>
+          </div>
+        </div>
+
+        <!-- 4. Fee Collections -->
+        <div class="bg-surface-card rounded-2xl p-5 border border-border-subtle shadow-sm card-hover flex flex-col justify-between">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-semibold text-neutral-muted uppercase tracking-wider">Fee Collections</span>
+            <div class="w-9 h-9 rounded-xl bg-indigo-500/10 text-indigo-600 flex items-center justify-center">
+              <span class="material-symbols-outlined text-[20px]">payments</span>
+            </div>
+          </div>
+          <div class="my-3">
+            <div class="flex items-baseline gap-2">
+              <span class="text-2xl font-black text-on-surface">₹1.84 Cr</span>
+              <span class="text-xs font-medium text-neutral-muted">of ₹2.20 Cr</span>
+            </div>
+            <div class="w-full bg-surface-container h-2 rounded-full mt-2.5 overflow-hidden">
+              <div class="bg-indigo-600 h-full rounded-full" style="width: 83.6%"></div>
+            </div>
+          </div>
+          <div class="flex items-center justify-between text-xs pt-2 border-t border-border-subtle">
+            <span class="text-indigo-600 font-bold">83.6% Realized</span>
+            <span class="text-neutral-muted">₹36L Pending</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Operational Center Grid -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="lg:col-span-2 flex flex-col gap-6">
+          <!-- Streams Capacity -->
+          <div class="bg-surface-card rounded-2xl p-6 border border-border-subtle shadow-sm flex flex-col gap-4">
+            <div class="flex items-center justify-between">
+              <div>
+                <h2 class="text-base font-bold text-on-surface">Stream-wise Seat Allotment Status</h2>
+                <p class="text-xs text-neutral-muted">Intermediate 1st &amp; 2nd Year Batch Allocations</p>
+              </div>
+              <button onclick="switchTab('leads')" class="text-xs font-bold text-primary hover:underline flex items-center gap-1">
+                Manage Seats <span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+              </button>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
+              <div class="p-4 rounded-xl bg-surface-canvas border border-border-subtle flex flex-col justify-between gap-2">
+                <div class="flex items-center justify-between">
+                  <span class="font-extrabold text-sm text-primary">MPC</span>
+                  <span class="text-[10px] px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold">95% Full</span>
+                </div>
+                <p class="text-[11px] text-neutral-muted">IIT-JEE Focus Batch</p>
+                <div class="flex items-baseline justify-between text-xs pt-2 border-t border-border-subtle">
+                  <span class="font-bold text-on-surface">228 / 240</span>
+                  <span class="text-rose-600 font-semibold">12 Left</span>
+                </div>
+              </div>
+              <div class="p-4 rounded-xl bg-surface-canvas border border-border-subtle flex flex-col justify-between gap-2">
+                <div class="flex items-center justify-between">
+                  <span class="font-extrabold text-sm text-primary">BiPC</span>
+                  <span class="text-[10px] px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold">90% Full</span>
+                </div>
+                <p class="text-[11px] text-neutral-muted">NEET Special Batch</p>
+                <div class="flex items-baseline justify-between text-xs pt-2 border-t border-border-subtle">
+                  <span class="font-bold text-on-surface">144 / 160</span>
+                  <span class="text-rose-600 font-semibold">16 Left</span>
+                </div>
+              </div>
+              <div class="p-4 rounded-xl bg-surface-canvas border border-border-subtle flex flex-col justify-between gap-2">
+                <div class="flex items-center justify-between">
+                  <span class="font-extrabold text-sm text-primary">MEC</span>
+                  <span class="text-[10px] px-2 py-0.5 rounded bg-amber-100 text-amber-800 font-bold">81% Full</span>
+                </div>
+                <p class="text-[11px] text-neutral-muted">CA Foundation Prep</p>
+                <div class="flex items-baseline justify-between text-xs pt-2 border-t border-border-subtle">
+                  <span class="font-bold text-on-surface">98 / 120</span>
+                  <span class="text-amber-700 font-semibold">22 Left</span>
+                </div>
+              </div>
+              <div class="p-4 rounded-xl bg-surface-canvas border border-border-subtle flex flex-col justify-between gap-2">
+                <div class="flex items-center justify-between">
+                  <span class="font-extrabold text-sm text-primary">CEC</span>
+                  <span class="text-[10px] px-2 py-0.5 rounded bg-primary-light text-primary font-bold">72% Full</span>
+                </div>
+                <p class="text-[11px] text-neutral-muted">Civils / CLAT Track</p>
+                <div class="flex items-baseline justify-between text-xs pt-2 border-t border-border-subtle">
+                  <span class="font-bold text-on-surface">58 / 80</span>
+                  <span class="text-neutral-muted font-semibold">22 Left</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Schedule Tracker -->
+          <div class="bg-surface-card rounded-2xl p-6 border border-border-subtle shadow-sm flex flex-col gap-4">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <div class="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+                  <span class="material-symbols-outlined text-[18px]">schedule</span>
+                </div>
+                <div>
+                  <h2 class="text-base font-bold text-on-surface">Today's Academic Session Tracker</h2>
+                  <p class="text-xs text-neutral-muted">Current Period • 10:30 AM - 11:30 AM</p>
+                </div>
+              </div>
+              <span class="px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 text-xs font-bold flex items-center gap-1">
+                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> In Progress
+              </span>
+            </div>
+            <table class="w-full text-left text-xs">
+              <thead>
+                <tr class="border-b border-border-subtle text-neutral-muted font-semibold uppercase">
+                  <th class="pb-3">Stream / Section</th>
+                  <th class="pb-3">Subject</th>
+                  <th class="pb-3">Faculty In-Charge</th>
+                  <th class="pb-3">Room / Lab</th>
+                  <th class="pb-3 text-right">Status</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-border-subtle">
+                <tr>
+                  <td class="py-3 font-bold text-on-surface">MPC - Section A1 (Jr)</td>
+                  <td class="py-3 text-primary font-semibold">Physics (Rotational Dynamics)</td>
+                  <td class="py-3 text-neutral-muted">Dr. K. Srinivas Rao (IITM)</td>
+                  <td class="py-3 font-medium">Room 204 (Smart Lab)</td>
+                  <td class="py-3 text-right"><span class="px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 font-bold">Ongoing</span></td>
+                </tr>
+                <tr>
+                  <td class="py-3 font-bold text-on-surface">BiPC - Section B1 (Sr)</td>
+                  <td class="py-3 text-primary font-semibold">Botany (Plant Physiology)</td>
+                  <td class="py-3 text-neutral-muted">Mrs. Sujatha Reddy</td>
+                  <td class="py-3 font-medium">Bio Research Lab</td>
+                  <td class="py-3 text-right"><span class="px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 font-bold">Ongoing</span></td>
+                </tr>
+                <tr>
+                  <td class="py-3 font-bold text-on-surface">MEC - Section C (Jr)</td>
+                  <td class="py-3 text-primary font-semibold">Economics (National Income)</td>
+                  <td class="py-3 text-neutral-muted">Mr. V. Ramanathan</td>
+                  <td class="py-3 font-medium">Room 102</td>
+                  <td class="py-3 text-right"><span class="px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 font-bold">Ongoing</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Right Col -->
+        <div class="flex flex-col gap-6">
+          <div class="bg-surface-card rounded-2xl p-6 border border-border-subtle shadow-sm flex flex-col gap-4">
+            <h2 class="text-base font-bold text-on-surface">Campus Calendar</h2>
+            <div class="flex flex-col gap-3">
+              <div class="flex items-start gap-3 p-3 rounded-xl bg-surface-canvas border-l-4 border-primary">
+                <div class="flex flex-col items-center min-w-10 text-center">
+                  <span class="text-xs font-bold text-neutral-muted">SEP</span>
+                  <span class="text-lg font-black text-primary">14</span>
+                </div>
+                <div>
+                  <h3 class="text-xs font-bold text-on-surface">JEE Advanced Mock Test #3</h3>
+                  <p class="text-[11px] text-neutral-muted">All MPC Senior Batches</p>
+                </div>
+              </div>
+              <div class="flex items-start gap-3 p-3 rounded-xl bg-surface-canvas border-l-4 border-secondary-container">
+                <div class="flex flex-col items-center min-w-10 text-center">
+                  <span class="text-xs font-bold text-neutral-muted">SEP</span>
+                  <span class="text-lg font-black text-secondary-deep">18</span>
+                </div>
+                <div>
+                  <h3 class="text-xs font-bold text-on-surface">Parent-Teacher Orientation</h3>
+                  <p class="text-[11px] text-neutral-muted">Auditorium Hall • 10 AM</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="p-5 rounded-2xl bg-gradient-to-br from-primary-light to-surface-container border border-primary/20 flex flex-col gap-3">
+            <div class="flex items-center gap-2 text-primary font-bold text-sm">
+              <span class="material-symbols-outlined text-[20px]">support_agent</span>
+              <span>Apex Admissions Hotline</span>
+            </div>
+            <p class="text-xs text-neutral-muted leading-relaxed">
+              WhatsApp Integration active on <strong>+91 98765 43210</strong>.
+            </p>
+            <button onclick="notify('📲 WhatsApp Broadcast Triggered!')" class="w-full py-2 bg-primary hover:bg-primary-dark text-white rounded-lg text-xs font-semibold transition-colors">
+              Send Parent Broadcast
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 2: COLLEGE PROFILE VIEW (Comprehensive 7-Module Profile Studio) -->
+    <section id="view-profile" class="page-view hidden pt-20 pb-16 px-8 max-w-[1520px] mx-auto flex flex-col gap-6">
+
+      <!-- Profile Header Hero Banner -->
+      <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 bg-surface-card p-6 rounded-2xl border border-border-subtle shadow-sm">
+        <div class="flex items-center gap-4">
+          <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-primary-deep via-primary to-primary-container text-secondary-container flex items-center justify-center shadow-md shrink-0">
+            <span class="material-symbols-outlined text-[34px]">account_balance</span>
+          </div>
+          <div>
+            <div class="flex items-center gap-2.5 flex-wrap">
+              <h1 class="text-2xl font-black text-on-surface tracking-tight">Apex Junior College - Profile Studio</h1>
+              <span class="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-xs font-bold border border-emerald-200">
+                TSBIE Affiliated (TS-HYD-500081)
+              </span>
+              <span class="px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-900 text-xs font-bold border border-amber-200">
+                ⭐ NAAC Grade 'A+'
+              </span>
+            </div>
+            <p class="text-xs text-neutral-muted mt-1">
+              Master Profile Manager • Knowledge City Road, Madhapur, Hyderabad • Integrated IIT-JEE, NEET &amp; CA Coaching
+            </p>
+          </div>
+        </div>
+
+        <!-- Action Tools -->
+        <div class="flex items-center gap-2.5">
+          <button onclick="shareTourLink()" class="px-3.5 py-2 rounded-xl bg-surface-canvas hover:bg-slate-100 border border-border-subtle text-xs font-bold text-on-surface flex items-center gap-1.5 transition-colors shadow-sm">
+            <span class="material-symbols-outlined text-[16px] text-primary">share</span>
+            Share Public URL
+          </button>
+          <button onclick="notify('🚀 Changes published live to student app!')" class="px-4 py-2 rounded-xl bg-primary text-white text-xs font-bold hover:bg-primary-dark transition-all flex items-center gap-1.5 shadow-sm">
+            <span class="material-symbols-outlined text-[16px]">cloud_upload</span>
+            Publish All Changes
+          </button>
+        </div>
+      </div>
+
+      <!-- 7 HORIZONTAL TAB SWITCHER (Top Navigation) -->
+      <div class="bg-surface-card p-2 rounded-2xl border border-border-subtle shadow-sm overflow-x-auto">
+        <div class="flex items-center gap-1.5 min-w-max" id="profileTabBar">
+          <button onclick="switchProfileModule('media')" id="pTabBtn-media" class="tab-btn active px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all flex items-center gap-2">
+            <span class="material-symbols-outlined text-[18px]">photo_library</span>
+            <span>1. Media &amp; Tours</span>
+          </button>
+          <button onclick="switchProfileModule('streams')" id="pTabBtn-streams" class="tab-btn px-3.5 py-2.5 rounded-xl text-xs font-semibold text-neutral-muted transition-all flex items-center gap-2">
+            <span class="material-symbols-outlined text-[18px]">menu_book</span>
+            <span>2. Streams &amp; Batches</span>
+          </button>
+          <button onclick="switchProfileModule('halloffame')" id="pTabBtn-halloffame" class="tab-btn px-3.5 py-2.5 rounded-xl text-xs font-semibold text-neutral-muted transition-all flex items-center gap-2">
+            <span class="material-symbols-outlined text-[18px]">workspace_premium</span>
+            <span>3. Hall of Fame</span>
+          </button>
+          <button onclick="switchProfileModule('hostel')" id="pTabBtn-hostel" class="tab-btn px-3.5 py-2.5 rounded-xl text-xs font-semibold text-neutral-muted transition-all flex items-center gap-2">
+            <span class="material-symbols-outlined text-[18px]">hotel</span>
+            <span>4. Hostel &amp; Living</span>
+          </button>
+          <button onclick="switchProfileModule('routine')" id="pTabBtn-routine" class="tab-btn px-3.5 py-2.5 rounded-xl text-xs font-semibold text-neutral-muted transition-all flex items-center gap-2">
+            <span class="material-symbols-outlined text-[18px]">restaurant</span>
+            <span>5. Daily Routine &amp; Food</span>
+          </button>
+          <button onclick="switchProfileModule('faculty')" id="pTabBtn-faculty" class="tab-btn px-3.5 py-2.5 rounded-xl text-xs font-semibold text-neutral-muted transition-all flex items-center gap-2">
+            <span class="material-symbols-outlined text-[18px]">badge</span>
+            <span>6. Faculty &amp; Mentors</span>
+          </button>
+          <button onclick="switchProfileModule('testimonials')" id="pTabBtn-testimonials" class="tab-btn px-3.5 py-2.5 rounded-xl text-xs font-semibold text-neutral-muted transition-all flex items-center gap-2">
+            <span class="material-symbols-outlined text-[18px]">verified</span>
+            <span>7. Testimonials &amp; Trust</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- WORKSPACE 2-COLUMN GRID (Left: 7-Tab Modules / Right: Live Sync Rail) -->
+      <div class="grid grid-cols-1 xl:grid-cols-12 gap-6 items-start">
+
+        <!-- LEFT WORKSPACE COLUMN (8 Cols) -->
+        <div class="xl:col-span-8 flex flex-col gap-6">
+
+          <!-- TAB 1: MEDIA & TOURS -->
+          <div id="pMod-media" class="prof-module flex flex-col gap-6">
+            <div class="bg-surface-card rounded-2xl p-6 border border-border-subtle shadow-sm flex flex-col gap-5">
+              <div class="flex items-center justify-between">
+                <div>
+                  <h2 class="text-base font-bold text-on-surface">Campus Photo Gallery &amp; Banners</h2>
+                  <p class="text-xs text-neutral-muted">High resolution campus imagery displayed in the student mobile app</p>
+                </div>
+                <button onclick="openModal('modal-add-media')" class="px-3.5 py-1.5 rounded-xl bg-primary text-white hover:bg-primary-dark text-xs font-bold transition-all flex items-center gap-1.5 shadow-sm">
+                  <span class="material-symbols-outlined text-[16px]">add_photo_alternate</span>
+                  + Add New Photo
+                </button>
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4" id="pMediaGalleryContainer">
+                <div class="rounded-xl overflow-hidden border border-border-subtle bg-surface-canvas flex flex-col card-hover">
+                  <div class="h-36 bg-gradient-to-tr from-primary-deep to-primary flex items-center justify-center text-white relative">
+                    <span class="material-symbols-outlined text-[44px] opacity-90">account_balance</span>
+                    <span class="absolute top-2 left-2 px-2 py-0.5 rounded-md bg-black/60 backdrop-blur-md text-[10px] font-bold text-white">Main Entrance</span>
+                    <span class="absolute bottom-2 right-2 px-1.5 py-0.5 rounded bg-white/20 backdrop-blur-md text-[9px] text-white">1920x1080</span>
+                  </div>
+                  <div class="p-3.5 flex items-center justify-between">
+                    <div>
+                      <h4 class="font-bold text-xs text-on-surface">Administrative Tower</h4>
+                      <p class="text-[10px] text-neutral-muted">Front campus facade</p>
+                    </div>
+                    <div class="flex items-center gap-1">
+                      <button onclick="notify('✏️ Photo details edited')" class="p-1 rounded text-neutral-muted hover:text-primary"><span class="material-symbols-outlined text-[16px]">edit</span></button>
+                      <button onclick="deleteCard(this, 'Photo')" class="p-1 rounded text-neutral-muted hover:text-rose-600"><span class="material-symbols-outlined text-[16px]">delete</span></button>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="rounded-xl overflow-hidden border border-border-subtle bg-surface-canvas flex flex-col card-hover">
+                  <div class="h-36 bg-gradient-to-tr from-emerald-800 to-emerald-600 flex items-center justify-center text-white relative">
+                    <span class="material-symbols-outlined text-[44px] opacity-90">science</span>
+                    <span class="absolute top-2 left-2 px-2 py-0.5 rounded-md bg-black/60 backdrop-blur-md text-[10px] font-bold text-white">Laboratories</span>
+                    <span class="absolute bottom-2 right-2 px-1.5 py-0.5 rounded bg-white/20 backdrop-blur-md text-[9px] text-white">4K UHD</span>
+                  </div>
+                  <div class="p-3.5 flex items-center justify-between">
+                    <div>
+                      <h4 class="font-bold text-xs text-on-surface">Robotics &amp; Physics Lab</h4>
+                      <p class="text-[10px] text-neutral-muted">Equipment zone</p>
+                    </div>
+                    <div class="flex items-center gap-1">
+                      <button onclick="notify('✏️ Photo details edited')" class="p-1 rounded text-neutral-muted hover:text-primary"><span class="material-symbols-outlined text-[16px]">edit</span></button>
+                      <button onclick="deleteCard(this, 'Photo')" class="p-1 rounded text-neutral-muted hover:text-rose-600"><span class="material-symbols-outlined text-[16px]">delete</span></button>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="rounded-xl overflow-hidden border border-border-subtle bg-surface-canvas flex flex-col card-hover">
+                  <div class="h-36 bg-gradient-to-tr from-amber-700 to-amber-500 flex items-center justify-center text-white relative">
+                    <span class="material-symbols-outlined text-[44px] opacity-90">local_library</span>
+                    <span class="absolute top-2 left-2 px-2 py-0.5 rounded-md bg-black/60 backdrop-blur-md text-[10px] font-bold text-white">Digital Library</span>
+                    <span class="absolute bottom-2 right-2 px-1.5 py-0.5 rounded bg-white/20 backdrop-blur-md text-[9px] text-white">1920x1080</span>
+                  </div>
+                  <div class="p-3.5 flex items-center justify-between">
+                    <div>
+                      <h4 class="font-bold text-xs text-on-surface">Central Reading Hall</h4>
+                      <p class="text-[10px] text-neutral-muted">Reference division</p>
+                    </div>
+                    <div class="flex items-center gap-1">
+                      <button onclick="notify('✏️ Photo details edited')" class="p-1 rounded text-neutral-muted hover:text-primary"><span class="material-symbols-outlined text-[16px]">edit</span></button>
+                      <button onclick="deleteCard(this, 'Photo')" class="p-1 rounded text-neutral-muted hover:text-rose-600"><span class="material-symbols-outlined text-[16px]">delete</span></button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 360 Tour -->
+            <div class="bg-surface-card rounded-2xl p-6 border border-border-subtle shadow-sm flex flex-col gap-4">
+              <div class="flex items-center justify-between">
+                <div>
+                  <h2 class="text-base font-bold text-on-surface">360° Interactive Campus Virtual Walkthrough</h2>
+                  <p class="text-xs text-neutral-muted">Matterport 3D Tour or YouTube 360° Drone link</p>
+                </div>
+                <span class="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-bold border border-emerald-200">
+                  3D Tour Active
+                </span>
+              </div>
+              <div class="flex flex-col sm:flex-row gap-3">
+                <div class="relative flex-1">
+                  <span class="material-symbols-outlined absolute left-3 top-2.5 text-neutral-muted text-[18px]">360</span>
+                  <input type="text" value="https://matterport.com/discover/space/apex-junior-college-hyderabad" class="w-full bg-surface-canvas text-xs pl-9 pr-3 py-2.5 rounded-xl border border-border-input focus:outline-none focus:border-primary font-mono text-neutral-muted"/>
+                </div>
+                <button onclick="notify('🔗 3D Tour URL updated successfully!')" class="px-4 py-2.5 rounded-xl bg-primary text-white text-xs font-bold hover:bg-primary-dark transition-colors shrink-0 flex items-center gap-1.5">
+                  <span class="material-symbols-outlined text-[16px]">save</span>
+                  Update Tour Link
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- TAB 2: STREAMS & BATCHES -->
+          <div id="pMod-streams" class="prof-module hidden flex flex-col gap-6">
+            <div class="bg-surface-card rounded-2xl p-6 border border-border-subtle shadow-sm flex flex-col gap-5">
+              <div class="flex items-center justify-between">
+                <div>
+                  <h2 class="text-base font-bold text-on-surface">Offered Intermediate Streams &amp; Elite Batches</h2>
+                  <p class="text-xs text-neutral-muted">Manage intake, annual fee structure, and competitive exam tracks</p>
+                </div>
+                <button onclick="openModal('modal-add-stream')" class="px-3.5 py-1.5 rounded-xl bg-primary text-white hover:bg-primary-dark text-xs font-bold transition-all flex items-center gap-1.5 shadow-sm">
+                  <span class="material-symbols-outlined text-[16px]">add_circle</span>
+                  + Add New Stream
+                </button>
+              </div>
+
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="p-5 rounded-2xl border border-primary/20 bg-primary-light/30 flex flex-col gap-3 card-hover">
+                  <div class="flex items-center justify-between">
+                    <span class="px-2.5 py-0.5 rounded-lg bg-primary text-white font-black text-xs">MPC Stream</span>
+                    <span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold text-[10px]">Open</span>
+                  </div>
+                  <div>
+                    <h3 class="font-bold text-sm text-on-surface">Mathematics, Physics, Chemistry</h3>
+                    <p class="text-xs text-neutral-muted mt-0.5">Integrated IIT-JEE Main + Advanced, BITSAT &amp; EAPCET Coaching.</p>
+                  </div>
+                  <div class="grid grid-cols-2 gap-2 text-[11px] pt-2 border-t border-primary/10">
+                    <div><span class="text-neutral-muted">Intake:</span> <strong class="text-on-surface">240 Seats (4 Batches)</strong></div>
+                    <div><span class="text-neutral-muted">Annual Fee:</span> <strong class="text-primary font-bold">₹1,10,000 / yr</strong></div>
+                  </div>
+                </div>
+
+                <div class="p-5 rounded-2xl border border-emerald-500/20 bg-emerald-50/40 flex flex-col gap-3 card-hover">
+                  <div class="flex items-center justify-between">
+                    <span class="px-2.5 py-0.5 rounded-lg bg-emerald-700 text-white font-black text-xs">BiPC Stream</span>
+                    <span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold text-[10px]">Open</span>
+                  </div>
+                  <div>
+                    <h3 class="font-bold text-sm text-on-surface">Biology, Physics, Chemistry</h3>
+                    <p class="text-xs text-neutral-muted mt-0.5">Integrated NEET (UG) &amp; AIIMS Medical training with daily anatomy labs.</p>
+                  </div>
+                  <div class="grid grid-cols-2 gap-2 text-[11px] pt-2 border-t border-emerald-500/10">
+                    <div><span class="text-neutral-muted">Intake:</span> <strong class="text-on-surface">180 Seats (3 Batches)</strong></div>
+                    <div><span class="text-neutral-muted">Annual Fee:</span> <strong class="text-emerald-800 font-bold">₹1,15,000 / yr</strong></div>
+                  </div>
+                </div>
+
+                <div class="p-5 rounded-2xl border border-amber-500/20 bg-amber-50/40 flex flex-col gap-3 card-hover">
+                  <div class="flex items-center justify-between">
+                    <span class="px-2.5 py-0.5 rounded-lg bg-amber-600 text-white font-black text-xs">MEC Stream</span>
+                    <span class="px-2 py-0.5 rounded-full bg-amber-100 text-amber-900 font-bold text-[10px]">Filling Fast</span>
+                  </div>
+                  <div>
+                    <h3 class="font-bold text-sm text-on-surface">Mathematics, Economics, Commerce</h3>
+                    <p class="text-xs text-neutral-muted mt-0.5">Integrated CA-Foundation &amp; CMA coaching by Chartered Accountants.</p>
+                  </div>
+                  <div class="grid grid-cols-2 gap-2 text-[11px] pt-2 border-t border-amber-500/10">
+                    <div><span class="text-neutral-muted">Intake:</span> <strong class="text-on-surface">120 Seats (2 Batches)</strong></div>
+                    <div><span class="text-neutral-muted">Annual Fee:</span> <strong class="text-amber-700 font-bold">₹85,000 / yr</strong></div>
+                  </div>
+                </div>
+
+                <div class="p-5 rounded-2xl border border-slate-300 bg-surface-canvas flex flex-col gap-3 card-hover">
+                  <div class="flex items-center justify-between">
+                    <span class="px-2.5 py-0.5 rounded-lg bg-slate-700 text-white font-black text-xs">CEC Stream</span>
+                    <span class="px-2 py-0.5 rounded-full bg-slate-100 text-slate-800 font-bold text-[10px]">Open</span>
+                  </div>
+                  <div>
+                    <h3 class="font-bold text-sm text-on-surface">Civics, Economics, Commerce</h3>
+                    <p class="text-xs text-neutral-muted mt-0.5">Civil Services (UPSC) &amp; CLAT Law Foundation track.</p>
+                  </div>
+                  <div class="grid grid-cols-2 gap-2 text-[11px] pt-2 border-t border-slate-200">
+                    <div><span class="text-neutral-muted">Intake:</span> <strong class="text-on-surface">60 Seats (1 Batch)</strong></div>
+                    <div><span class="text-neutral-muted">Annual Fee:</span> <strong class="text-slate-800 font-bold">₹75,000 / yr</strong></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- TAB 3: HALL OF FAME -->
+          <div id="pMod-halloffame" class="prof-module hidden flex flex-col gap-6">
+            <div class="bg-surface-card rounded-2xl p-6 border border-border-subtle shadow-sm flex flex-col gap-5">
+              <div class="flex items-center justify-between">
+                <div>
+                  <h2 class="text-base font-bold text-on-surface">Hall of Fame - Top National Rankers</h2>
+                  <p class="text-xs text-neutral-muted">Display stellar academic achievements, All India Ranks, and college allotments</p>
+                </div>
+                <button onclick="openModal('modal-add-ranker')" class="px-3.5 py-1.5 rounded-xl bg-primary text-white hover:bg-primary-dark text-xs font-bold transition-all flex items-center gap-1.5 shadow-sm">
+                  <span class="material-symbols-outlined text-[16px]">military_tech</span>
+                  + Add New Ranker
+                </button>
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div class="p-5 rounded-2xl border border-amber-400/30 bg-gradient-to-b from-amber-50/50 to-white flex flex-col gap-3 card-hover shadow-sm">
+                  <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 rounded-2xl bg-amber-500 text-white font-black text-base flex items-center justify-center shadow-md">AS</div>
+                    <div>
+                      <span class="px-2 py-0.5 rounded bg-amber-500 text-white text-[10px] font-extrabold">AIR 42</span>
+                      <h3 class="font-bold text-sm text-on-surface mt-1">Ananya Sharma</h3>
+                      <p class="text-[11px] text-neutral-muted">JEE Advanced 2024</p>
+                    </div>
+                  </div>
+                  <div class="p-2.5 rounded-xl bg-surface-canvas border border-border-subtle text-xs">
+                    <span class="text-neutral-muted block text-[10px]">Allotted College</span>
+                    <strong class="text-primary font-bold">IIT Bombay (CSE)</strong>
+                  </div>
+                </div>
+
+                <div class="p-5 rounded-2xl border border-emerald-400/30 bg-gradient-to-b from-emerald-50/50 to-white flex flex-col gap-3 card-hover shadow-sm">
+                  <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 rounded-2xl bg-emerald-600 text-white font-black text-base flex items-center justify-center shadow-md">KV</div>
+                    <div>
+                      <span class="px-2 py-0.5 rounded bg-emerald-600 text-white text-[10px] font-extrabold">AIR 18</span>
+                      <h3 class="font-bold text-sm text-on-surface mt-1">K. Varun Reddy</h3>
+                      <p class="text-[11px] text-neutral-muted">NEET (UG) 2024</p>
+                    </div>
+                  </div>
+                  <div class="p-2.5 rounded-xl bg-surface-canvas border border-border-subtle text-xs">
+                    <span class="text-neutral-muted block text-[10px]">Allotted College</span>
+                    <strong class="text-emerald-800 font-bold">AIIMS New Delhi (MBBS)</strong>
+                  </div>
+                </div>
+
+                <div class="p-5 rounded-2xl border border-indigo-400/30 bg-gradient-to-b from-indigo-50/50 to-white flex flex-col gap-3 card-hover shadow-sm">
+                  <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 rounded-2xl bg-indigo-600 text-white font-black text-base flex items-center justify-center shadow-md">PS</div>
+                    <div>
+                      <span class="px-2 py-0.5 rounded bg-indigo-600 text-white text-[10px] font-extrabold">AIR 08</span>
+                      <h3 class="font-bold text-sm text-on-surface mt-1">Pooja Sundaram</h3>
+                      <p class="text-[11px] text-neutral-muted">CA Foundation 2024</p>
+                    </div>
+                  </div>
+                  <div class="p-2.5 rounded-xl bg-surface-canvas border border-border-subtle text-xs">
+                    <span class="text-neutral-muted block text-[10px]">Allotted College</span>
+                    <strong class="text-indigo-800 font-bold">National Top 10 Merit</strong>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- TAB 4: HOSTEL & LIVING -->
+          <div id="pMod-hostel" class="prof-module hidden flex flex-col gap-6">
+            <div class="bg-surface-card rounded-2xl p-6 border border-border-subtle shadow-sm flex flex-col gap-5">
+              <div class="flex items-center justify-between">
+                <div>
+                  <h2 class="text-base font-bold text-on-surface">Hostel Amenities &amp; Residential Life</h2>
+                  <p class="text-xs text-neutral-muted">AC/Non-AC Rooms, Wi-Fi, 24/7 Security, In-House Doctor &amp; Laundry</p>
+                </div>
+                <button onclick="openModal('modal-add-amenity')" class="px-3.5 py-1.5 rounded-xl bg-primary text-white hover:bg-primary-dark text-xs font-bold transition-all flex items-center gap-1.5 shadow-sm">
+                  <span class="material-symbols-outlined text-[16px]">add_home</span>
+                  + Add New Amenity
+                </button>
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div class="p-4 rounded-xl border border-border-subtle bg-surface-canvas flex flex-col gap-2 card-hover">
+                  <span class="material-symbols-outlined text-primary text-2xl">ac_unit</span>
+                  <h3 class="font-bold text-xs">AC / Non-AC Rooms</h3>
+                  <p class="text-[11px] text-neutral-muted">2 &amp; 3 sharing with attached bath &amp; study desks.</p>
+                </div>
+                <div class="p-4 rounded-xl border border-border-subtle bg-surface-canvas flex flex-col gap-2 card-hover">
+                  <span class="material-symbols-outlined text-emerald-800 text-2xl">security</span>
+                  <h3 class="font-bold text-xs">24/7 Biometric Security</h3>
+                  <p class="text-[11px] text-neutral-muted">Wardens, 128 CCTV cameras, RFID access.</p>
+                </div>
+                <div class="p-4 rounded-xl border border-border-subtle bg-surface-canvas flex flex-col gap-2 card-hover">
+                  <span class="material-symbols-outlined text-indigo-800 text-2xl">wifi</span>
+                  <h3 class="font-bold text-xs">Gigabit Wi-Fi</h3>
+                  <p class="text-[11px] text-neutral-muted">Fiber broadband in study halls for lectures.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- TAB 5: DAILY ROUTINE & FOOD -->
+          <div id="pMod-routine" class="prof-module hidden flex flex-col gap-6">
+            <div class="bg-surface-card rounded-2xl p-6 border border-border-subtle shadow-sm flex flex-col gap-4">
+              <h2 class="text-base font-bold text-on-surface">Campus Academic Routine &amp; Mess Menu</h2>
+              <div class="flex flex-col divide-y divide-border-subtle text-xs">
+                <div class="py-2.5 flex items-center justify-between"><span class="font-bold text-primary w-40">06:00 AM – 07:00 AM</span><span>Morning Fitness &amp; Yoga</span></div>
+                <div class="py-2.5 flex items-center justify-between"><span class="font-bold text-amber-600 w-40">07:30 AM – 08:30 AM</span><span>Nutritious South Indian Breakfast</span></div>
+                <div class="py-2.5 flex items-center justify-between"><span class="font-bold text-primary w-40">08:30 AM – 11:30 AM</span><span>Core Lectures (Physics / Chemistry / Maths)</span></div>
+                <div class="py-2.5 flex items-center justify-between"><span class="font-bold text-emerald-600 w-40">11:30 AM – 01:30 PM</span><span>Practical Laboratory Sessions</span></div>
+                <div class="py-2.5 flex items-center justify-between"><span class="font-bold text-amber-600 w-40">01:30 PM – 02:15 PM</span><span>Hot Lunch Buffet</span></div>
+                <div class="py-2.5 flex items-center justify-between"><span class="font-bold text-primary w-40">02:15 PM – 05:00 PM</span><span>Daily Practice Tests &amp; Doubt Clearing</span></div>
+                <div class="py-2.5 flex items-center justify-between"><span class="font-bold text-indigo-600 w-40">05:00 PM – 06:00 PM</span><span>Sports Recreation &amp; Milk</span></div>
+                <div class="py-2.5 flex items-center justify-between"><span class="font-bold text-amber-600 w-40">08:30 PM – 09:15 PM</span><span>Dinner &amp; Bedtime Milk</span></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- TAB 6: FACULTY & MENTORS -->
+          <div id="pMod-faculty" class="prof-module hidden flex flex-col gap-6">
+            <div class="bg-surface-card rounded-2xl p-6 border border-border-subtle shadow-sm flex flex-col gap-5">
+              <div class="flex items-center justify-between">
+                <div>
+                  <h2 class="text-base font-bold text-on-surface">Faculty &amp; Subject Mentors</h2>
+                  <p class="text-xs text-neutral-muted">Ex-IITians, AIIMS Doctors &amp; Senior HODs</p>
+                </div>
+                <button onclick="openModal('modal-add-faculty')" class="px-3.5 py-1.5 rounded-xl bg-primary text-white hover:bg-primary-dark text-xs font-bold transition-all flex items-center gap-1.5 shadow-sm">
+                  <span class="material-symbols-outlined text-[16px]">person_add</span>
+                  + Add New Faculty
+                </button>
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div class="p-4 rounded-xl border border-border-subtle bg-surface-canvas flex items-start gap-3.5 card-hover">
+                  <div class="w-12 h-12 rounded-xl bg-primary text-white font-black text-base flex items-center justify-center shrink-0">KR</div>
+                  <div class="flex flex-col min-w-0 flex-1">
+                    <h3 class="font-bold text-xs text-on-surface">Prof. R. Krishna Rao</h3>
+                    <span class="text-[11px] text-neutral-muted">Physics HOD • Ex-IIT Madras</span>
+                    <p class="text-[11px] text-emerald-800 font-semibold mt-1">22+ Yrs JEE Advanced Experience</p>
+                  </div>
+                </div>
+
+                <div class="p-4 rounded-xl border border-border-subtle bg-surface-canvas flex items-start gap-3.5 card-hover">
+                  <div class="w-12 h-12 rounded-xl bg-emerald-700 text-white font-black text-base flex items-center justify-center shrink-0">SL</div>
+                  <div class="flex flex-col min-w-0 flex-1">
+                    <h3 class="font-bold text-xs text-on-surface">Dr. Sunita Lakshmi</h3>
+                    <span class="text-[11px] text-neutral-muted">Zoology Dean • AIIMS Mentor</span>
+                    <p class="text-[11px] text-emerald-800 font-semibold mt-1">18+ Yrs NEET UG Experience</p>
+                  </div>
+                </div>
+
+                <div class="p-4 rounded-xl border border-border-subtle bg-surface-canvas flex items-start gap-3.5 card-hover">
+                  <div class="w-12 h-12 rounded-xl bg-amber-600 text-white font-black text-base flex items-center justify-center shrink-0">VN</div>
+                  <div class="flex flex-col min-w-0 flex-1">
+                    <h3 class="font-bold text-xs text-on-surface">V. Narayana Murthy</h3>
+                    <span class="text-[11px] text-neutral-muted">Maths Specialist • IIT Roorkee</span>
+                    <p class="text-[11px] text-amber-800 font-semibold mt-1">15+ Yrs Olympiad Experience</p>
+                  </div>
+                </div>
+
+                <div class="p-4 rounded-xl border border-border-subtle bg-surface-canvas flex items-start gap-3.5 card-hover">
+                  <div class="w-12 h-12 rounded-xl bg-indigo-700 text-white font-black text-base flex items-center justify-center shrink-0">MB</div>
+                  <div class="flex flex-col min-w-0 flex-1">
+                    <h3 class="font-bold text-xs text-on-surface">Dr. Meera Banerjee</h3>
+                    <span class="text-[11px] text-neutral-muted">Organic Chemistry Head • Ph.D OU</span>
+                    <p class="text-[11px] text-indigo-800 font-semibold mt-1">16+ Yrs JEE Experience</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- TAB 7: TESTIMONIALS & TRUST -->
+          <div id="pMod-testimonials" class="prof-module hidden flex flex-col gap-6">
+            <div class="bg-surface-card rounded-2xl p-6 border border-border-subtle shadow-sm flex flex-col gap-4">
+              <h2 class="text-base font-bold text-on-surface">Accreditations &amp; Verified Reviews</h2>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div class="p-4 rounded-xl border border-border-subtle bg-surface-canvas flex flex-col gap-2 card-hover">
+                  <div class="flex items-center justify-between">
+                    <span class="text-amber-500 font-bold text-xs">★★★★★ 5.0</span>
+                    <span class="text-[10px] bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded">Verified Parent</span>
+                  </div>
+                  <p class="text-xs text-neutral-muted italic">"Exceptional mentorship by Physics faculty. My son secured AIR 42 in JEE Advanced."</p>
+                  <strong class="font-bold text-xs text-on-surface block mt-1">K. Ramakrishna Rao</strong>
+                </div>
+
+                <div class="p-4 rounded-xl border border-border-subtle bg-surface-canvas flex flex-col gap-2 card-hover">
+                  <div class="flex items-center justify-between">
+                    <span class="text-amber-500 font-bold text-xs">★★★★★ 5.0</span>
+                    <span class="text-[10px] bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded">Alumnus</span>
+                  </div>
+                  <p class="text-xs text-neutral-muted italic">"The daily NCERT line-by-line test series at Apex gave me rank 18 in NEET."</p>
+                  <strong class="font-bold text-xs text-on-surface block mt-1">K. Varun Reddy (AIIMS)</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- RIGHT LIVE SYNC RAIL (4 Cols) -->
+        <div class="xl:col-span-4 flex flex-col gap-6 sticky top-20">
+          <!-- Profile Strength -->
+          <div class="bg-surface-card rounded-2xl p-5 border border-border-subtle shadow-sm flex flex-col gap-3">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold text-neutral-muted uppercase tracking-wider">Profile Strength</span>
+              <span class="text-sm font-black text-primary">100% Complete</span>
+            </div>
+            <div class="w-full h-2.5 bg-surface-canvas rounded-full overflow-hidden border border-border-subtle">
+              <div class="h-full bg-gradient-to-r from-primary via-primary-container to-emerald-500 rounded-full" style="width: 100%;"></div>
+            </div>
+            <div class="grid grid-cols-2 gap-1.5 pt-2 text-[11px]">
+              <div class="flex items-center gap-1.5 text-emerald-800 font-semibold"><span class="material-symbols-outlined text-emerald-600 text-[15px]">check_circle</span> 1. Media &amp; Tours</div>
+              <div class="flex items-center gap-1.5 text-emerald-800 font-semibold"><span class="material-symbols-outlined text-emerald-600 text-[15px]">check_circle</span> 2. Streams (4)</div>
+              <div class="flex items-center gap-1.5 text-emerald-800 font-semibold"><span class="material-symbols-outlined text-emerald-600 text-[15px]">check_circle</span> 3. Hall of Fame</div>
+              <div class="flex items-center gap-1.5 text-emerald-800 font-semibold"><span class="material-symbols-outlined text-emerald-600 text-[15px]">check_circle</span> 4. Hostel Living</div>
+              <div class="flex items-center gap-1.5 text-emerald-800 font-semibold"><span class="material-symbols-outlined text-emerald-600 text-[15px]">check_circle</span> 5. Daily Routine</div>
+              <div class="flex items-center gap-1.5 text-emerald-800 font-semibold"><span class="material-symbols-outlined text-emerald-600 text-[15px]">check_circle</span> 6. Faculty (4)</div>
+              <div class="flex items-center gap-1.5 text-emerald-800 font-semibold col-span-2"><span class="material-symbols-outlined text-emerald-600 text-[15px]">check_circle</span> 7. Testimonials &amp; Trust</div>
+            </div>
+          </div>
+
+          <!-- Live App Preview -->
+          <div class="w-full max-w-[320px] bg-slate-950 p-3 rounded-[38px] shadow-2xl border-4 border-slate-700 text-white flex flex-col gap-2.5 mx-auto">
+            <div class="w-24 h-4 bg-slate-800 rounded-full mx-auto mt-1 flex items-center justify-center">
+              <div class="w-2.5 h-2.5 rounded-full bg-slate-900"></div>
+            </div>
+            <div class="bg-surface-card text-on-surface rounded-3xl overflow-hidden flex flex-col h-[480px] shadow-inner text-xs">
+              <div class="bg-primary-deep text-white px-4 py-3 flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="material-symbols-outlined text-[18px] text-secondary-container">account_balance</span>
+                  <span class="font-extrabold text-xs">Apex Junior College</span>
+                </div>
+                <span class="material-symbols-outlined text-[16px]">share</span>
+              </div>
+              <div class="overflow-y-auto flex-1 p-3 flex flex-col gap-3">
+                <div class="p-2 rounded-xl bg-primary-light text-primary text-[11px] font-bold" id="pPhoneSectionTag">
+                  📱 Live Preview: Media &amp; Tours
+                </div>
+                <div class="rounded-xl overflow-hidden bg-gradient-to-tr from-primary to-primary-container text-white p-3 flex flex-col gap-1 shadow-sm">
+                  <span class="text-[9px] font-bold text-secondary-container">TSBIE Approved Campus</span>
+                  <h4 class="font-black text-sm">Admissions Open 2025–26</h4>
+                  <p class="text-[10px] text-white/90">IIT-JEE • NEET • CA-Foundation</p>
+                </div>
+                <div class="flex flex-col gap-1">
+                  <span class="font-bold text-[11px]">Offered Streams:</span>
+                  <div class="flex flex-wrap gap-1">
+                    <span class="px-2 py-0.5 rounded bg-primary text-white text-[9px] font-bold">MPC (240)</span>
+                    <span class="px-2 py-0.5 rounded bg-emerald-700 text-white text-[9px] font-bold">BiPC (180)</span>
+                    <span class="px-2 py-0.5 rounded bg-amber-600 text-white text-[9px] font-bold">MEC (120)</span>
+                    <span class="px-2 py-0.5 rounded bg-slate-700 text-white text-[9px] font-bold">CEC (60)</span>
+                  </div>
+                </div>
+                <button onclick="notify('📲 In-app Prospectus Downloaded!')" class="w-full mt-auto py-2.5 bg-primary text-white font-extrabold rounded-xl text-xs shadow-md">
+                  Download Prospectus
+                </button>
+              </div>
+            </div>
+            <div class="w-24 h-1 bg-slate-700 rounded-full mx-auto my-1"></div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- TAB 3: LEADS & ADMISSIONS VIEW -->
+    <section id="view-leads" class="page-view hidden pt-20 pb-16 px-8 max-w-[1440px] mx-auto flex flex-col gap-6">
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-surface-card p-6 rounded-2xl border border-border-subtle shadow-sm">
+        <div>
+          <h1 class="text-xl font-bold text-on-surface">Admissions &amp; Lead Management Pipeline</h1>
+          <p class="text-xs text-neutral-muted mt-1">Track student inquiries, counselor follow-ups, fee confirmation, and batch allotments.</p>
+        </div>
+        <button onclick="openLeadModal()" class="px-4 py-2 rounded-xl bg-primary text-white text-xs font-bold shadow-sm hover:bg-primary-dark transition-colors flex items-center gap-1.5">
+          <span class="material-symbols-outlined text-[18px]">add</span>
+          + Add New Lead
+        </button>
+      </div>
+
+      <!-- Leads Table -->
+      <div class="bg-surface-card rounded-2xl border border-border-subtle shadow-sm overflow-hidden">
+        <table class="w-full text-left text-xs">
+          <thead class="bg-surface-canvas border-b border-border-subtle text-neutral-muted font-semibold uppercase">
+            <tr>
+              <th class="p-4">Student Name</th>
+              <th class="p-4">Stream / Course</th>
+              <th class="p-4">10th GPA</th>
+              <th class="p-4">Contact Phone</th>
+              <th class="p-4">Assigned Counselor</th>
+              <th class="p-4">Status</th>
+              <th class="p-4 text-right">Actions</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-border-subtle" id="leadsTableBody">
+            <tr class="hover:bg-surface-canvas">
+              <td class="p-4 font-bold text-on-surface">Rohan Sharma</td>
+              <td class="p-4"><span class="px-2 py-0.5 rounded bg-primary-light text-primary font-bold">MPC (IIT-JEE)</span></td>
+              <td class="p-4 font-bold text-emerald-700">9.8 GPA</td>
+              <td class="p-4 text-neutral-muted">+91 98490 12345</td>
+              <td class="p-4 font-medium">Mrs. Anitha Rao</td>
+              <td class="p-4"><span class="px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 font-bold">Callback Req</span></td>
+              <td class="p-4 text-right">
+                <button onclick="notify('📞 Calling Rohan Sharma...')" class="p-1 text-primary hover:bg-primary/10 rounded">
+                  <span class="material-symbols-outlined text-[18px]">call</span>
+                </button>
+              </td>
+            </tr>
+            <tr class="hover:bg-surface-canvas">
+              <td class="p-4 font-bold text-on-surface">Ananya Kulkarni</td>
+              <td class="p-4"><span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold">BiPC (NEET)</span></td>
+              <td class="p-4 font-bold text-emerald-700">10.0 GPA</td>
+              <td class="p-4 text-neutral-muted">+91 94401 67890</td>
+              <td class="p-4 font-medium">Mr. Rajesh Kumar</td>
+              <td class="p-4"><span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold">Seat Confirmed</span></td>
+              <td class="p-4 text-right">
+                <button onclick="notify('📄 Viewing enrollment form...')" class="p-1 text-primary hover:bg-primary/10 rounded">
+                  <span class="material-symbols-outlined text-[18px]">description</span>
+                </button>
+              </td>
+            </tr>
+            <tr class="hover:bg-surface-canvas">
+              <td class="p-4 font-bold text-on-surface">Varun Reddy</td>
+              <td class="p-4"><span class="px-2 py-0.5 rounded bg-indigo-100 text-indigo-800 font-bold">MEC (CA Track)</span></td>
+              <td class="p-4 font-bold text-emerald-700">9.4 GPA</td>
+              <td class="p-4 text-neutral-muted">+91 99887 54321</td>
+              <td class="p-4 font-medium">Mrs. Anitha Rao</td>
+              <td class="p-4"><span class="px-2 py-0.5 rounded-full bg-blue-100 text-blue-800 font-bold">Campus Visit</span></td>
+              <td class="p-4 text-right">
+                <button onclick="notify('📅 Scheduled Campus Tour!')" class="p-1 text-primary hover:bg-primary/10 rounded">
+                  <span class="material-symbols-outlined text-[18px]">event</span>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- TAB 4: ANALYTICS VIEW -->
+    <section id="view-analytics" class="page-view hidden pt-20 pb-16 px-8 max-w-[1440px] mx-auto flex flex-col gap-6">
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-surface-card p-6 rounded-2xl border border-border-subtle shadow-sm">
+        <div>
+          <h1 class="text-xl font-bold text-on-surface">Admissions &amp; Campus Traffic Analytics</h1>
+          <p class="text-xs text-neutral-muted mt-1">Feeder school patterns, GPA distributions, and lead conversion trends.</p>
+        </div>
+        <button onclick="notify('📊 Analytics PDF report exported successfully!')" class="px-4 py-2 rounded-xl bg-white border border-border-subtle shadow-sm text-xs font-bold hover:bg-surface-canvas transition-all flex items-center gap-1.5">
+          <span class="material-symbols-outlined text-[18px] text-primary">download</span>
+          Export Report (.PDF)
+        </button>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Feeder Schools -->
+        <div class="bg-surface-card rounded-2xl p-6 border border-border-subtle shadow-sm flex flex-col gap-4">
+          <h2 class="text-base font-bold text-on-surface">Top Feeder High Schools (Hyderabad &amp; RR Dist)</h2>
+          <div class="flex flex-col gap-3">
+            <div>
+              <div class="flex justify-between text-xs font-bold mb-1">
+                <span>Hyderabad Public School (Begumpet)</span>
+                <span class="text-primary">84 Inquiries (32 Enrolled)</span>
+              </div>
+              <div class="w-full bg-surface-container h-2 rounded-full overflow-hidden">
+                <div class="bg-primary h-full rounded-full" style="width: 85%"></div>
+              </div>
+            </div>
+            <div>
+              <div class="flex justify-between text-xs font-bold mb-1">
+                <span>Delhi Public School (Nacharam)</span>
+                <span class="text-primary">68 Inquiries (28 Enrolled)</span>
+              </div>
+              <div class="w-full bg-surface-container h-2 rounded-full overflow-hidden">
+                <div class="bg-primary h-full rounded-full" style="width: 70%"></div>
+              </div>
+            </div>
+            <div>
+              <div class="flex justify-between text-xs font-bold mb-1">
+                <span>Bharatiya Vidya Bhavan</span>
+                <span class="text-primary">54 Inquiries (21 Enrolled)</span>
+              </div>
+              <div class="w-full bg-surface-container h-2 rounded-full overflow-hidden">
+                <div class="bg-primary h-full rounded-full" style="width: 55%"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 10th Marks Distribution -->
+        <div class="bg-surface-card rounded-2xl p-6 border border-border-subtle shadow-sm flex flex-col gap-4">
+          <h2 class="text-base font-bold text-on-surface">10th Class GPA Distribution of Applicants</h2>
+          <div class="flex flex-col gap-3">
+            <div>
+              <div class="flex justify-between text-xs font-bold mb-1">
+                <span>9.5 – 10.0 GPA (Scholarship Eligibility)</span>
+                <span class="text-emerald-700">48% of applicants</span>
+              </div>
+              <div class="w-full bg-surface-container h-2 rounded-full overflow-hidden">
+                <div class="bg-emerald-600 h-full rounded-full" style="width: 48%"></div>
+              </div>
+            </div>
+            <div>
+              <div class="flex justify-between text-xs font-bold mb-1">
+                <span>8.5 – 9.4 GPA</span>
+                <span class="text-indigo-700">38% of applicants</span>
+              </div>
+              <div class="w-full bg-surface-container h-2 rounded-full overflow-hidden">
+                <div class="bg-indigo-600 h-full rounded-full" style="width: 38%"></div>
+              </div>
+            </div>
+            <div>
+              <div class="flex justify-between text-xs font-bold mb-1">
+                <span>7.5 – 8.4 GPA</span>
+                <span class="text-amber-700">14% of applicants</span>
+              </div>
+              <div class="w-full bg-surface-container h-2 rounded-full overflow-hidden">
+                <div class="bg-amber-500 h-full rounded-full" style="width: 14%"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 5: SETTINGS VIEW -->
+    <section id="view-settings" class="page-view hidden pt-20 pb-16 px-8 max-w-[1440px] mx-auto flex flex-col gap-6">
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-surface-card p-6 rounded-2xl border border-border-subtle shadow-sm">
+        <div>
+          <h1 class="text-xl font-bold text-on-surface">Portal &amp; Institution Settings</h1>
+          <p class="text-xs text-neutral-muted mt-1">Configure campus locations, academic sessions, WhatsApp automated bot, and staff permissions.</p>
+        </div>
+        <button onclick="notify('⚙️ Settings saved successfully!')" class="px-4 py-2 rounded-xl bg-primary text-white text-xs font-bold shadow-sm hover:bg-primary-dark transition-colors flex items-center gap-1.5">
+          <span class="material-symbols-outlined text-[18px]">save</span>
+          Save Settings
+        </button>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="bg-surface-card rounded-2xl p-6 border border-border-subtle shadow-sm flex flex-col gap-4">
+          <h2 class="text-base font-bold text-on-surface">Institution Details</h2>
+          <div class="flex flex-col gap-3 text-xs">
+            <div>
+              <label class="font-bold text-neutral-muted">College Name</label>
+              <input type="text" value="Apex Junior College" class="w-full mt-1 p-2 rounded-lg border border-border-input bg-surface-canvas"/>
+            </div>
+            <div>
+              <label class="font-bold text-neutral-muted">Affiliation Code</label>
+              <input type="text" value="TS-BIE-HYD-500081" class="w-full mt-1 p-2 rounded-lg border border-border-input bg-surface-canvas"/>
+            </div>
+            <div>
+              <label class="font-bold text-neutral-muted">Main Campus City</label>
+              <input type="text" value="Hyderabad, Telangana" class="w-full mt-1 p-2 rounded-lg border border-border-input bg-surface-canvas"/>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-surface-card rounded-2xl p-6 border border-border-subtle shadow-sm flex flex-col gap-4">
+          <h2 class="text-base font-bold text-on-surface">WhatsApp &amp; Notifications</h2>
+          <div class="flex flex-col gap-3 text-xs">
+            <div class="flex items-center justify-between p-3 rounded-xl bg-surface-canvas border border-border-subtle">
+              <div>
+                <p class="font-bold text-on-surface">WhatsApp Automated Lead Responder</p>
+                <p class="text-neutral-muted text-[11px]">Send prospectus automatically on student WhatsApp inquiry.</p>
+              </div>
+              <input type="checkbox" checked class="rounded text-primary focus:ring-primary w-4 h-4"/>
+            </div>
+            <div class="flex items-center justify-between p-3 rounded-xl bg-surface-canvas border border-border-subtle">
+              <div>
+                <p class="font-bold text-on-surface">Daily Attendance SMS to Parents</p>
+                <p class="text-neutral-muted text-[11px]">Auto trigger SMS at 10:00 AM for absent students.</p>
+              </div>
+              <input type="checkbox" checked class="rounded text-primary focus:ring-primary w-4 h-4"/>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- Add Lead Modal -->
+  <div id="leadModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl flex flex-col gap-4">
+      <div class="flex items-center justify-between border-b border-border-subtle pb-3">
+        <h3 class="font-bold text-base text-on-surface">Add New Admission Lead</h3>
+        <button onclick="closeLeadModal()" class="text-neutral-muted hover:text-on-surface">
+          <span class="material-symbols-outlined text-[20px]">close</span>
+        </button>
+      </div>
+      <form onsubmit="submitNewLead(event)" class="flex flex-col gap-3 text-xs">
+        <div>
+          <label class="font-bold text-neutral-muted">Student Name</label>
+          <input type="text" id="modalStudentName" required placeholder="e.g. Rahul Varma" class="w-full mt-1 p-2 rounded-lg border border-border-input bg-surface-canvas"/>
+        </div>
+        <div>
+          <label class="font-bold text-neutral-muted">Stream Interested In</label>
+          <select id="modalStream" class="w-full mt-1 p-2 rounded-lg border border-border-input bg-surface-canvas">
+            <option>MPC (IIT-JEE Focus)</option>
+            <option>BiPC (NEET Special)</option>
+            <option>MEC (CA Foundation)</option>
+            <option>CEC (Civils / CLAT)</option>
+          </select>
+        </div>
+        <div>
+          <label class="font-bold text-neutral-muted">10th Marks / GPA</label>
+          <input type="text" id="modalGpa" placeholder="e.g. 9.6 GPA" class="w-full mt-1 p-2 rounded-lg border border-border-input bg-surface-canvas"/>
+        </div>
+        <div>
+          <label class="font-bold text-neutral-muted">Parent Phone Number</label>
+          <input type="tel" id="modalPhone" required placeholder="+91 98765 43210" class="w-full mt-1 p-2 rounded-lg border border-border-input bg-surface-canvas"/>
+        </div>
+        <div class="flex items-center justify-end gap-2 pt-2 border-t border-border-subtle">
+          <button type="button" onclick="closeLeadModal()" class="px-4 py-2 rounded-lg text-neutral-muted hover:bg-surface-canvas font-semibold">Cancel</button>
+          <button type="submit" class="px-4 py-2 rounded-lg bg-primary text-white font-bold hover:bg-primary-dark">Save Lead</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div id="toastContainer" class="fixed bottom-6 right-6 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+  <!-- Instant Single-Page Application Tab Switcher Script -->
+  <script>
+    const tabMeta = {
+      dashboard: { title: 'College Dashboard', icon: 'dashboard', pageTitle: 'Apex Junior College - Command Hub' },
+      profile: { title: 'College Profile', icon: 'school', pageTitle: 'Apex Junior College - Profile Studio' },
+      leads: { title: 'Leads & Admissions', icon: 'group', pageTitle: 'Apex Junior College - Leads & Admissions' },
+      analytics: { title: 'Analytics', icon: 'insights', pageTitle: 'Apex Junior College - Campus Analytics' },
+      settings: { title: 'Settings', icon: 'settings', pageTitle: 'Apex Junior College - Portal Settings' }
+    };
+
+    function switchTab(tabId) {
+      if (!tabMeta[tabId]) tabId = 'dashboard';
+
+      // 1. Hide all views and show target view instantaneously
+      document.querySelectorAll('.page-view').forEach(view => {
+        view.classList.add('hidden');
+      });
+      const targetView = document.getElementById(`view-${tabId}`);
+      if (targetView) targetView.classList.remove('hidden');
+
+      // 2. Update sidebar navigation styles
+      document.querySelectorAll('.nav-btn').forEach(btn => {
+        btn.className = 'nav-btn flex items-center justify-between px-3.5 py-2.5 rounded-xl text-white/80 hover:bg-white/10 hover:text-white transition-all text-sm font-medium text-left w-full';
+      });
+      const activeBtn = document.getElementById(`nav-${tabId}`);
+      if (activeBtn) {
+        activeBtn.className = 'nav-btn flex items-center justify-between px-3.5 py-2.5 rounded-xl bg-white text-primary font-bold shadow-sm text-sm transition-all text-left w-full';
+      }
+
+      // 3. Update Leads badge style
+      const leadsBadge = document.getElementById('badge-leads');
+      if (leadsBadge) {
+        if (tabId === 'leads') {
+          leadsBadge.className = 'px-2 py-0.5 rounded-full bg-amber-500 text-white text-[10px] font-bold whitespace-nowrap shrink-0 shadow-sm';
+        } else {
+          leadsBadge.className = 'px-2 py-0.5 rounded-full bg-amber-400/20 text-amber-300 text-[10px] font-bold whitespace-nowrap shrink-0 border border-amber-400/30';
+        }
+      }
+
+      // 4. Update Header breadcrumbs and document title
+      const meta = tabMeta[tabId];
+      document.getElementById('breadcrumbTitle').innerText = meta.title;
+      document.getElementById('breadcrumbIcon').innerText = meta.icon;
+      document.title = meta.pageTitle;
+
+      // 5. Update URL Hash without reload
+      window.location.hash = tabId;
+      window.scrollTo({ top: 0, behavior: 'instant' });
+    }
+
+    // Handle initial load and hash changes
+    function checkHash() {
+      const hash = window.location.hash.replace('#', '') || 'dashboard';
+      switchTab(hash);
+    }
+    window.addEventListener('hashchange', checkHash);
+    window.addEventListener('DOMContentLoaded', checkHash);
+
+    // Toast notifications
+    function notify(message) {
+      const container = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
+      toast.className = 'toast pointer-events-auto bg-on-surface text-surface px-4 py-3 rounded-xl shadow-xl flex items-center gap-2 text-xs font-medium border border-white/10';
+      toast.innerHTML = `<span class="material-symbols-outlined text-secondary-container text-[18px]">check_circle</span><span>${message}</span>`;
+      container.appendChild(toast);
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateY(10px)';
+        toast.style.transition = 'all 0.3s ease-out';
+        setTimeout(() => toast.remove(), 300);
+      }, 3500);
+    }
+
+    function broadcastAlert() {
+      const notice = prompt("Enter campus announcement message for students and faculty:", "Special Seminar on JEE Advanced Strategy this Saturday at 10 AM.");
+      if (notice) {
+        notify(`📢 Announcement posted: "${notice}"`);
+      }
+    }
+
+    // Modal controls
+    function openLeadModal() {
+      document.getElementById('leadModal')?.classList.remove('hidden');
+    }
+    function closeLeadModal() {
+      document.getElementById('leadModal')?.classList.add('hidden');
+    }
+
+    function submitNewLead(e) {
+      e.preventDefault();
+      const name = document.getElementById('modalStudentName').value;
+      const stream = document.getElementById('modalStream').value;
+      const gpa = document.getElementById('modalGpa').value || '9.5 GPA';
+      const phone = document.getElementById('modalPhone').value;
+
+      const tbody = document.getElementById('leadsTableBody');
+      if (tbody) {
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-surface-canvas bg-amber-50/50';
+        tr.innerHTML = `
+          <td class="p-4 font-bold text-on-surface">${name}</td>
+          <td class="p-4"><span class="px-2 py-0.5 rounded bg-primary-light text-primary font-bold">${stream}</span></td>
+          <td class="p-4 font-bold text-emerald-700">${gpa}</td>
+          <td class="p-4 text-neutral-muted">${phone}</td>
+          <td class="p-4 font-medium">Auto Assigned</td>
+          <td class="p-4"><span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold">New Lead</span></td>
+          <td class="p-4 text-right">
+            <button onclick="notify('📞 Calling ${name}...')" class="p-1 text-primary hover:bg-primary/10 rounded">
+              <span class="material-symbols-outlined text-[18px]">call</span>
+            </button>
+          </td>
+        `;
+        tbody.prepend(tr);
+      }
+      closeLeadModal();
+    // Profile Studio Tab Switcher
+    const P_TABS = ['media', 'streams', 'halloffame', 'hostel', 'routine', 'faculty', 'testimonials'];
+    const P_TAB_LABELS = {
+      'media': 'Media & Tours',
+      'streams': 'Streams & Batches',
+      'halloffame': 'Hall of Fame Rankers',
+      'hostel': 'Hostel & Living',
+      'routine': 'Daily Routine & Food',
+      'faculty': 'Faculty & Mentors',
+      'testimonials': 'Testimonials & Trust'
+    };
+
+    function switchProfileModule(tabId) {
+      P_TABS.forEach(t => {
+        const mod = document.getElementById(`pMod-${t}`);
+        const btn = document.getElementById(`pTabBtn-${t}`);
+        if (mod) mod.classList.add('hidden');
+        if (btn) {
+          btn.className = 'tab-btn px-3.5 py-2.5 rounded-xl text-xs font-semibold text-neutral-muted transition-all flex items-center gap-2';
+        }
+      });
+
+      const activeMod = document.getElementById(`pMod-${tabId}`);
+      const activeBtn = document.getElementById(`pTabBtn-${tabId}`);
+      if (activeMod) activeMod.classList.remove('hidden');
+      if (activeBtn) {
+        activeBtn.className = 'tab-btn active px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all flex items-center gap-2';
+      }
+
+      const tag = document.getElementById('pPhoneSectionTag');
+      if (tag && P_TAB_LABELS[tabId]) {
+        tag.innerText = `📱 Live Preview: ${P_TAB_LABELS[tabId]}`;
+      }
+
+      notify(`Profile Module: ${P_TAB_LABELS[tabId] || tabId}`);
+    }
+  </script>
+</body>
+</html>

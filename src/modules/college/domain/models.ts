@@ -87,6 +87,32 @@ export class College {
   isPubliclyDiscoverable(): boolean {
     return this.status === 'ACTIVE' && this.verificationStatus === 'VERIFIED';
   }
+
+  updateProfile(data: {
+    shortName?: string | null;
+    description?: string | null;
+    website?: string | null;
+    contactPhone?: string | null;
+    contactEmail?: string | null;
+    location?: Partial<LocationProps>;
+    hostelSummary?: Partial<HostelSummaryProps>;
+  }): void {
+    if (data.shortName !== undefined) this.props.shortName = data.shortName;
+    if (data.description !== undefined) this.props.description = data.description;
+    if (data.website !== undefined) this.props.website = data.website;
+    if (data.contactPhone !== undefined) this.props.contactPhone = data.contactPhone;
+    if (data.contactEmail !== undefined) this.props.contactEmail = data.contactEmail;
+
+    if (data.location) {
+      this.props.location = { ...this.props.location, ...data.location };
+    }
+
+    if (data.hostelSummary) {
+      this.props.hostelSummary = { ...this.props.hostelSummary, ...data.hostelSummary };
+    }
+
+    this.props.updatedAt = new Date().toISOString();
+  }
 }
 
 export type StaffRole = 'COLLEGE_ADMIN' | 'COLLEGE_STAFF';
