@@ -36,6 +36,7 @@ export interface LocationDto {
   nameEn: string;
   nameTe: string;
   code: string | null;
+  status: string;
 }
 
 export interface SchoolDto {

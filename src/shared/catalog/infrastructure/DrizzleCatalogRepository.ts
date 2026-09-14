@@ -1,4 +1,4 @@
-import { eq, inArray, and, ne, ilike, sql } from 'drizzle-orm';
+import { eq, inArray, and, ne, ilike, sql, isNull } from 'drizzle-orm';
 import { db } from '../../database/db';
 import { educationPathwaysTable, educationProgramsTable, locationsTable, schoolsTable } from './schema';
 import { Pathway, Program, ServiceArea, Location, School } from '../domain/models';
@@ -78,7 +78,7 @@ export class DrizzleCatalogRepository {
     if (type) conditions.push(eq(locationsTable.type, type));
     if (parentId !== undefined) {
        if (parentId === null) {
-          // not supported via drizzle easily but parentId isn't null typically when queried
+          conditions.push(isNull(locationsTable.parentId));
        } else {
           conditions.push(eq(locationsTable.parentId, parentId));
        }
@@ -101,6 +101,86 @@ export class DrizzleCatalogRepository {
       latitude: r.latitude ? Number(r.latitude) : null,
       longitude: r.longitude ? Number(r.longitude) : null,
     }));
+  }
+
+  async getAdminLocations(type?: 'STATE' | 'DISTRICT' | 'MANDAL' | 'LOCALITY', parentId?: string | null): Promise<Location[]> {
+    const conditions = [];
+    if (type) conditions.push(eq(locationsTable.type, type));
+    if (parentId !== undefined) {
+       if (parentId === null) {
+          conditions.push(isNull(locationsTable.parentId));
+       } else {
+          conditions.push(eq(locationsTable.parentId, parentId));
+       }
+    }
+
+    const rows = await db
+      .select()
+      .from(locationsTable)
+      .where(conditions.length > 0 ? and(...conditions) : undefined)
+      .orderBy(locationsTable.nameEn);
+
+    return rows.map(r => Location.create({
+      id: r.id,
+      parentId: r.parentId,
+      type: r.type,
+      nameEn: r.nameEn,
+      nameTe: r.nameTe,
+      code: r.code,
+      status: r.status as 'ACTIVE' | 'INACTIVE' | 'COMING_SOON',
+      latitude: r.latitude ? Number(r.latitude) : null,
+      longitude: r.longitude ? Number(r.longitude) : null,
+    }));
+  }
+
+  async createLocation(location: { type: 'STATE' | 'DISTRICT' | 'MANDAL' | 'LOCALITY', parentId: string | null, nameEn: string, nameTe: string }): Promise<Location> {
+    const rows = await db
+      .insert(locationsTable)
+      .values({
+        type: location.type,
+        parentId: location.parentId,
+        nameEn: location.nameEn,
+        nameTe: location.nameTe,
+      })
+      .returning();
+
+    const r = rows[0];
+    return Location.create({
+      id: r.id,
+      parentId: r.parentId,
+      type: r.type,
+      nameEn: r.nameEn,
+      nameTe: r.nameTe,
+      code: r.code,
+      status: r.status as 'ACTIVE' | 'INACTIVE' | 'COMING_SOON',
+      latitude: r.latitude ? Number(r.latitude) : null,
+      longitude: r.longitude ? Number(r.longitude) : null,
+    });
+  }
+
+  async updateLocation(id: string, updates: { nameEn?: string, nameTe?: string, status?: 'ACTIVE' | 'INACTIVE' }): Promise<Location> {
+    const rows = await db
+      .update(locationsTable)
+      .set({
+        ...updates,
+        updatedAt: new Date().toISOString()
+      })
+      .where(eq(locationsTable.id, id))
+      .returning();
+      
+    if (rows.length === 0) throw new Error('Location not found');
+    const r = rows[0];
+    return Location.create({
+      id: r.id,
+      parentId: r.parentId,
+      type: r.type,
+      nameEn: r.nameEn,
+      nameTe: r.nameTe,
+      code: r.code,
+      status: r.status as 'ACTIVE' | 'INACTIVE' | 'COMING_SOON',
+      latitude: r.latitude ? Number(r.latitude) : null,
+      longitude: r.longitude ? Number(r.longitude) : null,
+    });
   }
 
   async getActiveSchools(locationId?: string, search?: string): Promise<School[]> {

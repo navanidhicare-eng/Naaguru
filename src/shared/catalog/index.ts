@@ -1,8 +1,10 @@
 import { DrizzleCatalogRepository } from './infrastructure/DrizzleCatalogRepository';
 import { CatalogUseCases } from './application/useCases/CatalogUseCases';
+import { CatalogAdminUseCases } from './application/useCases/CatalogAdminUseCases';
 
 const catalogRepository = new DrizzleCatalogRepository();
 const catalogUseCases = new CatalogUseCases(catalogRepository);
+const catalogAdminUseCases = new CatalogAdminUseCases(catalogRepository);
 
 export const CatalogModule = {
   getStudentVisiblePathways: () => catalogUseCases.getStudentVisiblePathways(),
@@ -15,6 +17,12 @@ export const CatalogModule = {
   validateProgram: (pathwayCode: string, programCode: string) => catalogUseCases.validateProgram(pathwayCode, programCode),
   validateArea: (id: string) => catalogUseCases.validateArea(id),
   validateSchool: (id: string) => catalogUseCases.validateSchool(id),
+};
+
+export const AdminCatalogModule = {
+  getLocations: (type?: any, parentId?: string) => catalogAdminUseCases.getLocations(type, parentId),
+  createLocation: (data: any) => catalogAdminUseCases.createLocation(data),
+  updateLocation: (id: string, updates: any) => catalogAdminUseCases.updateLocation(id, updates),
 };
 
 export * from './application/dtos';

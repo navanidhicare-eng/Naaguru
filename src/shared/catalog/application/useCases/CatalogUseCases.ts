@@ -105,6 +105,7 @@ export class CatalogUseCases {
       nameEn: l.props.nameEn,
       nameTe: l.props.nameTe,
       code: l.props.code,
+      status: l.props.status,
     }));
   }
 
