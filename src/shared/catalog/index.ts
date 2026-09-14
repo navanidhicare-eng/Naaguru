@@ -23,6 +23,9 @@ export const AdminCatalogModule = {
   getLocations: (type?: any, parentId?: string) => catalogAdminUseCases.getLocations(type, parentId),
   createLocation: (data: any) => catalogAdminUseCases.createLocation(data),
   updateLocation: (id: string, updates: any) => catalogAdminUseCases.updateLocation(id, updates),
+  getSchools: (locationId?: string, status?: string, partnershipStatus?: string | null, search?: string) => catalogAdminUseCases.getSchools(locationId, status, partnershipStatus, search),
+  createSchool: (data: any) => catalogAdminUseCases.createSchool(data),
+  updateSchool: (id: string, updates: any) => catalogAdminUseCases.updateSchool(id, updates),
 };
 
 export * from './application/dtos';

@@ -236,6 +236,108 @@ export class DrizzleCatalogRepository {
     }));
   }
 
+  async getAdminSchools(locationId?: string, status?: string, partnershipStatus?: string | null, search?: string): Promise<School[]> {
+    const conditions = [];
+
+    if (status) conditions.push(eq(schoolsTable.status, status as any));
+    if (partnershipStatus !== undefined) {
+      if (partnershipStatus === null) {
+        conditions.push(isNull(schoolsTable.partnershipStatus));
+      } else {
+        conditions.push(eq(schoolsTable.partnershipStatus, partnershipStatus));
+      }
+    }
+    if (search) {
+      conditions.push(ilike(schoolsTable.nameEn, `%${search}%`));
+    }
+
+    if (locationId) {
+      const result = await db.execute(sql`
+        WITH RECURSIVE loc_tree AS (
+          SELECT id, ARRAY[id] as path 
+          FROM locations 
+          WHERE id = ${locationId}::uuid
+          
+          UNION ALL
+          
+          SELECT l.id, t.path || l.id
+          FROM locations l
+          INNER JOIN loc_tree t ON l.parent_id = t.id
+          WHERE NOT l.id = ANY(t.path)
+        )
+        SELECT id FROM loc_tree;
+      `);
+      
+      const descendantIds = result.map(r => r.id as string);
+      
+      if (descendantIds.length > 0) {
+        conditions.push(inArray(schoolsTable.locationId, descendantIds));
+      } else {
+        return [];
+      }
+    }
+
+    const rows = await db
+      .select()
+      .from(schoolsTable)
+      .where(conditions.length > 0 ? and(...conditions) : undefined)
+      .orderBy(schoolsTable.nameEn);
+
+    return rows.map(r => School.create({
+      id: r.id,
+      locationId: r.locationId,
+      nameEn: r.nameEn,
+      nameTe: r.nameTe,
+      partnershipStatus: r.partnershipStatus,
+      status: r.status as any,
+    }));
+  }
+
+  async createSchool(school: { locationId: string, nameEn: string, nameTe: string, partnershipStatus: string | null, status: 'ACTIVE' | 'INACTIVE' }): Promise<School> {
+    const rows = await db
+      .insert(schoolsTable)
+      .values({
+        locationId: school.locationId,
+        nameEn: school.nameEn,
+        nameTe: school.nameTe,
+        partnershipStatus: school.partnershipStatus,
+        status: school.status,
+      })
+      .returning();
+
+    const r = rows[0];
+    return School.create({
+      id: r.id,
+      locationId: r.locationId,
+      nameEn: r.nameEn,
+      nameTe: r.nameTe,
+      partnershipStatus: r.partnershipStatus,
+      status: r.status as any,
+    });
+  }
+
+  async updateSchool(id: string, updates: { nameEn?: string, nameTe?: string, partnershipStatus?: string | null, status?: 'ACTIVE' | 'INACTIVE' }): Promise<School> {
+    const rows = await db
+      .update(schoolsTable)
+      .set({
+        ...updates,
+        updatedAt: new Date().toISOString()
+      })
+      .where(eq(schoolsTable.id, id))
+      .returning();
+      
+    if (rows.length === 0) throw new Error('School not found');
+    const r = rows[0];
+    return School.create({
+      id: r.id,
+      locationId: r.locationId,
+      nameEn: r.nameEn,
+      nameTe: r.nameTe,
+      partnershipStatus: r.partnershipStatus,
+      status: r.status as any,
+    });
+  }
+
   async getPathwayByCode(code: string): Promise<Pathway | null> {
     const rows = await db
       .select()
@@ -332,7 +434,7 @@ export class DrizzleCatalogRepository {
       nameEn: r.nameEn,
       nameTe: r.nameTe,
       partnershipStatus: r.partnershipStatus,
-      status: r.status as 'ACTIVE',
+      status: r.status as any,
     });
   }
 }

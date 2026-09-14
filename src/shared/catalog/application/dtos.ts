@@ -45,4 +45,5 @@ export interface SchoolDto {
   nameEn: string;
   nameTe: string;
   partnershipStatus: string | null;
+  status: string;
 }

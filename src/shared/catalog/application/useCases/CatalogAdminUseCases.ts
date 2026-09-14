@@ -1,5 +1,5 @@
 import { DrizzleCatalogRepository } from '../../infrastructure/DrizzleCatalogRepository';
-import { LocationDto } from '../dtos';
+import { LocationDto, SchoolDto } from '../dtos';
 import { LocationType } from '../../domain/models';
 import { AppError } from '../../../errors';
 
@@ -107,6 +107,85 @@ export class CatalogAdminUseCases {
     } catch (error: any) {
       if (error.code === '23505' || error.message?.includes('duplicate key')) {
         throw new AppError(`That ${existing.props.type.toLowerCase()} already exists.`, 409);
+      }
+      throw error;
+    }
+  }
+
+  async getSchools(locationId?: string, status?: string, partnershipStatus?: string | null, search?: string): Promise<SchoolDto[]> {
+    const schools = await this.catalogRepository.getAdminSchools(locationId, status, partnershipStatus, search);
+    return schools.map(s => ({
+      id: s.props.id,
+      locationId: s.props.locationId,
+      nameEn: s.props.nameEn,
+      nameTe: s.props.nameTe,
+      partnershipStatus: s.props.partnershipStatus,
+      status: s.props.status,
+    }));
+  }
+
+  async createSchool(data: { locationId: string, nameEn: string, nameTe: string, partnershipStatus: string | null, status: 'ACTIVE' | 'INACTIVE' }): Promise<SchoolDto> {
+    // 1. Validate location strictly (Must be an ACTIVE LOCALITY)
+    if (!data.locationId) throw new AppError('locationId is required', 400);
+    const location = await this.catalogRepository.getLocationById(data.locationId);
+    if (!location) throw new AppError('Location not found', 404);
+    if (location.props.type !== 'LOCALITY') {
+      throw new AppError(`School must be attached to a LOCALITY. Provided location is ${location.props.type}.`, 400);
+    }
+    if (location.props.status !== 'ACTIVE') {
+      throw new AppError('Cannot attach a school to an INACTIVE location.', 400);
+    }
+
+    // 2. Validate duplicates (exact nameEn in the same locationId)
+    const siblings = await this.catalogRepository.getAdminSchools(data.locationId);
+    const isDuplicate = siblings.some(s => s.props.nameEn.toLowerCase() === data.nameEn.toLowerCase());
+    if (isDuplicate) {
+      throw new AppError('That school already exists in this locality.', 409);
+    }
+
+    try {
+      const school = await this.catalogRepository.createSchool(data);
+      return {
+        id: school.props.id,
+        locationId: school.props.locationId,
+        nameEn: school.props.nameEn,
+        nameTe: school.props.nameTe,
+        partnershipStatus: school.props.partnershipStatus,
+        status: school.props.status,
+      };
+    } catch (error: any) {
+      if (error.code === '23505' || error.message?.includes('duplicate key')) {
+        throw new AppError('That school already exists in this locality.', 409);
+      }
+      throw error;
+    }
+  }
+
+  async updateSchool(id: string, updates: { nameEn?: string, nameTe?: string, partnershipStatus?: string | null, status?: 'ACTIVE' | 'INACTIVE' }): Promise<SchoolDto> {
+    const existing = await this.catalogRepository.getSchoolById(id);
+    if (!existing) throw new AppError('School not found', 404);
+
+    if (updates.nameEn && updates.nameEn.toLowerCase() !== existing.props.nameEn.toLowerCase()) {
+      const siblings = await this.catalogRepository.getAdminSchools(existing.props.locationId);
+      const isDuplicate = siblings.some(s => s.props.id !== id && s.props.nameEn.toLowerCase() === updates.nameEn!.toLowerCase());
+      if (isDuplicate) {
+        throw new AppError('That school already exists in this locality.', 409);
+      }
+    }
+
+    try {
+      const school = await this.catalogRepository.updateSchool(id, updates);
+      return {
+        id: school.props.id,
+        locationId: school.props.locationId,
+        nameEn: school.props.nameEn,
+        nameTe: school.props.nameTe,
+        partnershipStatus: school.props.partnershipStatus,
+        status: school.props.status,
+      };
+    } catch (error: any) {
+      if (error.code === '23505' || error.message?.includes('duplicate key')) {
+        throw new AppError('That school already exists in this locality.', 409);
       }
       throw error;
     }

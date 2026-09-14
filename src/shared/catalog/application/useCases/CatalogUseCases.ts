@@ -117,6 +117,7 @@ export class CatalogUseCases {
       nameEn: s.props.nameEn,
       nameTe: s.props.nameTe,
       partnershipStatus: s.props.partnershipStatus,
+      status: s.props.status,
     }));
   }
 }
