@@ -76,14 +76,14 @@ export class CollegeUseCases {
         lng: college.location.lng,
       },
       hostelSummary: {
-        hasBoysHostel: college.hostelSummary.hasBoysHostel,
-        hasGirlsHostel: college.hostelSummary.hasGirlsHostel,
-        annualHostelFee: college.hostelSummary.annualHostelFee,
+        hasBoysHostel: college.hostels.some(h => h.hasBoysHostel),
+        hasGirlsHostel: college.hostels.some(h => h.hasGirlsHostel),
+        annualHostelFee: college.hostels.map(h => h.annualHostelFee).filter(f => f !== null).sort((a, b) => a! - b!)[0] ?? null,
       },
       ownershipType: college.ownershipType,
       offerings: college.offerings.map(o => ({
         streamCode: o.streamCode,
-        tuitionFee: o.tuitionFee,
+        tuitionFee: o.minFee,
       })),
     };
   }

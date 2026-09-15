@@ -1,6 +1,6 @@
 import { eq, and, or, lte, inArray, sql } from 'drizzle-orm';
 import { db } from '@/shared/database/db';
-import { collegesTable, collegeStreamOfferingsTable } from './schema';
+import { collegesTable, collegeStreamOfferingsTable, branchesTable } from './schema';
 import { College, CollegeStreamOffering, CollegeStatus, VerificationStatus, OwnershipType } from '../domain/models';
 import { ICollegeRepository, CollegeSearchCriteria } from '../domain/ICollegeRepository';
 import { StreamCode } from '@/shared/domain/StreamCode';
@@ -11,7 +11,8 @@ export class DrizzleCollegeRepository implements ICollegeRepository {
     const rows = await db
       .select()
       .from(collegesTable)
-      .leftJoin(collegeStreamOfferingsTable, eq(collegeStreamOfferingsTable.collegeId, collegesTable.id))
+      .leftJoin(branchesTable, eq(branchesTable.collegeId, collegesTable.id))
+      .leftJoin(collegeStreamOfferingsTable, eq(collegeStreamOfferingsTable.branchId, branchesTable.id))
       .where(eq(collegesTable.id, id));
 
     if (rows.length === 0) return null;
@@ -22,36 +23,61 @@ export class DrizzleCollegeRepository implements ICollegeRepository {
   async searchActiveVerified(criteria: CollegeSearchCriteria): Promise<College[]> {
     const conditions = [
       eq(collegesTable.status, 'ACTIVE'),
-      eq(collegesTable.verificationStatus, 'VERIFIED')
+      eq(collegesTable.verificationStatus, 'VERIFIED'),
+      eq(branchesTable.isPubliclyEligible, true)
     ];
 
-    if (criteria.state) conditions.push(eq(collegesTable.state, criteria.state));
-    if (criteria.district) conditions.push(eq(collegesTable.district, criteria.district));
-    if (criteria.city) conditions.push(eq(collegesTable.city, criteria.city));
+    if (criteria.locationId) {
+      conditions.push(eq(branchesTable.locationId, criteria.locationId));
+    }
     
     if (criteria.requiresHostel) {
-      conditions.push(or(eq(collegesTable.hasBoysHostel, true), eq(collegesTable.hasGirlsHostel, true))!);
+      conditions.push(or(eq(branchesTable.hasBoysHostel, true), eq(branchesTable.hasGirlsHostel, true))!);
     }
-    if (criteria.requiresBoysHostel) conditions.push(eq(collegesTable.hasBoysHostel, true));
-    if (criteria.requiresGirlsHostel) conditions.push(eq(collegesTable.hasGirlsHostel, true));
+    if (criteria.requiresBoysHostel) conditions.push(eq(branchesTable.hasBoysHostel, true));
+    if (criteria.requiresGirlsHostel) conditions.push(eq(branchesTable.hasGirlsHostel, true));
 
     if (criteria.streamCode) {
       conditions.push(eq(collegeStreamOfferingsTable.streamCode, criteria.streamCode));
     }
     
     if (criteria.maxFee !== undefined) {
-      conditions.push(lte(collegeStreamOfferingsTable.tuitionFee, criteria.maxFee));
+      conditions.push(lte(collegeStreamOfferingsTable.minFee, criteria.maxFee));
     }
 
-    const rows = await db
+    // 1. Qualifying Phase: Find college IDs where AT LEAST ONE branch satisfies ALL criteria
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let qualifyingQuery: any = db
+      .select({ id: collegesTable.id })
+      .from(collegesTable)
+      .innerJoin(branchesTable, eq(branchesTable.collegeId, collegesTable.id));
+
+    if (criteria.streamCode || criteria.maxFee !== undefined) {
+      qualifyingQuery = qualifyingQuery.innerJoin(
+        collegeStreamOfferingsTable, 
+        eq(collegeStreamOfferingsTable.branchId, branchesTable.id)
+      );
+    }
+
+    qualifyingQuery = qualifyingQuery.where(and(...conditions));
+
+    const qualifyingRows = await qualifyingQuery;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const collegeIds = Array.from(new Set(qualifyingRows.map((r: any) => r.id))) as string[];
+
+    if (collegeIds.length === 0) return [];
+
+    // 2. Fetch Phase: Retrieve the complete aggregate (all branches, all offerings)
+    const fullRows = await db
       .select()
       .from(collegesTable)
-      .leftJoin(collegeStreamOfferingsTable, eq(collegeStreamOfferingsTable.collegeId, collegesTable.id))
-      .where(and(...conditions));
+      .leftJoin(branchesTable, eq(branchesTable.collegeId, collegesTable.id))
+      .leftJoin(collegeStreamOfferingsTable, eq(collegeStreamOfferingsTable.branchId, branchesTable.id))
+      .where(inArray(collegesTable.id, collegeIds));
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const collegesMap = new Map<string, any[]>();
-    for (const row of rows) {
+    for (const row of fullRows) {
       if (!collegesMap.has(row.colleges.id)) {
         collegesMap.set(row.colleges.id, []);
       }
@@ -77,9 +103,6 @@ export class DrizzleCollegeRepository implements ICollegeRepository {
         address: college.location.address,
         lat: college.location.lat ? String(college.location.lat) : null,
         lng: college.location.lng ? String(college.location.lng) : null,
-        hasBoysHostel: college.hostelSummary.hasBoysHostel,
-        hasGirlsHostel: college.hostelSummary.hasGirlsHostel,
-        annualHostelFee: college.hostelSummary.annualHostelFee,
         ownershipType: college.ownershipType,
         status: college.status,
         verificationStatus: college.verificationStatus,
@@ -100,9 +123,6 @@ export class DrizzleCollegeRepository implements ICollegeRepository {
           address: college.location.address,
           lat: college.location.lat ? String(college.location.lat) : null,
           lng: college.location.lng ? String(college.location.lng) : null,
-          hasBoysHostel: college.hostelSummary.hasBoysHostel,
-          hasGirlsHostel: college.hostelSummary.hasGirlsHostel,
-          annualHostelFee: college.hostelSummary.annualHostelFee,
           ownershipType: college.ownershipType,
           status: college.status,
           verificationStatus: college.verificationStatus,
@@ -110,36 +130,64 @@ export class DrizzleCollegeRepository implements ICollegeRepository {
         }
       });
 
-      // ID-aware synchronization of stream offerings
-      const existingOfferings = await tx.select({ id: collegeStreamOfferingsTable.id })
-        .from(collegeStreamOfferingsTable)
-        .where(eq(collegeStreamOfferingsTable.collegeId, college.id));
+      // Fetch all branches for this college to sync their offerings.
+      const branches = await tx.select({ id: branchesTable.id })
+        .from(branchesTable)
+        .where(eq(branchesTable.collegeId, college.id));
       
-      const existingIds = new Set(existingOfferings.map(o => o.id));
-      const incomingIds = new Set(college.offerings.map(o => o.id));
-
-      const idsToDelete = [...existingIds].filter(id => !incomingIds.has(id));
-
-      if (idsToDelete.length > 0) {
-        await tx.delete(collegeStreamOfferingsTable)
-          .where(inArray(collegeStreamOfferingsTable.id, idsToDelete));
+      const branchIds = branches.map(b => b.id);
+      
+      if (college.hostels.length > 0) {
+        for (const h of college.hostels) {
+          await tx.update(branchesTable)
+            .set({
+              hasBoysHostel: h.hasBoysHostel,
+              hasGirlsHostel: h.hasGirlsHostel,
+              annualHostelFee: h.annualHostelFee,
+            })
+            .where(eq(branchesTable.id, h.branchId));
+        }
       }
+      
+      if (branchIds.length > 0) {
+        // ID-aware synchronization of stream offerings across all branches of this college
+        const existingOfferings = await tx.select({ id: collegeStreamOfferingsTable.id })
+          .from(collegeStreamOfferingsTable)
+          .where(inArray(collegeStreamOfferingsTable.branchId, branchIds));
+        
+        const existingIds = new Set(existingOfferings.map(o => o.id));
+        const incomingIds = new Set(college.offerings.map(o => o.id));
 
-      if (college.offerings.length > 0) {
-        await tx.insert(collegeStreamOfferingsTable).values(
-          college.offerings.map(o => ({
-            id: o.id,
-            collegeId: o.collegeId,
-            streamCode: o.streamCode,
-            tuitionFee: o.tuitionFee,
-          }))
-        ).onConflictDoUpdate({
-          target: collegeStreamOfferingsTable.id,
-          set: {
-            streamCode: sql`EXCLUDED.stream_code`,
-            tuitionFee: sql`EXCLUDED.tuition_fee`,
-          }
-        });
+        const idsToDelete = [...existingIds].filter(id => !incomingIds.has(id));
+
+        if (idsToDelete.length > 0) {
+          await tx.delete(collegeStreamOfferingsTable)
+            .where(inArray(collegeStreamOfferingsTable.id, idsToDelete));
+        }
+
+        if (college.offerings.length > 0) {
+          // For legacy saves that don't know about branchId, fallback to the MAIN_CAMPUS branch.
+          // Note: The application logic should set branchId correctly.
+          const mainBranchId = branchIds[0]; // Assuming at least one branch exists.
+          
+          await tx.insert(collegeStreamOfferingsTable).values(
+            college.offerings.map(o => ({
+              id: o.id,
+              branchId: o.branchId || mainBranchId,
+              streamCode: o.streamCode,
+              minFee: o.minFee,
+              maxFee: o.maxFee,
+            }))
+          ).onConflictDoUpdate({
+            target: collegeStreamOfferingsTable.id,
+            set: {
+              branchId: sql`EXCLUDED.branch_id`,
+              streamCode: sql`EXCLUDED.stream_code`,
+              minFee: sql`EXCLUDED.min_fee`,
+              maxFee: sql`EXCLUDED.max_fee`,
+            }
+          });
+        }
       }
     });
   }
@@ -153,11 +201,28 @@ export class DrizzleCollegeRepository implements ICollegeRepository {
         const o = r.college_stream_offerings;
         return CollegeStreamOffering.create({
           id: o.id,
-          collegeId: o.collegeId,
+          branchId: o.branchId!,
           streamCode: o.streamCode as StreamCode,
-          tuitionFee: o.tuitionFee,
+          minFee: o.minFee!,
+          maxFee: o.maxFee!,
         });
       });
+
+    // Deduplicate offerings by ID since joining with branches might duplicate the college row
+    const uniqueOfferings = Array.from(new Map(offerings.map(o => [o.id, o])).values());
+
+    const branchHostelsMap = new Map<string, any>();
+    rows.forEach(r => {
+      if (r.branches) {
+        branchHostelsMap.set(r.branches.id, {
+          branchId: r.branches.id,
+          hasBoysHostel: r.branches.hasBoysHostel,
+          hasGirlsHostel: r.branches.hasGirlsHostel,
+          annualHostelFee: r.branches.annualHostelFee,
+        });
+      }
+    });
+    const uniqueHostels = Array.from(branchHostelsMap.values());
 
     return College.create({
       id: c.id,
@@ -175,15 +240,11 @@ export class DrizzleCollegeRepository implements ICollegeRepository {
         lat: c.lat ? Number(c.lat) : null,
         lng: c.lng ? Number(c.lng) : null,
       },
-      hostelSummary: {
-        hasBoysHostel: c.hasBoysHostel,
-        hasGirlsHostel: c.hasGirlsHostel,
-        annualHostelFee: c.annualHostelFee,
-      },
+      hostels: uniqueHostels,
       ownershipType: c.ownershipType as OwnershipType,
       status: c.status as CollegeStatus,
       verificationStatus: c.verificationStatus as VerificationStatus,
-      offerings,
+      offerings: uniqueOfferings,
       createdAt: c.createdAt,
       updatedAt: c.updatedAt,
     });

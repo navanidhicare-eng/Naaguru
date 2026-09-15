@@ -61,7 +61,6 @@ export class DrizzleStudentIntentRepository implements IStudentIntentRepository 
           programCode: intentData.programCode,
           preferredLocationId: intentData.preferredLocationId,
           requiresHostel: intentData.requiresHostel,
-          hostelGender: intentData.hostelGender,
           maxAnnualFee: intentData.maxAnnualFee,
         })
         .returning();
@@ -108,7 +107,6 @@ export class DrizzleStudentIntentRepository implements IStudentIntentRepository 
           programCode: intentData.programCode,
           preferredLocationId: intentData.preferredLocationId,
           requiresHostel: intentData.requiresHostel,
-          hostelGender: intentData.hostelGender,
           maxAnnualFee: intentData.maxAnnualFee,
         })
         .returning();
@@ -126,7 +124,6 @@ export class DrizzleStudentIntentRepository implements IStudentIntentRepository 
       programCode: row.programCode,
       preferredLocationId: row.preferredLocationId,
       requiresHostel: row.requiresHostel,
-      hostelGender: row.hostelGender as 'BOYS' | 'GIRLS' | null,
       maxAnnualFee: row.maxAnnualFee,
       status: row.status as 'ACTIVE' | 'SUPERSEDED',
     });

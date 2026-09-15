@@ -50,7 +50,6 @@ export interface IntentRequestDto {
   programCode: string | null;
   preferredLocationId: string | null;
   requiresHostel: boolean;
-  hostelGender: 'BOYS' | 'GIRLS' | null;
   maxAnnualFee: number | null;
 }
 
@@ -61,7 +60,6 @@ export interface IntentResponseDto {
   programCode: string | null;
   preferredLocationId: string | null;
   requiresHostel: boolean;
-  hostelGender: 'BOYS' | 'GIRLS' | null;
   maxAnnualFee: number | null;
   status: 'ACTIVE' | 'SUPERSEDED';
   remainingChanges: number;

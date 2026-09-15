@@ -29,7 +29,10 @@ void main() {
           'id': 'col-1',
           'name': 'Sri Chaitanya Junior College',
           'city': 'Vijayawada',
-          'district': 'Krishna',
+          'location': {
+            'district': 'Krishna',
+            'city': 'Vijayawada'
+          },
           'hasBoysHostel': true,
         }
       ]
@@ -37,8 +40,7 @@ void main() {
 
     final results = await client.searchColleges(
       streamCode: 'MPC',
-      district: 'Krishna',
-      city: 'Vijayawada',
+      locationId: 'dist-uuid',
       requiresHostel: true,
       maxFee: 50000,
     );
@@ -47,8 +49,7 @@ void main() {
     expect(results.first['name'], 'Sri Chaitanya Junior College');
     expect(mockApi.lastGetPath, contains('/colleges?'));
     expect(mockApi.lastGetPath, contains('streamCode=MPC'));
-    expect(mockApi.lastGetPath, contains('district=Krishna'));
-    expect(mockApi.lastGetPath, contains('city=Vijayawada'));
+    expect(mockApi.lastGetPath, contains('locationId=dist-uuid'));
     expect(mockApi.lastGetPath, contains('requiresHostel=true'));
     expect(mockApi.lastGetPath, contains('maxFee=50000'));
   });

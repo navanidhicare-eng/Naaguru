@@ -3,9 +3,7 @@ import { StreamCode } from '@/shared/domain/StreamCode';
 
 export interface CollegeSearchCriteria {
   streamCode?: StreamCode;
-  state?: string;
-  district?: string;
-  city?: string;
+  locationId?: string;
   requiresHostel?: boolean;
   requiresBoysHostel?: boolean;
   requiresGirlsHostel?: boolean;

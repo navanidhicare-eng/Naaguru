@@ -20,7 +20,6 @@ export class StudentIntentUseCases {
       programCode: dto.programCode,
       preferredLocationId: dto.preferredLocationId,
       requiresHostel: dto.requiresHostel,
-      hostelGender: dto.hostelGender,
       maxAnnualFee: dto.maxAnnualFee,
     });
     
@@ -35,7 +34,6 @@ export class StudentIntentUseCases {
       programCode: dto.programCode,
       preferredLocationId: dto.preferredLocationId,
       requiresHostel: dto.requiresHostel,
-      hostelGender: dto.hostelGender,
       maxAnnualFee: dto.maxAnnualFee,
     });
     
@@ -65,14 +63,6 @@ export class StudentIntentUseCases {
       }
     }
 
-    // Validate Hostel
-    if (dto.requiresHostel && dto.hostelGender !== 'BOYS' && dto.hostelGender !== 'GIRLS') {
-      throw new AppError('Hostel gender (BOYS or GIRLS) is required when requiresHostel is true', 400, 'BAD_REQUEST');
-    }
-    if (!dto.requiresHostel && dto.hostelGender !== null) {
-      throw new AppError('Hostel gender must be null when requiresHostel is false', 400, 'BAD_REQUEST');
-    }
-
     // Validate Fee
     if (dto.maxAnnualFee !== null && dto.maxAnnualFee < 0) {
       throw new AppError('Max annual fee must be non-negative', 400, 'BAD_REQUEST');
@@ -87,7 +77,6 @@ export class StudentIntentUseCases {
       programCode: intent.props.programCode,
       preferredLocationId: intent.props.preferredLocationId,
       requiresHostel: intent.props.requiresHostel,
-      hostelGender: intent.props.hostelGender,
       maxAnnualFee: intent.props.maxAnnualFee,
       status: intent.props.status,
       remainingChanges: intent.remainingChanges,

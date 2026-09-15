@@ -32,7 +32,6 @@ describe('StudentIntentUseCases', () => {
     programCode: 'MPC',
     preferredLocationId: null,
     requiresHostel: false,
-    hostelGender: null,
     maxAnnualFee: null,
   };
 
@@ -52,7 +51,6 @@ describe('StudentIntentUseCases', () => {
       programCode: 'MPC',
       preferredLocationId: null,
       requiresHostel: false,
-      hostelGender: null,
       maxAnnualFee: null,
       status: 'ACTIVE',
     });
@@ -84,7 +82,6 @@ describe('StudentIntentUseCases', () => {
       programCode: 'BIPC',
       preferredLocationId: null,
       requiresHostel: false,
-      hostelGender: null,
       maxAnnualFee: null,
       status: 'ACTIVE',
     });
@@ -98,19 +95,4 @@ describe('StudentIntentUseCases', () => {
     expect(result.status).toBe('ACTIVE');
   });
 
-  it('rejects invalid hostel gender combination', async () => {
-    setupCatalogMocks();
-    
-    await expect(useCases.submitInitialIntent('student1', {
-      ...validDto,
-      requiresHostel: true,
-      hostelGender: null, // Invalid
-    })).rejects.toThrow(AppError);
-
-    await expect(useCases.submitInitialIntent('student1', {
-      ...validDto,
-      requiresHostel: false,
-      hostelGender: 'BOYS', // Invalid
-    })).rejects.toThrow(AppError);
-  });
 });

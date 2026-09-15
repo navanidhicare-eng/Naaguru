@@ -36,6 +36,48 @@
       "when": 1789299931015,
       "tag": "0004_silent_deadpool",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1789397891544,
+      "tag": "0005_handy_betty_ross",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1789486306960,
+      "tag": "0006_white_kate_bishop",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1789487045113,
+      "tag": "0007_dizzy_microchip",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1789487300374,
+      "tag": "0008_safe_marvel_apes",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1789487696476,
+      "tag": "0009_concerned_triathlon",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1789488479037,
+      "tag": "0010_overrated_dakota_north",
+      "breakpoints": true
     }
   ]
 }

@@ -23,10 +23,14 @@ void main() {
           'id': 'c-1',
           'name': 'Sri Chaitanya Junior College',
           'city': 'Vijayawada',
-          'district': 'Krishna',
-          'ownershipType': 'PRIVATE',
-          'hasBoysHostel': true,
-          'hasGirlsHostel': true,
+          'location': {
+            'district': 'Krishna',
+            'city': 'Vijayawada'
+          },
+          'hostelSummary': {
+            'hasBoysHostel': true,
+            'hasGirlsHostel': false
+          },
           'offerings': [
             {'streamCode': 'MPC', 'tuitionFee': 45000},
             {'streamCode': 'BIPC', 'tuitionFee': 45000},
