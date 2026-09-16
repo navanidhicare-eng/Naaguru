@@ -12,6 +12,6 @@ export interface CollegeSearchCriteria {
 
 export interface ICollegeRepository {
   findById(id: string): Promise<College | null>;
-  searchActiveVerified(criteria: CollegeSearchCriteria): Promise<College[]>;
+  searchActiveVerified(criteria: CollegeSearchCriteria): Promise<{ college: College; matchedBranchId: string }[]>;
   save(college: College): Promise<void>;
 }

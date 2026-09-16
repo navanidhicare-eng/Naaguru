@@ -42,6 +42,46 @@ export class CollegeStreamOffering {
   get maxFee() { return this.props.maxFee; }
 }
 
+export type BranchType = 'MAIN_CAMPUS' | 'OFF_CAMPUS';
+
+export interface BranchProps {
+  id: string;
+  name: string;
+  type: BranchType;
+  locationId: string | null;
+  locationName?: string | null;
+  address: string | null;
+  lat: number | null;
+  lng: number | null;
+  contactPhone: string | null;
+  contactEmail: string | null;
+  isPubliclyEligible: boolean;
+  hostel: BranchHostelProps;
+  offerings: CollegeStreamOffering[];
+}
+
+export class Branch {
+  private constructor(public readonly props: BranchProps) {}
+
+  static create(props: BranchProps): Branch {
+    return new Branch(props);
+  }
+
+  get id() { return this.props.id; }
+  get name() { return this.props.name; }
+  get type() { return this.props.type; }
+  get locationId() { return this.props.locationId; }
+  get locationName() { return this.props.locationName; }
+  get address() { return this.props.address; }
+  get lat() { return this.props.lat; }
+  get lng() { return this.props.lng; }
+  get contactPhone() { return this.props.contactPhone; }
+  get contactEmail() { return this.props.contactEmail; }
+  get isPubliclyEligible() { return this.props.isPubliclyEligible; }
+  get hostel() { return this.props.hostel; }
+  get offerings() { return this.props.offerings; }
+}
+
 export interface CollegeProps {
   id: string;
   name: string;
@@ -59,6 +99,7 @@ export interface CollegeProps {
   verificationStatus: VerificationStatus;
 
   offerings: CollegeStreamOffering[];
+  branches: Branch[];
 
   createdAt: string;
   updatedAt: string;
@@ -84,6 +125,7 @@ export class College {
   get status() { return this.props.status; }
   get verificationStatus() { return this.props.verificationStatus; }
   get offerings() { return this.props.offerings; }
+  get branches() { return this.props.branches; }
   get createdAt() { return this.props.createdAt; }
   get updatedAt() { return this.props.updatedAt; }
 

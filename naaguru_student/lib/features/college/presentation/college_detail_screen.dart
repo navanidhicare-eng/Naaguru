@@ -183,6 +183,7 @@ class _CollegeDetailScreenState extends State<CollegeDetailScreen> {
     final annualHostelFee = hostelSummary['annualHostelFee'] as int?;
 
     final offerings = (_college!['offerings'] as List<dynamic>?) ?? [];
+    final branches = (_college!['branches'] as List<dynamic>?) ?? [];
 
     return Scaffold(
       backgroundColor: NaaguruTheme.background,
@@ -308,81 +309,91 @@ class _CollegeDetailScreenState extends State<CollegeDetailScreen> {
               ),
               const SizedBox(height: 20),
 
-              // Academic Stream Offerings Section
-              _buildSectionCard(
-                title: 'Intermediate Streams & Tuition',
-                icon: Icons.menu_book_outlined,
-                children: [
-                  if (offerings.isEmpty)
-                    const Text('General Intermediate Stream offerings available.', style: TextStyle(color: NaaguruTheme.muted, fontSize: 13))
-                  else
-                    ...offerings.map((o) {
-                      final sCode = o['streamCode'] as String? ?? '';
-                      final fee = o['tuitionFee'] as int? ?? 0;
-                      return Container(
-                        margin: const EdgeInsets.only(bottom: 8),
-                        padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          color: NaaguruTheme.background,
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Row(
-                              children: [
-                                Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                                  decoration: BoxDecoration(
-                                    color: NaaguruTheme.primaryLight,
-                                    borderRadius: BorderRadius.circular(6),
+              // Branches & Campuses Section
+              if (branches.isNotEmpty) ...[
+                const Text(
+                  'Branches & Campuses',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: NaaguruTheme.primaryDark),
+                ),
+                const SizedBox(height: 12),
+                ...branches.map((b) => _buildBranchCard(b)),
+              ] else ...[
+                // Fallback Academic Stream Offerings Section
+                _buildSectionCard(
+                  title: 'Intermediate Streams & Tuition',
+                  icon: Icons.menu_book_outlined,
+                  children: [
+                    if (offerings.isEmpty)
+                      const Text('General Intermediate Stream offerings available.', style: TextStyle(color: NaaguruTheme.muted, fontSize: 13))
+                    else
+                      ...offerings.map((o) {
+                        final sCode = o['streamCode'] as String? ?? '';
+                        final fee = o['tuitionFee'] as int? ?? 0;
+                        return Container(
+                          margin: const EdgeInsets.only(bottom: 8),
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: NaaguruTheme.background,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Row(
+                                children: [
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                    decoration: BoxDecoration(
+                                      color: NaaguruTheme.primaryLight,
+                                      borderRadius: BorderRadius.circular(6),
+                                    ),
+                                    child: Text(
+                                      sCode,
+                                      style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: NaaguruTheme.primaryDark),
+                                    ),
                                   ),
-                                  child: Text(
-                                    sCode,
-                                    style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: NaaguruTheme.primaryDark),
+                                  const SizedBox(width: 10),
+                                  Text(
+                                    _getStreamFullName(sCode),
+                                    style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w500),
                                   ),
-                                ),
-                                const SizedBox(width: 10),
-                                Text(
-                                  _getStreamFullName(sCode),
-                                  style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w500),
-                                ),
-                              ],
-                            ),
-                            Text(
-                              '₹$fee / yr',
-                              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: NaaguruTheme.text),
-                            ),
-                          ],
-                        ),
-                      );
-                    }),
-                ],
-              ),
-              const SizedBox(height: 20),
-
-              // Hostel & Residential Facilities
-              _buildSectionCard(
-                title: 'Hostel Facilities',
-                icon: Icons.hotel_outlined,
-                children: [
-                  Row(
-                    children: [
-                      _buildHostelBadge('Boys Hostel', hasBoysHostel),
-                      const SizedBox(width: 12),
-                      _buildHostelBadge('Girls Hostel', hasGirlsHostel),
-                    ],
-                  ),
-                  if (annualHostelFee != null && (hasBoysHostel || hasGirlsHostel)) ...[
-                    const SizedBox(height: 12),
-                    Text(
-                      'Annual Hostel Fee: ₹$annualHostelFee / year (approx)',
-                      style: const TextStyle(fontSize: 13, color: NaaguruTheme.muted),
-                    ),
+                                ],
+                              ),
+                              Text(
+                                '₹$fee / yr',
+                                style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: NaaguruTheme.text),
+                              ),
+                            ],
+                          ),
+                        );
+                      }),
                   ],
-                ],
-              ),
-              const SizedBox(height: 20),
+                ),
+                const SizedBox(height: 20),
+
+                // Fallback Hostel Section
+                _buildSectionCard(
+                  title: 'Hostel Facilities',
+                  icon: Icons.hotel_outlined,
+                  children: [
+                    Row(
+                      children: [
+                        _buildHostelBadge('Boys Hostel', hasBoysHostel),
+                        const SizedBox(width: 12),
+                        _buildHostelBadge('Girls Hostel', hasGirlsHostel),
+                      ],
+                    ),
+                    if (annualHostelFee != null && (hasBoysHostel || hasGirlsHostel)) ...[
+                      const SizedBox(height: 12),
+                      Text(
+                        'Annual Hostel Fee: ₹$annualHostelFee / year (approx)',
+                        style: const TextStyle(fontSize: 13, color: NaaguruTheme.muted),
+                      ),
+                    ],
+                  ],
+                ),
+                const SizedBox(height: 20),
+              ],
 
               // Contact Section
               _buildSectionCard(
@@ -506,5 +517,102 @@ class _CollegeDetailScreenState extends State<CollegeDetailScreen> {
       default:
         return 'Academic Stream';
     }
+  }
+
+  Widget _buildBranchCard(Map<String, dynamic> branch) {
+    final name = branch['name'] as String? ?? 'Branch';
+    final locationName = branch['locationName'] as String?;
+    final hostel = branch['hostel'] as Map<String, dynamic>? ?? {};
+    final hasBoysHostel = hostel['hasBoysHostel'] == true;
+    final hasGirlsHostel = hostel['hasGirlsHostel'] == true;
+    final annualHostelFee = hostel['annualHostelFee'] as int?;
+    final offerings = (branch['offerings'] as List<dynamic>?) ?? [];
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: NaaguruTheme.muted.withAlpha(38)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Icon(Icons.business, size: 20, color: NaaguruTheme.primaryDark),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  name,
+                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: NaaguruTheme.primaryDark),
+                ),
+              ),
+            ],
+          ),
+          if (locationName != null) ...[
+            const SizedBox(height: 4),
+            Row(
+              children: [
+                const Icon(Icons.location_on_outlined, size: 14, color: NaaguruTheme.muted),
+                const SizedBox(width: 4),
+                Text(locationName, style: const TextStyle(fontSize: 13, color: NaaguruTheme.muted)),
+              ],
+            ),
+          ],
+          const SizedBox(height: 16),
+          const Text('Streams & Fees', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: NaaguruTheme.text)),
+          const SizedBox(height: 8),
+          if (offerings.isEmpty)
+            const Text('No specific streams listed.', style: TextStyle(color: NaaguruTheme.muted, fontSize: 13))
+          else
+            ...offerings.map((o) {
+              final sCode = o['streamCode'] as String? ?? '';
+              final fee = o['tuitionFee'] as int? ?? 0;
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 6),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: NaaguruTheme.primaryLight,
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: Text(sCode, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: NaaguruTheme.primaryDark)),
+                        ),
+                        const SizedBox(width: 8),
+                        Text(_getStreamFullName(sCode), style: const TextStyle(fontSize: 13)),
+                      ],
+                    ),
+                    Text('₹$fee/yr', style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
+                  ],
+                ),
+              );
+            }),
+          const SizedBox(height: 16),
+          const Text('Hostel', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: NaaguruTheme.text)),
+          const SizedBox(height: 8),
+          Row(
+            children: [
+              _buildHostelBadge('Boys', hasBoysHostel),
+              const SizedBox(width: 8),
+              _buildHostelBadge('Girls', hasGirlsHostel),
+            ],
+          ),
+          if (annualHostelFee != null && (hasBoysHostel || hasGirlsHostel)) ...[
+            const SizedBox(height: 8),
+            Text(
+              'Fee: ₹$annualHostelFee / year (approx)',
+              style: const TextStyle(fontSize: 12, color: NaaguruTheme.muted),
+            ),
+          ],
+        ],
+      ),
+    );
   }
 }

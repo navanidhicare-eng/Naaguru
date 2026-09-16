@@ -241,15 +241,41 @@ class _CollegeListScreenState extends State<CollegeListScreen> {
   Widget _buildCollegeCard(Map<String, dynamic> college) {
     final collegeId = college['id'] as String? ?? '';
     final name = college['name'] as String? ?? 'Junior College';
-    final location = college['location'] as Map<String, dynamic>? ?? {};
-    final hostelSummary = college['hostelSummary'] as Map<String, dynamic>? ?? {};
-
-    final district = location['district'] as String? ?? '';
-    final city = location['city'] as String? ?? '';
     final ownershipType = college['ownershipType'] as String? ?? 'PRIVATE';
-    final hasBoysHostel = hostelSummary['hasBoysHostel'] == true;
-    final hasGirlsHostel = hostelSummary['hasGirlsHostel'] == true;
-    final offerings = (college['offerings'] as List<dynamic>?) ?? [];
+
+    final matchedBranchId = college['matchedBranchId'] as String?;
+    final branches = (college['branches'] as List<dynamic>?) ?? [];
+    
+    Map<String, dynamic>? matchedBranch;
+    if (matchedBranchId != null) {
+      try {
+        matchedBranch = branches.firstWhere((b) => b['id'] == matchedBranchId);
+      } catch (_) {
+        matchedBranch = null;
+      }
+    }
+    
+    // Fallbacks if no branch or no matchedBranchId
+    final fallbackLocation = college['location'] as Map<String, dynamic>? ?? {};
+    final fallbackHostel = college['hostelSummary'] as Map<String, dynamic>? ?? {};
+    
+    final district = fallbackLocation['district'] as String? ?? '';
+    final city = fallbackLocation['city'] as String? ?? '';
+    
+    final branchLocationName = matchedBranch?['locationName'] as String?;
+    final displayLocation = branchLocationName ?? '$city, $district';
+    
+    final hasBoysHostel = matchedBranch != null 
+        ? (matchedBranch['hostel']?['hasBoysHostel'] == true)
+        : (fallbackHostel['hasBoysHostel'] == true);
+        
+    final hasGirlsHostel = matchedBranch != null
+        ? (matchedBranch['hostel']?['hasGirlsHostel'] == true)
+        : (fallbackHostel['hasGirlsHostel'] == true);
+        
+    final offerings = (matchedBranch != null 
+        ? matchedBranch['offerings'] as List<dynamic>?
+        : college['offerings'] as List<dynamic>?) ?? [];
 
     String hostelLabel = 'No Hostel';
     Color hostelColor = NaaguruTheme.muted;
@@ -338,7 +364,7 @@ class _CollegeListScreenState extends State<CollegeListScreen> {
                 children: [
                   const Icon(Icons.location_on_outlined, size: 14, color: NaaguruTheme.muted),
                   const SizedBox(width: 4),
-                  Text('$city, $district', style: const TextStyle(fontSize: 12, color: NaaguruTheme.muted)),
+                  Text(displayLocation, style: const TextStyle(fontSize: 12, color: NaaguruTheme.muted)),
                 ],
               ),
               const SizedBox(height: 12),

@@ -54,12 +54,13 @@ export class CollegeUseCases {
   }
 
   async searchActiveColleges(criteria: CollegeSearchCriteria): Promise<PublicCollegeDto[]> {
-    const colleges = await this.collegeRepository.searchActiveVerified(criteria);
-    return colleges.map(c => this.mapToPublicDto(c));
+    const results = await this.collegeRepository.searchActiveVerified(criteria);
+    return results.map(r => this.mapToPublicDto(r.college, r.matchedBranchId));
   }
 
-  private mapToPublicDto(college: College): PublicCollegeDto {
+  private mapToPublicDto(college: College, matchedBranchId?: string): PublicCollegeDto {
     return {
+      matchedBranchId,
       id: college.id,
       name: college.name,
       shortName: college.shortName,
@@ -85,6 +86,21 @@ export class CollegeUseCases {
         streamCode: o.streamCode,
         tuitionFee: o.minFee,
       })),
+      branches: college.branches ? college.branches.map(b => ({
+        id: b.id,
+        name: b.name,
+        type: b.type,
+        locationName: b.locationName || null,
+        hostel: {
+          hasBoysHostel: b.hostel.hasBoysHostel,
+          hasGirlsHostel: b.hostel.hasGirlsHostel,
+          annualHostelFee: b.hostel.annualHostelFee,
+        },
+        offerings: b.offerings.map(o => ({
+          streamCode: o.streamCode,
+          tuitionFee: o.minFee,
+        })),
+      })) : [],
     };
   }
 }

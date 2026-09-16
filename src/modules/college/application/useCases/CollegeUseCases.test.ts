@@ -150,7 +150,7 @@ describe('CollegeUseCases', () => {
   describe('Search', () => {
     it('calls repository search with correct criteria', async () => {
       vi.mocked(mockRepo.searchActiveVerified).mockResolvedValue([
-        createMockCollege('ACTIVE', 'VERIFIED')
+        { college: createMockCollege('ACTIVE', 'VERIFIED'), matchedBranchId: 'branch-1' }
       ]);
 
       const criteria: CollegeSearchCriteria = {
