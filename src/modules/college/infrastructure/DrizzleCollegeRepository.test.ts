@@ -32,15 +32,15 @@ describe('DrizzleCollegeRepository', () => {
         contactPhone: null,
         contactEmail: null,
         location: { state: 'TS', district: 'Hyd', city: 'Hyd', address: 'Addr', lat: null, lng: null },
-        hostelSummary: { hasBoysHostel: false, hasGirlsHostel: false, annualHostelFee: null },
+        hostels: [],
         ownershipType: 'PRIVATE',
         status: 'ACTIVE',
         verificationStatus: 'VERIFIED',
         offerings: [
           // Keep this one
-          CollegeStreamOffering.create({ id: 'off-1', collegeId: 'col-1', streamCode: 'MPC', tuitionFee: 10000 }),
+          CollegeStreamOffering.create({ id: 'off-1', branchId: 'branch-1', streamCode: 'MPC', minFee: 10000, maxFee: 10000 }),
           // Add this new one
-          CollegeStreamOffering.create({ id: 'off-new', collegeId: 'col-1', streamCode: 'BIPC', tuitionFee: 12000 })
+          CollegeStreamOffering.create({ id: 'off-new', branchId: 'branch-1', streamCode: 'BIPC', minFee: 12000, maxFee: 12000 })
         ],
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
@@ -56,9 +56,11 @@ describe('DrizzleCollegeRepository', () => {
         delete: vi.fn().mockReturnValue({ where: vi.fn() }),
         select: vi.fn().mockReturnValue({
           from: vi.fn().mockReturnValue({
-            where: vi.fn().mockResolvedValue([
-              { id: 'off-1' }, // Existing
-              { id: 'off-deleted' } // Exists in DB but removed from domain model
+            where: vi.fn().mockResolvedValueOnce([
+              { id: 'branch-1' } // First call: select branches
+            ]).mockResolvedValueOnce([
+              { id: 'off-1' }, // Second call: select existing offerings
+              { id: 'off-deleted' }
             ])
           })
         }),

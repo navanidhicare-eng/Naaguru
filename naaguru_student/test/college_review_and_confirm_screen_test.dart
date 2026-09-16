@@ -14,15 +14,14 @@ class MockCollegeApiClient extends CollegeApiClient {
   @override
   Future<List<Map<String, dynamic>>> searchColleges({
     String? streamCode,
-    String? district,
-    String? city,
+    String? locationId,
     bool? requiresHostel,
     bool? requiresBoysHostel,
     bool? requiresGirlsHostel,
     int? maxFee,
   }) async {
     return [
-      {'id': 'clg-1', 'name': 'Vignan Junior College', 'district': district ?? 'Guntur'}
+      {'id': 'clg-1', 'name': 'Vignan Junior College', 'locationId': locationId ?? 'Guntur'}
     ];
   }
 }

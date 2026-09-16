@@ -3,7 +3,7 @@ import 'package:naaguru_student/core/api_client.dart';
 /// Communicates with the College REST API.
 ///
 /// Backend contract:
-///   GET  /colleges?[streamCode=&district=&city=&requiresHostel=&requiresBoysHostel=&requiresGirlsHostel=&maxFee=]
+///   GET  /colleges?[streamCode=&locationId=&requiresHostel=&requiresBoysHostel=&requiresGirlsHostel=&maxFee=]
 ///   GET  /colleges/:id
 class CollegeApiClient {
   final ApiClient _apiClient;
@@ -13,8 +13,7 @@ class CollegeApiClient {
   /// Searches active verified colleges with the given criteria.
   Future<List<Map<String, dynamic>>> searchColleges({
     String? streamCode,
-    String? district,
-    String? city,
+    String? locationId,
     bool? requiresHostel,
     bool? requiresBoysHostel,
     bool? requiresGirlsHostel,
@@ -25,11 +24,8 @@ class CollegeApiClient {
     if (streamCode != null && streamCode.isNotEmpty) {
       queryParams['streamCode'] = streamCode;
     }
-    if (district != null && district.isNotEmpty) {
-      queryParams['district'] = district;
-    }
-    if (city != null && city.isNotEmpty) {
-      queryParams['city'] = city;
+    if (locationId != null && locationId.isNotEmpty) {
+      queryParams['locationId'] = locationId;
     }
     if (requiresHostel == true) {
       queryParams['requiresHostel'] = 'true';

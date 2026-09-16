@@ -108,7 +108,7 @@ const DEV_COLLEGES = [
 async function seedDevColleges() {
   console.log('--- SEEDING DEV FIXTURE COLLEGES ---');
   for (const c of DEV_COLLEGES) {
-    const { streams, ...collegeData } = c;
+    const { streams, hasBoysHostel, hasGirlsHostel, annualHostelFee, ...collegeData } = c;
     const existing = await db.select().from(collegesTable).where(eq(collegesTable.name, collegeData.name));
     let collegeId = existing[0]?.id;
 
@@ -116,21 +116,43 @@ async function seedDevColleges() {
       const [inserted] = await db.insert(collegesTable).values(collegeData).returning();
       collegeId = inserted.id;
       console.log(`Inserted College: ${collegeData.name} (${collegeId})`);
+      
+      // Seed Main Campus Branch
+      await db.insert(require('../src/modules/college/infrastructure/schema').branchesTable).values({
+        collegeId,
+        name: 'Main Campus',
+        type: 'MAIN_CAMPUS',
+        address: collegeData.address,
+        lat: (collegeData as any).lat || null,
+        lng: (collegeData as any).lng || null,
+        contactPhone: collegeData.contactPhone,
+        contactEmail: collegeData.contactEmail,
+        hasBoysHostel,
+        hasGirlsHostel,
+        annualHostelFee,
+        isPubliclyEligible: false,
+      });
+      console.log(`  Seeded Main Campus branch for ${collegeData.shortName}`);
     } else {
       console.log(`College already exists: ${collegeData.name}`);
     }
 
+    const branchesSchema = require('../src/modules/college/infrastructure/schema').branchesTable;
+    const branches = await db.select().from(branchesSchema).where(eq(branchesSchema.collegeId, collegeId));
+    const branchId = branches[0]?.id;
+
     for (const stream of streams) {
       const existingOffering = await db.select()
         .from(collegeStreamOfferingsTable)
-        .where(eq(collegeStreamOfferingsTable.collegeId, collegeId));
+        .where(eq(collegeStreamOfferingsTable.branchId, branchId));
       
       const alreadyHasStream = existingOffering.some(o => o.streamCode === stream.streamCode);
       if (!alreadyHasStream) {
         await db.insert(collegeStreamOfferingsTable).values({
-          collegeId,
+          branchId,
           streamCode: stream.streamCode,
-          tuitionFee: stream.tuitionFee,
+          minFee: stream.tuitionFee,
+          maxFee: stream.tuitionFee,
         });
         console.log(`  Added stream ${stream.streamCode} (₹${stream.tuitionFee}) to ${collegeData.shortName}`);
       }

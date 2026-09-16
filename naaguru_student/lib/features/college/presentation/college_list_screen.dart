@@ -8,7 +8,8 @@ class CollegeListScreen extends StatefulWidget {
   final CollegeApiClient collegeApiClient;
   final String pathway;
   final String? streamCode;
-  final String? district;
+  final String? locationId;
+  final String? locationName;
   final bool requiresHostel;
   final int? maxFee;
 
@@ -17,7 +18,8 @@ class CollegeListScreen extends StatefulWidget {
     required this.collegeApiClient,
     required this.pathway,
     this.streamCode,
-    this.district,
+    this.locationId,
+    this.locationName,
     this.requiresHostel = false,
     this.maxFee,
   });
@@ -47,7 +49,7 @@ class _CollegeListScreenState extends State<CollegeListScreen> {
     try {
       final results = await widget.collegeApiClient.searchColleges(
         streamCode: widget.streamCode,
-        district: widget.district,
+        locationId: widget.locationId,
         requiresHostel: widget.requiresHostel ? true : null,
         maxFee: widget.maxFee,
       );
@@ -111,8 +113,8 @@ class _CollegeListScreenState extends State<CollegeListScreen> {
                     _buildFilterBadge(widget.pathway, isPrimary: true),
                     if (widget.streamCode != null)
                       _buildFilterBadge('Stream: ${widget.streamCode}'),
-                    if (widget.district != null)
-                      _buildFilterBadge(widget.district!),
+                    if (widget.locationName != null)
+                      _buildFilterBadge(widget.locationName!),
                     if (widget.requiresHostel)
                       _buildFilterBadge('Hostel Required'),
                     if (widget.maxFee != null)
@@ -239,11 +241,14 @@ class _CollegeListScreenState extends State<CollegeListScreen> {
   Widget _buildCollegeCard(Map<String, dynamic> college) {
     final collegeId = college['id'] as String? ?? '';
     final name = college['name'] as String? ?? 'Junior College';
-    final district = college['district'] as String? ?? '';
-    final city = college['city'] as String? ?? '';
+    final location = college['location'] as Map<String, dynamic>? ?? {};
+    final hostelSummary = college['hostelSummary'] as Map<String, dynamic>? ?? {};
+
+    final district = location['district'] as String? ?? '';
+    final city = location['city'] as String? ?? '';
     final ownershipType = college['ownershipType'] as String? ?? 'PRIVATE';
-    final hasBoysHostel = college['hasBoysHostel'] == true;
-    final hasGirlsHostel = college['hasGirlsHostel'] == true;
+    final hasBoysHostel = hostelSummary['hasBoysHostel'] == true;
+    final hasGirlsHostel = hostelSummary['hasGirlsHostel'] == true;
     final offerings = (college['offerings'] as List<dynamic>?) ?? [];
 
     String hostelLabel = 'No Hostel';

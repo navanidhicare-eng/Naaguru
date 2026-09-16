@@ -34,20 +34,24 @@ describe('CollegeUseCases', () => {
         lat: null,
         lng: null,
       },
-      hostelSummary: {
-        hasBoysHostel: true,
-        hasGirlsHostel: false,
-        annualHostelFee: 50000,
-      },
+      hostels: [
+        {
+          branchId: 'branch-1',
+          hasBoysHostel: true,
+          hasGirlsHostel: false,
+          annualHostelFee: 50000,
+        }
+      ],
       ownershipType: 'PRIVATE',
       status,
       verificationStatus,
       offerings: [
         CollegeStreamOffering.create({
           id: 'off-1',
-          collegeId: 'col-1',
+          branchId: 'branch-1',
           streamCode: 'MPC',
-          tuitionFee: 100000,
+          minFee: 100000,
+          maxFee: 100000,
         })
       ],
       createdAt: new Date().toISOString(),
@@ -151,8 +155,8 @@ describe('CollegeUseCases', () => {
 
       const criteria: CollegeSearchCriteria = {
         streamCode: 'MPC',
-        city: 'Hyderabad',
         maxFee: 120000,
+        locationId: 'loc-1',
       };
 
       const results = await useCases.searchActiveColleges(criteria);

@@ -29,7 +29,6 @@ export const studentCollegeIntentsTable = pgTable('student_college_intents', {
   programCode: varchar('program_code', { length: 30 }),
   preferredLocationId: uuid('preferred_location_id').references(() => locationsTable.id, { onDelete: 'restrict' }),
   requiresHostel: boolean('requires_hostel').notNull().default(false),
-  hostelGender: varchar('hostel_gender', { length: 10 }),
   maxAnnualFee: integer('max_annual_fee'),
   status: varchar('status', { length: 20 }).notNull(),
   createdAt: timestamp('created_at', { withTimezone: true, mode: 'string' }).defaultNow().notNull(),

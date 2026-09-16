@@ -166,18 +166,21 @@ class _CollegeDetailScreenState extends State<CollegeDetailScreen> {
     final name = _college!['name'] as String? ?? 'Junior College';
     final shortName = _college!['shortName'] as String?;
     final description = _college!['description'] as String? ?? '';
-    final address = _college!['address'] as String? ?? '';
-    final city = _college!['city'] as String? ?? '';
-    final district = _college!['district'] as String? ?? '';
-    final state = _college!['state'] as String? ?? '';
+    final location = _college!['location'] as Map<String, dynamic>? ?? {};
+    final hostelSummary = _college!['hostelSummary'] as Map<String, dynamic>? ?? {};
+
+    final address = location['address'] as String? ?? '';
+    final city = location['city'] as String? ?? '';
+    final district = location['district'] as String? ?? '';
+    final state = location['state'] as String? ?? '';
     final contactPhone = _college!['contactPhone'] as String?;
     final contactEmail = _college!['contactEmail'] as String?;
     final website = _college!['website'] as String?;
     final ownershipType = _college!['ownershipType'] as String? ?? 'PRIVATE';
 
-    final hasBoysHostel = _college!['hasBoysHostel'] == true;
-    final hasGirlsHostel = _college!['hasGirlsHostel'] == true;
-    final annualHostelFee = _college!['annualHostelFee'] as int?;
+    final hasBoysHostel = hostelSummary['hasBoysHostel'] == true;
+    final hasGirlsHostel = hostelSummary['hasGirlsHostel'] == true;
+    final annualHostelFee = hostelSummary['annualHostelFee'] as int?;
 
     final offerings = (_college!['offerings'] as List<dynamic>?) ?? [];
 

@@ -992,7 +992,8 @@ class _HomeScreenState extends State<HomeScreen> {
     final streamCode = intent['programCode'] as String?;
     final requiresHostel = intent['requiresHostel'] == true;
     final maxFee = intent['maxAnnualFee'] as int?;
-    final district = _savedDistrictLocation?.nameEn;
+    final locationId = intent['preferredLocationId'] as String?;
+    final locationName = _savedDistrictLocation?.displayName(_isTelugu);
 
     Navigator.push(
       context,
@@ -1001,7 +1002,8 @@ class _HomeScreenState extends State<HomeScreen> {
           collegeApiClient: widget.collegeApiClient!,
           pathway: pathway,
           streamCode: streamCode,
-          district: district,
+          locationId: locationId,
+          locationName: locationName,
           requiresHostel: requiresHostel,
           maxFee: maxFee,
         ),

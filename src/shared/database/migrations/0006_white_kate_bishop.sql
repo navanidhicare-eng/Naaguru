@@ -1,0 +1,2 @@
+ALTER TABLE "branches" ADD CONSTRAINT "branches_location_id_locations_id_fk" FOREIGN KEY ("location_id") REFERENCES "public"."locations"("id") ON DELETE restrict ON UPDATE no action;--> statement-breakpoint
+CREATE INDEX "idx_branches_location_id" ON "branches" USING btree ("location_id");

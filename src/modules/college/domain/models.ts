@@ -13,7 +13,8 @@ export interface LocationProps {
   lng: number | null;
 }
 
-export interface HostelSummaryProps {
+export interface BranchHostelProps {
+  branchId: string;
   hasBoysHostel: boolean;
   hasGirlsHostel: boolean;
   annualHostelFee: number | null; // INR
@@ -21,9 +22,10 @@ export interface HostelSummaryProps {
 
 export interface CollegeStreamOfferingProps {
   id: string;
-  collegeId: string;
+  branchId: string;
   streamCode: StreamCode;
-  tuitionFee: number; // INR
+  minFee: number; // INR
+  maxFee: number; // INR
 }
 
 export class CollegeStreamOffering {
@@ -34,9 +36,10 @@ export class CollegeStreamOffering {
   }
 
   get id() { return this.props.id; }
-  get collegeId() { return this.props.collegeId; }
+  get branchId() { return this.props.branchId; }
   get streamCode() { return this.props.streamCode; }
-  get tuitionFee() { return this.props.tuitionFee; }
+  get minFee() { return this.props.minFee; }
+  get maxFee() { return this.props.maxFee; }
 }
 
 export interface CollegeProps {
@@ -49,7 +52,7 @@ export interface CollegeProps {
   contactEmail: string | null;
   
   location: LocationProps;
-  hostelSummary: HostelSummaryProps;
+  hostels: BranchHostelProps[];
   
   ownershipType: OwnershipType;
   status: CollegeStatus;
@@ -76,7 +79,7 @@ export class College {
   get contactPhone() { return this.props.contactPhone; }
   get contactEmail() { return this.props.contactEmail; }
   get location() { return this.props.location; }
-  get hostelSummary() { return this.props.hostelSummary; }
+  get hostels() { return this.props.hostels; }
   get ownershipType() { return this.props.ownershipType; }
   get status() { return this.props.status; }
   get verificationStatus() { return this.props.verificationStatus; }
@@ -95,7 +98,7 @@ export class College {
     contactPhone?: string | null;
     contactEmail?: string | null;
     location?: Partial<LocationProps>;
-    hostelSummary?: Partial<HostelSummaryProps>;
+    hostels?: BranchHostelProps[];
   }): void {
     if (data.shortName !== undefined) this.props.shortName = data.shortName;
     if (data.description !== undefined) this.props.description = data.description;
@@ -107,8 +110,8 @@ export class College {
       this.props.location = { ...this.props.location, ...data.location };
     }
 
-    if (data.hostelSummary) {
-      this.props.hostelSummary = { ...this.props.hostelSummary, ...data.hostelSummary };
+    if (data.hostels) {
+      this.props.hostels = data.hostels;
     }
 
     this.props.updatedAt = new Date().toISOString();
