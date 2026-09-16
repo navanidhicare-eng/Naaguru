@@ -29,7 +29,7 @@ void main() {
           },
           'hostelSummary': {
             'hasBoysHostel': true,
-            'hasGirlsHostel': false
+            'hasGirlsHostel': true
           },
           'offerings': [
             {'streamCode': 'MPC', 'tuitionFee': 45000},

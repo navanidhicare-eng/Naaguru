@@ -102,8 +102,9 @@ describe('Phase C5: Branch-Aware Discovery', () => {
       streamCode: 'MPC',
       requiresBoysHostel: true
     });
-    const c5College = results.find(c => c.id === collegeId);
-    expect(c5College).toBeDefined();
+    const c5Result = results.find(r => r.college.id === collegeId);
+    expect(c5Result).toBeDefined();
+    expect(c5Result?.matchedBranchId).toBe(branchAId);
   });
 
   it('cross-branch stream/hostel false positive rejection', async () => {
@@ -114,8 +115,8 @@ describe('Phase C5: Branch-Aware Discovery', () => {
       streamCode: 'BIPC',
       requiresBoysHostel: true
     });
-    const c5College = results.find(c => c.id === collegeId);
-    expect(c5College).toBeUndefined();
+    const c5Result = results.find(r => r.college.id === collegeId);
+    expect(c5Result).toBeUndefined();
   });
 
   it('canonical locality matching', async () => {
@@ -123,8 +124,9 @@ describe('Phase C5: Branch-Aware Discovery', () => {
       locationId,
       streamCode: 'MPC'
     });
-    const c5College = results.find(c => c.id === collegeId);
-    expect(c5College).toBeDefined();
+    const c5Result = results.find(r => r.college.id === collegeId);
+    expect(c5Result).toBeDefined();
+    expect(c5Result?.matchedBranchId).toBe(branchAId);
   });
 
   it('legacy college location fields ignored', async () => {
@@ -134,8 +136,8 @@ describe('Phase C5: Branch-Aware Discovery', () => {
       locationId: '99999999-9999-9999-9999-999999999999',
       streamCode: 'MPC'
     });
-    const c5College = results.find(c => c.id === collegeId);
-    expect(c5College).toBeUndefined();
+    const c5Result = results.find(r => r.college.id === collegeId);
+    expect(c5Result).toBeUndefined();
   });
 
   it('non-public branch rejection', async () => {
@@ -143,8 +145,8 @@ describe('Phase C5: Branch-Aware Discovery', () => {
     const results = await repo.searchActiveVerified({
       streamCode: 'CEC'
     });
-    const c5College = results.find(c => c.id === collegeId);
-    expect(c5College).toBeUndefined();
+    const c5Result = results.find(r => r.college.id === collegeId);
+    expect(c5Result).toBeUndefined();
   });
 
   it('multiple matching branches → one institution', async () => {
@@ -152,7 +154,7 @@ describe('Phase C5: Branch-Aware Discovery', () => {
     const results = await repo.searchActiveVerified({
       locationId
     });
-    const c5Colleges = results.filter(c => c.id === collegeId);
+    const c5Colleges = results.filter(r => r.college.id === collegeId);
     expect(c5Colleges.length).toBe(1); // Deduplicated!
   });
 
@@ -161,15 +163,18 @@ describe('Phase C5: Branch-Aware Discovery', () => {
     const results = await repo.searchActiveVerified({
       streamCode: 'MPC'
     });
-    const c5College = results.find(c => c.id === collegeId);
-    expect(c5College).toBeDefined();
+    const c5Result = results.find(r => r.college.id === collegeId);
+    expect(c5Result).toBeDefined();
 
+    const c5College = c5Result?.college;
     // Ensure the college contains BOTH offerings, not just the matched one!
     expect(c5College?.offerings.length).toBe(3); // MPC, BIPC, CEC
     expect(c5College?.offerings.map(o => o.streamCode).sort()).toEqual(['BIPC', 'CEC', 'MPC']);
     
     // Ensure all 3 branch hostels are present
     expect(c5College?.hostels.length).toBe(3);
+    // Ensure branches aggregate is present
+    expect(c5College?.branches.length).toBe(3);
   });
 
   it('fee boundary behavior', async () => {
@@ -178,14 +183,14 @@ describe('Phase C5: Branch-Aware Discovery', () => {
       streamCode: 'MPC',
       maxFee: 49000
     });
-    expect(results.find(c => c.id === collegeId)).toBeUndefined();
+    expect(results.find(r => r.college.id === collegeId)).toBeUndefined();
 
     // Max fee 50000 should pass
     results = await repo.searchActiveVerified({
       streamCode: 'MPC',
       maxFee: 50000
     });
-    expect(results.find(c => c.id === collegeId)).toBeDefined();
+    expect(results.find(r => r.college.id === collegeId)).toBeDefined();
   });
 
   it('no-hostel-required behavior', async () => {
@@ -194,6 +199,6 @@ describe('Phase C5: Branch-Aware Discovery', () => {
       streamCode: 'MPC',
       requiresHostel: false
     });
-    expect(results.find(c => c.id === collegeId)).toBeDefined();
+    expect(results.find(r => r.college.id === collegeId)).toBeDefined();
   });
 });

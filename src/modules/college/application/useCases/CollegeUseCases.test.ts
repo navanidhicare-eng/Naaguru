@@ -54,6 +54,7 @@ describe('CollegeUseCases', () => {
           maxFee: 100000,
         })
       ],
+      branches: [],
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     });

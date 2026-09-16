@@ -401,25 +401,34 @@ class _CollegeDetailScreenState extends State<CollegeDetailScreen> {
                 icon: Icons.phone_outlined,
                 children: [
                   if (contactPhone != null)
-                    ListTile(
-                      dense: true,
-                      contentPadding: EdgeInsets.zero,
-                      leading: const Icon(Icons.phone, size: 18, color: NaaguruTheme.primaryDark),
-                      title: Text(contactPhone, style: const TextStyle(fontSize: 14)),
+                    Material(
+                      color: Colors.transparent,
+                      child: ListTile(
+                        dense: true,
+                        contentPadding: EdgeInsets.zero,
+                        leading: const Icon(Icons.phone, size: 18, color: NaaguruTheme.primaryDark),
+                        title: Text(contactPhone, style: const TextStyle(fontSize: 14)),
+                      ),
                     ),
                   if (contactEmail != null)
-                    ListTile(
-                      dense: true,
-                      contentPadding: EdgeInsets.zero,
-                      leading: const Icon(Icons.email_outlined, size: 18, color: NaaguruTheme.primaryDark),
-                      title: Text(contactEmail, style: const TextStyle(fontSize: 14)),
+                    Material(
+                      color: Colors.transparent,
+                      child: ListTile(
+                        dense: true,
+                        contentPadding: EdgeInsets.zero,
+                        leading: const Icon(Icons.email_outlined, size: 18, color: NaaguruTheme.primaryDark),
+                        title: Text(contactEmail, style: const TextStyle(fontSize: 14)),
+                      ),
                     ),
                   if (website != null)
-                    ListTile(
-                      dense: true,
-                      contentPadding: EdgeInsets.zero,
-                      leading: const Icon(Icons.language, size: 18, color: NaaguruTheme.primaryDark),
-                      title: Text(website, style: const TextStyle(fontSize: 14, color: Colors.blue)),
+                    Material(
+                      color: Colors.transparent,
+                      child: ListTile(
+                        dense: true,
+                        contentPadding: EdgeInsets.zero,
+                        leading: const Icon(Icons.language, size: 18, color: NaaguruTheme.primaryDark),
+                        title: Text(website, style: const TextStyle(fontSize: 14, color: Colors.blue)),
+                      ),
                     ),
                 ],
               ),

@@ -644,67 +644,76 @@ class _ResultsScreenState extends State<ResultsScreen> {
                           fontSize: 13, color: NaaguruTheme.muted),
                     ),
                     const SizedBox(height: 16),
-                    ListTile(
-                      contentPadding: EdgeInsets.zero,
-                      leading: const Text("🔧", style: TextStyle(fontSize: 24)),
-                      title: Text(_isTelugu ? "పాలిటెక్నిక్" : "Polytechnic",
-                          style: const TextStyle(fontWeight: FontWeight.bold)),
-                      subtitle: Text(_isTelugu
-                          ? "డిప్లొమా మార్గాలు"
-                          : "Diploma pathways"),
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => const PathDetailScreen(
-                              pathId: 'Polytechnic',
-                              title: 'Polytechnic',
+                    Material(
+                      color: Colors.transparent,
+                      child: ListTile(
+                        contentPadding: EdgeInsets.zero,
+                        leading: const Text("🔧", style: TextStyle(fontSize: 24)),
+                        title: Text(_isTelugu ? "పాలిటెక్నిక్" : "Polytechnic",
+                            style: const TextStyle(fontWeight: FontWeight.bold)),
+                        subtitle: Text(_isTelugu
+                            ? "డిప్లొమా మార్గాలు"
+                            : "Diploma pathways"),
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const PathDetailScreen(
+                                pathId: 'Polytechnic',
+                                title: 'Polytechnic',
+                              ),
                             ),
-                          ),
-                        );
-                      },
+                          );
+                        },
+                      ),
                     ),
                     const Divider(height: 1),
-                    ListTile(
-                      contentPadding: EdgeInsets.zero,
-                      leading: const Text("🛠", style: TextStyle(fontSize: 24)),
-                      title: Text(_isTelugu ? "ఐటిఐ (ITI)" : "ITI",
-                          style: const TextStyle(fontWeight: FontWeight.bold)),
-                      subtitle: Text(_isTelugu
-                          ? "నైపుణ్యం & వాణిజ్య మార్గాలు"
-                          : "Skill & trade pathways"),
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => const PathDetailScreen(
-                              pathId: 'ITI',
-                              title: 'ITI',
+                    Material(
+                      color: Colors.transparent,
+                      child: ListTile(
+                        contentPadding: EdgeInsets.zero,
+                        leading: const Text("🛠", style: TextStyle(fontSize: 24)),
+                        title: Text(_isTelugu ? "ఐటిఐ (ITI)" : "ITI",
+                            style: const TextStyle(fontWeight: FontWeight.bold)),
+                        subtitle: Text(_isTelugu
+                            ? "నైపుణ్యం & వాణిజ్య మార్గాలు"
+                            : "Skill & trade pathways"),
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const PathDetailScreen(
+                                pathId: 'ITI',
+                                title: 'ITI',
+                              ),
                             ),
-                          ),
-                        );
-                      },
+                          );
+                        },
+                      ),
                     ),
                     const Divider(height: 1),
-                    ListTile(
-                      contentPadding: EdgeInsets.zero,
-                      leading: const Text("🛡", style: TextStyle(fontSize: 24)),
-                      title: Text(_isTelugu ? "డిఫెన్స్" : "Defence",
-                          style: const TextStyle(fontWeight: FontWeight.bold)),
-                      subtitle: Text(_isTelugu
-                          ? "రక్షణ & సేవా మార్గాలు"
-                          : "Defence & service pathways"),
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => const PathDetailScreen(
-                              pathId: 'Defence',
-                              title: 'Defence',
+                    Material(
+                      color: Colors.transparent,
+                      child: ListTile(
+                        contentPadding: EdgeInsets.zero,
+                        leading: const Text("🛡", style: TextStyle(fontSize: 24)),
+                        title: Text(_isTelugu ? "డిఫెన్స్" : "Defence",
+                            style: const TextStyle(fontWeight: FontWeight.bold)),
+                        subtitle: Text(_isTelugu
+                            ? "రక్షణ & సేవా మార్గాలు"
+                            : "Defence & service pathways"),
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const PathDetailScreen(
+                                pathId: 'Defence',
+                                title: 'Defence',
+                              ),
                             ),
-                          ),
-                        );
-                      },
+                          );
+                        },
+                      ),
                     ),
                   ],
                 ),
