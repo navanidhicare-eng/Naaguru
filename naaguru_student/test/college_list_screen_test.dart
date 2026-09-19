@@ -54,9 +54,9 @@ void main() {
 
     expect(find.text('Sri Chaitanya Junior College'), findsOneWidget);
     expect(find.text('Vijayawada, Krishna'), findsOneWidget);
-    expect(find.text('Boys & Girls Hostel'), findsOneWidget);
+    expect(find.text('Hostel available'), findsOneWidget);
     expect(find.textContaining('MPC'), findsWidgets);
-    expect(find.text('View Details'), findsOneWidget);
+    expect(find.text('View College'), findsOneWidget);
   });
 
   testWidgets('CollegeListScreen displays empty state when no colleges found', (WidgetTester tester) async {
@@ -73,7 +73,7 @@ void main() {
     ));
     await tester.pumpAndSettle();
 
-    expect(find.text('No Matching Colleges Found'), findsOneWidget);
-    expect(find.text('Adjust Preferences'), findsOneWidget);
+    expect(find.text('No colleges found nearby'), findsOneWidget);
+    expect(find.text('Change location'), findsOneWidget);
   });
 }
