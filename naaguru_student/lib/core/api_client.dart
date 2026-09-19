@@ -55,7 +55,7 @@ class ApiClient {
   Future<Map<String, dynamic>> get(String path) async {
     final response = await _request(() =>
         _httpClient.get(Uri.parse('${AppConfig.apiBaseUrl}$path'),
-            headers: _headers));
+            headers: _headers), path: path);
     return _decodeResponse(response);
   }
 
@@ -66,7 +66,7 @@ class ApiClient {
           Uri.parse('${AppConfig.apiBaseUrl}$path'),
           headers: _headers,
           body: body != null ? jsonEncode(body) : null,
-        ));
+        ), path: path);
     return _decodeResponse(response);
   }
 
@@ -77,7 +77,7 @@ class ApiClient {
           Uri.parse('${AppConfig.apiBaseUrl}$path'),
           headers: _headers,
           body: body != null ? jsonEncode(body) : null,
-        ));
+        ), path: path);
     return _decodeResponse(response);
   }
 
@@ -85,14 +85,16 @@ class ApiClient {
   /// Uses [isRetry] to prevent infinite refresh loops.
   Future<http.Response> _request(
       Future<http.Response> Function() performRequest,
-      {bool isRetry = false}) async {
+      {bool isRetry = false, String path = ''}) async {
     final response = await performRequest();
 
-    if (response.statusCode == 401 && !isRetry && _refreshToken != null) {
+    final isAuthRoute = path.contains('/auth/');
+                        
+    if (response.statusCode == 401 && !isRetry && !isAuthRoute && _refreshToken != null) {
       final refreshed = await _tryRefreshTokens();
       if (refreshed) {
         // Retry the original request once with new credentials
-        return await _request(performRequest, isRetry: true);
+        return await _request(performRequest, isRetry: true, path: path);
       } else {
         onSessionExpired?.call();
       }

@@ -322,8 +322,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 onTap: () async {
                   Navigator.pop(ctx);
                   await widget.authService?.logout();
-                  if (context.mounted) {
-                    Navigator.pushReplacementNamed(context, '/login');
+                  if (mounted) {
+                    Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
                   }
                 },
               ),
@@ -389,7 +389,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               onPressed: () async {
                 await widget.authService?.logout();
-                if (mounted) Navigator.pushReplacementNamed(context, '/login');
+                if (mounted) Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
               },
             ),
           ),

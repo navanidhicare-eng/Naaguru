@@ -36,6 +36,7 @@ export function handleApiError(error: unknown, requestId: string): NextResponse<
 
   // 2. Validation Errors (Zod)
   if (error instanceof z.ZodError) {
+    logger.warn('Zod Validation Error', { requestId, details: error.issues, path: error.issues.map(i => i.path).join(',') });
     return NextResponse.json(
       {
         error: {

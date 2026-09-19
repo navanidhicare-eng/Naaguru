@@ -76,10 +76,6 @@ class NaaguruStudentApp extends StatelessWidget {
               assessmentApiClient: assessmentApiClient,
               collegeApiClient: collegeApiClient,
             ),
-        '/login': (_) => LoginScreen(
-              authService: authService,
-              studentApiClient: studentApiClient,
-            ),
         // Profile screen itself must remain reachable when profile is incomplete.
         // ProfileGate renders it directly — this named route is kept for any
         // edge-case deep-link that specifically targets /profile.
