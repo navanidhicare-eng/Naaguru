@@ -40,6 +40,9 @@ class _CollegeListScreenState extends State<CollegeListScreen> {
 
   final TextEditingController _searchController = TextEditingController();
 
+  // For bottom navigation
+  int _currentIndex = 1; // "Explore" is index 1
+
   @override
   void initState() {
     super.initState();
@@ -124,13 +127,13 @@ class _CollegeListScreenState extends State<CollegeListScreen> {
                         children: [
                           const SizedBox(height: NaaguruTheme.spacing16),
                           _buildContextSubheader(),
-                          const SizedBox(height: NaaguruTheme.spacing16),
-                          _buildLocationSelector(),
                           const SizedBox(height: NaaguruTheme.spacing12),
+                          _buildLocationSelector(),
+                          const SizedBox(height: NaaguruTheme.spacing16),
                           _buildSearchInput(),
                           const SizedBox(height: NaaguruTheme.spacing16),
                           _buildFiltersHorizontalScroll(),
-                          const SizedBox(height: NaaguruTheme.spacing16),
+                          const SizedBox(height: NaaguruTheme.spacing24),
                           _buildResultSummary(),
                           const SizedBox(height: NaaguruTheme.spacing16),
                         ],
@@ -138,8 +141,19 @@ class _CollegeListScreenState extends State<CollegeListScreen> {
                     ),
                   ),
                   _buildContentSliver(),
-                  const SliverToBoxAdapter(
-                    child: SizedBox(height: NaaguruTheme.spacing24),
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: NaaguruTheme.spacing20,
+                      ),
+                      child: Column(
+                        children: [
+                          const SizedBox(height: NaaguruTheme.spacing16),
+                          _buildInfoFooter(),
+                          const SizedBox(height: NaaguruTheme.spacing32),
+                        ],
+                      ),
+                    ),
                   ),
                 ],
               ),
@@ -147,58 +161,51 @@ class _CollegeListScreenState extends State<CollegeListScreen> {
           ],
         ),
       ),
+      bottomNavigationBar: _buildBottomNav(),
     );
   }
 
   Widget _buildAppBar() {
     return Padding(
-      padding: const EdgeInsets.symmetric(
-        horizontal: NaaguruTheme.spacing20,
-        vertical: NaaguruTheme.spacing12,
+      padding: const EdgeInsets.only(
+        left: NaaguruTheme.spacing16,
+        right: NaaguruTheme.spacing20,
+        top: NaaguruTheme.spacing16,
+        bottom: NaaguruTheme.spacing8,
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Row(
             children: [
-              InkWell(
-                onTap: () => Navigator.pop(context),
-                borderRadius: BorderRadius.circular(20),
-                child: Container(
-                  width: 40,
-                  height: 40,
-                  decoration: BoxDecoration(
-                    color: NaaguruTheme.surface.withAlpha(
-                      200,
-                    ), // surface-container-low fallback
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Icon(
-                    Icons.arrow_back,
-                    size: 20,
-                    color: NaaguruTheme.primaryDark,
-                  ),
+              IconButton(
+                icon: const Icon(
+                  Icons.arrow_back,
+                  color: NaaguruTheme.primaryDark,
+                  size: 24,
                 ),
+                onPressed: () => Navigator.pop(context),
+                padding: EdgeInsets.zero,
+                constraints: const BoxConstraints(),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: 16),
               Text(
                 _isTelugu ? 'కాలేజీలను పరిశీలించండి' : 'Explore Colleges',
                 style: const TextStyle(
                   fontFamily: 'Inter',
-                  fontSize: 18,
+                  fontSize: 20,
                   fontWeight: FontWeight.w600,
                   color: NaaguruTheme.text,
-                  letterSpacing: -0.5,
                 ),
               ),
             ],
           ),
-          // Language Switcher Pill
+          // Language Switcher Pill matching Stitch exactly
           Container(
-            padding: const EdgeInsets.all(4),
+            padding: const EdgeInsets.all(2),
             decoration: BoxDecoration(
-              color: NaaguruTheme.primaryLight.withAlpha(77),
-              borderRadius: BorderRadius.circular(24),
+              color: Colors.grey.shade200,
+              borderRadius: BorderRadius.circular(20),
             ),
             child: Row(
               children: [
@@ -217,14 +224,14 @@ class _CollegeListScreenState extends State<CollegeListScreen> {
     return GestureDetector(
       onTap: () => setState(() => _isTelugu = isTeluguValue),
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
         decoration: BoxDecoration(
           color: isActive ? Colors.white : Colors.transparent,
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(16),
           boxShadow: isActive
               ? [
                   BoxShadow(
-                    color: Colors.black.withAlpha(10),
+                    color: Colors.black.withAlpha(15),
                     blurRadius: 4,
                     offset: const Offset(0, 1),
                   ),
@@ -234,7 +241,7 @@ class _CollegeListScreenState extends State<CollegeListScreen> {
         child: Text(
           text,
           style: TextStyle(
-            fontSize: 11,
+            fontSize: 10,
             fontWeight: isActive ? FontWeight.w600 : FontWeight.w500,
             color: isActive ? NaaguruTheme.primaryDark : NaaguruTheme.muted,
           ),
@@ -248,13 +255,13 @@ class _CollegeListScreenState extends State<CollegeListScreen> {
     return Container(
       padding: const EdgeInsets.all(NaaguruTheme.spacing16),
       decoration: BoxDecoration(
-        color: NaaguruTheme.surface,
-        borderRadius: BorderRadius.circular(12),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withAlpha(10),
-            blurRadius: 4,
-            offset: const Offset(0, 1),
+            color: Colors.black.withAlpha(8),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
           ),
         ],
       ),
@@ -264,19 +271,16 @@ class _CollegeListScreenState extends State<CollegeListScreen> {
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 10,
-                  vertical: 2,
-                ),
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: NaaguruTheme.primaryLight.withAlpha(77),
-                  borderRadius: BorderRadius.circular(12),
+                  color: NaaguruTheme.primaryLight.withAlpha(128),
+                  borderRadius: BorderRadius.circular(6),
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     const Icon(
-                      Icons.auto_stories,
+                      Icons.campaign,
                       size: 14,
                       color: NaaguruTheme.primaryDark,
                     ),
@@ -296,17 +300,17 @@ class _CollegeListScreenState extends State<CollegeListScreen> {
               ),
               const SizedBox(width: 8),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: NaaguruTheme.accent.withAlpha(128),
-                  borderRadius: BorderRadius.circular(12),
+                  color: NaaguruTheme.accent.withAlpha(51),
+                  borderRadius: BorderRadius.circular(6),
                 ),
                 child: Text(
                   _isTelugu ? 'క్లాస్ 10 & 11' : widget.pathway,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 11,
                     fontWeight: FontWeight.w600,
-                    color: NaaguruTheme.primaryDark,
+                    color: Colors.orange.shade800,
                   ),
                 ),
               ),
@@ -317,7 +321,11 @@ class _CollegeListScreenState extends State<CollegeListScreen> {
             _isTelugu
                 ? 'ఈ స్ట్రీమ్ అందించే మీకు దగ్గరలోని కాలేజీలను చూడండి.'
                 : 'Find colleges offering this stream near you.',
-            style: const TextStyle(fontSize: 14, color: NaaguruTheme.muted),
+            style: const TextStyle(
+              fontSize: 14,
+              color: NaaguruTheme.muted,
+              height: 1.4,
+            ),
           ),
         ],
       ),
@@ -335,23 +343,26 @@ class _CollegeListScreenState extends State<CollegeListScreen> {
       ),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withAlpha(8),
-            blurRadius: 4,
-            offset: const Offset(0, 1),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
           ),
         ],
       ),
       child: Row(
         children: [
-          const Icon(
-            Icons.location_on,
-            color: NaaguruTheme.primaryDark,
-            size: 20,
+          Container(
+            padding: const EdgeInsets.all(8),
+            child: const Icon(
+              Icons.location_on_outlined,
+              color: NaaguruTheme.muted,
+              size: 24,
+            ),
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: 8),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -364,10 +375,11 @@ class _CollegeListScreenState extends State<CollegeListScreen> {
                     color: NaaguruTheme.muted,
                   ),
                 ),
+                const SizedBox(height: 2),
                 Text(
                   locName,
                   style: const TextStyle(
-                    fontSize: 14,
+                    fontSize: 15,
                     fontWeight: FontWeight.w600,
                     color: NaaguruTheme.text,
                   ),
@@ -378,17 +390,19 @@ class _CollegeListScreenState extends State<CollegeListScreen> {
             ),
           ),
           InkWell(
-            onTap: () => Navigator.pop(
-              context,
-            ), // Typically "Change" would pop to let user change location in previous screen
+            onTap: () => Navigator.pop(context),
+            borderRadius: BorderRadius.circular(4),
             child: Padding(
-              padding: const EdgeInsets.all(4.0),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 8.0,
+                vertical: 4.0,
+              ),
               child: Text(
                 _isTelugu ? 'మార్చండి' : 'Change',
                 style: const TextStyle(
-                  fontSize: 11,
+                  fontSize: 12,
                   fontWeight: FontWeight.w600,
-                  color: NaaguruTheme.primaryDark,
+                  color: NaaguruTheme.muted,
                 ),
               ),
             ),
@@ -406,7 +420,7 @@ class _CollegeListScreenState extends State<CollegeListScreen> {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withAlpha(8),
+            color: Colors.black.withAlpha(5),
             blurRadius: 4,
             offset: const Offset(0, 1),
           ),
@@ -446,22 +460,22 @@ class _CollegeListScreenState extends State<CollegeListScreen> {
       child: Row(
         children: [
           _buildFilterChip(
-            Icons.near_me,
+            Icons.near_me_outlined,
             _isTelugu ? 'దగ్గరలో' : 'Nearby',
             isActive: widget.locationId != null,
           ),
           _buildFilterChip(
-            Icons.hotel,
+            Icons.hotel_outlined,
             _isTelugu ? 'హాస్టల్' : 'Hostel',
             isActive: widget.requiresHostel,
           ),
           _buildFilterChip(
-            Icons.payments,
+            Icons.payments_outlined,
             _isTelugu ? 'ఫీజు' : 'Fees',
             isActive: widget.maxFee != null,
           ),
           _buildFilterChip(
-            Icons.tune,
+            Icons.tune_outlined,
             _isTelugu ? 'స్ట్రీమ్లు' : 'Streams',
             isActive: widget.streamCode != null,
           ),
@@ -477,19 +491,13 @@ class _CollegeListScreenState extends State<CollegeListScreen> {
   }) {
     return Container(
       margin: const EdgeInsets.only(right: 8),
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
       decoration: BoxDecoration(
-        color: isActive
-            ? NaaguruTheme.primaryLight.withAlpha(77)
-            : Colors.white,
+        color: isActive ? NaaguruTheme.primaryLight : Colors.white,
         borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withAlpha(8),
-            blurRadius: 2,
-            offset: const Offset(0, 1),
-          ),
-        ],
+        border: Border.all(
+          color: isActive ? Colors.transparent : Colors.grey.shade200,
+        ),
       ),
       child: Row(
         children: [
@@ -502,7 +510,7 @@ class _CollegeListScreenState extends State<CollegeListScreen> {
           Text(
             label,
             style: TextStyle(
-              fontSize: 11,
+              fontSize: 12,
               fontWeight: FontWeight.w500,
               color: isActive ? NaaguruTheme.primaryDark : NaaguruTheme.muted,
             ),
@@ -528,7 +536,7 @@ class _CollegeListScreenState extends State<CollegeListScreen> {
               _isTelugu ? 'మీ దగ్గరలోని కాలేజీలు' : 'Colleges near you',
               style: const TextStyle(
                 fontSize: 16,
-                fontWeight: FontWeight.w600,
+                fontWeight: FontWeight.w700,
                 color: NaaguruTheme.text,
               ),
             ),
@@ -536,7 +544,7 @@ class _CollegeListScreenState extends State<CollegeListScreen> {
             Text(
               countStr,
               style: const TextStyle(
-                fontSize: 11,
+                fontSize: 12,
                 fontWeight: FontWeight.w500,
                 color: NaaguruTheme.muted,
               ),
@@ -601,12 +609,12 @@ class _CollegeListScreenState extends State<CollegeListScreen> {
             padding: const EdgeInsets.all(NaaguruTheme.spacing24),
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(16),
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withAlpha(8),
-                  blurRadius: 4,
-                  offset: const Offset(0, 1),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
                 ),
               ],
             ),
@@ -616,7 +624,7 @@ class _CollegeListScreenState extends State<CollegeListScreen> {
                   width: 56,
                   height: 56,
                   decoration: BoxDecoration(
-                    color: NaaguruTheme.primaryLight.withAlpha(77),
+                    color: NaaguruTheme.primaryLight,
                     shape: BoxShape.circle,
                   ),
                   child: const Icon(
@@ -735,9 +743,11 @@ class _CollegeListScreenState extends State<CollegeListScreen> {
     String feeStr = 'Contact for details';
     if (minFee != 9999999 && maxFeeAmount > 0) {
       if (minFee == maxFeeAmount) {
-        feeStr = '₹$minFee / year';
+        // Format thousands properly (e.g. 55000 -> 55,000)
+        feeStr = '₹${_formatCurrency(minFee)} / year';
       } else {
-        feeStr = '₹$minFee–₹$maxFeeAmount / year';
+        feeStr =
+            '₹${_formatCurrency(minFee)}–₹${_formatCurrency(maxFeeAmount)} / year';
       }
     }
 
@@ -747,12 +757,12 @@ class _CollegeListScreenState extends State<CollegeListScreen> {
       margin: const EdgeInsets.only(bottom: NaaguruTheme.spacing16),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withAlpha(8),
-            blurRadius: 4,
-            offset: const Offset(0, 1),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
           ),
         ],
       ),
@@ -772,13 +782,13 @@ class _CollegeListScreenState extends State<CollegeListScreen> {
               ),
             );
           },
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(16),
           child: Padding(
             padding: const EdgeInsets.all(NaaguruTheme.spacing16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Top row with details
+                // Top section (badges & image)
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -790,14 +800,14 @@ class _CollegeListScreenState extends State<CollegeListScreen> {
                             children: [
                               Container(
                                 padding: const EdgeInsets.symmetric(
-                                  horizontal: 8,
+                                  horizontal: 6,
                                   vertical: 2,
                                 ),
                                 decoration: BoxDecoration(
                                   color: isGovt
-                                      ? NaaguruTheme.accent.withAlpha(128)
-                                      : NaaguruTheme.primaryLight.withAlpha(77),
-                                  borderRadius: BorderRadius.circular(12),
+                                      ? NaaguruTheme.accent.withAlpha(51)
+                                      : const Color(0xFFE0F5EB),
+                                  borderRadius: BorderRadius.circular(4),
                                 ),
                                 child: Row(
                                   mainAxisSize: MainAxisSize.min,
@@ -805,11 +815,11 @@ class _CollegeListScreenState extends State<CollegeListScreen> {
                                     Icon(
                                       isGovt
                                           ? Icons.account_balance
-                                          : Icons.verified_user,
-                                      size: 14,
+                                          : Icons.verified,
+                                      size: 12,
                                       color: isGovt
                                           ? Colors.orange.shade800
-                                          : NaaguruTheme.primaryDark,
+                                          : const Color(0xFF0F8C64),
                                     ),
                                     const SizedBox(width: 4),
                                     Text(
@@ -821,11 +831,11 @@ class _CollegeListScreenState extends State<CollegeListScreen> {
                                                 ? 'వెరిఫైడ్'
                                                 : 'Verified'),
                                       style: TextStyle(
-                                        fontSize: 11,
+                                        fontSize: 10,
                                         fontWeight: FontWeight.w600,
                                         color: isGovt
                                             ? Colors.orange.shade800
-                                            : NaaguruTheme.primaryDark,
+                                            : const Color(0xFF0F8C64),
                                       ),
                                     ),
                                   ],
@@ -843,18 +853,19 @@ class _CollegeListScreenState extends State<CollegeListScreen> {
                               ],
                             ],
                           ),
-                          const SizedBox(height: 6),
+                          const SizedBox(height: 8),
                           Text(
                             name,
                             style: const TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w600,
                               color: NaaguruTheme.text,
+                              height: 1.2,
                             ),
                           ),
-                          const SizedBox(height: 4),
+                          const SizedBox(height: 6),
                           Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               const Icon(
                                 Icons.location_on_outlined,
@@ -879,18 +890,18 @@ class _CollegeListScreenState extends State<CollegeListScreen> {
                       ),
                     ),
                     const SizedBox(width: 12),
-                    // Image placeholder (as per Stitch design)
+                    // Image placeholder (matching Stitch small rounded square)
                     Container(
-                      width: 48,
-                      height: 48,
+                      width: 60,
+                      height: 60,
                       decoration: BoxDecoration(
-                        color: NaaguruTheme.surface,
+                        color: Colors.grey.shade100,
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: const Center(
                         child: Icon(
                           Icons.school,
-                          color: NaaguruTheme.primaryDark,
+                          color: NaaguruTheme.muted,
                           size: 24,
                         ),
                       ),
@@ -898,24 +909,30 @@ class _CollegeListScreenState extends State<CollegeListScreen> {
                   ],
                 ),
 
-                const SizedBox(height: 12),
+                const SizedBox(height: 16),
 
                 // Stream Label
                 Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     const Icon(
-                      Icons.school,
+                      Icons.school_outlined,
                       size: 16,
-                      color: NaaguruTheme.primaryDark,
+                      color: NaaguruTheme.muted,
                     ),
                     const SizedBox(width: 6),
                     Text(
                       streamDisplay,
                       style: const TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: NaaguruTheme.primaryDark,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w700,
+                        color: NaaguruTheme.text,
                       ),
+                    ),
+                    const SizedBox(width: 4),
+                    const Text(
+                      '(Maths, Physics, Chemistry)',
+                      style: TextStyle(fontSize: 12, color: NaaguruTheme.muted),
                     ),
                   ],
                 ),
@@ -929,20 +946,20 @@ class _CollegeListScreenState extends State<CollegeListScreen> {
                   children: [
                     if (hasBoysHostel || hasGirlsHostel)
                       _buildTag(
-                        Icons.bed,
-                        _isTelugu
-                            ? 'హాస్టల్ అందుబాటులో ఉంది'
-                            : 'Hostel available',
+                        Icons.bed_outlined,
+                        _isTelugu ? 'హాస్టల్ అందుబాటులో ఉంది' : 'Hostel',
                       ),
                     if (isGovt)
                       _buildTag(
-                        Icons.savings,
+                        Icons.savings_outlined,
                         _isTelugu ? 'తక్కువ ఫీజు' : 'Affordable fee',
-                      ),
+                      )
+                    else
+                      _buildTag(Icons.science_outlined, 'Lab'),
                   ],
                 ),
 
-                const SizedBox(height: 16),
+                const SizedBox(height: 20),
 
                 // Bottom row: Fee & CTA
                 Row(
@@ -955,10 +972,11 @@ class _CollegeListScreenState extends State<CollegeListScreen> {
                         Text(
                           _isTelugu ? 'సుమారు ఫీజు' : 'Approx. Fee',
                           style: const TextStyle(
-                            fontSize: 11,
+                            fontSize: 10,
                             color: NaaguruTheme.muted,
                           ),
                         ),
+                        const SizedBox(height: 2),
                         Text(
                           feeStr,
                           style: const TextStyle(
@@ -971,12 +989,12 @@ class _CollegeListScreenState extends State<CollegeListScreen> {
                     ),
                     Container(
                       padding: const EdgeInsets.symmetric(
-                        horizontal: 14,
-                        vertical: 8,
+                        horizontal: 16,
+                        vertical: 10,
                       ),
                       decoration: BoxDecoration(
-                        color: NaaguruTheme.primaryLight.withAlpha(51),
-                        borderRadius: BorderRadius.circular(12),
+                        color: NaaguruTheme.primaryLight,
+                        borderRadius: BorderRadius.circular(8),
                       ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
@@ -984,7 +1002,7 @@ class _CollegeListScreenState extends State<CollegeListScreen> {
                           Text(
                             _isTelugu ? 'కాలేజీని చూడండి' : 'View College',
                             style: const TextStyle(
-                              fontSize: 14,
+                              fontSize: 13,
                               fontWeight: FontWeight.w600,
                               color: NaaguruTheme.primaryDark,
                             ),
@@ -992,7 +1010,7 @@ class _CollegeListScreenState extends State<CollegeListScreen> {
                           const SizedBox(width: 4),
                           const Icon(
                             Icons.arrow_forward,
-                            size: 16,
+                            size: 14,
                             color: NaaguruTheme.primaryDark,
                           ),
                         ],
@@ -1012,20 +1030,153 @@ class _CollegeListScreenState extends State<CollegeListScreen> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: NaaguruTheme.surface,
-        borderRadius: BorderRadius.circular(8),
+        color: Colors.grey.shade100,
+        borderRadius: BorderRadius.circular(6),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 13, color: NaaguruTheme.muted),
+          Icon(icon, size: 12, color: NaaguruTheme.muted),
           const SizedBox(width: 4),
           Text(
             label,
-            style: const TextStyle(fontSize: 11, color: NaaguruTheme.muted),
+            style: const TextStyle(
+              fontSize: 11,
+              fontWeight: FontWeight.w500,
+              color: NaaguruTheme.muted,
+            ),
           ),
         ],
       ),
     );
+  }
+
+  Widget _buildInfoFooter() {
+    return Container(
+      padding: const EdgeInsets.all(NaaguruTheme.spacing16),
+      decoration: BoxDecoration(
+        color: Colors.transparent,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Icon(
+            Icons.favorite_border,
+            size: 16,
+            color: NaaguruTheme.muted,
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              _isTelugu
+                  ? 'స్పాన్సర్ చేసిన ప్లేస్‌మెంట్‌లు లేదా ఆందోళన కలిగించే ర్యాంకింగ్‌లు లేకుండా ధృవీకరించబడిన స్ట్రీమ్‌లను నాగురు హైలైట్ చేస్తుంది. మీ అభ్యాస ప్రయాణానికి సరిపోయేదాన్ని ఎంచుకోండి.'
+                  : 'Naaguru highlights verified streams without sponsored placements or anxiety inducing competitive rankings. Choose what fits your learning journey.',
+              style: const TextStyle(
+                fontSize: 12,
+                color: NaaguruTheme.muted,
+                height: 1.5,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildBottomNav() {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withAlpha(10),
+            blurRadius: 10,
+            offset: const Offset(0, -2),
+          ),
+        ],
+      ),
+      child: BottomNavigationBar(
+        currentIndex: _currentIndex,
+        onTap: (index) {
+          setState(() => _currentIndex = index);
+          // In a real app, this would route to actual pages.
+          // For this specific screen task, we just update the UI state.
+        },
+        type: BottomNavigationBarType.fixed,
+        backgroundColor: Colors.white,
+        selectedItemColor: NaaguruTheme.primary,
+        unselectedItemColor: NaaguruTheme.muted,
+        selectedFontSize: 11,
+        unselectedFontSize: 11,
+        elevation: 0,
+        items: [
+          BottomNavigationBarItem(
+            icon: const Padding(
+              padding: EdgeInsets.only(bottom: 4.0),
+              child: Icon(Icons.home_outlined),
+            ),
+            activeIcon: const Padding(
+              padding: EdgeInsets.only(bottom: 4.0),
+              child: Icon(Icons.home),
+            ),
+            label: _isTelugu ? 'హోమ్' : 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: const Padding(
+              padding: EdgeInsets.only(bottom: 4.0),
+              child: Icon(Icons.explore_outlined),
+            ),
+            activeIcon: const Padding(
+              padding: EdgeInsets.only(bottom: 4.0),
+              child: Icon(Icons.explore),
+            ),
+            label: _isTelugu ? 'అన్వేషించండి' : 'Explore',
+          ),
+          BottomNavigationBarItem(
+            icon: const Padding(
+              padding: EdgeInsets.only(bottom: 4.0),
+              child: Icon(Icons.alt_route),
+            ),
+            activeIcon: const Padding(
+              padding: EdgeInsets.only(bottom: 4.0),
+              child: Icon(Icons.alt_route),
+            ),
+            label: _isTelugu ? 'ప్రయాణం' : 'Journey',
+          ),
+          BottomNavigationBarItem(
+            icon: const Padding(
+              padding: EdgeInsets.only(bottom: 4.0),
+              child: Icon(Icons.person_outline),
+            ),
+            activeIcon: const Padding(
+              padding: EdgeInsets.only(bottom: 4.0),
+              child: Icon(Icons.person),
+            ),
+            label: _isTelugu ? 'మీరు' : 'You',
+          ),
+        ],
+      ),
+    );
+  }
+
+  String _formatCurrency(int amount) {
+    // Basic formatter for Indian Rupees (e.g. 55000 -> 55,000)
+    final str = amount.toString();
+    if (str.length <= 3) return str;
+
+    String result = str.substring(str.length - 3);
+    String remaining = str.substring(0, str.length - 3);
+
+    while (remaining.length > 2) {
+      result = '${remaining.substring(remaining.length - 2)},$result';
+      remaining = remaining.substring(0, remaining.length - 2);
+    }
+
+    if (remaining.isNotEmpty) {
+      result = '$remaining,$result';
+    }
+
+    return result;
   }
 }

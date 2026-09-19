@@ -54,7 +54,7 @@ void main() {
 
     expect(find.text('Sri Chaitanya Junior College'), findsOneWidget);
     expect(find.text('Vijayawada, Krishna'), findsOneWidget);
-    expect(find.text('Hostel available'), findsOneWidget);
+    expect(find.text('Hostel'), findsWidgets);
     expect(find.textContaining('MPC'), findsWidgets);
     expect(find.text('View College'), findsOneWidget);
   });
