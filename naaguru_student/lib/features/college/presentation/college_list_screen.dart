@@ -3,8 +3,10 @@ import 'package:naaguru_student/core/theme.dart';
 import 'package:naaguru_student/core/ui/language_toggle.dart';
 import 'package:naaguru_student/features/college/data/college_api_client.dart';
 import 'package:naaguru_student/features/college/presentation/college_detail_screen.dart';
+import 'package:naaguru_student/features/student/data/student_api_client.dart';
 
 class CollegeListScreen extends StatefulWidget {
+  final StudentApiClient studentApiClient;
   final CollegeApiClient collegeApiClient;
   final String pathway;
   final String? streamCode;
@@ -15,6 +17,7 @@ class CollegeListScreen extends StatefulWidget {
 
   const CollegeListScreen({
     super.key,
+    required this.studentApiClient,
     required this.collegeApiClient,
     required this.pathway,
     this.streamCode,
@@ -255,27 +258,24 @@ class _CollegeListScreenState extends State<CollegeListScreen> {
       }
     }
     
-    // Fallbacks if no branch or no matchedBranchId
-    final fallbackLocation = college['location'] as Map<String, dynamic>? ?? {};
-    final fallbackHostel = college['hostelSummary'] as Map<String, dynamic>? ?? {};
+    if (matchedBranch == null) {
+      return Card(
+        margin: const EdgeInsets.only(bottom: 16),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        color: Colors.red.shade50,
+        child: const Padding(
+          padding: EdgeInsets.all(16.0),
+          child: Text('Incomplete branch data for this institution.', style: TextStyle(color: Colors.red)),
+        ),
+      );
+    }
     
-    final district = fallbackLocation['district'] as String? ?? '';
-    final city = fallbackLocation['city'] as String? ?? '';
+    final displayLocation = matchedBranch['locationName'] as String? ?? 'Unknown Location';
     
-    final branchLocationName = matchedBranch?['locationName'] as String?;
-    final displayLocation = branchLocationName ?? '$city, $district';
-    
-    final hasBoysHostel = matchedBranch != null 
-        ? (matchedBranch['hostel']?['hasBoysHostel'] == true)
-        : (fallbackHostel['hasBoysHostel'] == true);
+    final hasBoysHostel = matchedBranch['hostel']?['hasBoysHostel'] == true;
+    final hasGirlsHostel = matchedBranch['hostel']?['hasGirlsHostel'] == true;
         
-    final hasGirlsHostel = matchedBranch != null
-        ? (matchedBranch['hostel']?['hasGirlsHostel'] == true)
-        : (fallbackHostel['hasGirlsHostel'] == true);
-        
-    final offerings = (matchedBranch != null 
-        ? matchedBranch['offerings'] as List<dynamic>?
-        : college['offerings'] as List<dynamic>?) ?? [];
+    final offerings = matchedBranch['offerings'] as List<dynamic>? ?? [];
 
     String hostelLabel = 'No Hostel';
     Color hostelColor = NaaguruTheme.muted;
@@ -307,6 +307,7 @@ class _CollegeListScreenState extends State<CollegeListScreen> {
                 collegeId: collegeId,
                 initialData: college,
                 collegeApiClient: widget.collegeApiClient,
+                studentApiClient: widget.studentApiClient,
               ),
             ),
           );

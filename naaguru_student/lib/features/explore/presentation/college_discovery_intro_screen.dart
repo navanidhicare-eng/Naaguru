@@ -163,6 +163,7 @@ class CollegeDiscoveryIntroScreen extends StatelessWidget {
                     context,
                     MaterialPageRoute(
                       builder: (_) => CollegeListScreen(
+                        studentApiClient: studentApiClient!,
                         collegeApiClient: collegeApiClient!,
                         pathway: intent!['pathwayCode'] as String? ?? 'INTERMEDIATE',
                         streamCode: intent['programCode'] as String?,

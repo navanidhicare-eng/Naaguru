@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
 import { cookies } from 'next/headers';
 import { authUseCases } from './index';
 import { AppError } from '../errors';
@@ -22,14 +23,11 @@ export interface StaffAuthContext {
   role: 'COLLEGE_ADMIN' | 'COLLEGE_STAFF';
 }
 
-type RouteHandler = (
-  request: Request,
-  context: unknown,
-  authContext: AuthContext
-) => Promise<NextResponse> | NextResponse;
-
-export function withAuth(handler: RouteHandler, allowedRoles?: AuthContext['role'][]) {
-  return async (request: Request, context: unknown) => {
+export function withAuth(
+  handler: (request: NextRequest, context: any, auth: AuthContext, ...args: any[]) => Promise<NextResponse>,
+  allowedRoles?: AuthContext['role'][]
+) {
+  return async (request: NextRequest, context: unknown, ...args: any[]) => {
     let authContext: AuthContext;
 
     try {
@@ -68,18 +66,14 @@ export function withAuth(handler: RouteHandler, allowedRoles?: AuthContext['role
     }
 
     // 5. Proceed to handler with injected context OUTSIDE the auth try-catch
-    return await handler(request, context, authContext);
+    return await handler(request, context, authContext, ...args);
   };
 }
 
-type StaffRouteHandler = (
-  request: Request,
-  context: unknown,
-  staffAuthContext: StaffAuthContext
-) => Promise<NextResponse> | NextResponse;
-
-export function withStaffAuth(handler: StaffRouteHandler) {
-  return async (request: Request, context: unknown) => {
+export function withStaffAuth(
+  handler: (request: NextRequest, context: any, staffAuth: StaffAuthContext, ...args: any[]) => Promise<NextResponse>
+) {
+  return async (request: NextRequest, context: unknown, ...args: any[]) => {
     let staffAuthContext: StaffAuthContext;
 
     try {
@@ -126,7 +120,7 @@ export function withStaffAuth(handler: StaffRouteHandler) {
     }
 
     // 6. Proceed to handler with injected context OUTSIDE the auth try-catch
-    return await handler(request, context, staffAuthContext);
+    return await handler(request, context, staffAuthContext, ...args);
   };
 }
 
@@ -163,14 +157,10 @@ export interface AdminAuthContext {
   role: 'ADMIN';
 }
 
-type AdminRouteHandler = (
-  request: Request,
-  context: unknown,
-  adminAuthContext: AdminAuthContext
-) => Promise<NextResponse> | NextResponse;
-
-export function withAdminAuth(handler: AdminRouteHandler) {
-  return async (request: Request, context: unknown) => {
+export function withAdminAuth(
+  handler: (request: NextRequest, context: any, adminAuth: AdminAuthContext, ...args: any[]) => Promise<NextResponse>
+) {
+  return async (request: NextRequest, context: unknown, ...args: any[]) => {
     let adminAuthContext: AdminAuthContext;
 
     try {
@@ -223,7 +213,7 @@ export function withAdminAuth(handler: AdminRouteHandler) {
       throw new AppError('Unauthorized: Invalid or expired token', 401, 'UNAUTHORIZED');
     }
 
-    return await handler(request, context, adminAuthContext);
+    return await handler(request, context, adminAuthContext, ...args);
   };
 }
 

@@ -1,18 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:naaguru_student/core/api_client.dart';
 import 'package:naaguru_student/core/theme.dart';
 import 'package:naaguru_student/core/ui/buttons.dart';
 import 'package:naaguru_student/features/college/data/college_api_client.dart';
+import 'package:naaguru_student/features/student/data/student_api_client.dart';
 
 class CollegeDetailScreen extends StatefulWidget {
   final String collegeId;
   final Map<String, dynamic>? initialData;
   final CollegeApiClient? collegeApiClient;
+  final StudentApiClient? studentApiClient;
 
   const CollegeDetailScreen({
     super.key,
     required this.collegeId,
     this.initialData,
     this.collegeApiClient,
+    this.studentApiClient,
   });
 
   @override
@@ -57,76 +62,23 @@ class _CollegeDetailScreenState extends State<CollegeDetailScreen> {
     }
   }
 
-  void _showEnquirySheet(BuildContext context) {
+  void _showRequestCounsellingSheet(BuildContext context) {
+    if (widget.studentApiClient == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Student profile not available.')),
+      );
+      return;
+    }
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      builder: (ctx) => SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(24),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                      color: NaaguruTheme.primaryLight,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: const Icon(Icons.send_rounded, color: NaaguruTheme.primaryDark, size: 24),
-                  ),
-                  const SizedBox(width: 14),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'Direct College Enquiry',
-                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: NaaguruTheme.primaryDark),
-                        ),
-                        Text(
-                          _college?['name'] as String? ?? 'College Admissions',
-                          style: const TextStyle(fontSize: 13, color: NaaguruTheme.muted),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 20),
-              const Text(
-                'Naaguru connects Telugu 10th-grade students with verified college counselors directly without third-party agents.',
-                style: TextStyle(fontSize: 13, color: NaaguruTheme.text, height: 1.4),
-              ),
-              const SizedBox(height: 24),
-              PrimaryButton(
-                text: 'Send Admission Enquiry',
-                onPressed: () {
-                  Navigator.pop(ctx);
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('Enquiry registered for ${_college?['name']}. Admissions desk notified!'),
-                      backgroundColor: NaaguruTheme.primaryDark,
-                    ),
-                  );
-                },
-              ),
-              const SizedBox(height: 8),
-              SecondaryButton(
-                text: 'Cancel',
-                onPressed: () => Navigator.pop(ctx),
-              ),
-            ],
-          ),
-        ),
+      builder: (ctx) => _RequestCounsellingSheet(
+        college: _college!,
+        studentApiClient: widget.studentApiClient!,
+        collegeId: widget.collegeId,
       ),
     );
   }
@@ -166,23 +118,10 @@ class _CollegeDetailScreenState extends State<CollegeDetailScreen> {
     final name = _college!['name'] as String? ?? 'Junior College';
     final shortName = _college!['shortName'] as String?;
     final description = _college!['description'] as String? ?? '';
-    final location = _college!['location'] as Map<String, dynamic>? ?? {};
-    final hostelSummary = _college!['hostelSummary'] as Map<String, dynamic>? ?? {};
-
-    final address = location['address'] as String? ?? '';
-    final city = location['city'] as String? ?? '';
-    final district = location['district'] as String? ?? '';
-    final state = location['state'] as String? ?? '';
     final contactPhone = _college!['contactPhone'] as String?;
     final contactEmail = _college!['contactEmail'] as String?;
     final website = _college!['website'] as String?;
     final ownershipType = _college!['ownershipType'] as String? ?? 'PRIVATE';
-
-    final hasBoysHostel = hostelSummary['hasBoysHostel'] == true;
-    final hasGirlsHostel = hostelSummary['hasGirlsHostel'] == true;
-    final annualHostelFee = hostelSummary['annualHostelFee'] as int?;
-
-    final offerings = (_college!['offerings'] as List<dynamic>?) ?? [];
     final branches = (_college!['branches'] as List<dynamic>?) ?? [];
 
     return Scaffold(
@@ -297,17 +236,6 @@ class _CollegeDetailScreenState extends State<CollegeDetailScreen> {
               ),
               const SizedBox(height: 20),
 
-              // Location Section
-              _buildSectionCard(
-                title: 'Campus Location',
-                icon: Icons.location_on_outlined,
-                children: [
-                  Text(address, style: const TextStyle(fontSize: 14, color: NaaguruTheme.text, height: 1.3)),
-                  const SizedBox(height: 4),
-                  Text('$city, $district, $state', style: const TextStyle(fontSize: 13, color: NaaguruTheme.muted)),
-                ],
-              ),
-              const SizedBox(height: 20),
 
               // Branches & Campuses Section
               if (branches.isNotEmpty) ...[
@@ -318,78 +246,11 @@ class _CollegeDetailScreenState extends State<CollegeDetailScreen> {
                 const SizedBox(height: 12),
                 ...branches.map((b) => _buildBranchCard(b)),
               ] else ...[
-                // Fallback Academic Stream Offerings Section
                 _buildSectionCard(
-                  title: 'Intermediate Streams & Tuition',
-                  icon: Icons.menu_book_outlined,
+                  title: 'Branches & Campuses',
+                  icon: Icons.business_outlined,
                   children: [
-                    if (offerings.isEmpty)
-                      const Text('General Intermediate Stream offerings available.', style: TextStyle(color: NaaguruTheme.muted, fontSize: 13))
-                    else
-                      ...offerings.map((o) {
-                        final sCode = o['streamCode'] as String? ?? '';
-                        final fee = o['tuitionFee'] as int? ?? 0;
-                        return Container(
-                          margin: const EdgeInsets.only(bottom: 8),
-                          padding: const EdgeInsets.all(12),
-                          decoration: BoxDecoration(
-                            color: NaaguruTheme.background,
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Row(
-                                children: [
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                                    decoration: BoxDecoration(
-                                      color: NaaguruTheme.primaryLight,
-                                      borderRadius: BorderRadius.circular(6),
-                                    ),
-                                    child: Text(
-                                      sCode,
-                                      style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: NaaguruTheme.primaryDark),
-                                    ),
-                                  ),
-                                  const SizedBox(width: 10),
-                                  Text(
-                                    _getStreamFullName(sCode),
-                                    style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w500),
-                                  ),
-                                ],
-                              ),
-                              Text(
-                                '₹$fee / yr',
-                                style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: NaaguruTheme.text),
-                              ),
-                            ],
-                          ),
-                        );
-                      }),
-                  ],
-                ),
-                const SizedBox(height: 20),
-
-                // Fallback Hostel Section
-                _buildSectionCard(
-                  title: 'Hostel Facilities',
-                  icon: Icons.hotel_outlined,
-                  children: [
-                    Row(
-                      children: [
-                        _buildHostelBadge('Boys Hostel', hasBoysHostel),
-                        const SizedBox(width: 12),
-                        _buildHostelBadge('Girls Hostel', hasGirlsHostel),
-                      ],
-                    ),
-                    if (annualHostelFee != null && (hasBoysHostel || hasGirlsHostel)) ...[
-                      const SizedBox(height: 12),
-                      Text(
-                        'Annual Hostel Fee: ₹$annualHostelFee / year (approx)',
-                        style: const TextStyle(fontSize: 13, color: NaaguruTheme.muted),
-                      ),
-                    ],
+                    const Text('Branch information is currently unavailable.', style: TextStyle(color: NaaguruTheme.muted, fontSize: 13)),
                   ],
                 ),
                 const SizedBox(height: 20),
@@ -434,10 +295,23 @@ class _CollegeDetailScreenState extends State<CollegeDetailScreen> {
               ),
               const SizedBox(height: 32),
 
-              // Bottom Enquiry CTA
+              // Bottom CTAs
               PrimaryButton(
-                text: 'Enquire for Admissions →',
-                onPressed: () => _showEnquirySheet(context),
+                text: 'Request Counselling',
+                onPressed: () => _showRequestCounsellingSheet(context),
+              ),
+              const SizedBox(height: 12),
+              SecondaryButton(
+                text: 'Call College',
+                onPressed: () {
+                  if (contactPhone != null && contactPhone.isNotEmpty) {
+                    launchUrl(Uri.parse('tel:$contactPhone'));
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Contact number unavailable')),
+                    );
+                  }
+                },
               ),
               const SizedBox(height: 24),
             ],
@@ -621,6 +495,314 @@ class _CollegeDetailScreenState extends State<CollegeDetailScreen> {
             ),
           ],
         ],
+      ),
+    );
+  }
+
+}
+
+class _RequestCounsellingSheet extends StatefulWidget {
+  final Map<String, dynamic> college;
+  final StudentApiClient studentApiClient;
+  final String collegeId;
+
+  const _RequestCounsellingSheet({
+    required this.college,
+    required this.studentApiClient,
+    required this.collegeId,
+  });
+
+  @override
+  State<_RequestCounsellingSheet> createState() => _RequestCounsellingSheetState();
+}
+
+class _RequestCounsellingSheetState extends State<_RequestCounsellingSheet> {
+  List<Map<String, dynamic>> _branches = [];
+  String? _selectedBranchId;
+  String? _selectedStreamCode;
+
+  bool _isLoading = false;
+  bool _isSuccess = false;
+  bool _isConflict = false;
+  String? _errorMessage;
+
+  @override
+  void initState() {
+    super.initState();
+    _initData();
+  }
+
+  void _initData() {
+    final rawBranches = (widget.college['branches'] as List<dynamic>?) ?? [];
+    _branches = rawBranches.map((e) => e as Map<String, dynamic>).toList();
+    _branches.removeWhere((b) {
+      final offerings = (b['offerings'] as List<dynamic>?) ?? [];
+      return offerings.isEmpty;
+    });
+
+    if (_branches.length == 1) {
+      _selectedBranchId = _branches.first['id'] as String?;
+      final offerings = (_branches.first['offerings'] as List<dynamic>?) ?? [];
+      if (offerings.length == 1) {
+        _selectedStreamCode = offerings.first['streamCode'] as String?;
+      }
+    }
+  }
+
+  List<dynamic> get _currentOfferings {
+    if (_selectedBranchId == null) return [];
+    final branch = _branches.firstWhere((b) => b['id'] == _selectedBranchId, orElse: () => <String, dynamic>{});
+    return (branch['offerings'] as List<dynamic>?) ?? [];
+  }
+
+  Future<void> _submitLead() async {
+    if (_selectedBranchId == null || _selectedStreamCode == null) return;
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+      _isConflict = false;
+    });
+
+    try {
+      Map<String, dynamic>? intent;
+      try {
+        intent = await widget.studentApiClient.getCurrentCollegeIntent();
+      } catch (_) {}
+
+      final intentId = intent?['id'] as String?;
+
+      await widget.studentApiClient.createStudentLead(
+        collegeId: widget.collegeId,
+        branchId: _selectedBranchId!,
+        streamCode: _selectedStreamCode!,
+        intentId: intentId,
+      );
+
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+          _isSuccess = true;
+        });
+      }
+    } on ApiException catch (e) {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+          if (e.statusCode == 409) {
+            _isConflict = true;
+          } else {
+            _errorMessage = 'Failed to submit request. Please try again.';
+          }
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+          _errorMessage = 'An unexpected error occurred.';
+        });
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_isSuccess) {
+      return _buildSuccessState();
+    }
+    if (_isConflict) {
+      return _buildConflictState();
+    }
+
+    final collegeName = widget.college['name'] as String? ?? 'College';
+
+    return SafeArea(
+      child: Padding(
+        padding: EdgeInsets.only(
+          left: 24,
+          right: 24,
+          top: 24,
+          bottom: MediaQuery.of(context).viewInsets.bottom + 24,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            const Text(
+              'Request Counselling',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: NaaguruTheme.primaryDark),
+            ),
+            const SizedBox(height: 4),
+            Text(collegeName, style: const TextStyle(fontSize: 14, color: NaaguruTheme.muted)),
+            const SizedBox(height: 24),
+            if (_branches.isEmpty)
+              const Text('No branches available for counselling at this time.', style: TextStyle(color: NaaguruTheme.error))
+            else ...[
+              const Text('Branch', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: NaaguruTheme.text)),
+              const SizedBox(height: 8),
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: _branches.map((b) {
+                  final bId = b['id'] as String?;
+                  final bName = b['name'] as String? ?? 'Branch';
+                  final isSelected = _selectedBranchId == bId;
+                  return ChoiceChip(
+                    label: Text(bName),
+                    selected: isSelected,
+                    onSelected: (selected) {
+                      if (selected) {
+                        setState(() {
+                          _selectedBranchId = bId;
+                          _selectedStreamCode = null;
+                          final offerings = _currentOfferings;
+                          if (offerings.length == 1) {
+                            _selectedStreamCode = offerings.first['streamCode'] as String?;
+                          }
+                        });
+                      }
+                    },
+                    selectedColor: NaaguruTheme.primaryLight,
+                    backgroundColor: NaaguruTheme.background,
+                    labelStyle: TextStyle(
+                      color: isSelected ? NaaguruTheme.primaryDark : NaaguruTheme.text,
+                      fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                    ),
+                  );
+                }).toList(),
+              ),
+              const SizedBox(height: 16),
+              const Text('Stream', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: NaaguruTheme.text)),
+              const SizedBox(height: 8),
+              if (_selectedBranchId == null)
+                const Text('Select a branch to view streams', style: TextStyle(fontSize: 13, color: NaaguruTheme.muted))
+              else
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: _currentOfferings.map((o) {
+                    final code = o['streamCode'] as String? ?? '';
+                    final isSelected = _selectedStreamCode == code;
+                    return ChoiceChip(
+                      label: Text(code),
+                      selected: isSelected,
+                      onSelected: (selected) {
+                        if (selected) setState(() => _selectedStreamCode = code);
+                      },
+                      selectedColor: NaaguruTheme.primaryLight,
+                      backgroundColor: NaaguruTheme.background,
+                      labelStyle: TextStyle(
+                        color: isSelected ? NaaguruTheme.primaryDark : NaaguruTheme.text,
+                        fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                      ),
+                    );
+                  }).toList(),
+                ),
+              const SizedBox(height: 24),
+              if (_selectedBranchId != null && _selectedStreamCode != null) ...[
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(color: NaaguruTheme.background, borderRadius: BorderRadius.circular(8)),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text('Review', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: NaaguruTheme.text)),
+                      const SizedBox(height: 4),
+                      Text('College: $collegeName', style: const TextStyle(fontSize: 13, color: NaaguruTheme.muted)),
+                      Text('Branch: ${_branches.firstWhere((b) => b['id'] == _selectedBranchId)['name'] ?? 'Branch'}', style: const TextStyle(fontSize: 13, color: NaaguruTheme.muted)),
+                      Text('Stream: $_selectedStreamCode', style: const TextStyle(fontSize: 13, color: NaaguruTheme.muted)),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  'By submitting, you allow $collegeName admissions staff to contact you at your registered mobile number.',
+                  style: const TextStyle(fontSize: 12, color: NaaguruTheme.muted, height: 1.4),
+                ),
+                const SizedBox(height: 24),
+              ],
+              if (_errorMessage != null) ...[
+                Text(_errorMessage!, style: const TextStyle(color: NaaguruTheme.error, fontSize: 13)),
+                const SizedBox(height: 12),
+              ],
+              PrimaryButton(
+                text: _isLoading ? 'Submitting...' : 'Request Counselling',
+                onPressed: (_branches.isEmpty || _selectedBranchId == null || _selectedStreamCode == null || _isLoading)
+                    ? null
+                    : _submitLead,
+              ),
+            ]
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSuccessState() {
+    final collegeName = widget.college['name'] as String? ?? 'College';
+    final branchName = _branches.firstWhere((b) => b['id'] == _selectedBranchId, orElse: () => <String, dynamic>{})['name'] ?? 'Branch';
+    return SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            const Icon(Icons.check_circle, color: Colors.green, size: 64),
+            const SizedBox(height: 16),
+            const Text('Counselling Request Sent', textAlign: TextAlign.center, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: NaaguruTheme.primaryDark)),
+            const SizedBox(height: 16),
+            Text(collegeName, textAlign: TextAlign.center, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600)),
+            Text('$branchName • $_selectedStreamCode', textAlign: TextAlign.center, style: const TextStyle(fontSize: 14, color: NaaguruTheme.muted)),
+            const SizedBox(height: 16),
+            const Text('Your counselling request has been sent to the college.', textAlign: TextAlign.center, style: TextStyle(fontSize: 14, color: NaaguruTheme.text)),
+            const SizedBox(height: 32),
+            PrimaryButton(
+              text: 'View My Leads',
+              onPressed: () {
+                Navigator.pop(context);
+                Navigator.pushNamed(context, '/my-leads');
+              },
+            ),
+            const SizedBox(height: 8),
+            SecondaryButton(
+              text: 'Back to College',
+              onPressed: () => Navigator.pop(context),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildConflictState() {
+    return SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            const Icon(Icons.error_outline, color: Colors.orange, size: 64),
+            const SizedBox(height: 16),
+            const Text('Request Already Exists', textAlign: TextAlign.center, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: NaaguruTheme.primaryDark)),
+            const SizedBox(height: 16),
+            const Text('You already have an active counselling request for this branch.', textAlign: TextAlign.center, style: TextStyle(fontSize: 14, color: NaaguruTheme.text)),
+            const SizedBox(height: 32),
+            PrimaryButton(
+              text: 'View Lead Status',
+              onPressed: () {
+                Navigator.pop(context);
+                Navigator.pushNamed(context, '/my-leads');
+              },
+            ),
+            const SizedBox(height: 8),
+            SecondaryButton(
+              text: 'Cancel',
+              onPressed: () => Navigator.pop(context),
+            ),
+          ],
+        ),
       ),
     );
   }

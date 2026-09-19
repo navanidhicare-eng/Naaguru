@@ -1,4 +1,5 @@
 import 'package:naaguru_student/core/api_client.dart';
+import 'package:naaguru_student/features/student/data/student_lead_dto.dart';
 
 /// Communicates with the Student profile REST API.
 ///
@@ -88,6 +89,16 @@ class StudentApiClient {
     return await _apiClient.patch('/students/me', body: body);
   }
 
+  /// Fetches the student's leads (GET /students/me/leads).
+  Future<List<StudentLeadDto>> getStudentLeads() async {
+    final response = await _apiClient.get('/students/me/leads');
+    final dynamic data = response['data'];
+    final list = data is List ? data : <dynamic>[];
+    return list
+        .map((e) => StudentLeadDto.fromJson(e as Map<String, dynamic>))
+        .toList();
+  }
+
   /// Submits the student's college intent (POST /students/me/college-intent).
   Future<Map<String, dynamic>> submitCollegeIntent({
     required String pathwayCode,
@@ -116,5 +127,27 @@ class StudentApiClient {
       if (e.statusCode == 404) return null;
       rethrow;
     }
+  }
+
+  /// Creates a new student lead (POST /students/me/leads).
+  Future<StudentLeadDto> createStudentLead({
+    required String collegeId,
+    required String branchId,
+    required String streamCode,
+    String? intentId,
+  }) async {
+    final body = <String, dynamic>{
+      'collegeId': collegeId,
+      'branchId': branchId,
+      'streamCode': streamCode,
+    };
+    if (intentId != null) {
+      body['intentId'] = intentId;
+    }
+    final response = await _apiClient.post('/students/me/leads', body: body);
+    
+    // In case the backend wraps single objects in {"data": {...}}
+    final dynamic data = response['data'] ?? response;
+    return StudentLeadDto.fromJson(data as Map<String, dynamic>);
   }
 }

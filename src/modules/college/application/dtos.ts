@@ -28,25 +28,8 @@ export interface PublicCollegeDto {
   website: string | null;
   contactPhone: string | null;
   contactEmail: string | null;
-  
-  location: {
-    state: string;
-    district: string;
-    city: string;
-    address: string;
-    lat: number | null;
-    lng: number | null;
-  };
-
-  hostelSummary: {
-    hasBoysHostel: boolean;
-    hasGirlsHostel: boolean;
-    annualHostelFee: number | null;
-  };
-  
   ownershipType: OwnershipType;
 
-  offerings: CollegeStreamOfferingDto[];
   branches: PublicBranchDto[];
 }
 
@@ -61,17 +44,4 @@ export interface UpdateCollegeProfileDto {
   website?: string | null;
   contactPhone?: string | null;
   contactEmail?: string | null;
-  location?: {
-    state?: string;
-    district?: string;
-    city?: string;
-    address?: string;
-    lat?: number | null;
-    lng?: number | null;
-  };
-  hostelSummary?: {
-    hasBoysHostel?: boolean;
-    hasGirlsHostel?: boolean;
-    annualHostelFee?: number | null;
-  };
 }

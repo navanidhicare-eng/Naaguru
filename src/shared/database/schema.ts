@@ -15,3 +15,4 @@ export * from '@/modules/assessment/infrastructure/schema';
 export * from '@/modules/career/infrastructure/schema';
 export * from '@/modules/college/infrastructure/schema';
 export * from '@/shared/catalog/infrastructure/schema';
+export * from '@/modules/enquiry/infrastructure/schema';

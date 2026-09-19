@@ -26,35 +26,39 @@ describe('CollegeUseCases', () => {
       website: null,
       contactPhone: null,
       contactEmail: null,
-      location: {
-        state: 'TS',
-        district: 'Hyderabad',
-        city: 'Hyderabad',
-        address: 'Test Addr',
-        lat: null,
-        lng: null,
-      },
-      hostels: [
-        {
-          branchId: 'branch-1',
-          hasBoysHostel: true,
-          hasGirlsHostel: false,
-          annualHostelFee: 50000,
-        }
-      ],
       ownershipType: 'PRIVATE',
       status,
       verificationStatus,
-      offerings: [
-        CollegeStreamOffering.create({
-          id: 'off-1',
-          branchId: 'branch-1',
-          streamCode: 'MPC',
-          minFee: 100000,
-          maxFee: 100000,
-        })
+      branches: [
+        {
+          id: 'branch-1',
+          name: 'Main Branch',
+          type: 'MAIN_CAMPUS',
+          locationId: 'loc-1',
+          locationName: 'Test Loc',
+          address: 'Test Addr',
+          lat: null,
+          lng: null,
+          contactPhone: null,
+          contactEmail: null,
+          isPubliclyEligible: true,
+          hostel: {
+            branchId: 'branch-1',
+            hasBoysHostel: true,
+            hasGirlsHostel: false,
+            annualHostelFee: 50000,
+          },
+          offerings: [
+            CollegeStreamOffering.create({
+              id: 'off-1',
+              branchId: 'branch-1',
+              streamCode: 'MPC',
+              minFee: 100000,
+              maxFee: 100000,
+            })
+          ],
+        } as any // Mock casting for simplicity in test setup
       ],
-      branches: [],
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     });
@@ -72,7 +76,7 @@ describe('CollegeUseCases', () => {
       // DTO check
       expect(profile).not.toHaveProperty('createdAt');
       expect(profile).not.toHaveProperty('status');
-      expect(profile.offerings[0].streamCode).toBe('MPC');
+      expect(profile.branches[0].offerings[0].streamCode).toBe('MPC');
     });
 
     it('rejects an ACTIVE but UNVERIFIED college', async () => {
@@ -125,19 +129,12 @@ describe('CollegeUseCases', () => {
       const updateData = {
         shortName: 'Updated Short',
         description: 'Updated Desc',
-        location: {
-          city: 'New City'
-        }
       };
 
       const updatedProfile = await useCases.updateStaffCollegeProfile('col-1', updateData);
 
       expect(updatedProfile.shortName).toBe('Updated Short');
       expect(updatedProfile.description).toBe('Updated Desc');
-      expect(updatedProfile.location.city).toBe('New City');
-      
-      // Ensure other fields are intact
-      expect(updatedProfile.location.state).toBe('TS');
       
       expect(mockRepo.save).toHaveBeenCalledWith(activeVerified);
     });
@@ -164,7 +161,7 @@ describe('CollegeUseCases', () => {
       
       expect(mockRepo.searchActiveVerified).toHaveBeenCalledWith(criteria);
       expect(results).toHaveLength(1);
-      expect(results[0].offerings[0].streamCode).toBe('MPC');
+      expect(results[0].branches[0].offerings[0].streamCode).toBe('MPC');
     });
   });
 });

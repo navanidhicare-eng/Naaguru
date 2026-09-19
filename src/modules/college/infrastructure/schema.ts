@@ -16,11 +16,11 @@ export const collegesTable = pgTable('colleges', {
   contactPhone: varchar('contact_phone', { length: 50 }),
   contactEmail: varchar('contact_email', { length: 255 }),
   
-  // Location
-  state: varchar('state', { length: 100 }).notNull(),
-  district: varchar('district', { length: 100 }).notNull(),
-  city: varchar('city', { length: 100 }).notNull(),
-  address: text('address').notNull(),
+  // Location (Legacy - Constraints relaxed for C7 cleanup)
+  state: varchar('state', { length: 100 }),
+  district: varchar('district', { length: 100 }),
+  city: varchar('city', { length: 100 }),
+  address: text('address'),
   lat: decimal('lat', { precision: 10, scale: 7 }),
   lng: decimal('lng', { precision: 10, scale: 7 }),
 

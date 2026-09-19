@@ -110,12 +110,12 @@ export class DrizzleCollegeRepository implements ICollegeRepository {
         website: college.website,
         contactPhone: college.contactPhone,
         contactEmail: college.contactEmail,
-        state: college.location.state,
-        district: college.location.district,
-        city: college.location.city,
-        address: college.location.address,
-        lat: college.location.lat ? String(college.location.lat) : null,
-        lng: college.location.lng ? String(college.location.lng) : null,
+        state: null,
+        district: null,
+        city: null,
+        address: null,
+        lat: null,
+        lng: null,
         ownershipType: college.ownershipType,
         status: college.status,
         verificationStatus: college.verificationStatus,
@@ -130,12 +130,12 @@ export class DrizzleCollegeRepository implements ICollegeRepository {
           website: college.website,
           contactPhone: college.contactPhone,
           contactEmail: college.contactEmail,
-          state: college.location.state,
-          district: college.location.district,
-          city: college.location.city,
-          address: college.location.address,
-          lat: college.location.lat ? String(college.location.lat) : null,
-          lng: college.location.lng ? String(college.location.lng) : null,
+          state: null,
+          district: null,
+          city: null,
+          address: null,
+          lat: null,
+          lng: null,
           ownershipType: college.ownershipType,
           status: college.status,
           verificationStatus: college.verificationStatus,
@@ -150,15 +150,15 @@ export class DrizzleCollegeRepository implements ICollegeRepository {
       
       const branchIds = branches.map(b => b.id);
       
-      if (college.hostels.length > 0) {
-        for (const h of college.hostels) {
+      if (college.branches.length > 0) {
+        for (const b of college.branches) {
           await tx.update(branchesTable)
             .set({
-              hasBoysHostel: h.hasBoysHostel,
-              hasGirlsHostel: h.hasGirlsHostel,
-              annualHostelFee: h.annualHostelFee,
+              hasBoysHostel: b.hostel.hasBoysHostel,
+              hasGirlsHostel: b.hostel.hasGirlsHostel,
+              annualHostelFee: b.hostel.annualHostelFee,
             })
-            .where(eq(branchesTable.id, h.branchId));
+            .where(eq(branchesTable.id, b.id));
         }
       }
       
@@ -169,7 +169,9 @@ export class DrizzleCollegeRepository implements ICollegeRepository {
           .where(inArray(collegeStreamOfferingsTable.branchId, branchIds));
         
         const existingIds = new Set(existingOfferings.map(o => o.id));
-        const incomingIds = new Set(college.offerings.map(o => o.id));
+        
+        const allOfferings = college.branches.flatMap(b => b.offerings);
+        const incomingIds = new Set(allOfferings.map(o => o.id));
 
         const idsToDelete = [...existingIds].filter(id => !incomingIds.has(id));
 
@@ -178,15 +180,11 @@ export class DrizzleCollegeRepository implements ICollegeRepository {
             .where(inArray(collegeStreamOfferingsTable.id, idsToDelete));
         }
 
-        if (college.offerings.length > 0) {
-          // For legacy saves that don't know about branchId, fallback to the MAIN_CAMPUS branch.
-          // Note: The application logic should set branchId correctly.
-          const mainBranchId = branchIds[0]; // Assuming at least one branch exists.
-          
+        if (allOfferings.length > 0) {
           await tx.insert(collegeStreamOfferingsTable).values(
-            college.offerings.map(o => ({
+            allOfferings.map(o => ({
               id: o.id,
-              branchId: o.branchId || mainBranchId,
+              branchId: o.branchId,
               streamCode: o.streamCode,
               minFee: o.minFee,
               maxFee: o.maxFee,
@@ -225,17 +223,9 @@ export class DrizzleCollegeRepository implements ICollegeRepository {
     const uniqueOfferings = Array.from(new Map(offerings.map(o => [o.id, o])).values());
 
     const branchesMap = new Map<string, Branch>();
-    const branchHostelsMap = new Map<string, any>();
     
     rows.forEach(r => {
       if (r.branches) {
-        branchHostelsMap.set(r.branches.id, {
-          branchId: r.branches.id,
-          hasBoysHostel: r.branches.hasBoysHostel,
-          hasGirlsHostel: r.branches.hasGirlsHostel,
-          annualHostelFee: r.branches.annualHostelFee,
-        });
-        
         if (!branchesMap.has(r.branches.id)) {
           branchesMap.set(r.branches.id, Branch.create({
             id: r.branches.id,
@@ -260,7 +250,7 @@ export class DrizzleCollegeRepository implements ICollegeRepository {
         }
       }
     });
-    const uniqueHostels = Array.from(branchHostelsMap.values());
+
     const branches = Array.from(branchesMap.values());
 
     return College.create({
@@ -271,19 +261,9 @@ export class DrizzleCollegeRepository implements ICollegeRepository {
       website: c.website,
       contactPhone: c.contactPhone,
       contactEmail: c.contactEmail,
-      location: {
-        state: c.state,
-        district: c.district,
-        city: c.city,
-        address: c.address,
-        lat: c.lat ? Number(c.lat) : null,
-        lng: c.lng ? Number(c.lng) : null,
-      },
-      hostels: uniqueHostels,
       ownershipType: c.ownershipType as OwnershipType,
       status: c.status as CollegeStatus,
       verificationStatus: c.verificationStatus as VerificationStatus,
-      offerings: uniqueOfferings,
       branches,
       createdAt: c.createdAt,
       updatedAt: c.updatedAt,

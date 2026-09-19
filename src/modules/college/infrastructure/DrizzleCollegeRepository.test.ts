@@ -31,18 +31,36 @@ describe('DrizzleCollegeRepository', () => {
         website: null,
         contactPhone: null,
         contactEmail: null,
-        location: { state: 'TS', district: 'Hyd', city: 'Hyd', address: 'Addr', lat: null, lng: null },
-        hostels: [],
         ownershipType: 'PRIVATE',
         status: 'ACTIVE',
         verificationStatus: 'VERIFIED',
-        offerings: [
-          // Keep this one
-          CollegeStreamOffering.create({ id: 'off-1', branchId: 'branch-1', streamCode: 'MPC', minFee: 10000, maxFee: 10000 }),
-          // Add this new one
-          CollegeStreamOffering.create({ id: 'off-new', branchId: 'branch-1', streamCode: 'BIPC', minFee: 12000, maxFee: 12000 })
+        branches: [
+          {
+            id: 'branch-1',
+            name: 'Main',
+            type: 'MAIN_CAMPUS',
+            locationId: 'loc-1',
+            locationName: 'Test Loc',
+            address: 'Addr',
+            lat: null,
+            lng: null,
+            contactPhone: null,
+            contactEmail: null,
+            isPubliclyEligible: true,
+            hostel: {
+              branchId: 'branch-1',
+              hasBoysHostel: true,
+              hasGirlsHostel: true,
+              annualHostelFee: 10000,
+            },
+            offerings: [
+              // Keep this one
+              CollegeStreamOffering.create({ id: 'off-1', branchId: 'branch-1', streamCode: 'MPC', minFee: 10000, maxFee: 10000 }),
+              // Add this new one
+              CollegeStreamOffering.create({ id: 'off-new', branchId: 'branch-1', streamCode: 'BIPC', minFee: 12000, maxFee: 12000 })
+            ]
+          } as any
         ],
-        branches: [],
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       });
@@ -54,6 +72,7 @@ describe('DrizzleCollegeRepository', () => {
       
       const mockTx = {
         insert: vi.fn().mockReturnValue(mockChain),
+        update: vi.fn().mockReturnValue({ set: vi.fn().mockReturnValue({ where: vi.fn() }) }),
         delete: vi.fn().mockReturnValue({ where: vi.fn() }),
         select: vi.fn().mockReturnValue({
           from: vi.fn().mockReturnValue({

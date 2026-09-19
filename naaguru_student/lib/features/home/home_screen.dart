@@ -999,6 +999,7 @@ class _HomeScreenState extends State<HomeScreen> {
       context,
       MaterialPageRoute(
         builder: (_) => CollegeListScreen(
+          studentApiClient: widget.studentApiClient!,
           collegeApiClient: widget.collegeApiClient!,
           pathway: pathway,
           streamCode: streamCode,

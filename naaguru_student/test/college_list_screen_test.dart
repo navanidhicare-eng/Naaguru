@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:naaguru_student/core/api_client.dart';
 import 'package:naaguru_student/features/college/data/college_api_client.dart';
 import 'package:naaguru_student/features/college/presentation/college_list_screen.dart';
+import 'package:naaguru_student/features/student/data/student_api_client.dart';
 
 class MockCollegeApiClient extends ApiClient {
   final List<Map<String, dynamic>> colleges;
@@ -22,26 +23,28 @@ void main() {
         {
           'id': 'c-1',
           'name': 'Sri Chaitanya Junior College',
-          'city': 'Vijayawada',
-          'location': {
-            'district': 'Krishna',
-            'city': 'Vijayawada'
-          },
-          'hostelSummary': {
-            'hasBoysHostel': true,
-            'hasGirlsHostel': true
-          },
-          'offerings': [
-            {'streamCode': 'MPC', 'tuitionFee': 45000},
-            {'streamCode': 'BIPC', 'tuitionFee': 45000},
-          ],
-          'minFee': 45000,
+          'matchedBranchId': 'branch-1',
+          'branches': [
+            {
+              'id': 'branch-1',
+              'locationName': 'Vijayawada, Krishna',
+              'hostel': {
+                'hasBoysHostel': true,
+                'hasGirlsHostel': true,
+              },
+              'offerings': [
+                {'streamCode': 'MPC', 'tuitionFee': 45000},
+                {'streamCode': 'BIPC', 'tuitionFee': 45000},
+              ],
+            }
+          ]
         }
       ]),
     );
 
     await tester.pumpWidget(MaterialApp(
       home: CollegeListScreen(
+        studentApiClient: StudentApiClient(apiClient: ApiClient()),
         collegeApiClient: client,
         pathway: 'Intermediate',
         streamCode: 'MPC',
@@ -63,6 +66,7 @@ void main() {
 
     await tester.pumpWidget(MaterialApp(
       home: CollegeListScreen(
+        studentApiClient: StudentApiClient(apiClient: ApiClient()),
         collegeApiClient: client,
         pathway: 'Intermediate',
       ),

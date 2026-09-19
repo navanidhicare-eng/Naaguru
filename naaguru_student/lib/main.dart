@@ -12,6 +12,7 @@ import 'package:naaguru_student/features/college/data/college_api_client.dart';
 import 'package:naaguru_student/features/home/home_screen.dart';
 import 'package:naaguru_student/features/student/data/catalog_api_client.dart';
 import 'package:naaguru_student/features/student/data/student_api_client.dart';
+import 'package:naaguru_student/features/student/presentation/my_leads_screen.dart';
 import 'package:naaguru_student/features/student/presentation/student_profile_screen.dart';
 
 void main() {
@@ -99,8 +100,12 @@ class NaaguruStudentApp extends StatelessWidget {
               AssessmentQuestionScreen(
                   assessmentApiClient: assessmentApiClient),
             ),
-        '/results': (_) =>
-            gated(ResultsScreen(assessmentApiClient: assessmentApiClient)),
+        '/results': (_) => gated(
+              ResultsScreen(assessmentApiClient: assessmentApiClient!),
+            ),
+        '/my-leads': (_) => gated(
+              MyLeadsScreen(studentApiClient: studentApiClient),
+            ),
       },
     );
   }

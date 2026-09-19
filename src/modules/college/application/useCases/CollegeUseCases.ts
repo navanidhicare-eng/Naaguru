@@ -68,24 +68,7 @@ export class CollegeUseCases {
       website: college.website,
       contactPhone: college.contactPhone,
       contactEmail: college.contactEmail,
-      location: {
-        state: college.location.state,
-        district: college.location.district,
-        city: college.location.city,
-        address: college.location.address,
-        lat: college.location.lat,
-        lng: college.location.lng,
-      },
-      hostelSummary: {
-        hasBoysHostel: college.hostels.some(h => h.hasBoysHostel),
-        hasGirlsHostel: college.hostels.some(h => h.hasGirlsHostel),
-        annualHostelFee: college.hostels.map(h => h.annualHostelFee).filter(f => f !== null).sort((a, b) => a! - b!)[0] ?? null,
-      },
       ownershipType: college.ownershipType,
-      offerings: college.offerings.map(o => ({
-        streamCode: o.streamCode,
-        tuitionFee: o.minFee,
-      })),
       branches: college.branches ? college.branches.map(b => ({
         id: b.id,
         name: b.name,

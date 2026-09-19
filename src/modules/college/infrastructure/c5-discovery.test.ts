@@ -167,14 +167,17 @@ describe('Phase C5: Branch-Aware Discovery', () => {
     expect(c5Result).toBeDefined();
 
     const c5College = c5Result?.college;
-    // Ensure the college contains BOTH offerings, not just the matched one!
-    expect(c5College?.offerings.length).toBe(3); // MPC, BIPC, CEC
-    expect(c5College?.offerings.map(o => o.streamCode).sort()).toEqual(['BIPC', 'CEC', 'MPC']);
-    
-    // Ensure all 3 branch hostels are present
-    expect(c5College?.hostels.length).toBe(3);
     // Ensure branches aggregate is present
     expect(c5College?.branches.length).toBe(3);
+    
+    // Ensure the college contains BOTH offerings, not just the matched one!
+    const allOfferings = c5College?.branches.flatMap(b => b.offerings) || [];
+    expect(allOfferings.length).toBe(3); // MPC, BIPC, CEC
+    expect(allOfferings.map(o => o.streamCode).sort()).toEqual(['BIPC', 'CEC', 'MPC']);
+    
+    // Ensure all 3 branch hostels are present
+    const branchesWithHostels = c5College?.branches.filter(b => b.hostel.hasBoysHostel || b.hostel.hasGirlsHostel) || [];
+    expect(branchesWithHostels.length).toBe(3);
   });
 
   it('fee boundary behavior', async () => {

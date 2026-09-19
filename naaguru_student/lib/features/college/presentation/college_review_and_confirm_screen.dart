@@ -316,6 +316,7 @@ class _CollegeReviewAndConfirmScreenState
     Navigator.of(context).pushReplacement(
       MaterialPageRoute(
         builder: (_) => CollegeListScreen(
+          studentApiClient: widget.studentApiClient,
           collegeApiClient: widget.collegeApiClient,
           pathway: widget.wizardState.pathwayCode!,
           streamCode: widget.wizardState.programCode,

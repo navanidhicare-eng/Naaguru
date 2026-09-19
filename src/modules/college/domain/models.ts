@@ -91,14 +91,10 @@ export interface CollegeProps {
   contactPhone: string | null;
   contactEmail: string | null;
   
-  location: LocationProps;
-  hostels: BranchHostelProps[];
-  
   ownershipType: OwnershipType;
   status: CollegeStatus;
   verificationStatus: VerificationStatus;
 
-  offerings: CollegeStreamOffering[];
   branches: Branch[];
 
   createdAt: string;
@@ -119,12 +115,9 @@ export class College {
   get website() { return this.props.website; }
   get contactPhone() { return this.props.contactPhone; }
   get contactEmail() { return this.props.contactEmail; }
-  get location() { return this.props.location; }
-  get hostels() { return this.props.hostels; }
   get ownershipType() { return this.props.ownershipType; }
   get status() { return this.props.status; }
   get verificationStatus() { return this.props.verificationStatus; }
-  get offerings() { return this.props.offerings; }
   get branches() { return this.props.branches; }
   get createdAt() { return this.props.createdAt; }
   get updatedAt() { return this.props.updatedAt; }
@@ -139,22 +132,12 @@ export class College {
     website?: string | null;
     contactPhone?: string | null;
     contactEmail?: string | null;
-    location?: Partial<LocationProps>;
-    hostels?: BranchHostelProps[];
   }): void {
     if (data.shortName !== undefined) this.props.shortName = data.shortName;
     if (data.description !== undefined) this.props.description = data.description;
     if (data.website !== undefined) this.props.website = data.website;
     if (data.contactPhone !== undefined) this.props.contactPhone = data.contactPhone;
     if (data.contactEmail !== undefined) this.props.contactEmail = data.contactEmail;
-
-    if (data.location) {
-      this.props.location = { ...this.props.location, ...data.location };
-    }
-
-    if (data.hostels) {
-      this.props.hostels = data.hostels;
-    }
 
     this.props.updatedAt = new Date().toISOString();
   }

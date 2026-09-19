@@ -136,5 +136,52 @@ void main() {
         throwsA(isA<ApiException>()),
       );
     });
+
+    test('getStudentLeads returns list of StudentLeadDto on 200', () async {
+      final mockHttp = MockClient((request) async {
+        expect(request.url.path, contains('/students/me/leads'));
+        return http.Response(
+          jsonEncode([
+            {
+              'id': 'lead-1',
+              'collegeId': 'col-1',
+              'branchId': 'br-1',
+              'streamCode': 'MPC',
+              'status': 'NEW',
+              'createdAt': '2026-09-19T10:00:00Z',
+              'collegeName': 'Test College',
+              'branchName': 'Main Campus'
+            },
+            {
+              'id': 'lead-2',
+              'collegeId': 'col-2',
+              'branchId': 'br-2',
+              'streamCode': null,
+              'status': 'CONTACTED',
+              'createdAt': '2026-09-19T11:00:00Z',
+              'collegeName': null,
+              'branchName': null
+            }
+          ]),
+          200,
+        );
+      });
+
+      apiClient = buildClientWithMock(mockHttp);
+      studentApiClient = StudentApiClient(apiClient: apiClient);
+
+      final leads = await studentApiClient.getStudentLeads();
+
+      expect(leads, isNotNull);
+      expect(leads.length, 2);
+      
+      expect(leads[0].id, 'lead-1');
+      expect(leads[0].streamCode, 'MPC');
+      expect(leads[0].collegeName, 'Test College');
+      
+      expect(leads[1].id, 'lead-2');
+      expect(leads[1].streamCode, isNull);
+      expect(leads[1].collegeName, isNull);
+    });
   });
 }
