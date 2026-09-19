@@ -6,7 +6,21 @@ export interface CollegeStreamOfferingDto {
   tuitionFee: number;
 }
 
+export interface PublicBranchDto {
+  id: string;
+  name: string;
+  type: string;
+  locationName: string | null;
+  hostel: {
+    hasBoysHostel: boolean;
+    hasGirlsHostel: boolean;
+    annualHostelFee: number | null;
+  };
+  offerings: CollegeStreamOfferingDto[];
+}
+
 export interface PublicCollegeDto {
+  matchedBranchId?: string;
   id: string;
   name: string;
   shortName: string | null;
@@ -33,6 +47,7 @@ export interface PublicCollegeDto {
   ownershipType: OwnershipType;
 
   offerings: CollegeStreamOfferingDto[];
+  branches: PublicBranchDto[];
 }
 
 export interface StaffCollegeProfileDto extends PublicCollegeDto {

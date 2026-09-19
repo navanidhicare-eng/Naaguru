@@ -42,6 +42,7 @@ describe('DrizzleCollegeRepository', () => {
           // Add this new one
           CollegeStreamOffering.create({ id: 'off-new', branchId: 'branch-1', streamCode: 'BIPC', minFee: 12000, maxFee: 12000 })
         ],
+        branches: [],
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       });

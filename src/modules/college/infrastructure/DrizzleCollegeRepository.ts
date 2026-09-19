@@ -1,7 +1,8 @@
 import { eq, and, or, lte, inArray, sql } from 'drizzle-orm';
 import { db } from '@/shared/database/db';
 import { collegesTable, collegeStreamOfferingsTable, branchesTable } from './schema';
-import { College, CollegeStreamOffering, CollegeStatus, VerificationStatus, OwnershipType } from '../domain/models';
+import { locationsTable } from '@/shared/catalog/infrastructure/schema';
+import { College, CollegeStreamOffering, CollegeStatus, VerificationStatus, OwnershipType, Branch, BranchType } from '../domain/models';
 import { ICollegeRepository, CollegeSearchCriteria } from '../domain/ICollegeRepository';
 import { StreamCode } from '@/shared/domain/StreamCode';
 
@@ -12,6 +13,7 @@ export class DrizzleCollegeRepository implements ICollegeRepository {
       .select()
       .from(collegesTable)
       .leftJoin(branchesTable, eq(branchesTable.collegeId, collegesTable.id))
+      .leftJoin(locationsTable, eq(branchesTable.locationId, locationsTable.id))
       .leftJoin(collegeStreamOfferingsTable, eq(collegeStreamOfferingsTable.branchId, branchesTable.id))
       .where(eq(collegesTable.id, id));
 
@@ -20,7 +22,7 @@ export class DrizzleCollegeRepository implements ICollegeRepository {
     return this.mapToDomain(rows);
   }
 
-  async searchActiveVerified(criteria: CollegeSearchCriteria): Promise<College[]> {
+  async searchActiveVerified(criteria: CollegeSearchCriteria): Promise<{ college: College; matchedBranchId: string }[]> {
     const conditions = [
       eq(collegesTable.status, 'ACTIVE'),
       eq(collegesTable.verificationStatus, 'VERIFIED'),
@@ -48,7 +50,7 @@ export class DrizzleCollegeRepository implements ICollegeRepository {
     // 1. Qualifying Phase: Find college IDs where AT LEAST ONE branch satisfies ALL criteria
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let qualifyingQuery: any = db
-      .select({ id: collegesTable.id })
+      .select({ id: collegesTable.id, branchId: branchesTable.id })
       .from(collegesTable)
       .innerJoin(branchesTable, eq(branchesTable.collegeId, collegesTable.id));
 
@@ -62,8 +64,15 @@ export class DrizzleCollegeRepository implements ICollegeRepository {
     qualifyingQuery = qualifyingQuery.where(and(...conditions));
 
     const qualifyingRows = await qualifyingQuery;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const collegeIds = Array.from(new Set(qualifyingRows.map((r: any) => r.id))) as string[];
+    
+    const matchedBranches = new Map<string, string>();
+    for (const r of qualifyingRows) {
+      if (!matchedBranches.has(r.id)) {
+        matchedBranches.set(r.id, r.branchId);
+      }
+    }
+    
+    const collegeIds = Array.from(matchedBranches.keys());
 
     if (collegeIds.length === 0) return [];
 
@@ -72,6 +81,7 @@ export class DrizzleCollegeRepository implements ICollegeRepository {
       .select()
       .from(collegesTable)
       .leftJoin(branchesTable, eq(branchesTable.collegeId, collegesTable.id))
+      .leftJoin(locationsTable, eq(branchesTable.locationId, locationsTable.id))
       .leftJoin(collegeStreamOfferingsTable, eq(collegeStreamOfferingsTable.branchId, branchesTable.id))
       .where(inArray(collegesTable.id, collegeIds));
 
@@ -84,7 +94,10 @@ export class DrizzleCollegeRepository implements ICollegeRepository {
       collegesMap.get(row.colleges.id)!.push(row);
     }
 
-    return Array.from(collegesMap.values()).map(groupedRows => this.mapToDomain(groupedRows));
+    return Array.from(collegesMap.values()).map(groupedRows => {
+      const college = this.mapToDomain(groupedRows);
+      return { college, matchedBranchId: matchedBranches.get(college.id)! };
+    });
   }
 
   async save(college: College): Promise<void> {
@@ -211,7 +224,9 @@ export class DrizzleCollegeRepository implements ICollegeRepository {
     // Deduplicate offerings by ID since joining with branches might duplicate the college row
     const uniqueOfferings = Array.from(new Map(offerings.map(o => [o.id, o])).values());
 
+    const branchesMap = new Map<string, Branch>();
     const branchHostelsMap = new Map<string, any>();
+    
     rows.forEach(r => {
       if (r.branches) {
         branchHostelsMap.set(r.branches.id, {
@@ -220,9 +235,33 @@ export class DrizzleCollegeRepository implements ICollegeRepository {
           hasGirlsHostel: r.branches.hasGirlsHostel,
           annualHostelFee: r.branches.annualHostelFee,
         });
+        
+        if (!branchesMap.has(r.branches.id)) {
+          branchesMap.set(r.branches.id, Branch.create({
+            id: r.branches.id,
+            name: r.branches.name,
+            type: r.branches.type as BranchType,
+            locationId: r.branches.locationId,
+            locationName: r.locations ? r.locations.nameEn : null,
+            address: r.branches.address,
+            lat: r.branches.lat ? Number(r.branches.lat) : null,
+            lng: r.branches.lng ? Number(r.branches.lng) : null,
+            contactPhone: r.branches.contactPhone,
+            contactEmail: r.branches.contactEmail,
+            isPubliclyEligible: r.branches.isPubliclyEligible,
+            hostel: {
+              branchId: r.branches.id,
+              hasBoysHostel: r.branches.hasBoysHostel,
+              hasGirlsHostel: r.branches.hasGirlsHostel,
+              annualHostelFee: r.branches.annualHostelFee,
+            },
+            offerings: uniqueOfferings.filter(o => o.branchId === r.branches.id),
+          }));
+        }
       }
     });
     const uniqueHostels = Array.from(branchHostelsMap.values());
+    const branches = Array.from(branchesMap.values());
 
     return College.create({
       id: c.id,
@@ -245,6 +284,7 @@ export class DrizzleCollegeRepository implements ICollegeRepository {
       status: c.status as CollegeStatus,
       verificationStatus: c.verificationStatus as VerificationStatus,
       offerings: uniqueOfferings,
+      branches,
       createdAt: c.createdAt,
       updatedAt: c.updatedAt,
     });

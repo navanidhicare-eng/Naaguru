@@ -1,5 +1,5 @@
-import { db } from 'y:/Naaguru/src/shared/database/db';
-import { locationsTable } from 'y:/Naaguru/src/shared/catalog/infrastructure/schema';
+import { db } from '@/shared/database/db';
+import { locationsTable } from '@/shared/catalog/infrastructure/schema';
 import { eq, inArray } from 'drizzle-orm';
 
 async function run() {
