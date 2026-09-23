@@ -2,9 +2,12 @@ import { DrizzleCollegeRepository } from './infrastructure/DrizzleCollegeReposit
 import { CollegeUseCases } from './application/useCases/CollegeUseCases';
 import { PublicCollegeDto } from './application/dtos';
 import { CollegeSearchCriteria } from './domain/ICollegeRepository';
+import { SupabaseStorageService } from '../../shared/storage/SupabaseStorageService';
 
+// Keep module boundary tight: only export what other modules need.
 const collegeRepository = new DrizzleCollegeRepository();
-const internalUseCases = new CollegeUseCases(collegeRepository);
+const storageService = new SupabaseStorageService();
+const internalUseCases = new CollegeUseCases(collegeRepository, storageService);
 
 export const CollegeModule = {
   getPublicProfile: (id: string): Promise<PublicCollegeDto> => {

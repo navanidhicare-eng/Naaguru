@@ -1,7 +1,7 @@
 import 'dotenv/config';
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { db } from '@/shared/database/db';
-import { collegesTable, branchesTable, collegeStreamOfferingsTable } from './schema';
+import { collegesTable, branchesTable, collegeStreamOfferingsTable, collegeLeadershipTable, collegeMediaTable } from './schema';
 import { locationsTable } from '@/shared/catalog/infrastructure/schema';
 import { eq, inArray } from 'drizzle-orm';
 import { DrizzleCollegeRepository } from './DrizzleCollegeRepository';
@@ -88,9 +88,17 @@ describe('Phase C5: Branch-Aware Discovery', () => {
       minFee: 30000,
       maxFee: 30000
     });
+
+    await db.insert(collegeLeadershipTable).values({
+      collegeId: collegeId,
+      name: 'Dr. Test Principal',
+      designation: 'Principal',
+      displayOrder: 1
+    });
   });
 
   afterAll(async () => {
+    await db.delete(collegeLeadershipTable).where(eq(collegeLeadershipTable.collegeId, collegeId));
     await db.delete(collegeStreamOfferingsTable).where(inArray(collegeStreamOfferingsTable.branchId, [branchAId, branchBId, branchCId]));
     await db.delete(branchesTable).where(eq(branchesTable.collegeId, collegeId));
     await db.delete(collegesTable).where(eq(collegesTable.id, collegeId));
@@ -203,5 +211,30 @@ describe('Phase C5: Branch-Aware Discovery', () => {
       requiresHostel: false
     });
     expect(results.find(r => r.college.id === collegeId)).toBeDefined();
+  });
+
+  it('does not hydrate leadership profiles (keeps discovery query lightweight)', async () => {
+    // Discovery search ActiveVerified should NOT return leadership arrays, 
+    // avoiding one-to-many Cartesian product explosion with branches/offerings.
+    const results = await repo.searchActiveVerified({
+      streamCode: 'MPC'
+    });
+    
+    const c5Result = results.find(r => r.college.id === collegeId);
+    expect(c5Result).toBeDefined();
+    
+    // Even though we inserted a leadership profile, it should NOT be hydrated in search!
+    expect(c5Result?.college.leadership).toEqual([]);
+  });
+
+  it('does not hydrate media profiles (keeps discovery query lightweight)', async () => {
+    const results = await repo.searchActiveVerified({
+      streamCode: 'MPC'
+    });
+    
+    const c5Result = results.find(r => r.college.id === collegeId);
+    expect(c5Result).toBeDefined();
+    
+    expect(c5Result?.college.media).toEqual([]);
   });
 });

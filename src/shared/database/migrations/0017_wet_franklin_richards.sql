@@ -1,0 +1,1 @@
+ALTER TABLE "colleges" ADD COLUMN "weekly_menu" jsonb;

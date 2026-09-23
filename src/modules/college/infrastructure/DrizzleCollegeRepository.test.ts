@@ -61,6 +61,10 @@ describe('DrizzleCollegeRepository', () => {
             ]
           } as any
         ],
+        leadership: [],
+        media: [],
+        achievements: [],
+        weeklyMenu: null,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       });
@@ -77,9 +81,15 @@ describe('DrizzleCollegeRepository', () => {
         select: vi.fn().mockReturnValue({
           from: vi.fn().mockReturnValue({
             where: vi.fn().mockResolvedValueOnce([
-              { id: 'branch-1' } // First call: select branches
+              { id: 'l-1' } // First call: select existing leadership
             ]).mockResolvedValueOnce([
-              { id: 'off-1' }, // Second call: select existing offerings
+              // Second call: select media
+            ]).mockResolvedValueOnce([
+              // Third call: select achievements
+            ]).mockResolvedValueOnce([
+              { id: 'branch-1' } // Fourth call: select branches
+            ]).mockResolvedValueOnce([
+              { id: 'off-1' }, // Fourth call: select existing offerings
               { id: 'off-deleted' }
             ])
           })
@@ -114,6 +124,137 @@ describe('DrizzleCollegeRepository', () => {
       expect(offeringsInsertCall).toHaveLength(2);
       expect(offeringsInsertCall[0].id).toBe('off-1');
       expect(offeringsInsertCall[1].id).toBe('off-new');
+    });
+  });
+
+  describe('Media Removal (save)', () => {
+    it('omitted existing media becomes INACTIVE instead of being deleted physically', async () => {
+      const college = College.create({
+        id: 'col-1',
+        name: 'Test',
+        shortName: null,
+        description: null,
+        website: null,
+        contactPhone: null,
+        contactEmail: null,
+        ownershipType: 'PRIVATE',
+        status: 'ACTIVE',
+        verificationStatus: 'VERIFIED',
+        branches: [],
+        leadership: [],
+        media: [], // We are omitting an existing media!
+        achievements: [],
+        weeklyMenu: null,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      });
+
+      const mockChain = {
+        values: vi.fn().mockReturnValue({ onConflictDoUpdate: vi.fn() }),
+      };
+      
+      const mockUpdateChain = {
+        set: vi.fn().mockReturnValue({ where: vi.fn() })
+      };
+      
+      const mockTx = {
+        insert: vi.fn().mockReturnValue(mockChain),
+        update: vi.fn().mockReturnValue(mockUpdateChain),
+        delete: vi.fn().mockReturnValue({ where: vi.fn() }),
+        select: vi.fn().mockReturnValue({
+          from: vi.fn().mockReturnValue({
+            where: vi.fn().mockResolvedValueOnce([
+              // First call: select existing leadership
+            ]).mockResolvedValueOnce([
+              { id: 'm-old' } // Second call: select existing media
+            ]).mockResolvedValueOnce([
+              // Third call: select achievements
+            ]).mockResolvedValueOnce([
+              // Fourth call: select branches
+            ])
+          })
+        }),
+      };
+
+      vi.mocked(db.transaction).mockImplementation(async (cb) => {
+        await cb(mockTx as any);
+      });
+
+      await repo.save(college);
+
+      expect(mockTx.update).toHaveBeenCalled();
+      
+      // Ensure the update sets status: INACTIVE
+      expect(mockUpdateChain.set).toHaveBeenCalledWith(expect.objectContaining({
+        status: 'INACTIVE',
+        isCover: false
+      }));
+    });
+  });
+
+  describe('Achievement Synchronization (save)', () => {
+    it('syncs achievements correctly', async () => {
+      const college = College.create({
+        id: 'col-1',
+        name: 'Test',
+        shortName: null,
+        description: null,
+        website: null,
+        contactPhone: null,
+        contactEmail: null,
+        ownershipType: 'PRIVATE',
+        status: 'ACTIVE',
+        verificationStatus: 'VERIFIED',
+        branches: [],
+        leadership: [],
+        media: [],
+        weeklyMenu: null,
+        achievements: [], // We are omitting an existing achievement to test physical deletion
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      });
+
+      const mockChain = {
+        values: vi.fn().mockReturnValue({ onConflictDoUpdate: vi.fn() }),
+      };
+      
+      const mockUpdateChain = {
+        set: vi.fn().mockReturnValue({ where: vi.fn() })
+      };
+      
+      const mockDeleteChain = {
+        where: vi.fn()
+      };
+      
+      const mockTx = {
+        insert: vi.fn().mockReturnValue(mockChain),
+        update: vi.fn().mockReturnValue(mockUpdateChain),
+        delete: vi.fn().mockReturnValue(mockDeleteChain),
+        select: vi.fn().mockReturnValue({
+          from: vi.fn().mockReturnValue({
+            where: vi.fn().mockResolvedValueOnce([
+              // First call: select existing leadership
+            ]).mockResolvedValueOnce([
+              // Second call: select existing media
+            ]).mockResolvedValueOnce([
+              { id: 'a-old' } // Third call: select existing achievements
+            ]).mockResolvedValueOnce([
+              // Fourth call: select branches
+            ])
+          })
+        }),
+      };
+
+      vi.mocked(db.transaction).mockImplementation(async (cb) => {
+        await cb(mockTx as any);
+      });
+
+      await repo.save(college);
+
+      // Verify that a-old was deleted since it wasn't provided in incoming achievements
+      expect(mockTx.delete).toHaveBeenCalled();
+      const deleteWhereCall = mockDeleteChain.where.mock.calls[0][0];
+      expect(deleteWhereCall).toBeDefined();
     });
   });
 });

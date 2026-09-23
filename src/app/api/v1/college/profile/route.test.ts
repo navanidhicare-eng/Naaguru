@@ -165,5 +165,25 @@ describe('GET /api/v1/college/profile', () => {
       await expect(resPromise).rejects.toThrow();
       expect(mockUpdateStaffCollegeProfile).not.toHaveBeenCalled();
     });
+
+    it('VALIDATION: rejects empty string description', async () => {
+      const { PUT } = await import('./route');
+      const req = createPutRequest('http://localhost/api/v1/college/profile', { description: '   ' });
+      
+      const resPromise = PUT(req as any, {});
+      
+      await expect(resPromise).rejects.toThrow();
+      expect(mockUpdateStaffCollegeProfile).not.toHaveBeenCalled();
+    });
+
+    it('VALIDATION: rejects excessively long description', async () => {
+      const { PUT } = await import('./route');
+      const req = createPutRequest('http://localhost/api/v1/college/profile', { description: 'A'.repeat(3001) });
+      
+      const resPromise = PUT(req as any, {});
+      
+      await expect(resPromise).rejects.toThrow();
+      expect(mockUpdateStaffCollegeProfile).not.toHaveBeenCalled();
+    });
   });
 });

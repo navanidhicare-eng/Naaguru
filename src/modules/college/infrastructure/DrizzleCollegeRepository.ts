@@ -1,8 +1,8 @@
 import { eq, and, or, lte, inArray, sql } from 'drizzle-orm';
 import { db } from '@/shared/database/db';
-import { collegesTable, collegeStreamOfferingsTable, branchesTable } from './schema';
+import { collegesTable, collegeStreamOfferingsTable, branchesTable, collegeLeadershipTable, collegeMediaTable, collegeAchievementsTable } from './schema';
 import { locationsTable } from '@/shared/catalog/infrastructure/schema';
-import { College, CollegeStreamOffering, CollegeStatus, VerificationStatus, OwnershipType, Branch, BranchType } from '../domain/models';
+import { College, CollegeStreamOffering, CollegeStatus, VerificationStatus, OwnershipType, Branch, BranchType, LeadershipProfile, CollegeMedia, WeeklyMenu, CollegeAchievement, AchievementStatus } from '../domain/models';
 import { ICollegeRepository, CollegeSearchCriteria } from '../domain/ICollegeRepository';
 import { StreamCode } from '@/shared/domain/StreamCode';
 
@@ -15,11 +15,18 @@ export class DrizzleCollegeRepository implements ICollegeRepository {
       .leftJoin(branchesTable, eq(branchesTable.collegeId, collegesTable.id))
       .leftJoin(locationsTable, eq(branchesTable.locationId, locationsTable.id))
       .leftJoin(collegeStreamOfferingsTable, eq(collegeStreamOfferingsTable.branchId, branchesTable.id))
+      .leftJoin(collegeLeadershipTable, eq(collegeLeadershipTable.collegeId, collegesTable.id))
+      .leftJoin(collegeMediaTable, eq(collegeMediaTable.collegeId, collegesTable.id))
       .where(eq(collegesTable.id, id));
 
     if (rows.length === 0) return null;
 
-    return this.mapToDomain(rows);
+    const achievementRows = await db
+      .select()
+      .from(collegeAchievementsTable)
+      .where(eq(collegeAchievementsTable.collegeId, id));
+
+    return this.mapToDomain(rows, achievementRows);
   }
 
   async searchActiveVerified(criteria: CollegeSearchCriteria): Promise<{ college: College; matchedBranchId: string }[]> {
@@ -116,6 +123,7 @@ export class DrizzleCollegeRepository implements ICollegeRepository {
         address: null,
         lat: null,
         lng: null,
+        weeklyMenu: college.weeklyMenu ? college.weeklyMenu.toJSON() : null,
         ownershipType: college.ownershipType,
         status: college.status,
         verificationStatus: college.verificationStatus,
@@ -136,12 +144,146 @@ export class DrizzleCollegeRepository implements ICollegeRepository {
           address: null,
           lat: null,
           lng: null,
+          weeklyMenu: college.weeklyMenu ? college.weeklyMenu.toJSON() : null,
           ownershipType: college.ownershipType,
           status: college.status,
           verificationStatus: college.verificationStatus,
           updatedAt: college.updatedAt,
         }
       });
+
+      // Synchronize leadership profiles
+      const existingLeadership = await tx.select({ id: collegeLeadershipTable.id })
+        .from(collegeLeadershipTable)
+        .where(eq(collegeLeadershipTable.collegeId, college.id));
+      
+      const existingLeadershipIds = new Set(existingLeadership.map(l => l.id));
+      const incomingLeadership = college.leadership || [];
+      const incomingLeadershipIds = new Set(incomingLeadership.map(l => l.id));
+
+      const leadershipIdsToDelete = [...existingLeadershipIds].filter(id => !incomingLeadershipIds.has(id));
+
+      if (leadershipIdsToDelete.length > 0) {
+        await tx.delete(collegeLeadershipTable)
+          .where(inArray(collegeLeadershipTable.id, leadershipIdsToDelete));
+      }
+
+      if (incomingLeadership.length > 0) {
+        await tx.insert(collegeLeadershipTable).values(
+          incomingLeadership.map(l => ({
+            id: l.id,
+            collegeId: l.collegeId,
+            name: l.name,
+            designation: l.designation,
+            bio: l.bio,
+            imageUrl: l.imageUrl,
+            displayOrder: l.displayOrder,
+          }))
+        ).onConflictDoUpdate({
+          target: collegeLeadershipTable.id,
+          set: {
+            name: sql`EXCLUDED.name`,
+            designation: sql`EXCLUDED.designation`,
+            bio: sql`EXCLUDED.bio`,
+            imageUrl: sql`EXCLUDED.image_url`,
+            displayOrder: sql`EXCLUDED.display_order`,
+            updatedAt: sql`now()`,
+          }
+        });
+      }
+
+      // Synchronize media
+      const existingMedia = await tx.select({ id: collegeMediaTable.id })
+        .from(collegeMediaTable)
+        .where(eq(collegeMediaTable.collegeId, college.id));
+      
+      const existingMediaIds = new Set(existingMedia.map(m => m.id));
+      const incomingMedia = college.media || [];
+      const incomingMediaIds = new Set(incomingMedia.map(m => m.id));
+
+      const mediaIdsToDelete = [...existingMediaIds].filter(id => !incomingMediaIds.has(id));
+
+      if (mediaIdsToDelete.length > 0) {
+        await tx.update(collegeMediaTable)
+          .set({ status: 'INACTIVE', isCover: false, updatedAt: sql`now()` })
+          .where(inArray(collegeMediaTable.id, mediaIdsToDelete));
+      }
+
+      if (incomingMedia.length > 0) {
+        await tx.insert(collegeMediaTable).values(
+          incomingMedia.map(m => ({
+            id: m.id,
+            collegeId: m.collegeId,
+            mediaType: m.mediaType,
+            storageKey: m.storageKey,
+            thumbnailStorageKey: m.thumbnailStorageKey,
+            externalUrl: m.externalUrl,
+            caption: m.caption,
+            displayOrder: m.displayOrder,
+            isCover: m.isCover,
+            status: m.status,
+            createdAt: m.createdAt,
+            updatedAt: m.updatedAt,
+          }))
+        ).onConflictDoUpdate({
+          target: collegeMediaTable.id,
+          set: {
+            caption: sql`EXCLUDED.caption`,
+            displayOrder: sql`EXCLUDED.display_order`,
+            isCover: sql`EXCLUDED.is_cover`,
+            status: sql`EXCLUDED.status`,
+            updatedAt: sql`now()`,
+          }
+        });
+      }
+
+      // Synchronize achievements
+      const existingAchievements = await tx.select({ id: collegeAchievementsTable.id })
+        .from(collegeAchievementsTable)
+        .where(eq(collegeAchievementsTable.collegeId, college.id));
+      
+      const existingAchievementIds = new Set(existingAchievements.map(a => a.id));
+      const incomingAchievements = college.achievements || [];
+      const incomingAchievementIds = new Set(incomingAchievements.map(a => a.id));
+
+      const achievementIdsToDelete = [...existingAchievementIds].filter(id => !incomingAchievementIds.has(id));
+
+      if (achievementIdsToDelete.length > 0) {
+        await tx.delete(collegeAchievementsTable)
+          .where(inArray(collegeAchievementsTable.id, achievementIdsToDelete));
+      }
+
+      if (incomingAchievements.length > 0) {
+        await tx.insert(collegeAchievementsTable).values(
+          incomingAchievements.map(a => ({
+            id: a.id,
+            collegeId: a.collegeId,
+            studentName: a.studentName,
+            exam: a.exam,
+            achievement: a.achievement,
+            year: a.year,
+            description: a.description,
+            imageStorageKey: a.imageStorageKey,
+            displayOrder: a.displayOrder,
+            status: a.status,
+            createdAt: a.createdAt,
+            updatedAt: a.updatedAt,
+          }))
+        ).onConflictDoUpdate({
+          target: collegeAchievementsTable.id,
+          set: {
+            studentName: sql`EXCLUDED.student_name`,
+            exam: sql`EXCLUDED.exam`,
+            achievement: sql`EXCLUDED.achievement`,
+            year: sql`EXCLUDED.year`,
+            description: sql`EXCLUDED.description`,
+            imageStorageKey: sql`EXCLUDED.image_storage_key`,
+            displayOrder: sql`EXCLUDED.display_order`,
+            status: sql`EXCLUDED.status`,
+            updatedAt: sql`now()`,
+          }
+        });
+      }
 
       // Fetch all branches for this college to sync their offerings.
       const branches = await tx.select({ id: branchesTable.id })
@@ -150,8 +292,9 @@ export class DrizzleCollegeRepository implements ICollegeRepository {
       
       const branchIds = branches.map(b => b.id);
       
-      if (college.branches.length > 0) {
-        for (const b of college.branches) {
+      const incomingBranches = college.branches || [];
+      if (incomingBranches.length > 0) {
+        for (const b of incomingBranches) {
           await tx.update(branchesTable)
             .set({
               hasBoysHostel: b.hostel.hasBoysHostel,
@@ -170,7 +313,8 @@ export class DrizzleCollegeRepository implements ICollegeRepository {
         
         const existingIds = new Set(existingOfferings.map(o => o.id));
         
-        const allOfferings = college.branches.flatMap(b => b.offerings);
+        const incomingBranches = college.branches || [];
+        const allOfferings = incomingBranches.flatMap(b => b.offerings || []);
         const incomingIds = new Set(allOfferings.map(o => o.id));
 
         const idsToDelete = [...existingIds].filter(id => !incomingIds.has(id));
@@ -204,7 +348,7 @@ export class DrizzleCollegeRepository implements ICollegeRepository {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private mapToDomain(rows: any[]): College {
+  private mapToDomain(rows: any[], achievementRows: any[] = []): College {
     const c = rows[0].colleges;
     const offerings = rows
       .filter(r => r.college_stream_offerings != null)
@@ -251,7 +395,62 @@ export class DrizzleCollegeRepository implements ICollegeRepository {
       }
     });
 
+    const leadershipMap = new Map<string, LeadershipProfile>();
+    const mediaMap = new Map<string, CollegeMedia>();
+
+    rows.forEach(r => {
+      if (r.college_leadership) {
+        if (!leadershipMap.has(r.college_leadership.id)) {
+          leadershipMap.set(r.college_leadership.id, LeadershipProfile.create({
+            id: r.college_leadership.id,
+            collegeId: r.college_leadership.collegeId,
+            name: r.college_leadership.name,
+            designation: r.college_leadership.designation,
+            bio: r.college_leadership.bio,
+            imageUrl: r.college_leadership.imageUrl,
+            displayOrder: r.college_leadership.displayOrder,
+          }));
+        }
+      }
+
+      if (r.college_media) {
+        if (!mediaMap.has(r.college_media.id)) {
+          mediaMap.set(r.college_media.id, CollegeMedia.create({
+            id: r.college_media.id,
+            collegeId: r.college_media.collegeId,
+            mediaType: r.college_media.mediaType as any,
+            storageKey: r.college_media.storageKey,
+            thumbnailStorageKey: r.college_media.thumbnailStorageKey,
+            externalUrl: r.college_media.externalUrl,
+            caption: r.college_media.caption,
+            displayOrder: r.college_media.displayOrder,
+            isCover: r.college_media.isCover,
+            status: r.college_media.status as any,
+            createdAt: r.college_media.createdAt,
+            updatedAt: r.college_media.updatedAt,
+          }));
+        }
+      }
+    });
+
     const branches = Array.from(branchesMap.values());
+    const leadership = Array.from(leadershipMap.values());
+    const media = Array.from(mediaMap.values());
+
+    const achievements = achievementRows.map(r => CollegeAchievement.create({
+      id: r.id,
+      collegeId: r.collegeId,
+      studentName: r.studentName,
+      exam: r.exam,
+      achievement: r.achievement,
+      year: r.year,
+      description: r.description,
+      imageStorageKey: r.imageStorageKey,
+      displayOrder: r.displayOrder,
+      status: r.status as AchievementStatus,
+      createdAt: r.createdAt,
+      updatedAt: r.updatedAt,
+    }));
 
     return College.create({
       id: c.id,
@@ -264,6 +463,10 @@ export class DrizzleCollegeRepository implements ICollegeRepository {
       ownershipType: c.ownershipType as OwnershipType,
       status: c.status as CollegeStatus,
       verificationStatus: c.verificationStatus as VerificationStatus,
+      weeklyMenu: c.weeklyMenu ? WeeklyMenu.create(c.weeklyMenu) : null,
+      achievements: achievements.sort((a, b) => a.displayOrder - b.displayOrder),
+      leadership: leadership.sort((a, b) => a.displayOrder - b.displayOrder),
+      media: media.sort((a, b) => a.displayOrder - b.displayOrder),
       branches,
       createdAt: c.createdAt,
       updatedAt: c.updatedAt,

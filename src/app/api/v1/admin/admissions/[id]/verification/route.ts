@@ -20,7 +20,7 @@ export const PATCH = withRouteContext(
       return NextResponse.json({ error: "Validation failed", details: result.error.format() }, { status: 400 });
     }
 
-    await EnquiryModule.verifyAdmission(id, result.data.verificationStatus);
+    await EnquiryModule.verifyAdmission(id, result.data.verificationStatus as any);
     return NextResponse.json({ success: true });
   })
 );

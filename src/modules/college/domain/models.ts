@@ -1,4 +1,8 @@
 import { StreamCode } from '@/shared/domain/StreamCode';
+import { CollegeMedia } from './CollegeMedia';
+import { WeeklyMenu } from './WeeklyMenu';
+import { CollegeAchievement, AchievementStatus } from './CollegeAchievement';
+export { CollegeMedia, WeeklyMenu, CollegeAchievement, type AchievementStatus };
 
 export type CollegeStatus = 'DRAFT' | 'ACTIVE' | 'INACTIVE';
 export type VerificationStatus = 'UNVERIFIED' | 'VERIFIED';
@@ -82,6 +86,32 @@ export class Branch {
   get offerings() { return this.props.offerings; }
 }
 
+export interface LeadershipProfileProps {
+  id: string;
+  collegeId: string;
+  name: string;
+  designation: string;
+  bio: string | null;
+  imageUrl: string | null;
+  displayOrder: number;
+}
+
+export class LeadershipProfile {
+  private constructor(public readonly props: LeadershipProfileProps) {}
+
+  static create(props: LeadershipProfileProps): LeadershipProfile {
+    return new LeadershipProfile(props);
+  }
+
+  get id() { return this.props.id; }
+  get collegeId() { return this.props.collegeId; }
+  get name() { return this.props.name; }
+  get designation() { return this.props.designation; }
+  get bio() { return this.props.bio; }
+  get imageUrl() { return this.props.imageUrl; }
+  get displayOrder() { return this.props.displayOrder; }
+}
+
 export interface CollegeProps {
   id: string;
   name: string;
@@ -96,6 +126,10 @@ export interface CollegeProps {
   verificationStatus: VerificationStatus;
 
   branches: Branch[];
+  leadership: LeadershipProfile[];
+  media: CollegeMedia[];
+  weeklyMenu: WeeklyMenu | null;
+  achievements: CollegeAchievement[];
 
   createdAt: string;
   updatedAt: string;
@@ -119,6 +153,10 @@ export class College {
   get status() { return this.props.status; }
   get verificationStatus() { return this.props.verificationStatus; }
   get branches() { return this.props.branches; }
+  get leadership() { return this.props.leadership; }
+  get media() { return this.props.media; }
+  get weeklyMenu() { return this.props.weeklyMenu; }
+  get achievements() { return this.props.achievements; }
   get createdAt() { return this.props.createdAt; }
   get updatedAt() { return this.props.updatedAt; }
 
@@ -132,13 +170,50 @@ export class College {
     website?: string | null;
     contactPhone?: string | null;
     contactEmail?: string | null;
+    leadership?: LeadershipProfile[];
+    media?: CollegeMedia[];
+    weeklyMenu?: WeeklyMenu | null;
   }): void {
     if (data.shortName !== undefined) this.props.shortName = data.shortName;
     if (data.description !== undefined) this.props.description = data.description;
     if (data.website !== undefined) this.props.website = data.website;
     if (data.contactPhone !== undefined) this.props.contactPhone = data.contactPhone;
     if (data.contactEmail !== undefined) this.props.contactEmail = data.contactEmail;
+    if (data.leadership !== undefined) this.props.leadership = data.leadership;
+    
+    if (data.media !== undefined) {
+      const coverImagesCount = data.media.filter(m => m.isCover).length;
+      if (coverImagesCount > 1) {
+        throw new Error('A college can have at most one cover image.'); // Should ideally use AppError
+      }
+      this.props.media = data.media;
+    }
 
+    if (data.weeklyMenu !== undefined) {
+      this.props.weeklyMenu = data.weeklyMenu;
+    }
+
+    this.props.updatedAt = new Date().toISOString();
+  }
+
+  /**
+   * Replaces the institution's achievements.
+   * Enforces the hard business invariant of maximum 20 achievements per institution.
+   */
+  replaceAchievements(achievements: CollegeAchievement[]): void {
+    if (achievements.length > 20) {
+      // Using Error as per existing patterns in updateProfile for now,
+      // though AppError would be preferable if throwing from domain.
+      throw new Error('A college can have a maximum of 20 achievements.');
+    }
+    
+    // Ensure all achievements belong to this college
+    const invalidCollegeId = achievements.find(a => a.collegeId !== this.id);
+    if (invalidCollegeId) {
+      throw new Error(`Achievement ${invalidCollegeId.id} does not belong to college ${this.id}`);
+    }
+
+    this.props.achievements = achievements;
     this.props.updatedAt = new Date().toISOString();
   }
 }

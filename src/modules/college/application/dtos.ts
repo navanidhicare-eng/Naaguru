@@ -6,6 +6,28 @@ export interface CollegeStreamOfferingDto {
   tuitionFee: number;
 }
 
+export interface LeadershipProfileDto {
+  id: string;
+  name: string;
+  designation: string;
+  bio: string | null;
+  imageUrl: string | null;
+  displayOrder: number;
+}
+
+export interface CollegeMediaDto {
+  id?: string;
+  mediaType: 'IMAGE' | 'VIDEO' | 'VIRTUAL_TOUR';
+  url?: string;
+  storageKey?: string;
+  thumbnailStorageKey?: string;
+  externalUrl?: string;
+  caption: string | null;
+  displayOrder: number;
+  isCover: boolean;
+  status: 'ACTIVE' | 'INACTIVE';
+}
+
 export interface PublicBranchDto {
   id: string;
   name: string;
@@ -31,6 +53,8 @@ export interface PublicCollegeDto {
   ownershipType: OwnershipType;
 
   branches: PublicBranchDto[];
+  leadership: LeadershipProfileDto[];
+  media: CollegeMediaDto[];
 }
 
 export interface StaffCollegeProfileDto extends PublicCollegeDto {
@@ -44,4 +68,25 @@ export interface UpdateCollegeProfileDto {
   website?: string | null;
   contactPhone?: string | null;
   contactEmail?: string | null;
+  leadership?: LeadershipProfileDto[];
+}
+
+export interface SyncMediaDto {
+  media: CollegeMediaDto[];
+}
+
+export interface CollegeAchievementInputDto {
+  id?: string;
+  studentName: string;
+  exam: string;
+  achievement: string;
+  year: number;
+  description?: string | null;
+  imageStorageKey?: string | null;
+  displayOrder: number;
+  status: 'ACTIVE' | 'INACTIVE';
+}
+
+export interface SyncAchievementsDto {
+  achievements: CollegeAchievementInputDto[];
 }

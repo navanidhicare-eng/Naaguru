@@ -1,4 +1,4 @@
-import { pgTable, uuid, varchar, text, integer, decimal, boolean, timestamp, uniqueIndex, index, check, pgEnum } from 'drizzle-orm/pg-core';
+import { pgTable, uuid, varchar, text, integer, decimal, boolean, timestamp, uniqueIndex, index, check, pgEnum, jsonb } from 'drizzle-orm/pg-core';
 import { sql } from 'drizzle-orm';
 import { usersTable } from '@/shared/auth/schema';
 import { locationsTable } from '@/shared/catalog/infrastructure/schema';
@@ -6,6 +6,9 @@ import { locationsTable } from '@/shared/catalog/infrastructure/schema';
 export const staffRoleEnum = pgEnum('staff_role', ['COLLEGE_ADMIN', 'COLLEGE_STAFF']);
 export const staffStatusEnum = pgEnum('staff_status', ['ACTIVE', 'INACTIVE', 'SUSPENDED']);
 export const branchTypeEnum = pgEnum('branch_type', ['MAIN_CAMPUS', 'OFF_CAMPUS']);
+export const mediaTypeEnum = pgEnum('media_type', ['IMAGE', 'VIDEO', 'VIRTUAL_TOUR']);
+export const mediaStatusEnum = pgEnum('media_status', ['ACTIVE', 'INACTIVE']);
+export const achievementStatusEnum = pgEnum('achievement_status', ['ACTIVE', 'INACTIVE']);
 
 export const collegesTable = pgTable('colleges', {
   id: uuid('id').primaryKey().defaultRandom(),
@@ -15,6 +18,7 @@ export const collegesTable = pgTable('colleges', {
   website: varchar('website', { length: 255 }),
   contactPhone: varchar('contact_phone', { length: 50 }),
   contactEmail: varchar('contact_email', { length: 255 }),
+  weeklyMenu: jsonb('weekly_menu').$type<any>(),
   
   // Location (Legacy - Constraints relaxed for C7 cleanup)
   state: varchar('state', { length: 100 }),
@@ -39,6 +43,54 @@ export const collegesTable = pgTable('colleges', {
   statusCheck: check('status_check', sql`${table.status} IN ('DRAFT', 'ACTIVE', 'INACTIVE')`),
   verificationStatusCheck: check('verification_status_check', sql`${table.verificationStatus} IN ('UNVERIFIED', 'VERIFIED')`),
   ownershipTypeCheck: check('ownership_type_check', sql`${table.ownershipType} IN ('PRIVATE', 'GOVERNMENT')`),
+}));
+
+export const collegeLeadershipTable = pgTable('college_leadership', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  collegeId: uuid('college_id').notNull().references(() => collegesTable.id, { onDelete: 'restrict' }),
+  name: varchar('name', { length: 255 }).notNull(),
+  designation: varchar('designation', { length: 150 }).notNull(),
+  bio: text('bio'),
+  imageUrl: varchar('image_url', { length: 1024 }),
+  displayOrder: integer('display_order').default(0).notNull(),
+  createdAt: timestamp('created_at', { withTimezone: true, mode: 'string' }).defaultNow().notNull(),
+  updatedAt: timestamp('updated_at', { withTimezone: true, mode: 'string' }).defaultNow().notNull(),
+}, (table) => ({
+  collegeIdx: index('idx_college_leadership_college_id').on(table.collegeId),
+}));
+
+export const collegeMediaTable = pgTable('college_media', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  collegeId: uuid('college_id').notNull().references(() => collegesTable.id, { onDelete: 'restrict' }),
+  mediaType: mediaTypeEnum('media_type').notNull(),
+  storageKey: varchar('storage_key', { length: 1024 }),
+  thumbnailStorageKey: varchar('thumbnail_storage_key', { length: 1024 }),
+  externalUrl: varchar('external_url', { length: 1024 }),
+  caption: text('caption'),
+  displayOrder: integer('display_order').default(0).notNull(),
+  isCover: boolean('is_cover').default(false).notNull(),
+  status: mediaStatusEnum('status').default('ACTIVE').notNull(),
+  createdAt: timestamp('created_at', { withTimezone: true, mode: 'string' }).defaultNow().notNull(),
+  updatedAt: timestamp('updated_at', { withTimezone: true, mode: 'string' }).defaultNow().notNull(),
+}, (table) => ({
+  collegeIdx: index('idx_college_media_college_id').on(table.collegeId),
+}));
+
+export const collegeAchievementsTable = pgTable('college_achievements', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  collegeId: uuid('college_id').notNull().references(() => collegesTable.id, { onDelete: 'restrict' }),
+  studentName: varchar('student_name', { length: 255 }).notNull(),
+  exam: varchar('exam', { length: 255 }).notNull(),
+  achievement: varchar('achievement', { length: 255 }).notNull(),
+  year: integer('year').notNull(),
+  description: text('description'),
+  imageStorageKey: varchar('image_storage_key', { length: 1024 }),
+  displayOrder: integer('display_order').default(0).notNull(),
+  status: achievementStatusEnum('status').default('ACTIVE').notNull(),
+  createdAt: timestamp('created_at', { withTimezone: true, mode: 'string' }).defaultNow().notNull(),
+  updatedAt: timestamp('updated_at', { withTimezone: true, mode: 'string' }).defaultNow().notNull(),
+}, (table) => ({
+  collegeIdx: index('idx_college_achievements_college_id').on(table.collegeId),
 }));
 
 export const collegeStreamOfferingsTable = pgTable('college_stream_offerings', {
