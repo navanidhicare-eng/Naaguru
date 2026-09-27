@@ -28,9 +28,7 @@ class _AssessmentIntroScreenState extends State<AssessmentIntroScreen> {
               decoration: BoxDecoration(
                 color: NaaguruTheme.background,
                 border: Border(
-                  bottom: BorderSide(
-                    color: NaaguruTheme.muted.withAlpha(25),
-                  ),
+                  bottom: BorderSide(color: NaaguruTheme.muted.withAlpha(25)),
                 ),
               ),
               child: Row(
@@ -64,14 +62,15 @@ class _AssessmentIntroScreenState extends State<AssessmentIntroScreen> {
                       child: SvgPicture.asset(
                         'assets/branding/logo.svg',
                         height: 28,
-                        errorBuilder: (context, error, stackTrace) => const Text(
-                          'Naaguru',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: NaaguruTheme.primary,
-                          ),
-                        ),
+                        errorBuilder: (context, error, stackTrace) =>
+                            const Text(
+                              'Naaguru',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: NaaguruTheme.primary,
+                              ),
+                            ),
                       ),
                     ),
                   ),
@@ -150,10 +149,10 @@ class _AssessmentIntroScreenState extends State<AssessmentIntroScreen> {
                           fit: BoxFit.contain,
                           errorBuilder: (context, error, stackTrace) =>
                               const Icon(
-                            Icons.explore,
-                            size: 64,
-                            color: NaaguruTheme.primary,
-                          ),
+                                Icons.explore,
+                                size: 64,
+                                color: NaaguruTheme.primary,
+                              ),
                         ),
                       ),
                     ),
@@ -231,8 +230,12 @@ class _AssessmentIntroScreenState extends State<AssessmentIntroScreen> {
                             icon: Icons.schedule_outlined,
                             iconBg: NaaguruTheme.primaryLight,
                             iconColor: NaaguruTheme.primary,
-                            title: _isTelugu ? "40 చిన్న ప్రశ్నలు" : "40 quick questions",
-                            subtitle: _isTelugu ? "~8–10 నిమిషాలు" : "~8–10 mins",
+                            title: _isTelugu
+                                ? "40 చిన్న ప్రశ్నలు"
+                                : "40 quick questions",
+                            subtitle: _isTelugu
+                                ? "~8–10 నిమిషాలు"
+                                : "~8–10 mins",
                           ),
                         ),
                         const SizedBox(width: 8),
@@ -242,7 +245,9 @@ class _AssessmentIntroScreenState extends State<AssessmentIntroScreen> {
                             iconBg: NaaguruTheme.primaryLight,
                             iconColor: NaaguruTheme.primary,
                             title: _isTelugu ? "మార్కులు లేవు" : "No marks",
-                            subtitle: _isTelugu ? "ఎలాంటి ఒత్తిడి లేదు" : "Zero pressure",
+                            subtitle: _isTelugu
+                                ? "ఎలాంటి ఒత్తిడి లేదు"
+                                : "Zero pressure",
                           ),
                         ),
                         const SizedBox(width: 8),
@@ -252,7 +257,9 @@ class _AssessmentIntroScreenState extends State<AssessmentIntroScreen> {
                             iconBg: const Color(0xFFFAF3E0),
                             iconColor: NaaguruTheme.accent,
                             title: _isTelugu ? "మీ స్వంత వేగంతో" : "Self Paced",
-                            subtitle: _isTelugu ? "ఎప్పుడైనా ఆపవచ్చు" : "Pause anytime",
+                            subtitle: _isTelugu
+                                ? "ఎప్పుడైనా ఆపవచ్చు"
+                                : "Pause anytime",
                           ),
                         ),
                       ],
@@ -378,9 +385,7 @@ class _AttributeCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: NaaguruTheme.surface,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: NaaguruTheme.muted.withAlpha(38),
-        ),
+        border: Border.all(color: NaaguruTheme.muted.withAlpha(38)),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withAlpha(5),
@@ -418,10 +423,7 @@ class _AttributeCard extends StatelessWidget {
               const SizedBox(height: 2),
               Text(
                 subtitle,
-                style: const TextStyle(
-                  fontSize: 10,
-                  color: NaaguruTheme.muted,
-                ),
+                style: const TextStyle(fontSize: 10, color: NaaguruTheme.muted),
               ),
             ],
           ),

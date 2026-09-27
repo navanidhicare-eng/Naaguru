@@ -121,7 +121,8 @@ class CatalogApiClient {
   }) async {
     final params = StringBuffer('/catalog/locations?');
     if (type != null) params.write('type=$type&');
-    if (parentId != null) params.write('parentId=${Uri.encodeComponent(parentId)}&');
+    if (parentId != null)
+      params.write('parentId=${Uri.encodeComponent(parentId)}&');
     final result = await _apiClient.get(params.toString());
     final rawList = result['data'] as List<dynamic>?;
     if (rawList == null) return [];

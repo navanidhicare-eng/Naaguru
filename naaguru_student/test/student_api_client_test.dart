@@ -12,8 +12,7 @@ void main() {
 
     ApiClient buildClientWithMock(MockClient mockHttpClient) {
       final client = ApiClient(httpClient: mockHttpClient);
-      client.setTokens(
-          accessToken: 'test-token', refreshToken: 'test-refresh');
+      client.setTokens(accessToken: 'test-token', refreshToken: 'test-refresh');
       return client;
     }
 
@@ -44,10 +43,7 @@ void main() {
 
     test('getProfile returns null on 404', () async {
       final mockHttp = MockClient((request) async {
-        return http.Response(
-          jsonEncode({'error': 'Profile not found'}),
-          404,
-        );
+        return http.Response(jsonEncode({'error': 'Profile not found'}), 404);
       });
 
       apiClient = buildClientWithMock(mockHttp);
@@ -150,7 +146,7 @@ void main() {
               'status': 'NEW',
               'createdAt': '2026-09-19T10:00:00Z',
               'collegeName': 'Test College',
-              'branchName': 'Main Campus'
+              'branchName': 'Main Campus',
             },
             {
               'id': 'lead-2',
@@ -160,8 +156,8 @@ void main() {
               'status': 'CONTACTED',
               'createdAt': '2026-09-19T11:00:00Z',
               'collegeName': null,
-              'branchName': null
-            }
+              'branchName': null,
+            },
           ]),
           200,
         );
@@ -174,11 +170,11 @@ void main() {
 
       expect(leads, isNotNull);
       expect(leads.length, 2);
-      
+
       expect(leads[0].id, 'lead-1');
       expect(leads[0].streamCode, 'MPC');
       expect(leads[0].collegeName, 'Test College');
-      
+
       expect(leads[1].id, 'lead-2');
       expect(leads[1].streamCode, isNull);
       expect(leads[1].collegeName, isNull);

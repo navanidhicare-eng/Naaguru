@@ -43,7 +43,10 @@ class CollegeApiClient {
     String path = '/colleges';
     if (queryParams.isNotEmpty) {
       final queryString = queryParams.entries
-          .map((e) => '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value)}')
+          .map(
+            (e) =>
+                '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value)}',
+          )
           .join('&');
       path += '?$queryString';
     }

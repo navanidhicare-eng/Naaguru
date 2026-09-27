@@ -1,10 +1,12 @@
 import { eq, and, or, lte, inArray, sql } from 'drizzle-orm';
 import { db } from '@/shared/database/db';
-import { collegesTable, collegeStreamOfferingsTable, branchesTable, collegeLeadershipTable, collegeMediaTable, collegeAchievementsTable } from './schema';
+import { collegesTable, collegeStreamOfferingsTable, branchesTable, collegeLeadershipTable, collegeMediaTable, collegeAchievementsTable, collegeTestimonialsTable, collegeAccreditationsTable } from './schema';
 import { locationsTable } from '@/shared/catalog/infrastructure/schema';
-import { College, CollegeStreamOffering, CollegeStatus, VerificationStatus, OwnershipType, Branch, BranchType, LeadershipProfile, CollegeMedia, WeeklyMenu, CollegeAchievement, AchievementStatus } from '../domain/models';
+import { CatalogModule } from '@/shared/catalog';
+import { College, CollegeStreamOffering, CollegeStatus, VerificationStatus, OwnershipType, Branch, BranchType, LeadershipProfile, CollegeMedia, WeeklyMenu, CollegeAchievement, AchievementStatus, CollegeTestimonial, PersonType, TestimonialStatus, CollegeAccreditation, AccreditationStatus } from '../domain/models';
 import { ICollegeRepository, CollegeSearchCriteria } from '../domain/ICollegeRepository';
 import { StreamCode } from '@/shared/domain/StreamCode';
+import { AppError } from '@/shared/errors';
 
 export class DrizzleCollegeRepository implements ICollegeRepository {
   
@@ -26,7 +28,17 @@ export class DrizzleCollegeRepository implements ICollegeRepository {
       .from(collegeAchievementsTable)
       .where(eq(collegeAchievementsTable.collegeId, id));
 
-    return this.mapToDomain(rows, achievementRows);
+    const testimonialRows = await db
+      .select()
+      .from(collegeTestimonialsTable)
+      .where(eq(collegeTestimonialsTable.collegeId, id));
+
+    const accreditationRows = await db
+      .select()
+      .from(collegeAccreditationsTable)
+      .where(eq(collegeAccreditationsTable.collegeId, id));
+
+    return this.mapToDomain(rows, achievementRows, testimonialRows, accreditationRows);
   }
 
   async searchActiveVerified(criteria: CollegeSearchCriteria): Promise<{ college: College; matchedBranchId: string }[]> {
@@ -37,14 +49,25 @@ export class DrizzleCollegeRepository implements ICollegeRepository {
     ];
 
     if (criteria.locationId) {
-      conditions.push(eq(branchesTable.locationId, criteria.locationId));
+      const descendantLocationIds = await CatalogModule.getDescendantLocationIds(criteria.locationId);
+      if (descendantLocationIds.length === 0) {
+        return [];
+      }
+      conditions.push(inArray(branchesTable.locationId, descendantLocationIds));
     }
     
     if (criteria.requiresHostel) {
-      conditions.push(or(eq(branchesTable.hasBoysHostel, true), eq(branchesTable.hasGirlsHostel, true))!);
+      if (criteria.gender === 'FEMALE' || criteria.requiresGirlsHostel) {
+        conditions.push(eq(branchesTable.hasGirlsHostel, true));
+      } else if (criteria.gender === 'MALE' || criteria.requiresBoysHostel) {
+        conditions.push(eq(branchesTable.hasBoysHostel, true));
+      } else {
+        conditions.push(or(eq(branchesTable.hasBoysHostel, true), eq(branchesTable.hasGirlsHostel, true))!);
+      }
+    } else {
+      if (criteria.requiresBoysHostel) conditions.push(eq(branchesTable.hasBoysHostel, true));
+      if (criteria.requiresGirlsHostel) conditions.push(eq(branchesTable.hasGirlsHostel, true));
     }
-    if (criteria.requiresBoysHostel) conditions.push(eq(branchesTable.hasBoysHostel, true));
-    if (criteria.requiresGirlsHostel) conditions.push(eq(branchesTable.hasGirlsHostel, true));
 
     if (criteria.streamCode) {
       conditions.push(eq(collegeStreamOfferingsTable.streamCode, criteria.streamCode));
@@ -246,6 +269,22 @@ export class DrizzleCollegeRepository implements ICollegeRepository {
       const incomingAchievements = college.achievements || [];
       const incomingAchievementIds = new Set(incomingAchievements.map(a => a.id));
 
+      // Cross-college ID safety check for achievements
+      const incomingAchIds = incomingAchievements.map(a => a.id).filter(Boolean);
+      if (incomingAchIds.length > 0) {
+        const foreignAchievements = await tx.select({
+          id: collegeAchievementsTable.id,
+          collegeId: collegeAchievementsTable.collegeId
+        })
+          .from(collegeAchievementsTable)
+          .where(inArray(collegeAchievementsTable.id, incomingAchIds));
+
+        const foreignAch = foreignAchievements.find(a => a.collegeId !== college.id);
+        if (foreignAch) {
+          throw new AppError(`Cannot modify achievement ${foreignAch.id} belonging to another college`, 400);
+        }
+      }
+
       const achievementIdsToDelete = [...existingAchievementIds].filter(id => !incomingAchievementIds.has(id));
 
       if (achievementIdsToDelete.length > 0) {
@@ -281,7 +320,136 @@ export class DrizzleCollegeRepository implements ICollegeRepository {
             displayOrder: sql`EXCLUDED.display_order`,
             status: sql`EXCLUDED.status`,
             updatedAt: sql`now()`,
-          }
+          },
+          where: eq(collegeAchievementsTable.collegeId, college.id),
+        });
+      }
+
+      // Synchronize testimonials
+      const existingTestimonials = await tx.select({ id: collegeTestimonialsTable.id })
+        .from(collegeTestimonialsTable)
+        .where(eq(collegeTestimonialsTable.collegeId, college.id));
+      
+      const existingTestimonialIds = new Set(existingTestimonials.map(t => t.id));
+      const incomingTestimonials = college.testimonials || [];
+      const incomingTestimonialIds = new Set(incomingTestimonials.map(t => t.id));
+
+      // Cross-college ID safety check for testimonials
+      const incomingTestimonialIdsList = incomingTestimonials.map(t => t.id).filter(Boolean);
+      if (incomingTestimonialIdsList.length > 0) {
+        const foreignTestimonials = await tx.select({
+          id: collegeTestimonialsTable.id,
+          collegeId: collegeTestimonialsTable.collegeId
+        })
+          .from(collegeTestimonialsTable)
+          .where(inArray(collegeTestimonialsTable.id, incomingTestimonialIdsList));
+
+        const foreignItem = foreignTestimonials.find(t => t.collegeId !== college.id);
+        if (foreignItem) {
+          throw new AppError(`Cannot modify testimonial ${foreignItem.id} belonging to another college`, 400);
+        }
+      }
+
+      const testimonialIdsToDelete = [...existingTestimonialIds].filter(id => !incomingTestimonialIds.has(id));
+
+      if (testimonialIdsToDelete.length > 0) {
+        await tx.delete(collegeTestimonialsTable)
+          .where(inArray(collegeTestimonialsTable.id, testimonialIdsToDelete));
+      }
+
+      if (incomingTestimonials.length > 0) {
+        await tx.insert(collegeTestimonialsTable).values(
+          incomingTestimonials.map(t => ({
+            id: t.id,
+            collegeId: t.collegeId,
+            personName: t.personName,
+            personType: t.personType,
+            testimonialText: t.testimonialText,
+            imageStorageKey: t.imageStorageKey,
+            displayOrder: t.displayOrder,
+            status: t.status,
+            createdAt: t.createdAt,
+            updatedAt: t.updatedAt,
+          }))
+        ).onConflictDoUpdate({
+          target: collegeTestimonialsTable.id,
+          set: {
+            personName: sql`EXCLUDED.person_name`,
+            personType: sql`EXCLUDED.person_type`,
+            testimonialText: sql`EXCLUDED.testimonial_text`,
+            imageStorageKey: sql`EXCLUDED.image_storage_key`,
+            displayOrder: sql`EXCLUDED.display_order`,
+            status: sql`EXCLUDED.status`,
+            updatedAt: sql`now()`,
+          },
+          where: eq(collegeTestimonialsTable.collegeId, college.id),
+        });
+      }
+
+      // Synchronize accreditations
+      const existingAccreditations = await tx.select({ id: collegeAccreditationsTable.id })
+        .from(collegeAccreditationsTable)
+        .where(eq(collegeAccreditationsTable.collegeId, college.id));
+      
+      const existingAccreditationIds = new Set(existingAccreditations.map(a => a.id));
+      const incomingAccreditations = college.accreditations || [];
+      const incomingAccreditationIds = new Set(incomingAccreditations.map(a => a.id));
+
+      // Cross-college ID safety check for accreditations
+      const incomingAccreditationIdsList = incomingAccreditations.map(a => a.id).filter(Boolean);
+      if (incomingAccreditationIdsList.length > 0) {
+        const foreignAccreditations = await tx.select({
+          id: collegeAccreditationsTable.id,
+          collegeId: collegeAccreditationsTable.collegeId
+        })
+          .from(collegeAccreditationsTable)
+          .where(inArray(collegeAccreditationsTable.id, incomingAccreditationIdsList));
+
+        const foreignItem = foreignAccreditations.find(a => a.collegeId !== college.id);
+        if (foreignItem) {
+          throw new AppError(`Cannot modify accreditation ${foreignItem.id} belonging to another college`, 400);
+        }
+      }
+
+      const accreditationIdsToDelete = [...existingAccreditationIds].filter(id => !incomingAccreditationIds.has(id));
+
+      if (accreditationIdsToDelete.length > 0) {
+        await tx.delete(collegeAccreditationsTable)
+          .where(inArray(collegeAccreditationsTable.id, accreditationIdsToDelete));
+      }
+
+      if (incomingAccreditations.length > 0) {
+        await tx.insert(collegeAccreditationsTable).values(
+          incomingAccreditations.map(a => ({
+            id: a.id,
+            collegeId: a.collegeId,
+            name: a.name,
+            issuingBody: a.issuingBody,
+            year: a.year,
+            validUntilYear: a.validUntilYear,
+            description: a.description,
+            certificateStorageKey: a.certificateStorageKey,
+            verificationUrl: a.verificationUrl,
+            displayOrder: a.displayOrder,
+            status: a.status,
+            createdAt: a.createdAt,
+            updatedAt: a.updatedAt,
+          }))
+        ).onConflictDoUpdate({
+          target: collegeAccreditationsTable.id,
+          set: {
+            name: sql`EXCLUDED.name`,
+            issuingBody: sql`EXCLUDED.issuing_body`,
+            year: sql`EXCLUDED.year`,
+            validUntilYear: sql`EXCLUDED.valid_until_year`,
+            description: sql`EXCLUDED.description`,
+            certificateStorageKey: sql`EXCLUDED.certificate_storage_key`,
+            verificationUrl: sql`EXCLUDED.verification_url`,
+            displayOrder: sql`EXCLUDED.display_order`,
+            status: sql`EXCLUDED.status`,
+            updatedAt: sql`now()`,
+          },
+          where: eq(collegeAccreditationsTable.collegeId, college.id),
         });
       }
 
@@ -348,7 +516,7 @@ export class DrizzleCollegeRepository implements ICollegeRepository {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private mapToDomain(rows: any[], achievementRows: any[] = []): College {
+  private mapToDomain(rows: any[], achievementRows: any[] = [], testimonialRows: any[] = [], accreditationRows: any[] = []): College {
     const c = rows[0].colleges;
     const offerings = rows
       .filter(r => r.college_stream_offerings != null)
@@ -452,6 +620,35 @@ export class DrizzleCollegeRepository implements ICollegeRepository {
       updatedAt: r.updatedAt,
     }));
 
+    const testimonials = testimonialRows.map(r => CollegeTestimonial.create({
+      id: r.id,
+      collegeId: r.collegeId,
+      personName: r.personName,
+      personType: r.personType as PersonType,
+      testimonialText: r.testimonialText,
+      imageStorageKey: r.imageStorageKey,
+      displayOrder: r.displayOrder,
+      status: r.status as TestimonialStatus,
+      createdAt: r.createdAt,
+      updatedAt: r.updatedAt,
+    }));
+
+    const accreditations = accreditationRows.map(r => CollegeAccreditation.create({
+      id: r.id,
+      collegeId: r.collegeId,
+      name: r.name,
+      issuingBody: r.issuingBody,
+      year: r.year,
+      validUntilYear: r.validUntilYear,
+      description: r.description,
+      certificateStorageKey: r.certificateStorageKey,
+      verificationUrl: r.verificationUrl,
+      displayOrder: r.displayOrder,
+      status: r.status as AccreditationStatus,
+      createdAt: r.createdAt,
+      updatedAt: r.updatedAt,
+    }));
+
     return College.create({
       id: c.id,
       name: c.name,
@@ -465,6 +662,8 @@ export class DrizzleCollegeRepository implements ICollegeRepository {
       verificationStatus: c.verificationStatus as VerificationStatus,
       weeklyMenu: c.weeklyMenu ? WeeklyMenu.create(c.weeklyMenu) : null,
       achievements: achievements.sort((a, b) => a.displayOrder - b.displayOrder),
+      testimonials: testimonials.sort((a, b) => a.displayOrder - b.displayOrder),
+      accreditations: accreditations.sort((a, b) => a.displayOrder - b.displayOrder),
       leadership: leadership.sort((a, b) => a.displayOrder - b.displayOrder),
       media: media.sort((a, b) => a.displayOrder - b.displayOrder),
       branches,

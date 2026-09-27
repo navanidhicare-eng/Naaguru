@@ -127,7 +127,10 @@ class _LocationPickerSheetState extends State<LocationPickerSheet> {
         _filtered = q.isEmpty
             ? _all
             : _all.where((loc) {
-                final name = widget.isTelugu && loc.nameTe != null && loc.nameTe!.isNotEmpty
+                final name =
+                    widget.isTelugu &&
+                        loc.nameTe != null &&
+                        loc.nameTe!.isNotEmpty
                     ? loc.nameTe!.toLowerCase()
                     : loc.nameEn.toLowerCase();
                 return name.contains(q);
@@ -178,8 +181,10 @@ class _LocationPickerSheetState extends State<LocationPickerSheet> {
                     ),
                   ),
                   IconButton(
-                    icon: const Icon(Icons.close_rounded,
-                        color: NaaguruTheme.muted),
+                    icon: const Icon(
+                      Icons.close_rounded,
+                      color: NaaguruTheme.muted,
+                    ),
                     onPressed: () => Navigator.pop(context),
                   ),
                 ],
@@ -198,23 +203,27 @@ class _LocationPickerSheetState extends State<LocationPickerSheet> {
                 child: Row(
                   children: [
                     const SizedBox(width: 12),
-                    Icon(Icons.search_rounded,
-                        color: NaaguruTheme.muted, size: 20),
+                    Icon(
+                      Icons.search_rounded,
+                      color: NaaguruTheme.muted,
+                      size: 20,
+                    ),
                     const SizedBox(width: 8),
                     Expanded(
                       child: TextField(
                         controller: _search,
                         autofocus: true,
                         style: const TextStyle(
-                            fontSize: 14, color: NaaguruTheme.text),
+                          fontSize: 14,
+                          color: NaaguruTheme.text,
+                        ),
                         decoration: InputDecoration(
                           border: InputBorder.none,
-                          hintText: _s(
-                            'Search $label...',
-                            '$label వెతకండి...',
-                          ),
+                          hintText: _s('Search $label...', '$label వెతకండి...'),
                           hintStyle: const TextStyle(
-                              fontSize: 14, color: NaaguruTheme.muted),
+                            fontSize: 14,
+                            color: NaaguruTheme.muted,
+                          ),
                           isDense: true,
                           contentPadding: EdgeInsets.zero,
                         ),
@@ -225,8 +234,11 @@ class _LocationPickerSheetState extends State<LocationPickerSheet> {
                         onTap: () => _search.clear(),
                         child: Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 10),
-                          child: Icon(Icons.close_rounded,
-                              size: 18, color: NaaguruTheme.muted),
+                          child: Icon(
+                            Icons.close_rounded,
+                            size: 18,
+                            color: NaaguruTheme.muted,
+                          ),
                         ),
                       )
                     else
@@ -240,9 +252,7 @@ class _LocationPickerSheetState extends State<LocationPickerSheet> {
             Container(height: 1, color: _C.surfaceContainerHigh),
 
             // Content.
-            Expanded(
-              child: _buildContent(scrollController),
-            ),
+            Expanded(child: _buildContent(scrollController)),
           ],
         );
       },
@@ -264,17 +274,21 @@ class _LocationPickerSheetState extends State<LocationPickerSheet> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.cloud_off_outlined,
-                color: NaaguruTheme.muted, size: 36),
+            const Icon(
+              Icons.cloud_off_outlined,
+              color: NaaguruTheme.muted,
+              size: 36,
+            ),
             const SizedBox(height: 12),
             Text(
               widget.isTelugu
                   ? 'లొకేషన్లు లోడ్ కాలేదు'
                   : "Couldn't load locations",
               style: const TextStyle(
-                  fontSize: 14,
-                  color: NaaguruTheme.muted,
-                  fontWeight: FontWeight.w500),
+                fontSize: 14,
+                color: NaaguruTheme.muted,
+                fontWeight: FontWeight.w500,
+              ),
             ),
             const SizedBox(height: 8),
             TextButton(
@@ -294,11 +308,11 @@ class _LocationPickerSheetState extends State<LocationPickerSheet> {
         child: Text(
           _search.text.trim().isNotEmpty
               ? widget.isTelugu
-                  ? 'ఏ ఫలితాలు కనుగొనబడలేదు'
-                  : 'No results found'
+                    ? 'ఏ ఫలితాలు కనుగొనబడలేదు'
+                    : 'No results found'
               : widget.isTelugu
-                  ? 'లొకేషన్లు అందుబాటులో లేవు'
-                  : 'No locations available',
+              ? 'లొకేషన్లు అందుబాటులో లేవు'
+              : 'No locations available',
           style: const TextStyle(fontSize: 14, color: NaaguruTheme.muted),
           textAlign: TextAlign.center,
         ),
@@ -314,7 +328,8 @@ class _LocationPickerSheetState extends State<LocationPickerSheet> {
       itemBuilder: (_, i) {
         final loc = _filtered[i];
         final isSelected = loc.id == widget.current?.id;
-        final name = widget.isTelugu && loc.nameTe != null && loc.nameTe!.isNotEmpty
+        final name =
+            widget.isTelugu && loc.nameTe != null && loc.nameTe!.isNotEmpty
             ? loc.nameTe!
             : loc.nameEn;
         return InkWell(
@@ -328,8 +343,9 @@ class _LocationPickerSheetState extends State<LocationPickerSheet> {
                     name,
                     style: TextStyle(
                       fontSize: 15,
-                      fontWeight:
-                          isSelected ? FontWeight.w600 : FontWeight.w400,
+                      fontWeight: isSelected
+                          ? FontWeight.w600
+                          : FontWeight.w400,
                       color: isSelected
                           ? NaaguruTheme.primary
                           : NaaguruTheme.text,
@@ -337,8 +353,11 @@ class _LocationPickerSheetState extends State<LocationPickerSheet> {
                   ),
                 ),
                 if (isSelected)
-                  const Icon(Icons.check_circle_rounded,
-                      color: NaaguruTheme.primary, size: 20),
+                  const Icon(
+                    Icons.check_circle_rounded,
+                    color: NaaguruTheme.primary,
+                    size: 20,
+                  ),
               ],
             ),
           ),

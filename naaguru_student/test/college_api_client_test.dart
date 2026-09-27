@@ -29,13 +29,10 @@ void main() {
           'id': 'col-1',
           'name': 'Sri Chaitanya Junior College',
           'city': 'Vijayawada',
-          'location': {
-            'district': 'Krishna',
-            'city': 'Vijayawada'
-          },
+          'location': {'district': 'Krishna', 'city': 'Vijayawada'},
           'hasBoysHostel': true,
-        }
-      ]
+        },
+      ],
     };
 
     final results = await client.searchColleges(

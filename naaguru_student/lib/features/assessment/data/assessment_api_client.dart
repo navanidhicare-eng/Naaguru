@@ -29,10 +29,7 @@ class AssessmentApiClient {
   }) async {
     return await _apiClient.patch(
       '/assessments/attempts/current/answers',
-      body: {
-        'questionId': questionId,
-        'optionId': optionId,
-      },
+      body: {'questionId': questionId, 'optionId': optionId},
     );
   }
 

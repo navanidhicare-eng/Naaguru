@@ -6,14 +6,24 @@ class PathDetailScreen extends StatelessWidget {
   final String pathId;
   final String title;
 
-  const PathDetailScreen({super.key, required this.pathId, required this.title});
+  const PathDetailScreen({
+    super.key,
+    required this.pathId,
+    required this.title,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: NaaguruTheme.background,
       appBar: AppBar(
-        title: Text(title, style: const TextStyle(color: NaaguruTheme.primaryDark, fontWeight: FontWeight.bold)),
+        title: Text(
+          title,
+          style: const TextStyle(
+            color: NaaguruTheme.primaryDark,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         backgroundColor: NaaguruTheme.surface,
         elevation: 1,
         iconTheme: const IconThemeData(color: NaaguruTheme.primaryDark),
@@ -31,7 +41,11 @@ class PathDetailScreen extends StatelessWidget {
                   color: NaaguruTheme.primaryLight.withAlpha(128),
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(Icons.build_circle_outlined, size: 64, color: NaaguruTheme.primaryDark),
+                child: const Icon(
+                  Icons.build_circle_outlined,
+                  size: 64,
+                  color: NaaguruTheme.primaryDark,
+                ),
               ),
               const SizedBox(height: 32),
               Text(
@@ -55,7 +69,10 @@ class PathDetailScreen extends StatelessWidget {
               ),
               const SizedBox(height: 32),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
+                ),
                 decoration: BoxDecoration(
                   color: NaaguruTheme.surface,
                   borderRadius: BorderRadius.circular(12),
@@ -68,7 +85,10 @@ class PathDetailScreen extends StatelessWidget {
                     SizedBox(width: 8),
                     Text(
                       'Full details coming soon!',
-                      style: TextStyle(fontWeight: FontWeight.w600, color: NaaguruTheme.text),
+                      style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        color: NaaguruTheme.text,
+                      ),
                     ),
                   ],
                 ),

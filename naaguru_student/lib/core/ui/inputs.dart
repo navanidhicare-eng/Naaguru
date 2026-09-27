@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../theme.dart';
 
 class NaaguruTextField extends StatelessWidget {
@@ -9,6 +10,10 @@ class NaaguruTextField extends StatelessWidget {
   final bool obscureText;
   final TextEditingController? controller;
   final TextInputType? keyboardType;
+  final List<TextInputFormatter>? inputFormatters;
+  final int? maxLength;
+  final Widget? prefix;
+  final Widget? suffix;
   final void Function(String)? onChanged;
   final String? Function(String?)? validator;
 
@@ -21,6 +26,10 @@ class NaaguruTextField extends StatelessWidget {
     this.obscureText = false,
     this.controller,
     this.keyboardType,
+    this.inputFormatters,
+    this.maxLength,
+    this.prefix,
+    this.suffix,
     this.onChanged,
     this.validator,
   });
@@ -47,6 +56,8 @@ class NaaguruTextField extends StatelessWidget {
           enabled: enabled,
           obscureText: obscureText,
           keyboardType: keyboardType,
+          inputFormatters: inputFormatters,
+          maxLength: maxLength,
           onChanged: onChanged,
           validator: validator,
           style: TextStyle(
@@ -56,6 +67,9 @@ class NaaguruTextField extends StatelessWidget {
           decoration: InputDecoration(
             hintText: hintText,
             errorText: errorText,
+            counterText: '',
+            prefixIcon: prefix,
+            suffixIcon: suffix,
             hintStyle: const TextStyle(color: NaaguruTheme.muted),
             contentPadding: const EdgeInsets.symmetric(
               horizontal: NaaguruTheme.spacing16,
@@ -73,7 +87,10 @@ class NaaguruTextField extends StatelessWidget {
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: NaaguruTheme.borderRadius,
-              borderSide: const BorderSide(color: NaaguruTheme.primary, width: 2),
+              borderSide: const BorderSide(
+                color: NaaguruTheme.primary,
+                width: 2,
+              ),
             ),
             errorBorder: OutlineInputBorder(
               borderRadius: NaaguruTheme.borderRadius,
@@ -118,7 +135,8 @@ class NaaguruDropdownField<T> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final effectiveValue = (value != null && items.any((item) => item.value == value))
+    final effectiveValue =
+        (value != null && items.any((item) => item.value == value))
         ? value
         : null;
 
@@ -148,7 +166,10 @@ class NaaguruDropdownField<T> extends StatelessWidget {
             color: enabled ? NaaguruTheme.text : NaaguruTheme.muted,
             fontFamily: 'Inter',
           ),
-          icon: const Icon(Icons.keyboard_arrow_down, color: NaaguruTheme.muted),
+          icon: const Icon(
+            Icons.keyboard_arrow_down,
+            color: NaaguruTheme.muted,
+          ),
           decoration: InputDecoration(
             hintText: hintText,
             errorText: errorText,
@@ -169,7 +190,10 @@ class NaaguruDropdownField<T> extends StatelessWidget {
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: NaaguruTheme.borderRadius,
-              borderSide: const BorderSide(color: NaaguruTheme.primary, width: 2),
+              borderSide: const BorderSide(
+                color: NaaguruTheme.primary,
+                width: 2,
+              ),
             ),
             errorBorder: OutlineInputBorder(
               borderRadius: NaaguruTheme.borderRadius,
@@ -189,4 +213,3 @@ class NaaguruDropdownField<T> extends StatelessWidget {
     );
   }
 }
-

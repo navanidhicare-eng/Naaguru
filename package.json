@@ -11,6 +11,7 @@
     "db:migrate": "drizzle-kit migrate",
     "db:push": "drizzle-kit push",
     "db:verify": "npx tsx scripts/verify-db.ts",
+    "db:seed:dev": "npx tsx scripts/seed-dev.ts",
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
     "ci": "npm run typecheck && npm run lint && npm run test && npm run build"

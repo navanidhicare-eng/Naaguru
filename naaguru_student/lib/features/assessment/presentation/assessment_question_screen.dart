@@ -17,7 +17,7 @@ class AssessmentQuestionScreen extends StatefulWidget {
       _AssessmentQuestionScreenState();
 }
 
-class _AssessmentQuestionScreenState extends State<AssessmentQuestionScreen> with TickerProviderStateMixin {
+class _AssessmentQuestionScreenState extends State<AssessmentQuestionScreen> {
   bool _isLoading = true;
   String? _errorMessage;
   bool _isTelugu = false;
@@ -26,25 +26,17 @@ class _AssessmentQuestionScreenState extends State<AssessmentQuestionScreen> wit
   int _currentIndex = 0;
   List<Map<String, dynamic>> _questions = [];
   final Map<String, String> _userAnswers = {};
+  final Set<String> _persistedQuestionIds = <String>{};
 
   bool _isTransitioning = false;
   bool _isCompleted = false;
   Map<String, dynamic>? _completedResult;
   Map<String, dynamic>? _completedRecommendation;
 
-  late AnimationController _lottieController;
-
   @override
   void initState() {
     super.initState();
-    _lottieController = AnimationController(vsync: this);
     _loadAssessment();
-  }
-
-  @override
-  void dispose() {
-    _lottieController.dispose();
-    super.dispose();
   }
 
   Future<void> _loadAssessment() async {
@@ -76,22 +68,20 @@ class _AssessmentQuestionScreenState extends State<AssessmentQuestionScreen> wit
       }
 
       // Resume attempt if exists
-      try {
-        final attempt =
-            await widget.assessmentApiClient!.startOrResumeAttempt();
-        final rawAnswers = attempt['answers'] as List<dynamic>? ?? [];
-        _userAnswers.clear();
-        for (final a in rawAnswers) {
-          if (a is Map) {
-            final qId = a['questionId'] as String?;
-            final optId = a['selectedOptionId'] as String?;
-            if (qId != null && optId != null) {
-              _userAnswers[qId] = optId;
-            }
+      final attempt =
+          await widget.assessmentApiClient!.startOrResumeAttempt();
+      final rawAnswers = attempt['answers'] as List<dynamic>? ?? [];
+      _userAnswers.clear();
+      _persistedQuestionIds.clear();
+      for (final a in rawAnswers) {
+        if (a is Map) {
+          final qId = a['questionId'] as String?;
+          final optId = a['selectedOptionId'] as String?;
+          if (qId != null && optId != null) {
+            _userAnswers[qId] = optId;
+            _persistedQuestionIds.add(qId);
           }
         }
-      } catch (_) {
-        // Ignored, start fresh attempt locally
       }
 
       // Determine starting question index (first unanswered question)
@@ -107,12 +97,14 @@ class _AssessmentQuestionScreenState extends State<AssessmentQuestionScreen> wit
         targetIndex = _questions.length - 1;
       }
       _currentIndex = targetIndex;
-    } on ApiException catch (_) {
-      // Fallback to local questions if API fails or backend offline
-      _loadFallbackQuestions();
-      _errorMessage = null; // Proceed gracefully with available questions
+    } on ApiException catch (e) {
+      _errorMessage = _isTelugu
+          ? "అసెస్‌మెంట్ లోడ్ చేయడంలో విఫలమైంది (${e.statusCode}). దయచేసి మీ నెట్‌వర్క్ తనిఖీ చేసి మళ్లీ ప్రయత్నించండి."
+          : "Unable to start or load assessment. Please check your connection and try again.";
     } catch (_) {
-      _loadFallbackQuestions();
+      _errorMessage = _isTelugu
+          ? "అసెస్‌మెంట్ లోడ్ చేయడంలో విఫలమైంది. దయచేసి మీ నెట్‌వర్క్ తనిఖీ చేసి మళ్లీ ప్రయత్నించండి."
+          : "Unable to start or load assessment. Please check your connection and try again.";
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
@@ -237,6 +229,7 @@ class _AssessmentQuestionScreenState extends State<AssessmentQuestionScreen> wit
           questionId: questionId,
           optionId: optionId,
         );
+        _persistedQuestionIds.add(questionId);
       } catch (e) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -256,6 +249,8 @@ class _AssessmentQuestionScreenState extends State<AssessmentQuestionScreen> wit
         setState(() => _isSavingAnswer = false);
         return;
       }
+    } else {
+      _persistedQuestionIds.add(questionId);
     }
 
     // Brief transition delay for user feedback
@@ -279,42 +274,71 @@ class _AssessmentQuestionScreenState extends State<AssessmentQuestionScreen> wit
         });
       }
     } else {
-      // Final question answered
-      if (widget.assessmentApiClient != null) {
-        try {
-          await widget.assessmentApiClient!.submitAttempt();
-          final result = await widget.assessmentApiClient!.getResult();
-          final rec = await widget.assessmentApiClient!.getRecommendation();
-          if (mounted) {
-            setState(() {
-              _completedResult = result;
-              _completedRecommendation = rec;
-              _isCompleted = true;
-            });
-          }
-        } catch (e) {
-          if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(
-                  _isTelugu
-                      ? "సమర్పించడంలో విఫలమైంది. దయచేసి మళ్లీ ప్రయత్నించండి."
-                      : "Failed to submit assessment. Please try again.",
-                ),
-              ),
-            );
-          }
-        }
-      } else {
-        // Fallback local completion
-        if (mounted) {
-          setState(() => _isCompleted = true);
-        }
-      }
+      await _attemptSubmit();
+    }
+  }
 
-      if (mounted) {
-        setState(() => _isSavingAnswer = false);
+  Future<void> _attemptSubmit() async {
+    // Verify all questions are answered and persisted
+    for (int i = 0; i < _questions.length; i++) {
+      final qId = _questions[i]['id'] as String?;
+      if (qId != null && (!_userAnswers.containsKey(qId) || !_persistedQuestionIds.contains(qId))) {
+        if (mounted) {
+          setState(() {
+            _currentIndex = i;
+            _isSavingAnswer = false;
+          });
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                _isTelugu
+                    ? "దయచేసి అన్ని ప్రశ్నలకు సమాధానం ఇవ్వండి."
+                    : "Please answer all questions before submitting.",
+              ),
+            ),
+          );
+        }
+        return;
       }
+    }
+
+    if (widget.assessmentApiClient != null) {
+      try {
+        await widget.assessmentApiClient!.submitAttempt();
+        final result = await widget.assessmentApiClient!.getResult();
+        final rec = await widget.assessmentApiClient!.getRecommendation();
+        if (mounted) {
+          setState(() {
+            _completedResult = result;
+            _completedRecommendation = rec;
+            _isCompleted = true;
+          });
+        }
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                _isTelugu
+                    ? "సమర్పించడంలో విఫలమైంది. దయచేసి మళ్లీ ప్రయత్నించండి."
+                    : "Failed to submit assessment. Please try again.",
+              ),
+              action: SnackBarAction(
+                label: _isTelugu ? "మళ్లీ ప్రయత్నించండి" : "Retry",
+                onPressed: _attemptSubmit,
+              ),
+            ),
+          );
+        }
+      }
+    } else {
+      if (mounted) {
+        setState(() => _isCompleted = true);
+      }
+    }
+
+    if (mounted) {
+      setState(() => _isSavingAnswer = false);
     }
   }
 
@@ -359,7 +383,7 @@ class _AssessmentQuestionScreenState extends State<AssessmentQuestionScreen> wit
       return _buildTransitionScreen();
     }
 
-    if (_questions.isEmpty) {
+    if (_errorMessage != null || _questions.isEmpty) {
       return Scaffold(
         backgroundColor: NaaguruTheme.background,
         body: SafeArea(
@@ -373,6 +397,7 @@ class _AssessmentQuestionScreenState extends State<AssessmentQuestionScreen> wit
                 Text(
                   _errorMessage ?? "No questions available.",
                   style: const TextStyle(color: NaaguruTheme.text),
+                  textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 16),
                 ElevatedButton(
@@ -606,15 +631,10 @@ class _AssessmentQuestionScreenState extends State<AssessmentQuestionScreen> wit
                           _getIllustrationForQuestion(sequence),
                           fit: BoxFit.contain,
                           errorBuilder: (context, error, stackTrace) =>
-                              SvgPicture.asset(
-                            'assets/illustrations/path_exploration.svg',
-                            fit: BoxFit.contain,
-                            errorBuilder: (context, error, stackTrace) =>
-                                const Icon(
-                              Icons.science_outlined,
-                              size: 64,
-                              color: NaaguruTheme.primary,
-                            ),
+                              const Icon(
+                            Icons.science_outlined,
+                            size: 64,
+                            color: NaaguruTheme.primary,
                           ),
                         ),
                       ),
@@ -833,12 +853,7 @@ class _AssessmentQuestionScreenState extends State<AssessmentQuestionScreen> wit
               const Spacer(),
               Lottie.asset(
                 lottieAsset,
-                controller: _lottieController,
-                onLoaded: (composition) {
-                  _lottieController
-                    ..duration = composition.duration
-                    ..forward(from: 0.0);
-                },
+                repeat: true,
                 height: 250,
                 fit: BoxFit.contain,
                 errorBuilder: (context, error, stackTrace) => const Icon(
@@ -906,12 +921,7 @@ class _AssessmentQuestionScreenState extends State<AssessmentQuestionScreen> wit
               const Spacer(),
               Lottie.asset(
                 'assets/illustrations/assessment/assessment_complete.json',
-                controller: _lottieController,
-                onLoaded: (composition) {
-                  _lottieController
-                    ..duration = composition.duration
-                    ..forward(from: 0.0);
-                },
+                repeat: true,
                 height: 250,
                 fit: BoxFit.contain,
                 errorBuilder: (context, error, stackTrace) => const Icon(

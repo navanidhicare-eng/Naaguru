@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:naaguru_student/core/api_client.dart';
+import 'package:naaguru_student/core/errors/app_error.dart';
 import 'package:naaguru_student/core/theme.dart';
 import 'package:naaguru_student/core/ui/buttons.dart';
+import 'package:naaguru_student/core/ui/feedback.dart';
 import 'package:naaguru_student/core/ui/inputs.dart';
 import 'package:naaguru_student/core/ui/language_toggle.dart';
 import 'package:naaguru_student/features/auth/auth_service.dart';
@@ -70,13 +72,21 @@ class _StudentProfileScreenState extends State<StudentProfileScreen> {
     final nameValid = _nameController.text.trim().isNotEmpty;
     final classValid = _selectedClass != null && _selectedClass!.isNotEmpty;
     final boardValid = _selectedBoard != null && _selectedBoard!.isNotEmpty;
-    final districtValid = _selectedDistrict != null && _selectedDistrict!.isNotEmpty;
+    final districtValid =
+        _selectedDistrict != null && _selectedDistrict!.isNotEmpty;
     final guardianNameValid = _guardianNameController.text.trim().isNotEmpty;
     final phoneText = _guardianPhoneController.text.trim();
-    final guardianPhoneValid = phoneText.length == 10 && RegExp(r'^\d{10}$').hasMatch(phoneText);
+    final guardianPhoneValid =
+        phoneText.length == 10 && RegExp(r'^\d{10}$').hasMatch(phoneText);
     final genderValid = _selectedGender != null && _selectedGender!.isNotEmpty;
 
-    return nameValid && genderValid && classValid && boardValid && districtValid && guardianNameValid && guardianPhoneValid;
+    return nameValid &&
+        genderValid &&
+        classValid &&
+        boardValid &&
+        districtValid &&
+        guardianNameValid &&
+        guardianPhoneValid;
   }
 
   Future<void> _loadProfile() async {
@@ -111,7 +121,8 @@ class _StudentProfileScreenState extends State<StudentProfileScreen> {
         }
 
         final board = profile['board'] as String?;
-        if (board != null && ['AP Board', 'Telangana Board', 'CBSE / Other'].contains(board)) {
+        if (board != null &&
+            ['AP Board', 'Telangana Board', 'CBSE / Other'].contains(board)) {
           _selectedBoard = board;
         }
 
@@ -121,7 +132,8 @@ class _StudentProfileScreenState extends State<StudentProfileScreen> {
         }
 
         _guardianNameController.text = profile['guardianName'] as String? ?? '';
-        _guardianPhoneController.text = profile['guardianPhone'] as String? ?? '';
+        _guardianPhoneController.text =
+            profile['guardianPhone'] as String? ?? '';
       }
     } on ApiException catch (_) {
       // Ignored, form stays empty for new profile
@@ -138,7 +150,13 @@ class _StudentProfileScreenState extends State<StudentProfileScreen> {
 
     if (_selectedDistrict == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(_isTelugu ? "దయచేసి మీ జిల్లాను ఎంచుకోండి." : "Please select your district.")),
+        SnackBar(
+          content: Text(
+            _isTelugu
+                ? "దయచేసి మీ జిల్లాను ఎంచుకోండి."
+                : "Please select your district.",
+          ),
+        ),
       );
       return;
     }
@@ -177,11 +195,15 @@ class _StudentProfileScreenState extends State<StudentProfileScreen> {
       }
     } on ApiException catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.message)));
+        showNaaguruSnackbar(context, message: e.userMessage(_isTelugu), isError: true);
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Could not save profile.')));
+        showNaaguruSnackbar(
+          context,
+          message: ErrorMapper.userMessage(e, isTelugu: _isTelugu),
+          isError: true,
+        );
       }
     } finally {
       if (mounted) setState(() => _isSaving = false);
@@ -193,7 +215,9 @@ class _StudentProfileScreenState extends State<StudentProfileScreen> {
     if (_isLoading) {
       return const Scaffold(
         backgroundColor: NaaguruTheme.background,
-        body: Center(child: CircularProgressIndicator(color: NaaguruTheme.primary)),
+        body: Center(
+          child: CircularProgressIndicator(color: NaaguruTheme.primary),
+        ),
       );
     }
 
@@ -208,7 +232,9 @@ class _StudentProfileScreenState extends State<StudentProfileScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 20),
               decoration: BoxDecoration(
                 color: NaaguruTheme.background,
-                border: Border(bottom: BorderSide(color: NaaguruTheme.muted.withAlpha(25))),
+                border: Border(
+                  bottom: BorderSide(color: NaaguruTheme.muted.withAlpha(25)),
+                ),
               ),
               child: Row(
                 children: [
@@ -216,8 +242,14 @@ class _StudentProfileScreenState extends State<StudentProfileScreen> {
                   // Once ProfileGate resolves COMPLETE the user proceeds to Home.
                   Expanded(
                     child: Text(
-                      _isTelugu ? "మీ ప్రొఫైల్‌ను రూపొందించండి" : "Create Your Profile",
-                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: NaaguruTheme.text),
+                      _isTelugu
+                          ? "మీ ప్రొఫైల్‌ను రూపొందించండి"
+                          : "Create Your Profile",
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: NaaguruTheme.text,
+                      ),
                     ),
                   ),
                   LanguageToggle(
@@ -239,37 +271,67 @@ class _StudentProfileScreenState extends State<StudentProfileScreen> {
                     children: [
                       // Heading
                       Text(
-                        _isTelugu ? "మీ ప్రొఫైల్‌ను రూపొందిద్దాం" : "Let's create your profile",
-                        style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: NaaguruTheme.text, height: 1.2),
+                        _isTelugu
+                            ? "మీ ప్రొఫైల్‌ను రూపొందిద్దాం"
+                            : "Let's create your profile",
+                        style: const TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                          color: NaaguruTheme.text,
+                          height: 1.2,
+                        ),
                       ),
                       const SizedBox(height: 6),
                       Text(
-                        _isTelugu 
-                          ? "మీ Naaguru ప్రయాణాన్ని మీకు అనుగుణంగా రూపొందించడానికి ఈ వివరాలను ఉపయోగిస్తాము."
-                          : "We'll use these details to personalize your Naaguru journey.",
-                        style: const TextStyle(fontSize: 14, color: NaaguruTheme.muted),
+                        _isTelugu
+                            ? "మీ Naaguru ప్రయాణాన్ని మీకు అనుగుణంగా రూపొందించడానికి ఈ వివరాలను ఉపయోగిస్తాము."
+                            : "We'll use these details to personalize your Naaguru journey.",
+                        style: const TextStyle(
+                          fontSize: 14,
+                          color: NaaguruTheme.muted,
+                        ),
                       ),
                       const SizedBox(height: 24),
 
                       // Section: Student Details
                       Row(
                         children: [
-                          Container(width: 8, height: 8, decoration: const BoxDecoration(color: NaaguruTheme.primary, shape: BoxShape.circle)),
+                          Container(
+                            width: 8,
+                            height: 8,
+                            decoration: const BoxDecoration(
+                              color: NaaguruTheme.primary,
+                              shape: BoxShape.circle,
+                            ),
+                          ),
                           const SizedBox(width: 8),
                           Text(
-                            _isTelugu ? "విద్యార్థి వివరాలు" : "STUDENT DETAILS",
-                            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: NaaguruTheme.muted, letterSpacing: 0.5),
+                            _isTelugu
+                                ? "విద్యార్థి వివరాలు"
+                                : "STUDENT DETAILS",
+                            style: const TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                              color: NaaguruTheme.muted,
+                              letterSpacing: 0.5,
+                            ),
                           ),
                         ],
                       ),
                       const SizedBox(height: 8),
-                      const Divider(color: NaaguruTheme.muted, thickness: 0.2, height: 1),
+                      const Divider(
+                        color: NaaguruTheme.muted,
+                        thickness: 0.2,
+                        height: 1,
+                      ),
                       const SizedBox(height: 16),
 
                       if (_authPhone != null) ...[
                         NaaguruTextField(
                           controller: TextEditingController(text: _authPhone),
-                          label: _isTelugu ? "మీ వాట్సాప్ నంబర్" : "Your WhatsApp Number",
+                          label: _isTelugu
+                              ? "మీ వాట్సాప్ నంబర్"
+                              : "Your WhatsApp Number",
                           enabled: false,
                         ),
                         const SizedBox(height: 12),
@@ -278,21 +340,36 @@ class _StudentProfileScreenState extends State<StudentProfileScreen> {
                       NaaguruTextField(
                         controller: _nameController,
                         label: _isTelugu ? "మీ పేరు *" : "Your name *",
-                        hintText: _isTelugu ? "మీ పేరు నమోదు చేయండి" : "Enter your name",
+                        hintText: _isTelugu
+                            ? "మీ పేరు నమోదు చేయండి"
+                            : "Enter your name",
                         onChanged: (_) => setState(() {}),
-                        validator: (v) => v == null || v.trim().isEmpty ? (_isTelugu ? "దయచేసి మీ పేరును నమోదు చేయండి." : "Please enter your name.") : null,
+                        validator: (v) => v == null || v.trim().isEmpty
+                            ? (_isTelugu
+                                  ? "దయచేసి మీ పేరును నమోదు చేయండి."
+                                  : "Please enter your name.")
+                            : null,
                       ),
                       const SizedBox(height: 12),
 
                       NaaguruDropdownField<String>(
                         label: _isTelugu ? "లింగం *" : "Gender *",
-                        hintText: _isTelugu ? "లింగం ఎంచుకోండి" : "Select gender",
+                        hintText: _isTelugu
+                            ? "లింగం ఎంచుకోండి"
+                            : "Select gender",
                         value: _selectedGender,
                         items: [
-                          DropdownMenuItem(value: 'MALE', child: Text(_isTelugu ? "పురుషుడు" : "Male")),
-                          DropdownMenuItem(value: 'FEMALE', child: Text(_isTelugu ? "స్త్రీ" : "Female")),
+                          DropdownMenuItem(
+                            value: 'MALE',
+                            child: Text(_isTelugu ? "పురుషుడు" : "Male"),
+                          ),
+                          DropdownMenuItem(
+                            value: 'FEMALE',
+                            child: Text(_isTelugu ? "స్త్రీ" : "Female"),
+                          ),
                         ],
-                        onChanged: (val) => setState(() => _selectedGender = val),
+                        onChanged: (val) =>
+                            setState(() => _selectedGender = val),
                       ),
                       const SizedBox(height: 12),
 
@@ -303,9 +380,13 @@ class _StudentProfileScreenState extends State<StudentProfileScreen> {
                               label: _isTelugu ? "తరగతి *" : "Class *",
                               value: _selectedClass,
                               items: [
-                                DropdownMenuItem(value: '10TH_PURSUING', child: Text(_isTelugu ? "10వ తరగతి" : "10th")),
+                                DropdownMenuItem(
+                                  value: '10TH_PURSUING',
+                                  child: Text(_isTelugu ? "10వ తరగతి" : "10th"),
+                                ),
                               ],
-                              onChanged: (val) => setState(() => _selectedClass = val),
+                              onChanged: (val) =>
+                                  setState(() => _selectedClass = val),
                             ),
                           ),
                           const SizedBox(width: 12),
@@ -314,11 +395,29 @@ class _StudentProfileScreenState extends State<StudentProfileScreen> {
                               label: _isTelugu ? "బోర్డు *" : "Board *",
                               value: _selectedBoard,
                               items: [
-                                DropdownMenuItem(value: 'AP Board', child: Text(_isTelugu ? "AP బోర్డు" : "AP Board")),
-                                DropdownMenuItem(value: 'Telangana Board', child: Text(_isTelugu ? "తెలంగాణ బోర్డు" : "Telangana Board")),
-                                DropdownMenuItem(value: 'CBSE / Other', child: Text(_isTelugu ? "ఇతర" : "CBSE / Other")),
+                                DropdownMenuItem(
+                                  value: 'AP Board',
+                                  child: Text(
+                                    _isTelugu ? "AP బోర్డు" : "AP Board",
+                                  ),
+                                ),
+                                DropdownMenuItem(
+                                  value: 'Telangana Board',
+                                  child: Text(
+                                    _isTelugu
+                                        ? "తెలంగాణ బోర్డు"
+                                        : "Telangana Board",
+                                  ),
+                                ),
+                                DropdownMenuItem(
+                                  value: 'CBSE / Other',
+                                  child: Text(
+                                    _isTelugu ? "ఇతర" : "CBSE / Other",
+                                  ),
+                                ),
                               ],
-                              onChanged: (val) => setState(() => _selectedBoard = val),
+                              onChanged: (val) =>
+                                  setState(() => _selectedBoard = val),
                             ),
                           ),
                         ],
@@ -327,55 +426,116 @@ class _StudentProfileScreenState extends State<StudentProfileScreen> {
 
                       NaaguruDropdownField<String>(
                         label: _isTelugu ? "జిల్లా *" : "District *",
-                        hintText: _isTelugu ? "మీ జిల్లాను ఎంచుకోండి" : "Select your district",
+                        hintText: _isTelugu
+                            ? "మీ జిల్లాను ఎంచుకోండి"
+                            : "Select your district",
                         value: _selectedDistrict,
                         items: const [
-                          DropdownMenuItem(value: 'Visakhapatnam', child: Text("Visakhapatnam")),
-                          DropdownMenuItem(value: 'Vijayawada', child: Text("Vijayawada (NTR)")),
-                          DropdownMenuItem(value: 'Guntur', child: Text("Guntur")),
-                          DropdownMenuItem(value: 'Tirupati', child: Text("Tirupati")),
-                          DropdownMenuItem(value: 'Hyderabad', child: Text("Hyderabad")),
-                          DropdownMenuItem(value: 'Warangal', child: Text("Warangal")),
-                          DropdownMenuItem(value: 'Kurnool', child: Text("Kurnool")),
-                          DropdownMenuItem(value: 'Other', child: Text("Other District")),
+                          DropdownMenuItem(
+                            value: 'Visakhapatnam',
+                            child: Text("Visakhapatnam"),
+                          ),
+                          DropdownMenuItem(
+                            value: 'Vijayawada',
+                            child: Text("Vijayawada (NTR)"),
+                          ),
+                          DropdownMenuItem(
+                            value: 'Guntur',
+                            child: Text("Guntur"),
+                          ),
+                          DropdownMenuItem(
+                            value: 'Tirupati',
+                            child: Text("Tirupati"),
+                          ),
+                          DropdownMenuItem(
+                            value: 'Hyderabad',
+                            child: Text("Hyderabad"),
+                          ),
+                          DropdownMenuItem(
+                            value: 'Warangal',
+                            child: Text("Warangal"),
+                          ),
+                          DropdownMenuItem(
+                            value: 'Kurnool',
+                            child: Text("Kurnool"),
+                          ),
+                          DropdownMenuItem(
+                            value: 'Other',
+                            child: Text("Other District"),
+                          ),
                         ],
-                        onChanged: (val) => setState(() => _selectedDistrict = val),
+                        onChanged: (val) =>
+                            setState(() => _selectedDistrict = val),
                       ),
                       const SizedBox(height: 24),
 
                       // Section: Guardian Details
                       Row(
                         children: [
-                          Container(width: 8, height: 8, decoration: const BoxDecoration(color: NaaguruTheme.accent, shape: BoxShape.circle)),
+                          Container(
+                            width: 8,
+                            height: 8,
+                            decoration: const BoxDecoration(
+                              color: NaaguruTheme.accent,
+                              shape: BoxShape.circle,
+                            ),
+                          ),
                           const SizedBox(width: 8),
                           Text(
-                            _isTelugu ? "తల్లిదండ్రులు / గార్డియన్ వివరాలు" : "PARENT / GUARDIAN DETAILS",
-                            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: NaaguruTheme.muted, letterSpacing: 0.5),
+                            _isTelugu
+                                ? "తల్లిదండ్రులు / గార్డియన్ వివరాలు"
+                                : "PARENT / GUARDIAN DETAILS",
+                            style: const TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                              color: NaaguruTheme.muted,
+                              letterSpacing: 0.5,
+                            ),
                           ),
                         ],
                       ),
                       const SizedBox(height: 8),
-                      const Divider(color: NaaguruTheme.muted, thickness: 0.2, height: 1),
+                      const Divider(
+                        color: NaaguruTheme.muted,
+                        thickness: 0.2,
+                        height: 1,
+                      ),
                       const SizedBox(height: 16),
 
                       NaaguruTextField(
                         controller: _guardianNameController,
-                        label: _isTelugu ? "తల్లిదండ్రులు / గార్డియన్ పేరు *" : "Parent / Guardian name *",
-                        hintText: _isTelugu ? "వారి పేరు నమోదు చేయండి" : "Enter their name",
+                        label: _isTelugu
+                            ? "తల్లిదండ్రులు / గార్డియన్ పేరు *"
+                            : "Parent / Guardian name *",
+                        hintText: _isTelugu
+                            ? "వారి పేరు నమోదు చేయండి"
+                            : "Enter their name",
                         onChanged: (_) => setState(() {}),
-                        validator: (v) => v == null || v.trim().isEmpty ? (_isTelugu ? "దయచేసి తల్లిదండ్రులు / గార్డియన్ పేరును నమోదు చేయండి." : "Please enter parent or guardian name.") : null,
+                        validator: (v) => v == null || v.trim().isEmpty
+                            ? (_isTelugu
+                                  ? "దయచేసి తల్లిదండ్రులు / గార్డియన్ పేరును నమోదు చేయండి."
+                                  : "Please enter parent or guardian name.")
+                            : null,
                       ),
                       const SizedBox(height: 12),
 
                       NaaguruTextField(
                         controller: _guardianPhoneController,
-                        label: _isTelugu ? "తల్లిదండ్రులు / గార్డియన్ మొబైల్ *" : "Parent / Guardian mobile *",
-                        hintText: _isTelugu ? "మొబైల్ నంబర్ నమోదు చేయండి" : "Enter mobile number",
+                        label: _isTelugu
+                            ? "తల్లిదండ్రులు / గార్డియన్ మొబైల్ *"
+                            : "Parent / Guardian mobile *",
+                        hintText: _isTelugu
+                            ? "మొబైల్ నంబర్ నమోదు చేయండి"
+                            : "Enter mobile number",
                         keyboardType: TextInputType.phone,
                         onChanged: (_) => setState(() {}),
                         validator: (v) {
-                          if (v == null || v.trim().length != 10 || !RegExp(r'^\d{10}$').hasMatch(v.trim())) {
-                            return _isTelugu ? "సరైన 10 అంకెల మొబైల్ నంబర్ నమోదు చేయండి." : "Please enter a valid 10-digit mobile number.";
+                          if (v == null ||
+                              v.trim().length != 10 ||
+                              !RegExp(r'^\d{10}$').hasMatch(v.trim())) {
+                            return _isTelugu
+                                ? "సరైన 10 అంకెల మొబైల్ నంబర్ నమోదు చేయండి."
+                                : "Please enter a valid 10-digit mobile number.";
                           }
                           return null;
                         },
@@ -392,14 +552,21 @@ class _StudentProfileScreenState extends State<StudentProfileScreen> {
                         ),
                         child: Row(
                           children: [
-                            const Icon(Icons.bolt, color: NaaguruTheme.primary, size: 20),
+                            const Icon(
+                              Icons.bolt,
+                              color: NaaguruTheme.primary,
+                              size: 20,
+                            ),
                             const SizedBox(width: 8),
                             Expanded(
                               child: Text(
-                                _isTelugu 
-                                  ? "కేవలం 1 నిమిషం లోపు పూర్తవుతుంది • వెంటనే అసెస్‌మెంట్ ప్రారంభమవుతుంది." 
-                                  : "Takes under 1 minute • Assessment starts immediately after.",
-                                style: const TextStyle(fontSize: 12, color: NaaguruTheme.primaryDark),
+                                _isTelugu
+                                    ? "కేవలం 1 నిమిషం లోపు పూర్తవుతుంది • వెంటనే అసెస్‌మెంట్ ప్రారంభమవుతుంది."
+                                    : "Takes under 1 minute • Assessment starts immediately after.",
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                  color: NaaguruTheme.primaryDark,
+                                ),
                               ),
                             ),
                           ],
@@ -412,15 +579,23 @@ class _StudentProfileScreenState extends State<StudentProfileScreen> {
                         children: [
                           const Padding(
                             padding: EdgeInsets.only(top: 2),
-                            child: Icon(Icons.shield_outlined, color: NaaguruTheme.primary, size: 16),
+                            child: Icon(
+                              Icons.shield_outlined,
+                              color: NaaguruTheme.primary,
+                              size: 16,
+                            ),
                           ),
                           const SizedBox(width: 8),
                           Expanded(
                             child: Text(
                               _isTelugu
-                                ? "మీ ప్రయాణాన్ని మీకు అనుగుణంగా రూపొందించడానికి మరియు మీకు సరైన అవకాశాలతో కనెక్ట్ చేయడంలో సహాయపడటానికి మీ సమాచారాన్ని ఉపయోగిస్తాము."
-                                : "Your information is used to personalize your journey and help connect you with relevant opportunities.",
-                              style: const TextStyle(fontSize: 11, color: NaaguruTheme.muted, height: 1.4),
+                                  ? "మీ ప్రయాణాన్ని మీకు అనుగుణంగా రూపొందించడానికి మరియు మీకు సరైన అవకాశాలతో కనెక్ట్ చేయడంలో సహాయపడటానికి మీ సమాచారాన్ని ఉపయోగిస్తాము."
+                                  : "Your information is used to personalize your journey and help connect you with relevant opportunities.",
+                              style: const TextStyle(
+                                fontSize: 11,
+                                color: NaaguruTheme.muted,
+                                height: 1.4,
+                              ),
                             ),
                           ),
                         ],
@@ -457,7 +632,9 @@ class _StudentProfileScreenState extends State<StudentProfileScreen> {
               ),
               const SizedBox(height: 8),
               Text(
-                _isTelugu ? "డాక్యుమెంట్లు లేదా పాస్‌వర్డ్ ఏమీ అవసరం లేదు" : "No documents or password required for V1",
+                _isTelugu
+                    ? "డాక్యుమెంట్లు లేదా పాస్‌వర్డ్ ఏమీ అవసరం లేదు"
+                    : "No documents or password required for V1",
                 style: const TextStyle(fontSize: 11, color: NaaguruTheme.muted),
               ),
             ],

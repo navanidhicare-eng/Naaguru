@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:naaguru_student/core/api_client.dart';
@@ -47,16 +46,16 @@ void main() {
       mockClient.mockLeads = [];
       // Use a delayed future to ensure the FutureBuilder is in loading state
       mockClient.mockError = null; // Ensure we don't throw
-      
+
       await tester.pumpWidget(createWidgetUnderTest());
-      
+
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
       await tester.pumpAndSettle();
     });
 
     testWidgets('shows empty state when no leads', (tester) async {
       mockClient.mockLeads = [];
-      
+
       await tester.pumpWidget(createWidgetUnderTest());
       await tester.pumpAndSettle();
 
@@ -66,7 +65,7 @@ void main() {
 
     testWidgets('shows error state and retry works', (tester) async {
       mockClient.mockError = Exception('Failed');
-      
+
       await tester.pumpWidget(createWidgetUnderTest());
       await tester.pumpAndSettle();
 
@@ -77,7 +76,7 @@ void main() {
       // Fix error and retry
       mockClient.mockError = null;
       mockClient.mockLeads = [];
-      
+
       await tester.tap(find.text('Retry'));
       await tester.pumpAndSettle();
 
@@ -105,10 +104,10 @@ void main() {
           status: 'CONTACTED',
           createdAt: '2026-09-19T11:00:00Z',
           collegeName: null, // Null test
-          branchName: null,  // Null test
-        )
+          branchName: null, // Null test
+        ),
       ];
-      
+
       await tester.pumpWidget(createWidgetUnderTest());
       await tester.pumpAndSettle();
 
@@ -122,7 +121,7 @@ void main() {
       expect(find.text('Unknown College'), findsOneWidget);
       expect(find.text('Unknown Branch'), findsOneWidget);
       expect(find.text('College Contacted'), findsOneWidget);
-      
+
       // Ensure raw UUIDs are not exposed
       expect(find.text('c2'), findsNothing);
       expect(find.text('b2'), findsNothing);

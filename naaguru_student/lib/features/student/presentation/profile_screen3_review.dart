@@ -61,8 +61,10 @@ class _ProfileScreen3ReviewState extends State<ProfileScreen3Review> {
 
     if (!widget.wizardState.screen1Valid || !widget.wizardState.screen2Valid) {
       setState(() {
-        _errorMsg = _s('Please complete all previous steps first.',
-            'దయచేసి ముందుగా మునుపటి అన్ని దశలను పూర్తి చేయండి.');
+        _errorMsg = _s(
+          'Please complete all previous steps first.',
+          'దయచేసి ముందుగా మునుపటి అన్ని దశలను పూర్తి చేయండి.',
+        );
       });
       return;
     }
@@ -74,7 +76,7 @@ class _ProfileScreen3ReviewState extends State<ProfileScreen3Review> {
 
     try {
       final existingProfile = await widget.studentApiClient.getProfile();
-      
+
       final fullName = widget.wizardState.fullName;
       final gender = widget.wizardState.gender!;
       final schoolId = widget.wizardState.selectedSchool!.id;
@@ -104,7 +106,7 @@ class _ProfileScreen3ReviewState extends State<ProfileScreen3Review> {
       }
 
       widget.authService.markProfileComplete();
-      
+
       if (mounted) {
         Navigator.of(context).pushReplacementNamed('/home');
       }
@@ -114,7 +116,7 @@ class _ProfileScreen3ReviewState extends State<ProfileScreen3Review> {
           _isSubmitting = false;
           _errorMsg = _s(
             "Couldn't save your profile. Please try again.",
-            "మీ ప్రొఫైల్‌ను సేవ్ చేయడం సాధ్యం కాలేదు. దయచేసి మళ్లీ ప్రయత్నించండి."
+            "మీ ప్రొఫైల్‌ను సేవ్ చేయడం సాధ్యం కాలేదు. దయచేసి మళ్లీ ప్రయత్నించండి.",
           );
         });
       }
@@ -165,12 +167,7 @@ class _ProfileScreen3ReviewState extends State<ProfileScreen3Review> {
               ],
             ),
           ),
-          Positioned(
-            left: 0,
-            right: 0,
-            bottom: 0,
-            child: _buildBottomCta(),
-          ),
+          Positioned(left: 0, right: 0, bottom: 0, child: _buildBottomCta()),
         ],
       ),
     );
@@ -196,14 +193,20 @@ class _ProfileScreen3ReviewState extends State<ProfileScreen3Review> {
                       height: 44,
                       color: Colors.transparent,
                       child: const Center(
-                        child: Icon(Icons.arrow_back,
-                            color: NaaguruTheme.text, size: 22),
+                        child: Icon(
+                          Icons.arrow_back,
+                          color: NaaguruTheme.text,
+                          size: 22,
+                        ),
                       ),
                     ),
                   ),
                 ),
-                const Icon(Icons.school_rounded,
-                    color: NaaguruTheme.primary, size: 18),
+                const Icon(
+                  Icons.school_rounded,
+                  color: NaaguruTheme.primary,
+                  size: 18,
+                ),
                 const SizedBox(width: 6),
                 Flexible(
                   child: Text(
@@ -231,9 +234,15 @@ class _ProfileScreen3ReviewState extends State<ProfileScreen3Review> {
                 child: Row(
                   children: [
                     _buildLangButton(
-                        'EN', !_isTelugu, () => _setLanguage(false)),
+                      'EN',
+                      !_isTelugu,
+                      () => _setLanguage(false),
+                    ),
                     _buildLangButton(
-                        'తెలుగు', _isTelugu, () => _setLanguage(true)),
+                      'తెలుగు',
+                      _isTelugu,
+                      () => _setLanguage(true),
+                    ),
                   ],
                 ),
               ),
@@ -268,7 +277,7 @@ class _ProfileScreen3ReviewState extends State<ProfileScreen3Review> {
                     color: Colors.black.withAlpha(10),
                     blurRadius: 4,
                     offset: const Offset(0, 1),
-                  )
+                  ),
                 ]
               : null,
         ),
@@ -361,14 +370,13 @@ class _ProfileScreen3ReviewState extends State<ProfileScreen3Review> {
             color: Colors.black.withAlpha(5),
             blurRadius: 4,
             offset: const Offset(0, 1),
-          )
+          ),
         ],
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(Icons.check_circle,
-              color: NaaguruTheme.primary, size: 16),
+          const Icon(Icons.check_circle, color: NaaguruTheme.primary, size: 16),
           const SizedBox(width: 6),
           Text(
             _s('Profile Ready', 'ప్రొఫైల్ సిద్ధం'),
@@ -398,8 +406,10 @@ class _ProfileScreen3ReviewState extends State<ProfileScreen3Review> {
         ),
         const SizedBox(height: 4),
         Text(
-          _s('Check your details before you continue.',
-              'కొనసాగడానికి ముందు మీ వివరాలను ఒకసారి పరిశీలించండి.'),
+          _s(
+            'Check your details before you continue.',
+            'కొనసాగడానికి ముందు మీ వివరాలను ఒకసారి పరిశీలించండి.',
+          ),
           style: const TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.w400,
@@ -419,9 +429,10 @@ class _ProfileScreen3ReviewState extends State<ProfileScreen3Review> {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-              color: Colors.black.withAlpha(10),
-              blurRadius: 6,
-              offset: const Offset(0, 2))
+            color: Colors.black.withAlpha(10),
+            blurRadius: 6,
+            offset: const Offset(0, 2),
+          ),
         ],
       ),
       child: Column(
@@ -440,8 +451,11 @@ class _ProfileScreen3ReviewState extends State<ProfileScreen3Review> {
                         color: _C.surfaceContainerLow,
                         borderRadius: BorderRadius.circular(8),
                       ),
-                      child: const Icon(Icons.location_on,
-                          color: NaaguruTheme.primary, size: 18),
+                      child: const Icon(
+                        Icons.location_on,
+                        color: NaaguruTheme.primary,
+                        size: 18,
+                      ),
                     ),
                     const SizedBox(width: 8),
                     Expanded(
@@ -463,17 +477,27 @@ class _ProfileScreen3ReviewState extends State<ProfileScreen3Review> {
           ),
           const SizedBox(height: 12),
           _buildSummaryRow(
-              _s('State', 'రాష్ట్రం'), wiz.selectedState?.displayName(_isTelugu)),
-          _buildSummaryRow(_s('District', 'జిల్లా'),
-              wiz.selectedDistrict?.displayName(_isTelugu)),
+            _s('State', 'రాష్ట్రం'),
+            wiz.selectedState?.displayName(_isTelugu),
+          ),
           _buildSummaryRow(
-              _s('Mandal', 'మండలం'), wiz.selectedMandal?.displayName(_isTelugu)),
-          _buildSummaryRow(_s('Village / City', 'గ్రామం / నగరం'),
-              wiz.selectedLocality?.displayName(_isTelugu)),
+            _s('District', 'జిల్లా'),
+            wiz.selectedDistrict?.displayName(_isTelugu),
+          ),
+          _buildSummaryRow(
+            _s('Mandal', 'మండలం'),
+            wiz.selectedMandal?.displayName(_isTelugu),
+          ),
+          _buildSummaryRow(
+            _s('Village / City', 'గ్రామం / నగరం'),
+            wiz.selectedLocality?.displayName(_isTelugu),
+          ),
           _buildSummaryRow(_s('Pincode', 'పిన్కోడ్'), wiz.pincode),
           if (wiz.landmark.isNotEmpty)
-            _buildSummaryRow(_s('Landmark', 'గుర్తింపు ప్రదేశం (Landmark)'),
-                wiz.landmark),
+            _buildSummaryRow(
+              _s('Landmark', 'గుర్తింపు ప్రదేశం (Landmark)'),
+              wiz.landmark,
+            ),
           const SizedBox(height: 12),
           Container(
             padding: const EdgeInsets.all(8),
@@ -486,15 +510,19 @@ class _ProfileScreen3ReviewState extends State<ProfileScreen3Review> {
               children: [
                 const Padding(
                   padding: EdgeInsets.only(top: 2),
-                  child: Icon(Icons.verified,
-                      color: NaaguruTheme.primary, size: 18),
+                  child: Icon(
+                    Icons.verified,
+                    color: NaaguruTheme.primary,
+                    size: 18,
+                  ),
                 ),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
                     _s(
-                        'Your location helps Naaguru show opportunities relevant to your area.',
-                        'మీ నివాస ప్రాంతం ఆధారంగా నాగురు మీకు తగిన అవకాశాలను చూపుతుంది.'),
+                      'Your location helps Naaguru show opportunities relevant to your area.',
+                      'మీ నివాస ప్రాంతం ఆధారంగా నాగురు మీకు తగిన అవకాశాలను చూపుతుంది.',
+                    ),
                     style: const TextStyle(
                       fontSize: 12,
                       color: NaaguruTheme.primary,
@@ -504,7 +532,7 @@ class _ProfileScreen3ReviewState extends State<ProfileScreen3Review> {
                 ),
               ],
             ),
-          )
+          ),
         ],
       ),
     );
@@ -519,9 +547,10 @@ class _ProfileScreen3ReviewState extends State<ProfileScreen3Review> {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-              color: Colors.black.withAlpha(10),
-              blurRadius: 6,
-              offset: const Offset(0, 2))
+            color: Colors.black.withAlpha(10),
+            blurRadius: 6,
+            offset: const Offset(0, 2),
+          ),
         ],
       ),
       child: Column(
@@ -540,8 +569,11 @@ class _ProfileScreen3ReviewState extends State<ProfileScreen3Review> {
                         color: _C.surfaceContainerLow,
                         borderRadius: BorderRadius.circular(8),
                       ),
-                      child: const Icon(Icons.school,
-                          color: NaaguruTheme.primary, size: 18),
+                      child: const Icon(
+                        Icons.school,
+                        color: NaaguruTheme.primary,
+                        size: 18,
+                      ),
                     ),
                     const SizedBox(width: 8),
                     Expanded(
@@ -563,13 +595,16 @@ class _ProfileScreen3ReviewState extends State<ProfileScreen3Review> {
           ),
           const SizedBox(height: 12),
           _buildSummaryBlock(
-              _s('Student Name', 'విద్యార్థి పేరు'), wiz.fullName),
+            _s('Student Name', 'విద్యార్థి పేరు'),
+            wiz.fullName,
+          ),
           const SizedBox(height: 8),
           _buildSummaryBlock(
-              _s('Gender', 'లింగం'),
-              wiz.gender == 'MALE'
-                  ? _s('Male', 'పురుషుడు')
-                  : (wiz.gender == 'FEMALE' ? _s('Female', 'స్త్రీ') : '')),
+            _s('Gender', 'లింగం'),
+            wiz.gender == 'MALE'
+                ? _s('Male', 'పురుషుడు')
+                : (wiz.gender == 'FEMALE' ? _s('Female', 'స్త్రీ') : ''),
+          ),
           const SizedBox(height: 8),
           _buildSummaryBlock(
             _s('School Name', 'పాఠశాల పేరు'),
@@ -596,15 +631,19 @@ class _ProfileScreen3ReviewState extends State<ProfileScreen3Review> {
               children: [
                 const Padding(
                   padding: EdgeInsets.only(top: 2),
-                  child: Icon(Icons.verified_user,
-                      color: NaaguruTheme.primary, size: 18),
+                  child: Icon(
+                    Icons.verified_user,
+                    color: NaaguruTheme.primary,
+                    size: 18,
+                  ),
                 ),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
                     _s(
-                        'Your school selection is saved to your Naaguru profile.',
-                        'మీ పాఠశాల ఎంపిక నాగురు ప్రొఫైల్‌లో సేవ్ చేయబడింది.'),
+                      'Your school selection is saved to your Naaguru profile.',
+                      'మీ పాఠశాల ఎంపిక నాగురు ప్రొఫైల్‌లో సేవ్ చేయబడింది.',
+                    ),
                     style: const TextStyle(
                       fontSize: 12,
                       color: NaaguruTheme.primary,
@@ -614,7 +653,7 @@ class _ProfileScreen3ReviewState extends State<ProfileScreen3Review> {
                 ),
               ],
             ),
-          )
+          ),
         ],
       ),
     );
@@ -631,10 +670,7 @@ class _ProfileScreen3ReviewState extends State<ProfileScreen3Review> {
             flex: 2,
             child: Text(
               label,
-              style: const TextStyle(
-                fontSize: 12,
-                color: NaaguruTheme.muted,
-              ),
+              style: const TextStyle(fontSize: 12, color: NaaguruTheme.muted),
             ),
           ),
           const SizedBox(width: 16),
@@ -661,10 +697,7 @@ class _ProfileScreen3ReviewState extends State<ProfileScreen3Review> {
       children: [
         Text(
           label,
-          style: const TextStyle(
-            fontSize: 12,
-            color: NaaguruTheme.muted,
-          ),
+          style: const TextStyle(fontSize: 12, color: NaaguruTheme.muted),
         ),
         const SizedBox(height: 4),
         Text(
@@ -718,9 +751,10 @@ class _ProfileScreen3ReviewState extends State<ProfileScreen3Review> {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-              color: Colors.black.withAlpha(5),
-              blurRadius: 4,
-              offset: const Offset(0, 1))
+            color: Colors.black.withAlpha(5),
+            blurRadius: 4,
+            offset: const Offset(0, 1),
+          ),
         ],
       ),
       child: Column(
@@ -728,8 +762,11 @@ class _ProfileScreen3ReviewState extends State<ProfileScreen3Review> {
         children: [
           Row(
             children: [
-              const Icon(Icons.auto_awesome,
-                  color: NaaguruTheme.accent, size: 20),
+              const Icon(
+                Icons.auto_awesome,
+                color: NaaguruTheme.accent,
+                size: 20,
+              ),
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
@@ -746,8 +783,9 @@ class _ProfileScreen3ReviewState extends State<ProfileScreen3Review> {
           const SizedBox(height: 8),
           Text(
             _s(
-                "Next, you can explore Naaguru's career guidance and college discovery features.",
-                "తదుపరి, మీరు నాగురు కెరీర్ గైడెన్స్ మరియు కాలేజ్ సెర్చ్ ఫీచర్లను అన్వేషించవచ్చు."),
+              "Next, you can explore Naaguru's career guidance and college discovery features.",
+              "తదుపరి, మీరు నాగురు కెరీర్ గైడెన్స్ మరియు కాలేజ్ సెర్చ్ ఫీచర్లను అన్వేషించవచ్చు.",
+            ),
             style: const TextStyle(
               fontSize: 14,
               color: NaaguruTheme.muted,
@@ -769,16 +807,12 @@ class _ProfileScreen3ReviewState extends State<ProfileScreen3Review> {
       ),
       child: Row(
         children: [
-          const Icon(Icons.error_outline,
-              color: NaaguruTheme.error, size: 20),
+          const Icon(Icons.error_outline, color: NaaguruTheme.error, size: 20),
           const SizedBox(width: 8),
           Expanded(
             child: Text(
               _errorMsg!,
-              style: const TextStyle(
-                fontSize: 13,
-                color: NaaguruTheme.error,
-              ),
+              style: const TextStyle(fontSize: 13, color: NaaguruTheme.error),
             ),
           ),
         ],
@@ -794,9 +828,10 @@ class _ProfileScreen3ReviewState extends State<ProfileScreen3Review> {
         color: NaaguruTheme.surface.withAlpha(242),
         boxShadow: [
           BoxShadow(
-              color: NaaguruTheme.primary.withAlpha(15),
-              blurRadius: 16,
-              offset: const Offset(0, -4))
+            color: NaaguruTheme.primary.withAlpha(15),
+            blurRadius: 16,
+            offset: const Offset(0, -4),
+          ),
         ],
       ),
       child: Column(
@@ -813,7 +848,8 @@ class _ProfileScreen3ReviewState extends State<ProfileScreen3Review> {
                 foregroundColor: Colors.white,
                 disabledForegroundColor: NaaguruTheme.muted,
                 shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(14)),
+                  borderRadius: BorderRadius.circular(14),
+                ),
                 elevation: 0,
               ),
               child: _isSubmitting

@@ -12,18 +12,26 @@ void main() {
       print('REQUEST URL: ${request.url}');
       print('QUERY PARAMS: ${request.url.queryParameters}');
       if (request.url.path.contains('/catalog/locations')) {
-        return http.Response(jsonEncode({
-          'data': [
-            {'id': 'state-1', 'nameEn': 'Andhra Pradesh', 'nameTe': 'ఆంధ్రప్రదేశ్', 'type': 'STATE'}
-          ]
-        }), 200);
+        return http.Response(
+          jsonEncode({
+            'data': [
+              {
+                'id': 'state-1',
+                'nameEn': 'Andhra Pradesh',
+                'nameTe': 'ఆంధ్రప్రదేశ్',
+                'type': 'STATE',
+              },
+            ],
+          }),
+          200,
+        );
       }
       return http.Response('ok', 200);
     });
-    
+
     final apiClient = ApiClient(httpClient: mockHttpClient);
     final catalogApiClient = CatalogApiClient(apiClient: apiClient);
-    
+
     try {
       final locs = await catalogApiClient.getLocations(type: 'STATE');
       print('LOCS COUNT: ${locs.length}');

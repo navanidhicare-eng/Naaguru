@@ -47,7 +47,8 @@ class StudentApiClient {
       'educationStage': educationStage,
     };
     if (board != null && board.isNotEmpty) body['board'] = board;
-    if (residenceLocationId != null && residenceLocationId.isNotEmpty) body['residenceLocationId'] = residenceLocationId;
+    if (residenceLocationId != null && residenceLocationId.isNotEmpty)
+      body['residenceLocationId'] = residenceLocationId;
     if (schoolId != null && schoolId.isNotEmpty) body['schoolId'] = schoolId;
     if (pincode != null && pincode.isNotEmpty) body['pincode'] = pincode;
     if (landmark != null && landmark.isNotEmpty) body['landmark'] = landmark;
@@ -79,7 +80,8 @@ class StudentApiClient {
     if (gender != null) body['gender'] = gender;
     if (educationStage != null) body['educationStage'] = educationStage;
     if (board != null) body['board'] = board;
-    if (residenceLocationId != null) body['residenceLocationId'] = residenceLocationId;
+    if (residenceLocationId != null)
+      body['residenceLocationId'] = residenceLocationId;
     if (schoolId != null) body['schoolId'] = schoolId;
     if (pincode != null) body['pincode'] = pincode;
     if (landmark != null) body['landmark'] = landmark;
@@ -145,7 +147,7 @@ class StudentApiClient {
       body['intentId'] = intentId;
     }
     final response = await _apiClient.post('/students/me/leads', body: body);
-    
+
     // In case the backend wraps single objects in {"data": {...}}
     final dynamic data = response['data'] ?? response;
     return StudentLeadDto.fromJson(data as Map<String, dynamic>);

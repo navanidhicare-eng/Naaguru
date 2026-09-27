@@ -36,79 +36,91 @@ void main() {
     fakeStudentApi = FakeStudentApiClient();
   });
 
-  testWidgets('CollegeLocationPreferencesScreen renders hierarchical location fields, hostel, and budget', (tester) async {
-    tester.view.physicalSize = const Size(800, 1600);
-    tester.view.devicePixelRatio = 1.0;
-    addTearDown(tester.view.resetPhysicalSize);
+  testWidgets(
+    'CollegeLocationPreferencesScreen renders hierarchical location fields, hostel, and budget',
+    (tester) async {
+      tester.view.physicalSize = const Size(800, 1600);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
 
+      final wizardState = CollegeDiscoveryWizardState();
+      wizardState.selectPathway(code: 'INTERMEDIATE', nameEn: 'Intermediate');
+      wizardState.selectProgram(code: 'MPC', nameEn: 'MPC');
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: CollegeLocationPreferencesScreen(
+            collegeApiClient: fakeCollegeApi,
+            catalogApiClient: fakeCatalogApi,
+            studentApiClient: fakeStudentApi,
+            wizardState: wizardState,
+            pathwayCode: 'INTERMEDIATE',
+            programCode: 'MPC',
+            isTelugu: false,
+            onLanguageChanged: (val) {},
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      // Section 1: Hierarchical Location Dropdowns / Pickers
+      expect(find.text('Preferred study location'), findsOneWidget);
+      expect(find.text('PREFERRED STATE'), findsOneWidget);
+      expect(find.text('PREFERRED DISTRICT'), findsOneWidget);
+      expect(find.text('PREFERRED MANDAL'), findsOneWidget);
+      expect(find.text('PREFERRED VILLAGE / CITY'), findsOneWidget);
+
+      // Section 2: Hostel options
+      expect(find.text('Do you need hostel accommodation?'), findsOneWidget);
+      expect(find.text('Yes'), findsOneWidget);
+      expect(find.text('No'), findsOneWidget);
+      expect(find.text('Either is fine'), findsOneWidget);
+
+      // Section 3: Budget options
+      expect(
+        find.text("What's your approximate yearly tuition budget?"),
+        findsOneWidget,
+      );
+      expect(find.text('< ₹50,000'), findsOneWidget);
+      expect(find.text('Up to ₹1,00,000'), findsOneWidget);
+      expect(find.text('₹1,00,000+'), findsOneWidget);
+      expect(find.text('Not sure yet'), findsOneWidget);
+
+      // Button: Review Preferences
+      expect(find.text('Continue to Review →'), findsOneWidget);
+
+      // Interacting with Hostel and Budget
+      await tester.tap(find.text('Yes'));
+      await tester.pumpAndSettle();
+      expect(wizardState.hostel, 'YES');
+
+      await tester.tap(find.text('Up to ₹1,00,000'));
+      await tester.pumpAndSettle();
+      expect(wizardState.budget, 'UP_TO_1L');
+    },
+  );
+
+  testWidgets('CollegeLocationPreferencesScreen renders in Telugu', (
+    tester,
+  ) async {
     final wizardState = CollegeDiscoveryWizardState();
     wizardState.selectPathway(code: 'INTERMEDIATE', nameEn: 'Intermediate');
     wizardState.selectProgram(code: 'MPC', nameEn: 'MPC');
 
-    await tester.pumpWidget(MaterialApp(
-      home: CollegeLocationPreferencesScreen(
-        collegeApiClient: fakeCollegeApi,
-        catalogApiClient: fakeCatalogApi,
-        studentApiClient: fakeStudentApi,
-        wizardState: wizardState,
-        pathwayCode: 'INTERMEDIATE',
-        programCode: 'MPC',
-        isTelugu: false,
-        onLanguageChanged: (val) {},
+    await tester.pumpWidget(
+      MaterialApp(
+        home: CollegeLocationPreferencesScreen(
+          collegeApiClient: fakeCollegeApi,
+          catalogApiClient: fakeCatalogApi,
+          studentApiClient: fakeStudentApi,
+          wizardState: wizardState,
+          pathwayCode: 'INTERMEDIATE',
+          programCode: 'MPC',
+          isTelugu: true,
+          onLanguageChanged: (val) {},
+        ),
       ),
-    ));
-    await tester.pumpAndSettle();
-
-    // Section 1: Hierarchical Location Dropdowns / Pickers
-    expect(find.text('Preferred study location'), findsOneWidget);
-    expect(find.text('PREFERRED STATE'), findsOneWidget);
-    expect(find.text('PREFERRED DISTRICT'), findsOneWidget);
-    expect(find.text('PREFERRED MANDAL'), findsOneWidget);
-    expect(find.text('PREFERRED VILLAGE / CITY'), findsOneWidget);
-
-    // Section 2: Hostel options
-    expect(find.text('Do you need hostel accommodation?'), findsOneWidget);
-    expect(find.text('Yes'), findsOneWidget);
-    expect(find.text('No'), findsOneWidget);
-    expect(find.text('Either is fine'), findsOneWidget);
-
-    // Section 3: Budget options
-    expect(find.text("What's your approximate yearly tuition budget?"), findsOneWidget);
-    expect(find.text('< ₹50,000'), findsOneWidget);
-    expect(find.text('Up to ₹1,00,000'), findsOneWidget);
-    expect(find.text('₹1,00,000+'), findsOneWidget);
-    expect(find.text('Not sure yet'), findsOneWidget);
-
-    // Button: Review Preferences
-    expect(find.text('Continue to Review →'), findsOneWidget);
-
-    // Interacting with Hostel and Budget
-    await tester.tap(find.text('Yes'));
-    await tester.pumpAndSettle();
-    expect(wizardState.hostel, 'YES');
-
-    await tester.tap(find.text('Up to ₹1,00,000'));
-    await tester.pumpAndSettle();
-    expect(wizardState.budget, 'UP_TO_1L');
-  });
-
-  testWidgets('CollegeLocationPreferencesScreen renders in Telugu', (tester) async {
-    final wizardState = CollegeDiscoveryWizardState();
-    wizardState.selectPathway(code: 'INTERMEDIATE', nameEn: 'Intermediate');
-    wizardState.selectProgram(code: 'MPC', nameEn: 'MPC');
-
-    await tester.pumpWidget(MaterialApp(
-      home: CollegeLocationPreferencesScreen(
-        collegeApiClient: fakeCollegeApi,
-        catalogApiClient: fakeCatalogApi,
-        studentApiClient: fakeStudentApi,
-        wizardState: wizardState,
-        pathwayCode: 'INTERMEDIATE',
-        programCode: 'MPC',
-        isTelugu: true,
-        onLanguageChanged: (val) {},
-      ),
-    ));
+    );
     await tester.pumpAndSettle();
 
     expect(find.text('ప్రాధాన్యతా అధ్యయన ప్రాంతం'), findsOneWidget);

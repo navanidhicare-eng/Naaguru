@@ -251,3 +251,33 @@ export async function getServerAdminAuthContext(): Promise<AdminAuthContext | nu
     return null;
   }
 }
+
+export async function getOptionalAuthContext(request?: Request): Promise<AuthContext | null> {
+  try {
+    let token: string | undefined;
+
+    if (request) {
+      const authHeader = request.headers.get('authorization');
+      if (authHeader?.startsWith('Bearer ')) {
+        token = authHeader.substring(7);
+      }
+    }
+
+    if (!token) {
+      try {
+        const cookieStore = await cookies();
+        token = cookieStore.get('accessToken')?.value;
+      } catch {
+        // cookies() might throw outside request context
+      }
+    }
+
+    if (!token) {
+      return null;
+    }
+
+    return await tokenService.verifyAccessToken<AuthContext>(token);
+  } catch {
+    return null;
+  }
+}

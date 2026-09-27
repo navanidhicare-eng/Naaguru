@@ -8,12 +8,12 @@ import 'package:naaguru_student/features/student/presentation/profile_wizard_sta
 
 class MockAuthService implements AuthService {
   bool markProfileCompleteCalled = false;
-  
+
   @override
   Future<void> markProfileComplete() async {
     markProfileCompleteCalled = true;
   }
-  
+
   @override
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
@@ -88,7 +88,7 @@ class MockNavigatorObserver extends NavigatorObserver {
   void didPop(Route<dynamic> route, Route<dynamic>? previousRoute) {
     popCount++;
   }
-  
+
   @override
   void didReplace({Route<dynamic>? newRoute, Route<dynamic>? oldRoute}) {
     if (newRoute != null) {
@@ -107,19 +107,57 @@ void main() {
   setUp(() {
     wizard = ProfileWizardState();
     wizard.updateFullName('Test Student Name');
-    wizard.selectSchoolState(const CatalogLocation(id: 'sl1', nameEn: 'School State', type: 'STATE'));
-    wizard.selectSchoolDistrict(const CatalogLocation(id: 'sl2', nameEn: 'School District', type: 'DISTRICT'));
-    wizard.selectSchoolMandal(const CatalogLocation(id: 'sl3', nameEn: 'School Mandal', type: 'MANDAL'));
-    wizard.selectSchoolLocality(const CatalogLocation(id: 'sl4', nameEn: 'School Locality', type: 'LOCALITY'));
-    wizard.selectSchool(const CatalogSchool(id: 's1', nameEn: 'Test School Name', nameTe: 'పాఠశాల'));
-    wizard.selectState(const CatalogLocation(id: 'l1', nameEn: 'Test State', type: 'STATE'));
-    wizard.selectDistrict(const CatalogLocation(id: 'l2', nameEn: 'Test District', type: 'DISTRICT'));
-    wizard.selectMandal(const CatalogLocation(id: 'l3', nameEn: 'Test Mandal', type: 'MANDAL'));
-    wizard.selectLocality(const CatalogLocation(id: 'l4', nameEn: 'Test Locality', type: 'LOCALITY'));
+    wizard.selectSchoolState(
+      const CatalogLocation(id: 'sl1', nameEn: 'School State', type: 'STATE'),
+    );
+    wizard.selectSchoolDistrict(
+      const CatalogLocation(
+        id: 'sl2',
+        nameEn: 'School District',
+        type: 'DISTRICT',
+      ),
+    );
+    wizard.selectSchoolMandal(
+      const CatalogLocation(id: 'sl3', nameEn: 'School Mandal', type: 'MANDAL'),
+    );
+    wizard.selectSchoolLocality(
+      const CatalogLocation(
+        id: 'sl4',
+        nameEn: 'School Locality',
+        type: 'LOCALITY',
+      ),
+    );
+    wizard.selectSchool(
+      const CatalogSchool(
+        id: 's1',
+        nameEn: 'Test School Name',
+        nameTe: 'పాఠశాల',
+      ),
+    );
+    wizard.selectState(
+      const CatalogLocation(id: 'l1', nameEn: 'Test State', type: 'STATE'),
+    );
+    wizard.selectDistrict(
+      const CatalogLocation(
+        id: 'l2',
+        nameEn: 'Test District',
+        type: 'DISTRICT',
+      ),
+    );
+    wizard.selectMandal(
+      const CatalogLocation(id: 'l3', nameEn: 'Test Mandal', type: 'MANDAL'),
+    );
+    wizard.selectLocality(
+      const CatalogLocation(
+        id: 'l4',
+        nameEn: 'Test Locality',
+        type: 'LOCALITY',
+      ),
+    );
     wizard.updatePincode('530052');
     wizard.updateGender('MALE');
     wizard.updateLandmark('Test Landmark');
-    
+
     authService = MockAuthService();
     studentApiClient = MockStudentApiClient();
     catalogApiClient = MockCatalogApiClient();
@@ -131,7 +169,9 @@ void main() {
       navigatorObservers: [navObserver],
       onGenerateRoute: (settings) {
         if (settings.name == '/home') {
-          return MaterialPageRoute(builder: (_) => const Scaffold(body: Text('Home Page Loaded')));
+          return MaterialPageRoute(
+            builder: (_) => const Scaffold(body: Text('Home Page Loaded')),
+          );
         }
         return null;
       },
@@ -144,31 +184,40 @@ void main() {
     );
   }
 
-  testWidgets('Actual wizard values appear in the review and no hardcoded data', (tester) async {
-    tester.view.physicalSize = const Size(1200, 3200);
-    tester.view.devicePixelRatio = 1.0;
-    addTearDown(tester.view.resetPhysicalSize);
-    addTearDown(tester.view.resetDevicePixelRatio);
-    await tester.pumpWidget(createWidgetUnderTest());
-    
-    // School & Identity
-    expect(find.text('Test Student Name'), findsOneWidget);
-    expect(find.text('Test School Name'), findsOneWidget);
-    expect(find.text('Kiran Kumar M.'), findsNothing); // Hardcoded data from stitch
-    
-    // Location
-    expect(find.text('Test State'), findsOneWidget);
-    expect(find.text('Test District'), findsOneWidget);
-    expect(find.text('Test Mandal'), findsOneWidget);
-    expect(find.text('Test Locality'), findsOneWidget);
-    expect(find.text('530052'), findsOneWidget);
-    expect(find.text('Test Landmark'), findsOneWidget);
-    expect(find.text('Visakhapatnam'), findsNothing); // Hardcoded data from stitch
-    
-    // Unsupported claims are not displayed
-    expect(find.text('government college quotas accurately'), findsNothing);
-    expect(find.text('Maps local scholarships'), findsNothing);
-  });
+  testWidgets(
+    'Actual wizard values appear in the review and no hardcoded data',
+    (tester) async {
+      tester.view.physicalSize = const Size(1200, 3200);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      await tester.pumpWidget(createWidgetUnderTest());
+
+      // School & Identity
+      expect(find.text('Test Student Name'), findsOneWidget);
+      expect(find.text('Test School Name'), findsOneWidget);
+      expect(
+        find.text('Kiran Kumar M.'),
+        findsNothing,
+      ); // Hardcoded data from stitch
+
+      // Location
+      expect(find.text('Test State'), findsOneWidget);
+      expect(find.text('Test District'), findsOneWidget);
+      expect(find.text('Test Mandal'), findsOneWidget);
+      expect(find.text('Test Locality'), findsOneWidget);
+      expect(find.text('530052'), findsOneWidget);
+      expect(find.text('Test Landmark'), findsOneWidget);
+      expect(
+        find.text('Visakhapatnam'),
+        findsNothing,
+      ); // Hardcoded data from stitch
+
+      // Unsupported claims are not displayed
+      expect(find.text('government college quotas accurately'), findsNothing);
+      expect(find.text('Maps local scholarships'), findsNothing);
+    },
+  );
 
   testWidgets('Edit Location pops once to Screen 2', (tester) async {
     tester.view.physicalSize = const Size(1200, 3200);
@@ -176,15 +225,14 @@ void main() {
     addTearDown(tester.view.resetPhysicalSize);
     addTearDown(tester.view.resetDevicePixelRatio);
     await tester.pumpWidget(createWidgetUnderTest());
-    
+
     // First Edit button is for location. We can find it by its position.
-    final locationEditBtn = find.descendant(
-      of: find.byType(Container),
-      matching: find.text('Edit'),
-    ).first;
+    final locationEditBtn = find
+        .descendant(of: find.byType(Container), matching: find.text('Edit'))
+        .first;
     await tester.tap(locationEditBtn);
     await tester.pumpAndSettle();
-    
+
     expect(navObserver.popCount, 1);
   });
 
@@ -194,16 +242,18 @@ void main() {
     addTearDown(tester.view.resetPhysicalSize);
     addTearDown(tester.view.resetDevicePixelRatio);
     await tester.pumpWidget(createWidgetUnderTest());
-    
-    final schoolEditBtn = find.descendant(
-      of: find.byType(Container),
-      matching: find.text('Edit'),
-    ).last;
+
+    final schoolEditBtn = find
+        .descendant(of: find.byType(Container), matching: find.text('Edit'))
+        .last;
     await tester.ensureVisible(schoolEditBtn);
     await tester.tap(schoolEditBtn);
     await tester.pumpAndSettle();
-    
-    expect(navObserver.popCount, 1); // Test navigator only has one route, so popUntil stops at 1
+
+    expect(
+      navObserver.popCount,
+      1,
+    ); // Test navigator only has one route, so popUntil stops at 1
   });
 
   testWidgets('Invalid profile cannot submit', (tester) async {
@@ -213,30 +263,38 @@ void main() {
     addTearDown(tester.view.resetDevicePixelRatio);
     wizard.updatePincode(''); // Invalid state
     await tester.pumpWidget(createWidgetUnderTest());
-    
+
     await tester.tap(find.text('Complete Profile'));
     await tester.pumpAndSettle();
-    
+
     expect(studentApiClient.getProfileCalled, isFalse);
     expect(authService.markProfileCompleteCalled, isFalse);
-    expect(find.text('Please complete all previous steps first.'), findsOneWidget);
+    expect(
+      find.text('Please complete all previous steps first.'),
+      findsOneWidget,
+    );
   });
 
-  testWidgets('Complete Profile creates new profile if missing', (tester) async {
+  testWidgets('Complete Profile creates new profile if missing', (
+    tester,
+  ) async {
     tester.view.physicalSize = const Size(1200, 3200);
     tester.view.devicePixelRatio = 1.0;
     addTearDown(tester.view.resetPhysicalSize);
     addTearDown(tester.view.resetDevicePixelRatio);
     studentApiClient.profileExists = false;
     await tester.pumpWidget(createWidgetUnderTest());
-    
+
     await tester.tap(find.text('Complete Profile'));
     await tester.pump();
-    
-    expect(find.byType(CircularProgressIndicator), findsOneWidget); // Loading state prevents duplicate
-    
+
+    expect(
+      find.byType(CircularProgressIndicator),
+      findsOneWidget,
+    ); // Loading state prevents duplicate
+
     await tester.pumpAndSettle();
-    
+
     expect(studentApiClient.getProfileCalled, isTrue);
     expect(studentApiClient.createProfileCalled, isTrue);
     expect(studentApiClient.capturedEducationStage, '10TH_PASSED');
@@ -253,10 +311,10 @@ void main() {
     addTearDown(tester.view.resetDevicePixelRatio);
     studentApiClient.profileExists = true;
     await tester.pumpWidget(createWidgetUnderTest());
-    
+
     await tester.tap(find.text('Complete Profile'));
     await tester.pumpAndSettle();
-    
+
     expect(studentApiClient.getProfileCalled, isTrue);
     expect(studentApiClient.createProfileCalled, isFalse);
     expect(studentApiClient.updateProfileCalled, isTrue);
@@ -271,30 +329,33 @@ void main() {
     addTearDown(tester.view.resetDevicePixelRatio);
     studentApiClient.shouldThrow = true;
     await tester.pumpWidget(createWidgetUnderTest());
-    
+
     await tester.tap(find.text('Complete Profile'));
     await tester.pumpAndSettle();
-    
+
     expect(authService.markProfileCompleteCalled, isFalse);
     expect(navObserver.pushedReplacementRoute, isNull); // Didn't navigate
-    expect(find.text("Couldn't save your profile. Please try again."), findsOneWidget);
+    expect(
+      find.text("Couldn't save your profile. Please try again."),
+      findsOneWidget,
+    );
   });
-  
+
   testWidgets('English and Telugu toggles correctly', (tester) async {
     tester.view.physicalSize = const Size(1200, 3200);
     tester.view.devicePixelRatio = 1.0;
     addTearDown(tester.view.resetPhysicalSize);
     addTearDown(tester.view.resetDevicePixelRatio);
     await tester.pumpWidget(createWidgetUnderTest());
-    
+
     // Initially English
     expect(find.text('Where You Live'), findsOneWidget);
     expect(find.text('మీ నివాస ప్రాంతం'), findsNothing);
-    
+
     // Tap Telugu
     await tester.tap(find.text('తెలుగు'));
     await tester.pumpAndSettle();
-    
+
     expect(find.text('Where You Live'), findsNothing);
     expect(find.text('మీ నివాస ప్రాంతం'), findsOneWidget);
   });

@@ -1,7 +1,7 @@
 import { ICollegeRepository, CollegeSearchCriteria } from '../../domain/ICollegeRepository';
-import { PublicCollegeDto, StaffCollegeProfileDto, UpdateCollegeProfileDto, SyncMediaDto, SyncAchievementsDto } from '../dtos';
+import { PublicCollegeDto, PublicCollegeDetailDto, StaffCollegeProfileDto, UpdateCollegeProfileDto, SyncMediaDto, SyncAchievementsDto, CollegeAchievementDto, StaffCollegeAchievementDto, SyncTestimonialsDto, StaffCollegeTestimonialDto, CollegeTestimonialDto, SyncAccreditationsDto, StaffCollegeAccreditationDto, CollegeAccreditationDto } from '../dtos';
 import { AppError } from '../../../../shared/errors';
-import { College, LeadershipProfile, CollegeMedia, WeeklyMenu, CollegeAchievement } from '../../domain/models';
+import { College, LeadershipProfile, CollegeMedia, WeeklyMenu, CollegeAchievement, CollegeTestimonial, CollegeAccreditation } from '../../domain/models';
 import { IStorageService } from '../../../../shared/storage/IStorageService';
 
 export class CollegeUseCases {
@@ -10,7 +10,7 @@ export class CollegeUseCases {
     private readonly storageService: IStorageService
   ) {}
 
-  async getPublicProfile(id: string): Promise<PublicCollegeDto> {
+  async getPublicProfile(id: string): Promise<PublicCollegeDetailDto> {
     const college = await this.collegeRepository.findById(id);
     
     if (!college) {
@@ -21,9 +21,53 @@ export class CollegeUseCases {
       throw new AppError('College is not available for public discovery', 403);
     }
 
-    const dto = this.mapToPublicDto(college);
-    dto.media = dto.media.filter(m => m.status === 'ACTIVE');
-    return dto;
+    const baseDto = this.mapToPublicDto(college);
+    baseDto.media = baseDto.media.filter(m => m.status === 'ACTIVE');
+
+    const achievements: CollegeAchievementDto[] = (college.achievements || [])
+      .filter(a => a.status === 'ACTIVE')
+      .map(a => ({
+        id: a.id,
+        studentName: a.studentName,
+        exam: a.exam,
+        achievement: a.achievement,
+        year: a.year,
+        description: a.description,
+        imageUrl: a.imageStorageKey ? this.storageService.getPublicUrl(a.imageStorageKey) : null,
+        displayOrder: a.displayOrder,
+      }));
+
+    const testimonials: CollegeTestimonialDto[] = (college.testimonials || [])
+      .filter(t => t.status === 'ACTIVE')
+      .map(t => ({
+        id: t.id,
+        personName: t.personName,
+        personType: t.personType,
+        testimonialText: t.testimonialText,
+        imageUrl: t.imageStorageKey ? this.storageService.getPublicUrl(t.imageStorageKey) : null,
+        displayOrder: t.displayOrder,
+      }));
+
+    const accreditations: CollegeAccreditationDto[] = (college.accreditations || [])
+      .filter(a => a.status === 'ACTIVE')
+      .map(a => ({
+        id: a.id,
+        name: a.name,
+        issuingBody: a.issuingBody,
+        year: a.year,
+        validUntilYear: a.validUntilYear,
+        description: a.description,
+        certificateUrl: a.certificateStorageKey ? this.storageService.getPublicUrl(a.certificateStorageKey) : null,
+        verificationUrl: a.verificationUrl,
+        displayOrder: a.displayOrder,
+      }));
+
+    return {
+      ...baseDto,
+      achievements,
+      testimonials,
+      accreditations,
+    };
   }
 
   async getStaffCollegeProfile(id: string): Promise<StaffCollegeProfileDto> {
@@ -35,10 +79,48 @@ export class CollegeUseCases {
 
     // Bypass isPubliclyDiscoverable() for staff
 
+    const achievements: StaffCollegeAchievementDto[] = (college.achievements || []).map(a => ({
+      id: a.id,
+      studentName: a.studentName,
+      exam: a.exam,
+      achievement: a.achievement,
+      year: a.year,
+      description: a.description,
+      imageUrl: a.imageStorageKey ? this.storageService.getPublicUrl(a.imageStorageKey) : null,
+      displayOrder: a.displayOrder,
+      status: a.status,
+    }));
+
+    const testimonials: StaffCollegeTestimonialDto[] = (college.testimonials || []).map(t => ({
+      id: t.id,
+      personName: t.personName,
+      personType: t.personType,
+      testimonialText: t.testimonialText,
+      imageStorageKey: t.imageStorageKey,
+      displayOrder: t.displayOrder,
+      status: t.status,
+    }));
+
+    const accreditations: StaffCollegeAccreditationDto[] = (college.accreditations || []).map(a => ({
+      id: a.id,
+      name: a.name,
+      issuingBody: a.issuingBody,
+      year: a.year,
+      validUntilYear: a.validUntilYear,
+      description: a.description,
+      certificateStorageKey: a.certificateStorageKey,
+      verificationUrl: a.verificationUrl,
+      displayOrder: a.displayOrder,
+      status: a.status,
+    }));
+
     return {
       ...this.mapToPublicDto(college),
       status: college.status,
       verificationStatus: college.verificationStatus,
+      achievements,
+      testimonials,
+      accreditations,
     };
   }
 
@@ -60,11 +142,7 @@ export class CollegeUseCases {
     college.updateProfile(updateData);
     await this.collegeRepository.save(college);
 
-    return {
-      ...this.mapToPublicDto(college),
-      status: college.status,
-      verificationStatus: college.verificationStatus,
-    };
+    return this.getStaffCollegeProfile(id);
   }
 
   async generateMediaUploadUrl(id: string, contentType: string, size: number) {
@@ -164,6 +242,93 @@ export class CollegeUseCases {
     }));
 
     college.replaceAchievements(newAchievements);
+
+    await this.collegeRepository.save(college);
+
+    return this.getStaffCollegeProfile(id);
+  }
+
+  async syncTestimonials(id: string, data: SyncTestimonialsDto): Promise<StaffCollegeProfileDto> {
+    const college = await this.collegeRepository.findById(id);
+    
+    if (!college) {
+      throw new AppError('College not found', 404);
+    }
+
+    // Explicit cross-college ID ownership validation
+    const incomingIds = (data.testimonials || []).filter(t => t.id).map(t => t.id as string);
+    if (incomingIds.length > 0) {
+      const existingIds = new Set(college.testimonials.map(t => t.id));
+      const invalidIds = incomingIds.filter(incomingId => !existingIds.has(incomingId));
+      if (invalidIds.length > 0) {
+        throw new AppError(`Cannot modify testimonials not belonging to this college: ${invalidIds.join(', ')}`, 400);
+      }
+    }
+
+    const newTestimonials = (data.testimonials || []).map(t => CollegeTestimonial.create({
+      id: t.id || crypto.randomUUID(),
+      collegeId: college.id,
+      personName: t.personName,
+      personType: t.personType,
+      testimonialText: t.testimonialText,
+      imageStorageKey: t.imageStorageKey || null,
+      displayOrder: t.displayOrder,
+      status: t.status,
+    }));
+
+    try {
+      college.replaceTestimonials(newTestimonials);
+    } catch (err: any) {
+      throw new AppError(err.message, 400);
+    }
+
+    await this.collegeRepository.save(college);
+
+    return this.getStaffCollegeProfile(id);
+  }
+
+  async syncAccreditations(id: string, data: SyncAccreditationsDto): Promise<StaffCollegeProfileDto> {
+    const college = await this.collegeRepository.findById(id);
+    
+    if (!college) {
+      throw new AppError('College not found', 404);
+    }
+
+    // Duplicate IDs in submission check
+    const incomingIds = (data.accreditations || []).filter(a => a.id).map(a => a.id as string);
+    const uniqueIds = new Set(incomingIds);
+    if (uniqueIds.size !== incomingIds.length) {
+      throw new AppError('Duplicate accreditation IDs in submission', 400);
+    }
+
+    // Explicit cross-college ID ownership validation
+    if (incomingIds.length > 0) {
+      const existingIds = new Set(college.accreditations.map(a => a.id));
+      const invalidIds = incomingIds.filter(incomingId => !existingIds.has(incomingId));
+      if (invalidIds.length > 0) {
+        throw new AppError(`Cannot modify accreditations not belonging to this college: ${invalidIds.join(', ')}`, 400);
+      }
+    }
+
+    const newAccreditations = (data.accreditations || []).map(a => CollegeAccreditation.create({
+      id: a.id || crypto.randomUUID(),
+      collegeId: college.id,
+      name: a.name,
+      issuingBody: a.issuingBody,
+      year: a.year ?? null,
+      validUntilYear: a.validUntilYear ?? null,
+      description: a.description ?? null,
+      certificateStorageKey: a.certificateStorageKey ?? null,
+      verificationUrl: a.verificationUrl ?? null,
+      displayOrder: a.displayOrder,
+      status: a.status,
+    }));
+
+    try {
+      college.replaceAccreditations(newAccreditations);
+    } catch (err: any) {
+      throw new AppError(err.message, 400);
+    }
 
     await this.collegeRepository.save(college);
 

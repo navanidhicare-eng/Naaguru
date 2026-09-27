@@ -33,7 +33,10 @@ MockClient _makeClient({
 
     if (request.url.path.contains('/auth/refresh')) {
       if (refreshStatusCode != 200) {
-        return http.Response(jsonEncode({'error': 'expired'}), refreshStatusCode);
+        return http.Response(
+          jsonEncode({'error': 'expired'}),
+          refreshStatusCode,
+        );
       }
       return http.Response(
         jsonEncode({
@@ -53,7 +56,10 @@ MockClient _makeClient({
         return http.Response(jsonEncode({'error': 'Not found'}), 404);
       }
       if (profileStatusCode >= 500) {
-        return http.Response(jsonEncode({'error': 'Server error'}), profileStatusCode);
+        return http.Response(
+          jsonEncode({'error': 'Server error'}),
+          profileStatusCode,
+        );
       }
       return http.Response(
         jsonEncode(profileResponse ?? {}),
@@ -120,14 +126,20 @@ void main() {
 
     test('returns false when pincode has invalid format (leading zero)', () {
       expect(
-        AuthService.isProfileComplete({..._completeProfile, 'pincode': '012345'}),
+        AuthService.isProfileComplete({
+          ..._completeProfile,
+          'pincode': '012345',
+        }),
         isFalse,
       );
     });
 
     test('returns false when pincode has invalid format (too short)', () {
       expect(
-        AuthService.isProfileComplete({..._completeProfile, 'pincode': '53000'}),
+        AuthService.isProfileComplete({
+          ..._completeProfile,
+          'pincode': '53000',
+        }),
         isFalse,
       );
     });
@@ -157,72 +169,91 @@ void main() {
       secureStorage = const FlutterSecureStorage();
     });
 
-    test('verifyOtp stores refresh token securely and keeps access token in memory', () async {
-      final client = _makeClient(profileResponse: _completeProfile);
-      final authService = AuthService(
-        apiClient: ApiClient(httpClient: client),
-        storage: secureStorage,
-      );
+    test(
+      'verifyOtp stores refresh token securely and keeps access token in memory',
+      () async {
+        final client = _makeClient(profileResponse: _completeProfile);
+        final authService = AuthService(
+          apiClient: ApiClient(httpClient: client),
+          storage: secureStorage,
+        );
 
-      await authService.verifyOtp('+919876543210', '123456');
+        await authService.verifyOtp('+919876543210', '123456');
 
-      expect(authService.isAuthenticated, isTrue);
-      expect(authService.authStateNotifier.value, isTrue);
-      expect(await secureStorage.read(key: 'naaguru_refresh_token'),
-          'test-refresh-token');
-      // Access token must NOT be written to persistent storage.
-      expect(await secureStorage.read(key: 'naaguru_access_token'), isNull);
-    });
+        expect(authService.isAuthenticated, isTrue);
+        expect(authService.authStateNotifier.value, isTrue);
+        expect(
+          await secureStorage.read(key: 'naaguru_refresh_token'),
+          'test-refresh-token',
+        );
+        // Access token must NOT be written to persistent storage.
+        expect(await secureStorage.read(key: 'naaguru_access_token'), isNull);
+      },
+    );
 
-    test('sets profileState to COMPLETE when profile satisfies predicate', () async {
-      final client = _makeClient(profileResponse: _completeProfile);
-      final authService = AuthService(
-        apiClient: ApiClient(httpClient: client),
-        storage: secureStorage,
-      );
+    test(
+      'sets profileState to COMPLETE when profile satisfies predicate',
+      () async {
+        final client = _makeClient(profileResponse: _completeProfile);
+        final authService = AuthService(
+          apiClient: ApiClient(httpClient: client),
+          storage: secureStorage,
+        );
 
-      await authService.verifyOtp('+919876543210', '123456');
+        await authService.verifyOtp('+919876543210', '123456');
 
-      expect(authService.profileStateNotifier.value, ProfileState.complete);
-    });
+        expect(authService.profileStateNotifier.value, ProfileState.complete);
+      },
+    );
 
-    test('sets profileState to INCOMPLETE when profile is missing required fields', () async {
-      final client = _makeClient(profileResponse: _incompleteProfileMissingSchool);
-      final authService = AuthService(
-        apiClient: ApiClient(httpClient: client),
-        storage: secureStorage,
-      );
+    test(
+      'sets profileState to INCOMPLETE when profile is missing required fields',
+      () async {
+        final client = _makeClient(
+          profileResponse: _incompleteProfileMissingSchool,
+        );
+        final authService = AuthService(
+          apiClient: ApiClient(httpClient: client),
+          storage: secureStorage,
+        );
 
-      await authService.verifyOtp('+919876543210', '123456');
+        await authService.verifyOtp('+919876543210', '123456');
 
-      expect(authService.profileStateNotifier.value, ProfileState.incomplete);
-    });
+        expect(authService.profileStateNotifier.value, ProfileState.incomplete);
+      },
+    );
 
-    test('sets profileState to INCOMPLETE when GET /students/me returns 404', () async {
-      // 404 = authenticated student with no profile record yet.
-      final client = _makeClient(profileStatusCode: 404);
-      final authService = AuthService(
-        apiClient: ApiClient(httpClient: client),
-        storage: secureStorage,
-      );
+    test(
+      'sets profileState to INCOMPLETE when GET /students/me returns 404',
+      () async {
+        // 404 = authenticated student with no profile record yet.
+        final client = _makeClient(profileStatusCode: 404);
+        final authService = AuthService(
+          apiClient: ApiClient(httpClient: client),
+          storage: secureStorage,
+        );
 
-      await authService.verifyOtp('+919876543210', '123456');
+        await authService.verifyOtp('+919876543210', '123456');
 
-      expect(authService.profileStateNotifier.value, ProfileState.incomplete);
-    });
+        expect(authService.profileStateNotifier.value, ProfileState.incomplete);
+      },
+    );
 
-    test('sets profileState to ERROR (not incomplete) when server returns 500', () async {
-      // Network/5xx errors must NOT silently become ProfileState.incomplete.
-      final client = _makeClient(profileStatusCode: 500);
-      final authService = AuthService(
-        apiClient: ApiClient(httpClient: client),
-        storage: secureStorage,
-      );
+    test(
+      'sets profileState to ERROR (not incomplete) when server returns 500',
+      () async {
+        // Network/5xx errors must NOT silently become ProfileState.incomplete.
+        final client = _makeClient(profileStatusCode: 500);
+        final authService = AuthService(
+          apiClient: ApiClient(httpClient: client),
+          storage: secureStorage,
+        );
 
-      await authService.verifyOtp('+919876543210', '123456');
+        await authService.verifyOtp('+919876543210', '123456');
 
-      expect(authService.profileStateNotifier.value, ProfileState.error);
-    });
+        expect(authService.profileStateNotifier.value, ProfileState.error);
+      },
+    );
   });
 
   // ---------------------------------------------------------------------------
@@ -238,61 +269,76 @@ void main() {
       secureStorage = const FlutterSecureStorage();
     });
 
-    test('restores session and sets profileState to COMPLETE for a complete profile', () async {
-      final client = _makeClient(profileResponse: _completeProfile);
-      final authService = AuthService(
-        apiClient: ApiClient(httpClient: client),
-        storage: secureStorage,
-      );
+    test(
+      'restores session and sets profileState to COMPLETE for a complete profile',
+      () async {
+        final client = _makeClient(profileResponse: _completeProfile);
+        final authService = AuthService(
+          apiClient: ApiClient(httpClient: client),
+          storage: secureStorage,
+        );
 
-      final restored = await authService.tryRestoreSession();
+        final restored = await authService.tryRestoreSession();
 
-      expect(restored, isTrue);
-      expect(authService.isAuthenticated, isTrue);
-      expect(authService.profileStateNotifier.value, ProfileState.complete);
-    });
+        expect(restored, isTrue);
+        expect(authService.isAuthenticated, isTrue);
+        expect(authService.profileStateNotifier.value, ProfileState.complete);
+      },
+    );
 
-    test('restores session and sets profileState to INCOMPLETE for 404 profile', () async {
-      final client = _makeClient(profileStatusCode: 404);
-      final authService = AuthService(
-        apiClient: ApiClient(httpClient: client),
-        storage: secureStorage,
-      );
+    test(
+      'restores session and sets profileState to INCOMPLETE for 404 profile',
+      () async {
+        final client = _makeClient(profileStatusCode: 404);
+        final authService = AuthService(
+          apiClient: ApiClient(httpClient: client),
+          storage: secureStorage,
+        );
 
-      final restored = await authService.tryRestoreSession();
+        final restored = await authService.tryRestoreSession();
 
-      expect(restored, isTrue);
-      expect(authService.profileStateNotifier.value, ProfileState.incomplete);
-    });
+        expect(restored, isTrue);
+        expect(authService.profileStateNotifier.value, ProfileState.incomplete);
+      },
+    );
 
-    test('returns false and keeps profileState UNKNOWN when refresh token is expired', () async {
-      FlutterSecureStorage.setMockInitialValues({
-        'naaguru_refresh_token': 'expired-token',
-      });
-      final client = _makeClient(refreshStatusCode: 401);
-      final authService = AuthService(
-        apiClient: ApiClient(httpClient: client),
-        storage: secureStorage,
-      );
+    test(
+      'returns false and keeps profileState UNKNOWN when refresh token is expired',
+      () async {
+        FlutterSecureStorage.setMockInitialValues({
+          'naaguru_refresh_token': 'expired-token',
+        });
+        final client = _makeClient(refreshStatusCode: 401);
+        final authService = AuthService(
+          apiClient: ApiClient(httpClient: client),
+          storage: secureStorage,
+        );
 
-      final restored = await authService.tryRestoreSession();
+        final restored = await authService.tryRestoreSession();
 
-      expect(restored, isFalse);
-      expect(authService.profileStateNotifier.value, ProfileState.unknown);
-    });
+        expect(restored, isFalse);
+        expect(authService.profileStateNotifier.value, ProfileState.unknown);
+      },
+    );
 
-    test('profileState ERROR (not incomplete) when server errors during restore', () async {
-      final client = _makeClient(profileStatusCode: 500);
-      final authService = AuthService(
-        apiClient: ApiClient(httpClient: client),
-        storage: secureStorage,
-      );
+    test(
+      'profileState ERROR (not incomplete) when server errors during restore',
+      () async {
+        final client = _makeClient(profileStatusCode: 500);
+        final authService = AuthService(
+          apiClient: ApiClient(httpClient: client),
+          storage: secureStorage,
+        );
 
-      final restored = await authService.tryRestoreSession();
+        final restored = await authService.tryRestoreSession();
 
-      expect(restored, isTrue); // session restored ok, but profile fetch errored
-      expect(authService.profileStateNotifier.value, ProfileState.error);
-    });
+        expect(
+          restored,
+          isTrue,
+        ); // session restored ok, but profile fetch errored
+        expect(authService.profileStateNotifier.value, ProfileState.error);
+      },
+    );
   });
 
   // ---------------------------------------------------------------------------
@@ -328,7 +374,9 @@ void main() {
       final client = _makeClient(profileResponse: _completeProfile);
       final apiClient = ApiClient(httpClient: client);
       apiClient.setTokens(
-          accessToken: 'active-access', refreshToken: 'active-refresh-token');
+        accessToken: 'active-access',
+        refreshToken: 'active-refresh-token',
+      );
 
       final authService = AuthService(
         apiClient: apiClient,
@@ -344,24 +392,27 @@ void main() {
       expect(apiClient.isAuthenticated, isFalse);
     });
 
-    test('no stale COMPLETE profile state survives logout for a new login', () async {
-      FlutterSecureStorage.setMockInitialValues({
-        'naaguru_refresh_token': 'token',
-      });
-      final client = _makeClient(profileResponse: _completeProfile);
-      final apiClient = ApiClient(httpClient: client);
-      apiClient.setTokens(accessToken: 'token', refreshToken: 'token');
+    test(
+      'no stale COMPLETE profile state survives logout for a new login',
+      () async {
+        FlutterSecureStorage.setMockInitialValues({
+          'naaguru_refresh_token': 'token',
+        });
+        final client = _makeClient(profileResponse: _completeProfile);
+        final apiClient = ApiClient(httpClient: client);
+        apiClient.setTokens(accessToken: 'token', refreshToken: 'token');
 
-      final authService = AuthService(
-        apiClient: apiClient,
-        storage: const FlutterSecureStorage(),
-      );
-      authService.profileStateNotifier.value = ProfileState.complete;
+        final authService = AuthService(
+          apiClient: apiClient,
+          storage: const FlutterSecureStorage(),
+        );
+        authService.profileStateNotifier.value = ProfileState.complete;
 
-      await authService.logout();
+        await authService.logout();
 
-      // After logout: state must be unknown, not complete.
-      expect(authService.profileStateNotifier.value, ProfileState.unknown);
-    });
+        // After logout: state must be unknown, not complete.
+        expect(authService.profileStateNotifier.value, ProfileState.unknown);
+      },
+    );
   });
 }

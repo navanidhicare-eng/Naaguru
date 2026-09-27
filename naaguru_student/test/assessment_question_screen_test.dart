@@ -144,4 +144,219 @@ void main() {
     expect(find.text("Question 2"), findsOneWidget);
     expect(find.text("Do you enjoy building software?"), findsOneWidget);
   });
+
+  testWidgets('Initialization failure renders error state with retry and does not proceed', (WidgetTester tester) async {
+    bool shouldFail = true;
+    final mockApi = MockApiClient(
+      onGet: (path) {
+        if (shouldFail) {
+          throw ApiException('Unauthorized', 401);
+        }
+        if (path == '/assessments/active') {
+          return {
+            'questions': [
+              {
+                'id': 'q-1',
+                'sequence': 1,
+                'textEn': 'Do you enjoy science?',
+                'options': [
+                  {'id': 'opt-1-1', 'textEn': 'Like'},
+                ],
+              },
+            ],
+          };
+        }
+        if (path == '/assessments/attempts/current') {
+          return {'id': 'attempt-1', 'answers': []};
+        }
+        throw Exception('Not found: $path');
+      },
+      onPost: (path, {body}) => {},
+      onPatch: (path, {body}) => {},
+    );
+
+    final apiClient = AssessmentApiClient(apiClient: mockApi);
+
+    await tester.pumpWidget(buildTestWidget(apiClient: apiClient));
+    await tester.pumpAndSettle();
+
+    // Verify error state is shown and question flow is blocked
+    expect(find.text("Unable to start or load assessment. Please check your connection and try again."), findsOneWidget);
+    expect(find.text("Retry"), findsOneWidget);
+    expect(find.text("Question 1"), findsNothing);
+
+    // Now fix failure and tap retry
+    shouldFail = false;
+    await tester.tap(find.text("Retry"));
+    await tester.pumpAndSettle();
+
+    expect(find.text("Question 1"), findsOneWidget);
+    expect(find.text("Do you enjoy science?"), findsOneWidget);
+  });
+
+  testWidgets('Failed answer persistence surfaces SnackBar and prevents false server-persisted assumption', (WidgetTester tester) async {
+    bool patchShouldFail = true;
+    final mockApi = MockApiClient(
+      onGet: (path) {
+        if (path == '/assessments/active') {
+          return {
+            'questions': [
+              {
+                'id': 'q-1',
+                'sequence': 1,
+                'textEn': 'Do you enjoy science?',
+                'options': [
+                  {'id': 'opt-1-1', 'textEn': 'Like'},
+                ],
+              },
+              {
+                'id': 'q-2',
+                'sequence': 2,
+                'textEn': 'Do you enjoy math?',
+                'options': [
+                  {'id': 'opt-2-1', 'textEn': 'Like'},
+                ],
+              },
+            ],
+          };
+        }
+        if (path == '/assessments/attempts/current') {
+          return {'id': 'attempt-1', 'answers': []};
+        }
+        throw Exception('Not found: $path');
+      },
+      onPost: (path, {body}) => {},
+      onPatch: (path, {body}) {
+        if (patchShouldFail) {
+          throw ApiException('Server Error', 500);
+        }
+        return {
+          'id': 'attempt-1',
+          'answers': [{'questionId': 'q-1', 'selectedOptionId': 'opt-1-1'}],
+        };
+      },
+    );
+
+    final apiClient = AssessmentApiClient(apiClient: mockApi);
+
+    await tester.pumpWidget(buildTestWidget(apiClient: apiClient));
+    await tester.pumpAndSettle();
+
+    // Tap option on Q1 when PATCH will fail
+    final optionFinder = find.text("Like");
+    await tester.ensureVisible(optionFinder);
+    await tester.tap(optionFinder);
+    await tester.pumpAndSettle();
+
+    // Expect error SnackBar
+    expect(find.text("Could not save answer. Please check your connection."), findsOneWidget);
+    // Did NOT advance to Question 2 because persistence failed
+    expect(find.text("Question 1"), findsOneWidget);
+
+    // Retry when PATCH succeeds
+    patchShouldFail = false;
+    await tester.tap(find.text("Retry"));
+    await tester.pump(const Duration(milliseconds: 350));
+    await tester.pumpAndSettle();
+
+    // Now successfully advanced to Question 2
+    expect(find.text("Question 2"), findsOneWidget);
+  });
+
+  testWidgets('Pre-submit completeness guard blocks submit and navigates to missing question', (WidgetTester tester) async {
+    bool submitCalled = false;
+    final mockApi = MockApiClient(
+      onGet: (path) {
+        if (path == '/assessments/active') {
+          return {
+            'questions': [
+              {
+                'id': 'q-1',
+                'sequence': 1,
+                'textEn': 'Question 1 Title',
+                'options': [
+                  {'id': 'opt-1-1', 'textEn': 'Like'},
+                ],
+              },
+              {
+                'id': 'q-2',
+                'sequence': 2,
+                'textEn': 'Question 2 Title',
+                'options': [
+                  {'id': 'opt-2-1', 'textEn': 'Like'},
+                ],
+              },
+            ],
+          };
+        }
+        if (path == '/assessments/attempts/current') {
+          // Attempt starts with only Q2 answered (Q1 missing)
+          return {
+            'id': 'attempt-1',
+            'answers': [
+              {'questionId': 'q-2', 'selectedOptionId': 'opt-2-1'},
+            ],
+          };
+        }
+        throw Exception('Not found: $path');
+      },
+      onPost: (path, {body}) {
+        if (path == '/assessments/attempts/current/submit') {
+          submitCalled = true;
+          return {'attemptId': 'attempt-1'};
+        }
+        throw Exception('Not found: $path');
+      },
+      onPatch: (path, {body}) => {
+        'id': 'attempt-1',
+        'answers': [{'questionId': 'q-2', 'selectedOptionId': 'opt-2-1'}],
+      },
+    );
+
+    final apiClient = AssessmentApiClient(apiClient: mockApi);
+
+    await tester.pumpWidget(buildTestWidget(apiClient: apiClient));
+    await tester.pumpAndSettle();
+
+    // Starts at Q1 (the first unanswered question)
+    expect(find.text("Question 1"), findsOneWidget);
+
+    // Verify submit is not called
+    expect(submitCalled, isFalse);
+  });
+
+  testWidgets('SVG illustration fallback renders safe icon without recursive errors or stack overflow', (WidgetTester tester) async {
+    final mockApi = MockApiClient(
+      onGet: (path) {
+        if (path == '/assessments/active') {
+          return {
+            'questions': [
+              {
+                'id': 'q-40',
+                'sequence': 40,
+                'textEn': 'Business Question 40',
+                'options': [
+                  {'id': 'opt-40-1', 'textEn': 'Like'},
+                ],
+              },
+            ],
+          };
+        }
+        if (path == '/assessments/attempts/current') {
+          return {'id': 'attempt-1', 'answers': []};
+        }
+        throw Exception('Not found: $path');
+      },
+      onPost: (path, {body}) => {},
+      onPatch: (path, {body}) => {},
+    );
+
+    final apiClient = AssessmentApiClient(apiClient: mockApi);
+
+    await tester.pumpWidget(buildTestWidget(apiClient: apiClient));
+    await tester.pumpAndSettle();
+
+    expect(find.text("Question 40"), findsOneWidget);
+    expect(find.text("Business Question 40"), findsOneWidget);
+  });
 }

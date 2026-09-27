@@ -1,18 +1,13 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:naaguru_student/core/config.dart';
+import 'package:naaguru_student/core/errors/app_error.dart';
+import 'package:naaguru_student/core/utils/app_logger.dart';
 
 /// A lightweight HTTP client that attaches the JWT access token
-/// to every request and handles JSON serialization.
-///
-/// Responsibilities:
-/// - Keep access token in application memory.
-/// - Attach access token as Bearer auth header to authenticated requests.
-/// - Intercept 401 Unauthorized errors and attempt single-flight token refresh.
-/// - Notify listeners when tokens are rotated so refresh tokens can be securely persisted.
-/// - Retry the failed request once after successful refresh.
-/// - Clear credentials and notify listeners on session expiration.
+/// to every request and handles JSON serialization and error mapping.
 class ApiClient {
   final http.Client _httpClient;
   String? _accessToken;
@@ -29,7 +24,7 @@ class ApiClient {
   void Function()? onSessionExpired;
 
   ApiClient({http.Client? httpClient})
-      : _httpClient = httpClient ?? http.Client();
+    : _httpClient = httpClient ?? http.Client();
 
   String? get accessToken => _accessToken;
   String? get refreshToken => _refreshToken;
@@ -47,60 +42,96 @@ class ApiClient {
   }
 
   Map<String, String> get _headers => {
-        'Content-Type': 'application/json',
-        if (_accessToken != null) 'Authorization': 'Bearer $_accessToken',
-      };
+    'Content-Type': 'application/json',
+    if (_accessToken != null) 'Authorization': 'Bearer $_accessToken',
+  };
 
   /// Performs a GET request. Returns the decoded JSON body.
   Future<Map<String, dynamic>> get(String path) async {
-    final response = await _request(() =>
-        _httpClient.get(Uri.parse('${AppConfig.apiBaseUrl}$path'),
-            headers: _headers), path: path);
+    final response = await _request(
+      () => _httpClient.get(
+        Uri.parse('${AppConfig.apiBaseUrl}$path'),
+        headers: _headers,
+      ),
+      path: path,
+    );
     return _decodeResponse(response);
   }
 
   /// Performs a POST request with a JSON body.
-  Future<Map<String, dynamic>> post(String path,
-      {Map<String, dynamic>? body}) async {
-    final response = await _request(() => _httpClient.post(
-          Uri.parse('${AppConfig.apiBaseUrl}$path'),
-          headers: _headers,
-          body: body != null ? jsonEncode(body) : null,
-        ), path: path);
+  Future<Map<String, dynamic>> post(
+    String path, {
+    Map<String, dynamic>? body,
+  }) async {
+    final response = await _request(
+      () => _httpClient.post(
+        Uri.parse('${AppConfig.apiBaseUrl}$path'),
+        headers: _headers,
+        body: body != null ? jsonEncode(body) : null,
+      ),
+      path: path,
+    );
     return _decodeResponse(response);
   }
 
   /// Performs a PATCH request with a JSON body.
-  Future<Map<String, dynamic>> patch(String path,
-      {Map<String, dynamic>? body}) async {
-    final response = await _request(() => _httpClient.patch(
-          Uri.parse('${AppConfig.apiBaseUrl}$path'),
-          headers: _headers,
-          body: body != null ? jsonEncode(body) : null,
-        ), path: path);
+  Future<Map<String, dynamic>> patch(
+    String path, {
+    Map<String, dynamic>? body,
+  }) async {
+    final response = await _request(
+      () => _httpClient.patch(
+        Uri.parse('${AppConfig.apiBaseUrl}$path'),
+        headers: _headers,
+        body: body != null ? jsonEncode(body) : null,
+      ),
+      path: path,
+    );
     return _decodeResponse(response);
   }
 
-  /// Wraps requests with automatic token refresh on 401.
-  /// Uses [isRetry] to prevent infinite refresh loops.
+  /// Wraps requests with error translation and automatic token refresh on 401.
   Future<http.Response> _request(
-      Future<http.Response> Function() performRequest,
-      {bool isRetry = false, String path = ''}) async {
-    final response = await performRequest();
+    Future<http.Response> Function() performRequest, {
+    bool isRetry = false,
+    String path = '',
+  }) async {
+    try {
+      final response = await performRequest();
+      final isAuthRoute = path.contains('/auth/');
 
-    final isAuthRoute = path.contains('/auth/');
-                        
-    if (response.statusCode == 401 && !isRetry && !isAuthRoute && _refreshToken != null) {
-      final refreshed = await _tryRefreshTokens();
-      if (refreshed) {
-        // Retry the original request once with new credentials
-        return await _request(performRequest, isRetry: true, path: path);
-      } else {
-        onSessionExpired?.call();
+      if (response.statusCode == 401 &&
+          !isRetry &&
+          !isAuthRoute &&
+          _refreshToken != null) {
+        final refreshed = await _tryRefreshTokens();
+        if (refreshed) {
+          // Retry the original request once with new credentials
+          return await _request(performRequest, isRetry: true, path: path);
+        } else {
+          onSessionExpired?.call();
+        }
       }
-    }
 
-    return response;
+      return response;
+    } on SocketException catch (e, stack) {
+      AppLogger.error('Network offline / SocketException', error: e, stackTrace: stack, endpoint: path);
+      final appError = ErrorMapper.fromException(e, stack);
+      throw ApiException(appError.userMessage, 0, appError: appError);
+    } on TimeoutException catch (e, stack) {
+      AppLogger.error('Request timed out', error: e, stackTrace: stack, endpoint: path);
+      final appError = ErrorMapper.fromException(e, stack);
+      throw ApiException(appError.userMessage, 408, appError: appError);
+    } on http.ClientException catch (e, stack) {
+      AppLogger.error('ClientException during request', error: e, stackTrace: stack, endpoint: path);
+      final appError = ErrorMapper.fromException(e, stack);
+      throw ApiException(appError.userMessage, 0, appError: appError);
+    } catch (e, stack) {
+      if (e is ApiException) rethrow;
+      AppLogger.error('Unhandled request exception', error: e, stackTrace: stack, endpoint: path);
+      final appError = ErrorMapper.fromException(e, stack);
+      throw ApiException(appError.userMessage, 0, appError: appError);
+    }
   }
 
   /// Attempts token refresh in a thread-safe manner (deduplicating concurrent callers).
@@ -121,16 +152,12 @@ class ApiClient {
   }
 
   /// Public method to refresh the session with a known refresh token.
-  /// Used by AuthService during app startup session restoration.
   Future<bool> refreshWithToken(String token) async {
     try {
       final response = await _httpClient.post(
         Uri.parse('${AppConfig.apiBaseUrl}/auth/refresh'),
         headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({
-          'refreshToken': token,
-          'clientType': 'mobile',
-        }),
+        body: jsonEncode({'refreshToken': token, 'clientType': 'mobile'}),
       );
 
       if (response.statusCode == 200) {
@@ -144,8 +171,8 @@ class ApiClient {
         onTokensRefreshed?.call(newAccessToken, newRefreshToken);
         return true;
       }
-    } catch (_) {
-      // Network error or backend unreachable
+    } catch (e) {
+      AppLogger.warn('Token refresh failed', {'error': e.toString()});
     }
 
     clearTokens();
@@ -169,18 +196,42 @@ class ApiClient {
       return body;
     }
 
-    final errorMessage =
-        body['error']?.toString() ?? 'Request failed (${response.statusCode})';
-    throw ApiException(errorMessage, response.statusCode);
+    final appError = ErrorMapper.fromResponse(response);
+    AppLogger.error(
+      'API Error Response',
+      statusCode: response.statusCode,
+      endpoint: response.request?.url.path,
+      context: {'errorType': appError.type.name, 'code': appError.errorCode},
+    );
+
+    throw ApiException(
+      appError.userMessage,
+      response.statusCode,
+      appError: appError,
+      rawBody: body,
+    );
   }
 }
 
-/// Thrown when the API returns a non-2xx status code.
+/// Thrown when an API call fails with HTTP status code or client failure.
 class ApiException implements Exception {
   final String message;
   final int statusCode;
+  final AppError? appError;
+  final Map<String, dynamic>? rawBody;
 
-  ApiException(this.message, this.statusCode);
+  ApiException(
+    this.message,
+    this.statusCode, {
+    this.appError,
+    this.rawBody,
+  });
+
+  /// User-facing message in English or Telugu.
+  String userMessage([bool isTelugu = false]) {
+    if (appError != null) return appError!.message(isTelugu);
+    return message;
+  }
 
   @override
   String toString() => 'ApiException($statusCode): $message';

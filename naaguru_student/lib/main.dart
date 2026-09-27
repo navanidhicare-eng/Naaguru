@@ -26,13 +26,15 @@ void main() {
   final assessmentApiClient = AssessmentApiClient(apiClient: apiClient);
   final collegeApiClient = CollegeApiClient(apiClient: apiClient);
 
-  runApp(NaaguruStudentApp(
-    authService: authService,
-    studentApiClient: studentApiClient,
-    catalogApiClient: catalogApiClient,
-    assessmentApiClient: assessmentApiClient,
-    collegeApiClient: collegeApiClient,
-  ));
+  runApp(
+    NaaguruStudentApp(
+      authService: authService,
+      studentApiClient: studentApiClient,
+      catalogApiClient: catalogApiClient,
+      assessmentApiClient: assessmentApiClient,
+      collegeApiClient: collegeApiClient,
+    ),
+  );
 }
 
 /// Root widget for the Naaguru Student application.
@@ -57,11 +59,11 @@ class NaaguruStudentApp extends StatelessWidget {
     // Helper: wraps an authenticated screen with the mandatory ProfileGate.
     // Any route wrapped here cannot be bypassed by an incomplete-profile student.
     Widget gated(Widget child) => ProfileGate(
-          authService: authService,
-          studentApiClient: studentApiClient,
-          catalogApiClient: catalogApiClient,
-          child: child,
-        );
+      authService: authService,
+      studentApiClient: studentApiClient,
+      catalogApiClient: catalogApiClient,
+      child: child,
+    );
 
     return MaterialApp(
       title: 'Naaguru',
@@ -71,41 +73,40 @@ class NaaguruStudentApp extends StatelessWidget {
       routes: {
         // ── Public / Authentication routes (NOT gated) ─────────────────────
         '/': (_) => AuthGate(
-              authService: authService,
-              studentApiClient: studentApiClient,
-              catalogApiClient: catalogApiClient,
-              assessmentApiClient: assessmentApiClient,
-              collegeApiClient: collegeApiClient,
-            ),
+          authService: authService,
+          studentApiClient: studentApiClient,
+          catalogApiClient: catalogApiClient,
+          assessmentApiClient: assessmentApiClient,
+          collegeApiClient: collegeApiClient,
+        ),
         // Profile screen itself must remain reachable when profile is incomplete.
         // ProfileGate renders it directly — this named route is kept for any
         // edge-case deep-link that specifically targets /profile.
         '/profile': (_) => StudentProfileScreen(
-              studentApiClient: studentApiClient,
-              authService: authService,
-            ),
+          studentApiClient: studentApiClient,
+          authService: authService,
+        ),
 
         // ── Authenticated routes (ALL wrapped with ProfileGate) ─────────────
         // An incomplete-profile student navigating to any of these routes will
         // be shown the new profile wizard Screen 1 regardless.
-        '/home': (_) => gated(HomeScreen(
-              authService: authService,
-              studentApiClient: studentApiClient,
-              catalogApiClient: catalogApiClient,
-              assessmentApiClient: assessmentApiClient,
-              collegeApiClient: collegeApiClient,
-            )),
+        '/home': (_) => gated(
+          HomeScreen(
+            authService: authService,
+            studentApiClient: studentApiClient,
+            catalogApiClient: catalogApiClient,
+            assessmentApiClient: assessmentApiClient,
+            collegeApiClient: collegeApiClient,
+          ),
+        ),
         '/assessment-intro': (_) => gated(const AssessmentIntroScreen()),
         '/assessment-question': (_) => gated(
-              AssessmentQuestionScreen(
-                  assessmentApiClient: assessmentApiClient),
-            ),
-        '/results': (_) => gated(
-              ResultsScreen(assessmentApiClient: assessmentApiClient!),
-            ),
-        '/my-leads': (_) => gated(
-              MyLeadsScreen(studentApiClient: studentApiClient),
-            ),
+          AssessmentQuestionScreen(assessmentApiClient: assessmentApiClient),
+        ),
+        '/results': (_) =>
+            gated(ResultsScreen(assessmentApiClient: assessmentApiClient!)),
+        '/my-leads': (_) =>
+            gated(MyLeadsScreen(studentApiClient: studentApiClient)),
       },
     );
   }

@@ -186,13 +186,18 @@ class _CollegeLocationPreferencesScreenState
                 onTap: () => Navigator.of(context).pop(),
                 child: Row(
                   children: [
-                    const Icon(Icons.school_outlined,
-                        size: 14, color: NaaguruTheme.primaryDark),
+                    const Icon(
+                      Icons.school_outlined,
+                      size: 14,
+                      color: NaaguruTheme.primaryDark,
+                    ),
                     const SizedBox(width: 4),
                     Text(
                       '${widget.pathwayCode == 'INTERMEDIATE' ? 'Inter' : widget.pathwayCode} • ${widget.programCode}',
                       style: const TextStyle(
-                          fontSize: 12, color: NaaguruTheme.primaryDark),
+                        fontSize: 12,
+                        color: NaaguruTheme.primaryDark,
+                      ),
                     ),
                   ],
                 ),
@@ -272,8 +277,9 @@ class _CollegeLocationPreferencesScreenState
               _locationRow(
                 sublabel: _isTelugu ? 'రాష్ట్రం' : 'PREFERRED STATE',
                 value: _wizard.preferredState?.displayName(_isTelugu),
-                placeholder:
-                    _isTelugu ? 'రాష్ట్రాన్ని ఎంచుకోండి' : 'Select state',
+                placeholder: _isTelugu
+                    ? 'రాష్ట్రాన్ని ఎంచుకోండి'
+                    : 'Select state',
                 enabled: true,
                 onTap: _pickPreferredState,
               ),
@@ -284,8 +290,8 @@ class _CollegeLocationPreferencesScreenState
                 placeholder: _wizard.preferredState != null
                     ? (_isTelugu ? 'జిల్లాను ఎంచుకోండి' : 'Select district')
                     : (_isTelugu
-                        ? 'ముందు రాష్ట్రం ఎంచుకోండి'
-                        : 'Select state first'),
+                          ? 'ముందు రాష్ట్రం ఎంచుకోండి'
+                          : 'Select state first'),
                 enabled: _wizard.preferredState != null,
                 onTap: _pickPreferredDistrict,
               ),
@@ -296,23 +302,24 @@ class _CollegeLocationPreferencesScreenState
                 placeholder: _wizard.preferredDistrict != null
                     ? (_isTelugu ? 'మండలాన్ని ఎంచుకోండి' : 'Select mandal')
                     : (_isTelugu
-                        ? 'ముందు జిల్లా ఎంచుకోండి'
-                        : 'Select district first'),
+                          ? 'ముందు జిల్లా ఎంచుకోండి'
+                          : 'Select district first'),
                 enabled: _wizard.preferredDistrict != null,
                 onTap: _pickPreferredMandal,
               ),
               _divider(),
               _locationRow(
-                sublabel:
-                    _isTelugu ? 'గ్రామం / నగరం' : 'PREFERRED VILLAGE / CITY',
+                sublabel: _isTelugu
+                    ? 'గ్రామం / నగరం'
+                    : 'PREFERRED VILLAGE / CITY',
                 value: _wizard.preferredLocality?.displayName(_isTelugu),
                 placeholder: _wizard.preferredMandal != null
                     ? (_isTelugu
-                        ? 'గ్రామం లేదా నగరాన్ని ఎంచుకోండి'
-                        : 'Select village or city')
+                          ? 'గ్రామం లేదా నగరాన్ని ఎంచుకోండి'
+                          : 'Select village or city')
                     : (_isTelugu
-                        ? 'ముందు మండలం ఎంచుకోండి'
-                        : 'Select mandal first'),
+                          ? 'ముందు మండలం ఎంచుకోండి'
+                          : 'Select mandal first'),
                 enabled: _wizard.preferredMandal != null,
                 onTap: _pickPreferredLocality,
               ),
@@ -360,8 +367,9 @@ class _CollegeLocationPreferencesScreenState
                       hasValue ? value : placeholder,
                       style: TextStyle(
                         fontSize: 15,
-                        fontWeight:
-                            hasValue ? FontWeight.w600 : FontWeight.w400,
+                        fontWeight: hasValue
+                            ? FontWeight.w600
+                            : FontWeight.w400,
                         color: hasValue
                             ? NaaguruTheme.text
                             : NaaguruTheme.muted.withAlpha(enabled ? 200 : 100),
@@ -432,14 +440,19 @@ class _CollegeLocationPreferencesScreenState
         Row(
           children: [
             Expanded(
-                child: _buildHostelOption('YES', _isTelugu ? 'అవును' : 'Yes')),
+              child: _buildHostelOption('YES', _isTelugu ? 'అవును' : 'Yes'),
+            ),
             const SizedBox(width: 8),
             Expanded(
-                child: _buildHostelOption('NO', _isTelugu ? 'వద్దు' : 'No')),
+              child: _buildHostelOption('NO', _isTelugu ? 'వద్దు' : 'No'),
+            ),
             const SizedBox(width: 8),
             Expanded(
-                child: _buildHostelOption(
-                    'EITHER', _isTelugu ? 'ఏదైనా పర్వాలేదు' : 'Either is fine')),
+              child: _buildHostelOption(
+                'EITHER',
+                _isTelugu ? 'ఏదైనా పర్వాలేదు' : 'Either is fine',
+              ),
+            ),
           ],
         ),
         const SizedBox(height: 12),
@@ -555,8 +568,11 @@ class _CollegeLocationPreferencesScreenState
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Icon(Icons.verified_user_outlined,
-                  color: NaaguruTheme.primaryDark, size: 20),
+              const Icon(
+                Icons.verified_user_outlined,
+                color: NaaguruTheme.primaryDark,
+                size: 20,
+              ),
               const SizedBox(width: 12),
               Expanded(
                 child: Column(
@@ -622,8 +638,11 @@ class _CollegeLocationPreferencesScreenState
               ),
             ),
             if (isSelected)
-              const Icon(Icons.check_circle,
-                  size: 18, color: NaaguruTheme.primaryDark)
+              const Icon(
+                Icons.check_circle,
+                size: 18,
+                color: NaaguruTheme.primaryDark,
+              ),
           ],
         ),
       ),
@@ -640,8 +659,11 @@ class _CollegeLocationPreferencesScreenState
         backgroundColor: Colors.white,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios,
-              color: NaaguruTheme.primaryDark, size: 20),
+          icon: const Icon(
+            Icons.arrow_back_ios,
+            color: NaaguruTheme.primaryDark,
+            size: 20,
+          ),
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: const Row(
@@ -674,8 +696,11 @@ class _CollegeLocationPreferencesScreenState
           const CircleAvatar(
             radius: 16,
             backgroundColor: NaaguruTheme.primaryLight,
-            child:
-                Icon(Icons.person, size: 20, color: NaaguruTheme.primaryDark),
+            child: Icon(
+              Icons.person,
+              size: 20,
+              color: NaaguruTheme.primaryDark,
+            ),
           ),
           const SizedBox(width: 20),
         ],
@@ -742,8 +767,11 @@ class _CollegeLocationPreferencesScreenState
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Icon(Icons.lock_outline,
-                          size: 12, color: NaaguruTheme.muted),
+                      const Icon(
+                        Icons.lock_outline,
+                        size: 12,
+                        color: NaaguruTheme.muted,
+                      ),
                       const SizedBox(width: 4),
                       Text(
                         _isTelugu

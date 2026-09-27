@@ -23,13 +23,8 @@ class PrimaryButton extends StatelessWidget {
         disabledBackgroundColor: NaaguruTheme.muted.withAlpha(128),
         disabledForegroundColor: Colors.white,
         minimumSize: const Size.fromHeight(48),
-        shape: RoundedRectangleBorder(
-          borderRadius: NaaguruTheme.borderRadius,
-        ),
-        textStyle: const TextStyle(
-          fontSize: 15,
-          fontWeight: FontWeight.w600,
-        ),
+        shape: RoundedRectangleBorder(borderRadius: NaaguruTheme.borderRadius),
+        textStyle: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
       ),
       child: isLoading
           ? const SizedBox(
@@ -65,16 +60,13 @@ class SecondaryButton extends StatelessWidget {
         backgroundColor: NaaguruTheme.surface,
         foregroundColor: NaaguruTheme.primary,
         side: BorderSide(
-          color: (onPressed == null || isLoading) ? NaaguruTheme.muted : NaaguruTheme.primary,
+          color: (onPressed == null || isLoading)
+              ? NaaguruTheme.muted
+              : NaaguruTheme.primary,
         ),
         minimumSize: const Size.fromHeight(48),
-        shape: RoundedRectangleBorder(
-          borderRadius: NaaguruTheme.borderRadius,
-        ),
-        textStyle: const TextStyle(
-          fontSize: 15,
-          fontWeight: FontWeight.w600,
-        ),
+        shape: RoundedRectangleBorder(borderRadius: NaaguruTheme.borderRadius),
+        textStyle: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
       ),
       child: isLoading
           ? const SizedBox(
@@ -109,13 +101,8 @@ class TertiaryButton extends StatelessWidget {
       style: TextButton.styleFrom(
         foregroundColor: NaaguruTheme.primary,
         minimumSize: const Size(48, 48), // minimum touch target
-        shape: RoundedRectangleBorder(
-          borderRadius: NaaguruTheme.borderRadius,
-        ),
-        textStyle: const TextStyle(
-          fontSize: 15,
-          fontWeight: FontWeight.w600,
-        ),
+        shape: RoundedRectangleBorder(borderRadius: NaaguruTheme.borderRadius),
+        textStyle: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
       ),
       child: isLoading
           ? const SizedBox(

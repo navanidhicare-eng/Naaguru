@@ -109,7 +109,10 @@ class ProfileGate extends StatelessWidget {
                       const SizedBox(height: 8),
                       const Text(
                         'Please check your connection and try again.',
-                        style: TextStyle(fontSize: 14, color: NaaguruTheme.muted),
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: NaaguruTheme.muted,
+                        ),
                         textAlign: TextAlign.center,
                       ),
                       const SizedBox(height: 24),

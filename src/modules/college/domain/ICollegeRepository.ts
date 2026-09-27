@@ -8,6 +8,7 @@ export interface CollegeSearchCriteria {
   requiresBoysHostel?: boolean;
   requiresGirlsHostel?: boolean;
   maxFee?: number;
+  gender?: 'MALE' | 'FEMALE';
 }
 
 export interface ICollegeRepository {

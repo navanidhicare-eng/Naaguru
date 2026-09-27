@@ -238,3 +238,417 @@ describe('Phase C5: Branch-Aware Discovery', () => {
     expect(c5Result?.college.media).toEqual([]);
   });
 });
+
+describe('Discovery Policy Enhancements: Location Hierarchy & Gender Hostel Matching', () => {
+  const repo = new DrizzleCollegeRepository();
+
+  // Location IDs
+  let hierDistrictId: string;
+  let hierMandal1Id: string;
+  let hierLocality1AId: string;
+  let hierLocality1BId: string;
+  let hierMandal2Id: string;
+  let hierLocality2AId: string;
+  let otherDistrictId: string;
+  let otherMandalId: string;
+  let otherLocalityId: string;
+
+  // College & Branch IDs
+  let multiCollegeId: string;
+  let branch1AId: string;
+  let branch1BId: string;
+  let branch2AId: string;
+  let otherCollegeId: string;
+  let otherBranchId: string;
+  let unverifiedCollegeId: string;
+  let unverifiedBranchId: string;
+
+  beforeAll(async () => {
+    // 1. Create location hierarchy
+    const [dist1] = await db.insert(locationsTable).values({
+      type: 'DISTRICT',
+      nameEn: 'Hier Test District 1',
+      nameTe: 'హైయర్ టెస్ట్ జిల్లా 1',
+      status: 'ACTIVE'
+    }).returning();
+    hierDistrictId = dist1.id;
+
+    const [mand1] = await db.insert(locationsTable).values({
+      type: 'MANDAL',
+      parentId: hierDistrictId,
+      nameEn: 'Hier Test Mandal 1',
+      nameTe: 'హైయర్ టెస్ట్ మండలం 1',
+      status: 'ACTIVE'
+    }).returning();
+    hierMandal1Id = mand1.id;
+
+    const [loc1A] = await db.insert(locationsTable).values({
+      type: 'LOCALITY',
+      parentId: hierMandal1Id,
+      nameEn: 'Hier Locality 1A',
+      nameTe: 'హైయర్ ప్రాంతం 1A',
+      status: 'ACTIVE'
+    }).returning();
+    hierLocality1AId = loc1A.id;
+
+    const [loc1B] = await db.insert(locationsTable).values({
+      type: 'LOCALITY',
+      parentId: hierMandal1Id,
+      nameEn: 'Hier Locality 1B',
+      nameTe: 'హైయర్ ప్రాంతం 1B',
+      status: 'ACTIVE'
+    }).returning();
+    hierLocality1BId = loc1B.id;
+
+    const [mand2] = await db.insert(locationsTable).values({
+      type: 'MANDAL',
+      parentId: hierDistrictId,
+      nameEn: 'Hier Test Mandal 2',
+      nameTe: 'హైయర్ టెస్ట్ మండలం 2',
+      status: 'ACTIVE'
+    }).returning();
+    hierMandal2Id = mand2.id;
+
+    const [loc2A] = await db.insert(locationsTable).values({
+      type: 'LOCALITY',
+      parentId: hierMandal2Id,
+      nameEn: 'Hier Locality 2A',
+      nameTe: 'హైయర్ ప్రాంతం 2A',
+      status: 'ACTIVE'
+    }).returning();
+    hierLocality2AId = loc2A.id;
+
+    // External District Hierarchy
+    const [dist2] = await db.insert(locationsTable).values({
+      type: 'DISTRICT',
+      nameEn: 'Other Test District 2',
+      nameTe: 'ఇతర టెస్ట్ జిల్లా 2',
+      status: 'ACTIVE'
+    }).returning();
+    otherDistrictId = dist2.id;
+
+    const [otherMand] = await db.insert(locationsTable).values({
+      type: 'MANDAL',
+      parentId: otherDistrictId,
+      nameEn: 'Other Test Mandal',
+      nameTe: 'ఇతర టెస్ట్ మండలం',
+      status: 'ACTIVE'
+    }).returning();
+    otherMandalId = otherMand.id;
+
+    const [otherLoc] = await db.insert(locationsTable).values({
+      type: 'LOCALITY',
+      parentId: otherMandalId,
+      nameEn: 'Other Locality',
+      nameTe: 'ఇతర ప్రాంతం',
+      status: 'ACTIVE'
+    }).returning();
+    otherLocalityId = otherLoc.id;
+
+    // 2. Multi-branch College in Hierarchical Locations
+    const [mCollege] = await db.insert(collegesTable).values({
+      name: 'Multi-Branch Hier College',
+      ownershipType: 'PRIVATE',
+      status: 'ACTIVE',
+      verificationStatus: 'VERIFIED'
+    }).returning();
+    multiCollegeId = mCollege.id;
+
+    // Branch 1A: Old Gajuwaka (Mandal 1) - MPC, Boys Only Hostel, Fee 45000
+    const [b1A] = await db.insert(branchesTable).values({
+      collegeId: multiCollegeId,
+      name: 'Hier Campus 1A',
+      type: 'MAIN_CAMPUS',
+      locationId: hierLocality1AId,
+      isPubliclyEligible: true,
+      hasBoysHostel: true,
+      hasGirlsHostel: false
+    }).returning();
+    branch1AId = b1A.id;
+
+    await db.insert(collegeStreamOfferingsTable).values({
+      branchId: branch1AId,
+      streamCode: 'MPC',
+      minFee: 45000,
+      maxFee: 45000
+    });
+
+    // Branch 1B: New Gajuwaka (Mandal 1) - BIPC, Girls Only Hostel, Fee 55000
+    const [b1B] = await db.insert(branchesTable).values({
+      collegeId: multiCollegeId,
+      name: 'Hier Campus 1B',
+      type: 'OFF_CAMPUS',
+      locationId: hierLocality1BId,
+      isPubliclyEligible: true,
+      hasBoysHostel: false,
+      hasGirlsHostel: true
+    }).returning();
+    branch1BId = b1B.id;
+
+    await db.insert(collegeStreamOfferingsTable).values({
+      branchId: branch1BId,
+      streamCode: 'BIPC',
+      minFee: 55000,
+      maxFee: 55000
+    });
+
+    // Branch 2A: PM Palem (Mandal 2) - CEC, Both Hostels (Coed), Fee 35000
+    const [b2A] = await db.insert(branchesTable).values({
+      collegeId: multiCollegeId,
+      name: 'Hier Campus 2A',
+      type: 'OFF_CAMPUS',
+      locationId: hierLocality2AId,
+      isPubliclyEligible: true,
+      hasBoysHostel: true,
+      hasGirlsHostel: true
+    }).returning();
+    branch2AId = b2A.id;
+
+    await db.insert(collegeStreamOfferingsTable).values({
+      branchId: branch2AId,
+      streamCode: 'CEC',
+      minFee: 35000,
+      maxFee: 35000
+    });
+
+    // 3. Other District College
+    const [oCollege] = await db.insert(collegesTable).values({
+      name: 'Other District College',
+      ownershipType: 'PRIVATE',
+      status: 'ACTIVE',
+      verificationStatus: 'VERIFIED'
+    }).returning();
+    otherCollegeId = oCollege.id;
+
+    const [oBranch] = await db.insert(branchesTable).values({
+      collegeId: otherCollegeId,
+      name: 'Other Main Branch',
+      type: 'MAIN_CAMPUS',
+      locationId: otherLocalityId,
+      isPubliclyEligible: true,
+      hasBoysHostel: true,
+      hasGirlsHostel: false
+    }).returning();
+    otherBranchId = oBranch.id;
+
+    await db.insert(collegeStreamOfferingsTable).values({
+      branchId: otherBranchId,
+      streamCode: 'MPC',
+      minFee: 40000,
+      maxFee: 40000
+    });
+
+    // 4. Unverified College in Locality 1A
+    const [uCollege] = await db.insert(collegesTable).values({
+      name: 'Unverified College',
+      ownershipType: 'PRIVATE',
+      status: 'ACTIVE',
+      verificationStatus: 'UNVERIFIED'
+    }).returning();
+    unverifiedCollegeId = uCollege.id;
+
+    const [uBranch] = await db.insert(branchesTable).values({
+      collegeId: unverifiedCollegeId,
+      name: 'Unverified Branch',
+      type: 'MAIN_CAMPUS',
+      locationId: hierLocality1AId,
+      isPubliclyEligible: true,
+      hasBoysHostel: true,
+      hasGirlsHostel: true
+    }).returning();
+    unverifiedBranchId = uBranch.id;
+
+    await db.insert(collegeStreamOfferingsTable).values({
+      branchId: unverifiedBranchId,
+      streamCode: 'MPC',
+      minFee: 30000,
+      maxFee: 30000
+    });
+  });
+
+  afterAll(async () => {
+    const branchIds = [branch1AId, branch1BId, branch2AId, otherBranchId, unverifiedBranchId].filter(Boolean) as string[];
+    const collegeIds = [multiCollegeId, otherCollegeId, unverifiedCollegeId].filter(Boolean) as string[];
+    const locIds = [
+      hierLocality1AId, hierLocality1BId, hierLocality2AId, otherLocalityId,
+      hierMandal1Id, hierMandal2Id, otherMandalId,
+      hierDistrictId, otherDistrictId
+    ].filter(Boolean) as string[];
+
+    // Delete stream offerings
+    if (branchIds.length > 0) {
+      await db.delete(collegeStreamOfferingsTable).where(
+        inArray(collegeStreamOfferingsTable.branchId, branchIds)
+      );
+      // Delete branches
+      await db.delete(branchesTable).where(
+        inArray(branchesTable.id, branchIds)
+      );
+    }
+    // Delete colleges
+    if (collegeIds.length > 0) {
+      await db.delete(collegesTable).where(
+        inArray(collegesTable.id, collegeIds)
+      );
+    }
+    // Delete locations
+    if (locIds.length > 0) {
+      await db.delete(locationsTable).where(
+        inArray(locationsTable.id, locIds)
+      );
+    }
+  });
+
+  it('1. District search returns eligible branches in multiple descendant localities', async () => {
+    const results = await repo.searchActiveVerified({
+      locationId: hierDistrictId
+    });
+    const found = results.find(r => r.college.id === multiCollegeId);
+    expect(found).toBeDefined();
+    expect(results.some(r => r.college.id === otherCollegeId)).toBe(false);
+  });
+
+  it('2. Mandal search returns eligible branches in descendant localities and excludes other mandals', async () => {
+    // Search Mandal 1 (has 1A: MPC and 1B: BIPC)
+    const mpcResults = await repo.searchActiveVerified({
+      locationId: hierMandal1Id,
+      streamCode: 'MPC'
+    });
+    expect(mpcResults.find(r => r.college.id === multiCollegeId)?.matchedBranchId).toBe(branch1AId);
+
+    const bipcResults = await repo.searchActiveVerified({
+      locationId: hierMandal1Id,
+      streamCode: 'BIPC'
+    });
+    expect(bipcResults.find(r => r.college.id === multiCollegeId)?.matchedBranchId).toBe(branch1BId);
+
+    // Mandal 1 does NOT have CEC (CEC is in Mandal 2)
+    const cecResults = await repo.searchActiveVerified({
+      locationId: hierMandal1Id,
+      streamCode: 'CEC'
+    });
+    expect(cecResults.find(r => r.college.id === multiCollegeId)).toBeUndefined();
+  });
+
+  it('3. Exact locality search does not return sibling localities', async () => {
+    // Locality 1A only has branch1A (MPC)
+    const bipcResults = await repo.searchActiveVerified({
+      locationId: hierLocality1AId,
+      streamCode: 'BIPC'
+    });
+    expect(bipcResults.find(r => r.college.id === multiCollegeId)).toBeUndefined();
+
+    const mpcResults = await repo.searchActiveVerified({
+      locationId: hierLocality1AId,
+      streamCode: 'MPC'
+    });
+    expect(mpcResults.find(r => r.college.id === multiCollegeId)?.matchedBranchId).toBe(branch1AId);
+  });
+
+  it('4. District and mandal searches do not return branches outside the selected hierarchy', async () => {
+    // Other district search should never find multiCollege
+    const results = await repo.searchActiveVerified({
+      locationId: otherDistrictId,
+      streamCode: 'BIPC'
+    });
+    expect(results.find(r => r.college.id === multiCollegeId)).toBeUndefined();
+  });
+
+  it('5. Female hostel-required discovery excludes boys-only branches and includes girls-hostel branches', async () => {
+    // Branch 1A has MPC but only Boys Hostel -> should be excluded for FEMALE
+    const mpcFemaleResults = await repo.searchActiveVerified({
+      streamCode: 'MPC',
+      requiresHostel: true,
+      gender: 'FEMALE'
+    });
+    expect(mpcFemaleResults.find(r => r.college.id === multiCollegeId)).toBeUndefined();
+
+    // Branch 1B has BIPC with Girls Hostel -> should be included for FEMALE
+    const bipcFemaleResults = await repo.searchActiveVerified({
+      streamCode: 'BIPC',
+      requiresHostel: true,
+      gender: 'FEMALE'
+    });
+    const bipcFound = bipcFemaleResults.find(r => r.college.id === multiCollegeId);
+    expect(bipcFound).toBeDefined();
+    expect(bipcFound?.matchedBranchId).toBe(branch1BId);
+
+    // Branch 2A has CEC with Coed (both) -> should be included for FEMALE
+    const cecFemaleResults = await repo.searchActiveVerified({
+      streamCode: 'CEC',
+      requiresHostel: true,
+      gender: 'FEMALE'
+    });
+    expect(cecFemaleResults.find(r => r.college.id === multiCollegeId)?.matchedBranchId).toBe(branch2AId);
+  });
+
+  it('6. Male hostel-required discovery excludes girls-only branches and includes boys-hostel branches', async () => {
+    // Branch 1B has BIPC but only Girls Hostel -> should be excluded for MALE
+    const bipcMaleResults = await repo.searchActiveVerified({
+      streamCode: 'BIPC',
+      requiresHostel: true,
+      gender: 'MALE'
+    });
+    expect(bipcMaleResults.find(r => r.college.id === multiCollegeId)).toBeUndefined();
+
+    // Branch 1A has MPC with Boys Hostel -> should be included for MALE
+    const mpcMaleResults = await repo.searchActiveVerified({
+      streamCode: 'MPC',
+      requiresHostel: true,
+      gender: 'MALE'
+    });
+    expect(mpcMaleResults.find(r => r.college.id === multiCollegeId)?.matchedBranchId).toBe(branch1AId);
+  });
+
+  it('7. Hostel not required preserves existing results without gender filtering', async () => {
+    const results = await repo.searchActiveVerified({
+      streamCode: 'MPC',
+      requiresHostel: false
+    });
+    expect(results.some(r => r.college.id === multiCollegeId)).toBe(true);
+    expect(results.some(r => r.college.id === otherCollegeId)).toBe(true);
+  });
+
+  it('8. Combined location, stream, fee, and hostel filters work together', async () => {
+    // In Hier District, CEC with fee <= 35000, Hostel for FEMALE -> matches Branch 2A
+    const match = await repo.searchActiveVerified({
+      locationId: hierDistrictId,
+      streamCode: 'CEC',
+      maxFee: 35000,
+      requiresHostel: true,
+      gender: 'FEMALE'
+    });
+    expect(match.find(r => r.college.id === multiCollegeId)?.matchedBranchId).toBe(branch2AId);
+
+    // Fee below minFee (30000 < 35000) -> returns empty
+    const feeMiss = await repo.searchActiveVerified({
+      locationId: hierDistrictId,
+      streamCode: 'CEC',
+      maxFee: 30000,
+      requiresHostel: true,
+      gender: 'FEMALE'
+    });
+    expect(feeMiss.find(r => r.college.id === multiCollegeId)).toBeUndefined();
+  });
+
+  it('9. A college with multiple branches returns the correct qualifying matched branch', async () => {
+    const bipcMatch = await repo.searchActiveVerified({
+      streamCode: 'BIPC'
+    });
+    expect(bipcMatch.find(r => r.college.id === multiCollegeId)?.matchedBranchId).toBe(branch1BId);
+
+    const cecMatch = await repo.searchActiveVerified({
+      streamCode: 'CEC'
+    });
+    expect(cecMatch.find(r => r.college.id === multiCollegeId)?.matchedBranchId).toBe(branch2AId);
+  });
+
+  it('10. Existing eligibility and verification filters remain enforced', async () => {
+    // Unverified college in Locality 1A must NOT appear
+    const results = await repo.searchActiveVerified({
+      locationId: hierLocality1AId,
+      streamCode: 'MPC'
+    });
+    expect(results.some(r => r.college.id === unverifiedCollegeId)).toBe(false);
+  });
+});

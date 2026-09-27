@@ -60,7 +60,11 @@ class MockHomeScreenCollegeApiClient extends CollegeApiClient {
     int? maxFee,
   }) async {
     return [
-      {'id': 'c1', 'name': 'Aditya Junior College', 'locationId': locationId ?? 'Visakhapatnam'}
+      {
+        'id': 'c1',
+        'name': 'Aditya Junior College',
+        'locationId': locationId ?? 'Visakhapatnam',
+      },
     ];
   }
 
@@ -73,9 +77,14 @@ class MockHomeScreenCollegeApiClient extends CollegeApiClient {
         'nameTe': 'ఇంటర్మీడియట్',
         'status': 'ACTIVE',
         'programs': [
-          {'code': 'MPC', 'nameEn': 'MPC', 'nameTe': 'ఎంపిసి', 'status': 'ACTIVE'},
-        ]
-      }
+          {
+            'code': 'MPC',
+            'nameEn': 'MPC',
+            'nameTe': 'ఎంపిసి',
+            'status': 'ACTIVE',
+          },
+        ],
+      },
     ];
   }
 }
@@ -94,23 +103,28 @@ void main() {
     collegeApiClient = MockHomeScreenCollegeApiClient();
   });
 
-  Widget buildHomeScreen({MockHomeScreenStudentApiClient? customStudentClient}) => MaterialApp(
-        home: HomeScreen(
-          authService: authService,
-          studentApiClient: customStudentClient ?? studentApiClient,
-          collegeApiClient: collegeApiClient,
-        ),
-        routes: {
-          '/login': (context) => LoginScreen(authService: authService, studentApiClient: studentApiClient),
-        },
-      );
+  Widget buildHomeScreen({
+    MockHomeScreenStudentApiClient? customStudentClient,
+  }) => MaterialApp(
+    home: HomeScreen(
+      authService: authService,
+      studentApiClient: customStudentClient ?? studentApiClient,
+      collegeApiClient: collegeApiClient,
+    ),
+    routes: {
+      '/login': (context) => LoginScreen(
+        authService: authService,
+        studentApiClient: studentApiClient,
+      ),
+    },
+  );
 
   Widget buildLoginScreen() => MaterialApp(
-        home: LoginScreen(
-          authService: authService,
-          studentApiClient: studentApiClient,
-        ),
-      );
+    home: LoginScreen(
+      authService: authService,
+      studentApiClient: studentApiClient,
+    ),
+  );
 
   group('HomeScreen Discovery & Exploration Navigation', () {
     testWidgets('renders Naaguru branding', (tester) async {
@@ -135,210 +149,234 @@ void main() {
       expect(find.text("Browse Verified Colleges"), findsOneWidget);
     });
 
-    testWidgets('1 & 8. Fresh student (no saved intent): Explore Colleges routes to Discovery Step 1, NOT Review', (tester) async {
-      studentApiClient.mockIntent = null; // No intent
+    testWidgets(
+      '1 & 8. Fresh student (no saved intent): Explore Colleges routes to Discovery Step 1, NOT Review',
+      (tester) async {
+        studentApiClient.mockIntent = null; // No intent
 
-      await tester.pumpWidget(buildHomeScreen());
-      await tester.pumpAndSettle();
+        await tester.pumpWidget(buildHomeScreen());
+        await tester.pumpAndSettle();
 
-      await tester.ensureVisible(find.text('Explore Colleges →'));
-      await tester.tap(find.text('Explore Colleges →'));
-      await tester.pumpAndSettle();
+        await tester.ensureVisible(find.text('Explore Colleges →'));
+        await tester.tap(find.text('Explore Colleges →'));
+        await tester.pumpAndSettle();
 
-      // Opens Step 1 (CollegePreferencesScreen)
-      expect(find.byType(CollegePreferencesScreen), findsOneWidget);
-      expect(find.byType(CollegeReviewAndConfirmScreen), findsNothing);
-      expect(find.byType(CollegeListScreen), findsNothing);
-    });
+        // Opens Step 1 (CollegePreferencesScreen)
+        expect(find.byType(CollegePreferencesScreen), findsOneWidget);
+        expect(find.byType(CollegeReviewAndConfirmScreen), findsNothing);
+        expect(find.byType(CollegeListScreen), findsNothing);
+      },
+    );
 
-    testWidgets('2 & 9. Version 1 intent: Explore Colleges routes directly to CollegeListScreen, NOT Review', (tester) async {
-      studentApiClient.mockIntent = {
-        'id': 'intent-v1',
-        'versionNumber': 1,
-        'pathwayCode': 'INTERMEDIATE',
-        'programCode': 'MPC',
-        'requiresHostel': true,
-        'maxAnnualFee': 100000,
-        'status': 'ACTIVE',
-      };
+    testWidgets(
+      '2 & 9. Version 1 intent: Explore Colleges routes directly to CollegeListScreen, NOT Review',
+      (tester) async {
+        studentApiClient.mockIntent = {
+          'id': 'intent-v1',
+          'versionNumber': 1,
+          'pathwayCode': 'INTERMEDIATE',
+          'programCode': 'MPC',
+          'requiresHostel': true,
+          'maxAnnualFee': 100000,
+          'status': 'ACTIVE',
+        };
 
-      await tester.pumpWidget(buildHomeScreen());
-      await tester.pumpAndSettle();
+        await tester.pumpWidget(buildHomeScreen());
+        await tester.pumpAndSettle();
 
-      await tester.ensureVisible(find.text('Explore Colleges →'));
-      await tester.tap(find.text('Explore Colleges →'));
-      await tester.pumpAndSettle();
+        await tester.ensureVisible(find.text('Explore Colleges →'));
+        await tester.tap(find.text('Explore Colleges →'));
+        await tester.pumpAndSettle();
 
-      // Directly on CollegeListScreen!
-      expect(find.byType(CollegeListScreen), findsOneWidget);
-      expect(find.byType(CollegeReviewAndConfirmScreen), findsNothing);
-      expect(find.byType(CollegePreferencesScreen), findsNothing);
-    });
+        // Directly on CollegeListScreen!
+        expect(find.byType(CollegeListScreen), findsOneWidget);
+        expect(find.byType(CollegeReviewAndConfirmScreen), findsNothing);
+        expect(find.byType(CollegePreferencesScreen), findsNothing);
+      },
+    );
 
-    testWidgets('3. Version 2 intent: Explore Colleges routes directly to CollegeListScreen, NOT Review', (tester) async {
-      studentApiClient.mockIntent = {
-        'id': 'intent-v2',
-        'versionNumber': 2,
-        'pathwayCode': 'INTERMEDIATE',
-        'programCode': 'BIPC',
-        'requiresHostel': false,
-        'maxAnnualFee': 50000,
-        'status': 'ACTIVE',
-      };
+    testWidgets(
+      '3. Version 2 intent: Explore Colleges routes directly to CollegeListScreen, NOT Review',
+      (tester) async {
+        studentApiClient.mockIntent = {
+          'id': 'intent-v2',
+          'versionNumber': 2,
+          'pathwayCode': 'INTERMEDIATE',
+          'programCode': 'BIPC',
+          'requiresHostel': false,
+          'maxAnnualFee': 50000,
+          'status': 'ACTIVE',
+        };
 
-      await tester.pumpWidget(buildHomeScreen());
-      await tester.pumpAndSettle();
+        await tester.pumpWidget(buildHomeScreen());
+        await tester.pumpAndSettle();
 
-      await tester.ensureVisible(find.text('Explore Colleges →'));
-      await tester.tap(find.text('Explore Colleges →'));
-      await tester.pumpAndSettle();
+        await tester.ensureVisible(find.text('Explore Colleges →'));
+        await tester.tap(find.text('Explore Colleges →'));
+        await tester.pumpAndSettle();
 
-      // Directly on CollegeListScreen!
-      expect(find.byType(CollegeListScreen), findsOneWidget);
-      expect(find.byType(CollegeReviewAndConfirmScreen), findsNothing);
-      expect(find.byType(CollegePreferencesScreen), findsNothing);
-    });
+        // Directly on CollegeListScreen!
+        expect(find.byType(CollegeListScreen), findsOneWidget);
+        expect(find.byType(CollegeReviewAndConfirmScreen), findsNothing);
+        expect(find.byType(CollegePreferencesScreen), findsNothing);
+      },
+    );
 
-    testWidgets('4 & 10. Profile tab ("You"): Version 1 intent shows College Preferences and allows editing', (tester) async {
-      studentApiClient.mockIntent = {
-        'id': 'intent-v1',
-        'versionNumber': 1,
-        'pathwayCode': 'INTERMEDIATE',
-        'programCode': 'MPC',
-        'requiresHostel': true,
-        'maxAnnualFee': 100000,
-        'status': 'ACTIVE',
-      };
+    testWidgets(
+      '4 & 10. Profile tab ("You"): Version 1 intent shows College Preferences and allows editing',
+      (tester) async {
+        studentApiClient.mockIntent = {
+          'id': 'intent-v1',
+          'versionNumber': 1,
+          'pathwayCode': 'INTERMEDIATE',
+          'programCode': 'MPC',
+          'requiresHostel': true,
+          'maxAnnualFee': 100000,
+          'status': 'ACTIVE',
+        };
 
-      await tester.pumpWidget(buildHomeScreen());
-      await tester.pumpAndSettle();
+        await tester.pumpWidget(buildHomeScreen());
+        await tester.pumpAndSettle();
 
-      // Switch to "You" tab (index 3)
-      await tester.tap(find.text('You'));
-      await tester.pumpAndSettle();
+        // Switch to "You" tab (index 3)
+        await tester.tap(find.text('You'));
+        await tester.pumpAndSettle();
 
-      // Shows College Preferences card with 1 edit left
-      expect(find.text('College Preferences'), findsOneWidget);
-      expect(find.text('Intermediate • MPC'), findsOneWidget);
-      expect(find.text('Hostel required'), findsOneWidget);
-      expect(find.text('Budget: Up to ₹1,00,000 / year'), findsOneWidget);
-      expect(find.text('1 edit left'), findsOneWidget);
+        // Shows College Preferences card with 1 edit left
+        expect(find.text('College Preferences'), findsOneWidget);
+        expect(find.text('Intermediate • MPC'), findsOneWidget);
+        expect(find.text('Hostel required'), findsOneWidget);
+        expect(find.text('Budget: Up to ₹1,00,000 / year'), findsOneWidget);
+        expect(find.text('1 edit left'), findsOneWidget);
 
-      // Tap View / Change Preferences
-      final viewButton = find.text('View / Change Preferences →');
-      expect(viewButton, findsOneWidget);
-      await tester.ensureVisible(viewButton);
-      await tester.tap(viewButton);
-      await tester.pumpAndSettle();
+        // Tap View / Change Preferences
+        final viewButton = find.text('View / Change Preferences →');
+        expect(viewButton, findsOneWidget);
+        await tester.ensureVisible(viewButton);
+        await tester.tap(viewButton);
+        await tester.pumpAndSettle();
 
-      // Review & Confirm opens with Edit enabled!
-      expect(find.byType(CollegeReviewAndConfirmScreen), findsOneWidget);
-      expect(find.text('Edit'), findsNWidgets(5));
-      expect(find.text('FINAL PREFERENCES'), findsNothing);
-    });
+        // Review & Confirm opens with Edit enabled!
+        expect(find.byType(CollegeReviewAndConfirmScreen), findsOneWidget);
+        expect(find.text('Edit'), findsNWidgets(5));
+        expect(find.text('FINAL PREFERENCES'), findsNothing);
+      },
+    );
 
-    testWidgets('5 & 6. Profile tab ("You"): Version 2 intent shows Final 🔒 and locks editing, but results accessible', (tester) async {
-      studentApiClient.mockIntent = {
-        'id': 'intent-v2',
-        'versionNumber': 2,
-        'pathwayCode': 'INTERMEDIATE',
-        'programCode': 'MPC',
-        'requiresHostel': true,
-        'maxAnnualFee': 100000,
-        'status': 'ACTIVE',
-      };
+    testWidgets(
+      '5 & 6. Profile tab ("You"): Version 2 intent shows Final 🔒 and locks editing, but results accessible',
+      (tester) async {
+        studentApiClient.mockIntent = {
+          'id': 'intent-v2',
+          'versionNumber': 2,
+          'pathwayCode': 'INTERMEDIATE',
+          'programCode': 'MPC',
+          'requiresHostel': true,
+          'maxAnnualFee': 100000,
+          'status': 'ACTIVE',
+        };
 
-      await tester.pumpWidget(buildHomeScreen());
-      await tester.pumpAndSettle();
+        await tester.pumpWidget(buildHomeScreen());
+        await tester.pumpAndSettle();
 
-      // Switch to "You" tab (index 3)
-      await tester.tap(find.text('You'));
-      await tester.pumpAndSettle();
+        // Switch to "You" tab (index 3)
+        await tester.tap(find.text('You'));
+        await tester.pumpAndSettle();
 
-      // Shows Final 🔒 badge on preferences card
-      expect(find.text('College Preferences'), findsOneWidget);
-      expect(find.text('Final 🔒'), findsOneWidget);
+        // Shows Final 🔒 badge on preferences card
+        expect(find.text('College Preferences'), findsOneWidget);
+        expect(find.text('Final 🔒'), findsOneWidget);
 
-      // Tap View Preferences
-      final viewButton = find.text('View Preferences →');
-      expect(viewButton, findsOneWidget);
-      await tester.ensureVisible(viewButton);
-      await tester.tap(viewButton);
-      await tester.pumpAndSettle();
+        // Tap View Preferences
+        final viewButton = find.text('View Preferences →');
+        expect(viewButton, findsOneWidget);
+        await tester.ensureVisible(viewButton);
+        await tester.tap(viewButton);
+        await tester.pumpAndSettle();
 
-      // Review & Confirm opens with Final preferences locked!
-      expect(find.byType(CollegeReviewAndConfirmScreen), findsOneWidget);
-      expect(find.text('FINAL PREFERENCES'), findsOneWidget);
-      expect(find.text('Edit'), findsNothing);
-      expect(find.text('Final'), findsNWidgets(5));
+        // Review & Confirm opens with Final preferences locked!
+        expect(find.byType(CollegeReviewAndConfirmScreen), findsOneWidget);
+        expect(find.text('FINAL PREFERENCES'), findsOneWidget);
+        expect(find.text('Edit'), findsNothing);
+        expect(find.text('Final'), findsNWidgets(5));
 
-      // Results remain accessible via CTA
-      await tester.ensureVisible(find.text('Confirm & View Colleges'));
-      await tester.tap(find.text('Confirm & View Colleges'));
-      await tester.pumpAndSettle();
+        // Results remain accessible via CTA
+        await tester.ensureVisible(find.text('Confirm & View Colleges'));
+        await tester.tap(find.text('Confirm & View Colleges'));
+        await tester.pumpAndSettle();
 
-      expect(find.byType(CollegeListScreen), findsOneWidget);
-    });
+        expect(find.byType(CollegeListScreen), findsOneWidget);
+      },
+    );
 
-    testWidgets('7. GET intent failure: does not assume intent exists or route to Review', (tester) async {
-      studentApiClient.failGetIntent = true;
+    testWidgets(
+      '7. GET intent failure: does not assume intent exists or route to Review',
+      (tester) async {
+        studentApiClient.failGetIntent = true;
 
-      await tester.pumpWidget(buildHomeScreen());
-      await tester.pumpAndSettle();
+        await tester.pumpWidget(buildHomeScreen());
+        await tester.pumpAndSettle();
 
-      await tester.ensureVisible(find.text('Explore Colleges →'));
-      await tester.tap(find.text('Explore Colleges →'));
-      await tester.pumpAndSettle();
+        await tester.ensureVisible(find.text('Explore Colleges →'));
+        await tester.tap(find.text('Explore Colleges →'));
+        await tester.pumpAndSettle();
 
-      // Defaults to starting discovery, NOT Review & Confirm
-      expect(find.byType(CollegeReviewAndConfirmScreen), findsNothing);
-      expect(find.byType(CollegePreferencesScreen), findsOneWidget);
-    });
+        // Defaults to starting discovery, NOT Review & Confirm
+        expect(find.byType(CollegeReviewAndConfirmScreen), findsNothing);
+        expect(find.byType(CollegePreferencesScreen), findsOneWidget);
+      },
+    );
 
-    testWidgets('11. Opening Explore Colleges does NOT overwrite or resubmit saved intent', (tester) async {
-      studentApiClient.mockIntent = {
-        'id': 'intent-v1',
-        'versionNumber': 1,
-        'pathwayCode': 'INTERMEDIATE',
-        'programCode': 'MPC',
-        'status': 'ACTIVE',
-      };
+    testWidgets(
+      '11. Opening Explore Colleges does NOT overwrite or resubmit saved intent',
+      (tester) async {
+        studentApiClient.mockIntent = {
+          'id': 'intent-v1',
+          'versionNumber': 1,
+          'pathwayCode': 'INTERMEDIATE',
+          'programCode': 'MPC',
+          'status': 'ACTIVE',
+        };
 
-      await tester.pumpWidget(buildHomeScreen());
-      await tester.pumpAndSettle();
+        await tester.pumpWidget(buildHomeScreen());
+        await tester.pumpAndSettle();
 
-      await tester.ensureVisible(find.text('Explore Colleges →'));
-      await tester.tap(find.text('Explore Colleges →'));
-      await tester.pumpAndSettle();
+        await tester.ensureVisible(find.text('Explore Colleges →'));
+        await tester.tap(find.text('Explore Colleges →'));
+        await tester.pumpAndSettle();
 
-      // submitCollegeIntent was NEVER called!
-      expect(studentApiClient.submitIntentCallCount, 0);
-      expect(find.byType(CollegeListScreen), findsOneWidget);
-    });
+        // submitCollegeIntent was NEVER called!
+        expect(studentApiClient.submitIntentCallCount, 0);
+        expect(find.byType(CollegeListScreen), findsOneWidget);
+      },
+    );
 
-    testWidgets('12. Rapid taps on Explore Colleges do not cause duplicate navigation/API calls', (tester) async {
-      studentApiClient.mockIntent = {
-        'id': 'intent-v1',
-        'versionNumber': 1,
-        'pathwayCode': 'INTERMEDIATE',
-        'status': 'ACTIVE',
-      };
+    testWidgets(
+      '12. Rapid taps on Explore Colleges do not cause duplicate navigation/API calls',
+      (tester) async {
+        studentApiClient.mockIntent = {
+          'id': 'intent-v1',
+          'versionNumber': 1,
+          'pathwayCode': 'INTERMEDIATE',
+          'status': 'ACTIVE',
+        };
 
-      await tester.pumpWidget(buildHomeScreen());
-      await tester.pumpAndSettle();
+        await tester.pumpWidget(buildHomeScreen());
+        await tester.pumpAndSettle();
 
-      final initialCalls = studentApiClient.getIntentCallCount;
+        final initialCalls = studentApiClient.getIntentCallCount;
 
-      await tester.ensureVisible(find.text('Explore Colleges →'));
-      // Rapidly tap button twice
-      await tester.tap(find.text('Explore Colleges →'), warnIfMissed: false);
-      await tester.tap(find.text('Explore Colleges →'), warnIfMissed: false);
-      await tester.pumpAndSettle();
+        await tester.ensureVisible(find.text('Explore Colleges →'));
+        // Rapidly tap button twice
+        await tester.tap(find.text('Explore Colleges →'), warnIfMissed: false);
+        await tester.tap(find.text('Explore Colleges →'), warnIfMissed: false);
+        await tester.pumpAndSettle();
 
-      // Only one intent check initiated for the rapid tap sequence
-      expect(studentApiClient.getIntentCallCount - initialCalls, 1);
-      expect(find.byType(CollegeListScreen), findsOneWidget);
-    });
+        // Only one intent check initiated for the rapid tap sequence
+        expect(studentApiClient.getIntentCallCount - initialCalls, 1);
+        expect(find.byType(CollegeListScreen), findsOneWidget);
+      },
+    );
   });
 
   group('LoginScreen', () {
@@ -350,8 +388,9 @@ void main() {
       expect(find.text('Send OTP'), findsOneWidget);
     });
 
-    testWidgets('shows error when phone is empty and Send OTP tapped',
-        (tester) async {
+    testWidgets('shows error when phone is empty and Send OTP tapped', (
+      tester,
+    ) async {
       await tester.pumpWidget(buildLoginScreen());
       await tester.pumpAndSettle();
 
@@ -360,27 +399,33 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(
-          find.text('Enter a valid 10-digit mobile number.'), findsOneWidget);
+        find.text('Enter a valid 10-digit mobile number.'),
+        findsOneWidget,
+      );
     });
   });
 
   group('StudentProfileScreen', () {
     testWidgets('renders profile form fields', (tester) async {
-      await tester.pumpWidget(MaterialApp(
-        home: Builder(builder: (context) {
-          return Scaffold(
-            body: ElevatedButton(
-              onPressed: () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => const _MockProfileScreen(),
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Builder(
+            builder: (context) {
+              return Scaffold(
+                body: ElevatedButton(
+                  onPressed: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const _MockProfileScreen(),
+                    ),
+                  ),
+                  child: const Text('Go'),
                 ),
-              ),
-              child: const Text('Go'),
-            ),
-          );
-        }),
-      ));
+              );
+            },
+          ),
+        ),
+      );
     });
   });
 }
@@ -390,8 +435,6 @@ class _MockProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Center(child: Text('Profile loaded')),
-    );
+    return const Scaffold(body: Center(child: Text('Profile loaded')));
   }
 }

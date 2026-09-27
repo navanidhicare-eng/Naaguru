@@ -184,6 +184,31 @@ export class DrizzleCatalogRepository {
     });
   }
 
+  async getDescendantLocationIds(locationId: string): Promise<string[]> {
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    if (!uuidRegex.test(locationId)) {
+      return [];
+    }
+
+    const result = await db.execute(sql`
+      WITH RECURSIVE loc_tree AS (
+        SELECT id, ARRAY[id] as path 
+        FROM locations 
+        WHERE id = ${locationId}::uuid AND status = 'ACTIVE'
+        
+        UNION ALL
+        
+        SELECT l.id, t.path || l.id
+        FROM locations l
+        INNER JOIN loc_tree t ON l.parent_id = t.id
+        WHERE NOT l.id = ANY(t.path) AND l.status = 'ACTIVE'
+      )
+      SELECT id FROM loc_tree;
+    `);
+    
+    return result.map(r => r.id as string);
+  }
+
   async getActiveSchools(locationId?: string, search?: string): Promise<School[]> {
     const conditions = [
       eq(schoolsTable.status, 'ACTIVE'),
@@ -195,29 +220,11 @@ export class DrizzleCatalogRepository {
     }
 
     if (locationId) {
-      // Recursive CTE to find all descendant location IDs, preventing cycles
-      const result = await db.execute(sql`
-        WITH RECURSIVE loc_tree AS (
-          SELECT id, ARRAY[id] as path 
-          FROM locations 
-          WHERE id = ${locationId}::uuid
-          
-          UNION ALL
-          
-          SELECT l.id, t.path || l.id
-          FROM locations l
-          INNER JOIN loc_tree t ON l.parent_id = t.id
-          WHERE NOT l.id = ANY(t.path) -- Prevent cycles
-        )
-        SELECT id FROM loc_tree;
-      `);
-      
-      const descendantIds = result.map(r => r.id as string);
-      
+      const descendantIds = await this.getDescendantLocationIds(locationId);
       if (descendantIds.length > 0) {
         conditions.push(inArray(schoolsTable.locationId, descendantIds));
       } else {
-        return []; // If no descendants found (invalid locationId), return empty array
+        return []; // If no descendants found (invalid/inactive locationId), return empty array
       }
     }
 
@@ -253,24 +260,7 @@ export class DrizzleCatalogRepository {
     }
 
     if (locationId) {
-      const result = await db.execute(sql`
-        WITH RECURSIVE loc_tree AS (
-          SELECT id, ARRAY[id] as path 
-          FROM locations 
-          WHERE id = ${locationId}::uuid
-          
-          UNION ALL
-          
-          SELECT l.id, t.path || l.id
-          FROM locations l
-          INNER JOIN loc_tree t ON l.parent_id = t.id
-          WHERE NOT l.id = ANY(t.path)
-        )
-        SELECT id FROM loc_tree;
-      `);
-      
-      const descendantIds = result.map(r => r.id as string);
-      
+      const descendantIds = await this.getDescendantLocationIds(locationId);
       if (descendantIds.length > 0) {
         conditions.push(inArray(schoolsTable.locationId, descendantIds));
       } else {

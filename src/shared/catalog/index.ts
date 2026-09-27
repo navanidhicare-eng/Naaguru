@@ -12,11 +12,12 @@ export const CatalogModule = {
   getStudentVisibleLocations: (type?: any, parentId?: string) => catalogUseCases.getStudentVisibleLocations(type, parentId),
   getPartnerSchools: (locationId?: string, search?: string) => catalogUseCases.getPartnerSchools(locationId, search),
   
-  // Validation methods used by other modules (e.g., student module)
+  // Validation and hierarchy methods used by other modules (e.g., student module, college module)
   validatePathway: (code: string) => catalogUseCases.validatePathway(code),
   validateProgram: (pathwayCode: string, programCode: string) => catalogUseCases.validateProgram(pathwayCode, programCode),
   validateArea: (id: string) => catalogUseCases.validateArea(id),
   validateSchool: (id: string) => catalogUseCases.validateSchool(id),
+  getDescendantLocationIds: (locationId: string) => catalogUseCases.getDescendantLocationIds(locationId),
 };
 
 export const AdminCatalogModule = {

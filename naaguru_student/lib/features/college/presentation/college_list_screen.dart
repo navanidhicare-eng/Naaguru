@@ -1,29 +1,38 @@
 import 'package:flutter/material.dart';
+import 'package:naaguru_student/core/errors/app_error.dart';
 import 'package:naaguru_student/core/theme.dart';
 import 'package:naaguru_student/features/college/data/college_api_client.dart';
 import 'package:naaguru_student/features/college/presentation/college_detail_screen.dart';
+import 'package:naaguru_student/features/student/data/catalog_api_client.dart';
 import 'package:naaguru_student/features/student/data/student_api_client.dart';
+import 'package:naaguru_student/features/student/presentation/location_picker_sheet.dart';
 
+/// Screen A: College Discovery Screen
+/// Reproduces the Stitch College Listing reference design.
 class CollegeListScreen extends StatefulWidget {
-  final StudentApiClient studentApiClient;
-  final CollegeApiClient collegeApiClient;
+  final StudentApiClient? studentApiClient;
+  final CollegeApiClient? collegeApiClient;
+  final CatalogApiClient? catalogApiClient;
   final String pathway;
   final String? streamCode;
   final String? locationId;
   final String? locationName;
   final bool requiresHostel;
   final int? maxFee;
+  final bool showBottomNav;
 
   const CollegeListScreen({
     super.key,
-    required this.studentApiClient,
-    required this.collegeApiClient,
-    required this.pathway,
+    this.studentApiClient,
+    this.collegeApiClient,
+    this.catalogApiClient,
+    this.pathway = 'Intermediate',
     this.streamCode,
     this.locationId,
     this.locationName,
     this.requiresHostel = false,
     this.maxFee,
+    this.showBottomNav = true,
   });
 
   @override
@@ -31,21 +40,37 @@ class CollegeListScreen extends StatefulWidget {
 }
 
 class _CollegeListScreenState extends State<CollegeListScreen> {
-  bool _isTelugu = false;
   bool _isLoading = true;
   String? _errorMessage;
 
   List<Map<String, dynamic>> _colleges = [];
   List<Map<String, dynamic>> _filteredColleges = [];
 
+  // Active filter states
+  String? _selectedStreamCode;
+  String? _selectedLocationId;
+  String? _selectedLocationName;
+  bool _requiresHostel = false;
+  int? _maxFee;
+
+  // Search input
   final TextEditingController _searchController = TextEditingController();
 
+  // Saved bookmarks set
+  final Set<String> _bookmarkedCollegeIds = {};
+
   // For bottom navigation
-  int _currentIndex = 1; // "Explore" is index 1
+  int _currentIndex = 1; // Discover is index 1
 
   @override
   void initState() {
     super.initState();
+    _selectedStreamCode = widget.streamCode ?? 'MPC';
+    _selectedLocationId = widget.locationId;
+    _selectedLocationName = widget.locationName ?? 'Visakhapatnam, AP';
+    _requiresHostel = widget.requiresHostel;
+    _maxFee = widget.maxFee;
+
     _fetchColleges();
     _searchController.addListener(_onSearchChanged);
   }
@@ -64,24 +89,40 @@ class _CollegeListScreenState extends State<CollegeListScreen> {
       setState(() {
         _filteredColleges = _colleges.where((college) {
           final name = (college['name'] as String? ?? '').toLowerCase();
-          return name.contains(query);
+          final desc = (college['description'] as String? ?? '').toLowerCase();
+          final branches = (college['branches'] as List<dynamic>?) ?? [];
+          final matchBranch = branches.any((b) {
+            final loc = (b['locationName'] as String? ?? '').toLowerCase();
+            final bName = (b['name'] as String? ?? '').toLowerCase();
+            return loc.contains(query) || bName.contains(query);
+          });
+          return name.contains(query) || desc.contains(query) || matchBranch;
         }).toList();
       });
     }
   }
 
   Future<void> _fetchColleges() async {
+    if (widget.collegeApiClient == null) {
+      setState(() {
+        _isLoading = false;
+        _colleges = [];
+        _filteredColleges = [];
+      });
+      return;
+    }
+
     setState(() {
       _isLoading = true;
       _errorMessage = null;
     });
 
     try {
-      final results = await widget.collegeApiClient.searchColleges(
-        streamCode: widget.streamCode,
-        locationId: widget.locationId,
-        requiresHostel: widget.requiresHostel ? true : null,
-        maxFee: widget.maxFee,
+      final results = await widget.collegeApiClient!.searchColleges(
+        streamCode: _selectedStreamCode,
+        locationId: _selectedLocationId,
+        requiresHostel: _requiresHostel ? true : null,
+        maxFee: _maxFee,
       );
 
       if (mounted) {
@@ -90,70 +131,1134 @@ class _CollegeListScreenState extends State<CollegeListScreen> {
           _filteredColleges = List.from(results);
           _isLoading = false;
         });
+        _onSearchChanged();
       }
     } catch (e) {
       if (mounted) {
         setState(() {
-          _errorMessage = "Failed to load colleges. Please check connection.";
+          _errorMessage = ErrorMapper.userMessage(e);
           _isLoading = false;
         });
       }
     }
   }
 
-  void _clearSearch() {
-    _searchController.clear();
-    FocusScope.of(context).unfocus();
+  void _toggleStream(String stream) {
+    setState(() {
+      if (_selectedStreamCode == stream) {
+        _selectedStreamCode = null;
+      } else {
+        _selectedStreamCode = stream;
+      }
+    });
+    _fetchColleges();
+  }
+
+  void _toggleHostel() {
+    setState(() {
+      _requiresHostel = !_requiresHostel;
+    });
+    _fetchColleges();
+  }
+
+  Future<void> _pickLocation() async {
+    if (widget.catalogApiClient == null) return;
+
+    final picked = await LocationPickerSheet.show(
+      context,
+      levelLabel: 'District / Location',
+      levelLabelTe: 'జిల్లా / ప్రదేశం',
+      isTelugu: false,
+      loader: () => widget.catalogApiClient!.getLocations(type: 'DISTRICT'),
+    );
+
+    if (picked != null && mounted) {
+      setState(() {
+        _selectedLocationId = picked.id;
+        _selectedLocationName = '${picked.nameEn}, AP';
+      });
+      _fetchColleges();
+    }
+  }
+
+  void _showFeeFilterSheet() {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: NaaguruTheme.surface,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (ctx) {
+        return SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                const Text(
+                  'Filter by Annual Tuition Fee',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: NaaguruTheme.text,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                _buildFeeOption(ctx, label: 'Any Fee', fee: null),
+                _buildFeeOption(ctx, label: 'Under ₹50,000 / yr', fee: 50000),
+                _buildFeeOption(ctx, label: 'Under ₹1,00,000 / yr', fee: 100000),
+                _buildFeeOption(ctx, label: 'Under ₹1,50,000 / yr', fee: 150000),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildFeeOption(BuildContext ctx, {required String label, required int? fee}) {
+    final isSelected = _maxFee == fee;
+    return ListTile(
+      title: Text(
+        label,
+        style: TextStyle(
+          fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+          color: isSelected ? NaaguruTheme.primary : NaaguruTheme.text,
+        ),
+      ),
+      trailing: isSelected ? const Icon(Icons.check, color: NaaguruTheme.primary) : null,
+      onTap: () {
+        Navigator.pop(ctx);
+        setState(() => _maxFee = fee);
+        _fetchColleges();
+      },
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: NaaguruTheme.background,
+      backgroundColor: const Color(0xFFEFFCF9),
       body: SafeArea(
         child: Column(
           children: [
-            _buildAppBar(),
+            _buildHeader(),
             Expanded(
-              child: CustomScrollView(
-                slivers: [
-                  SliverToBoxAdapter(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: NaaguruTheme.spacing20,
+              child: RefreshIndicator(
+                color: NaaguruTheme.primary,
+                onRefresh: _fetchColleges,
+                child: SingleChildScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      _buildGreetingAndSearch(),
+                      const SizedBox(height: 16),
+                      _buildStreamSelector(),
+                      const SizedBox(height: 16),
+                      _buildFilterChips(),
+                      const SizedBox(height: 20),
+                      _buildCollegesHeader(),
+                      const SizedBox(height: 12),
+                      _buildCollegeListContent(),
+                      const SizedBox(height: 20),
+                      _buildCounselorPrompt(),
+                      const SizedBox(height: 24),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+      bottomNavigationBar: widget.showBottomNav ? _buildBottomNav() : null,
+    );
+  }
+
+  Widget _buildHeader() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      decoration: BoxDecoration(
+        color: Colors.white.withAlpha(235),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withAlpha(10),
+            blurRadius: 8,
+            offset: const Offset(0, 1),
+          ),
+        ],
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Row(
+            children: [
+              Container(
+                width: 32,
+                height: 32,
+                decoration: BoxDecoration(
+                  color: NaaguruTheme.primary,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Icon(
+                  Icons.school,
+                  color: Colors.white,
+                  size: 20,
+                ),
+              ),
+              const SizedBox(width: 8),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Text(
+                    'Naaguru',
+                    style: TextStyle(
+                      fontFamily: 'Inter',
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: NaaguruTheme.primary,
+                      letterSpacing: -0.2,
+                    ),
+                  ),
+                  InkWell(
+                    onTap: _pickLocation,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          _selectedLocationName ?? 'Visakhapatnam, AP',
+                          style: const TextStyle(
+                            fontSize: 11,
+                            color: Color(0xFF3E4946),
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        const SizedBox(width: 2),
+                        const Icon(
+                          Icons.expand_more,
+                          size: 14,
+                          color: Color(0xFF3E4946),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          Row(
+            children: [
+              IconButton(
+                icon: Stack(
+                  children: [
+                    const Icon(
+                      Icons.notifications_outlined,
+                      size: 22,
+                      color: Color(0xFF3E4946),
+                    ),
+                    Positioned(
+                      top: 1,
+                      right: 1,
+                      child: Container(
+                        width: 8,
+                        height: 8,
+                        decoration: const BoxDecoration(
+                          color: Color(0xFFFEC24A),
+                          shape: BoxShape.circle,
+                        ),
                       ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          const SizedBox(height: NaaguruTheme.spacing16),
-                          _buildContextSubheader(),
-                          const SizedBox(height: NaaguruTheme.spacing12),
-                          _buildLocationSelector(),
-                          const SizedBox(height: NaaguruTheme.spacing16),
-                          _buildSearchInput(),
-                          const SizedBox(height: NaaguruTheme.spacing16),
-                          _buildFiltersHorizontalScroll(),
-                          const SizedBox(height: NaaguruTheme.spacing24),
-                          _buildResultSummary(),
-                          const SizedBox(height: NaaguruTheme.spacing16),
+                    ),
+                  ],
+                ),
+                onPressed: () {},
+                padding: EdgeInsets.zero,
+                constraints: const BoxConstraints(),
+              ),
+              const SizedBox(width: 14),
+              Container(
+                width: 32,
+                height: 32,
+                decoration: const BoxDecoration(
+                  color: NaaguruTheme.primary,
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(
+                  Icons.person,
+                  color: Colors.white,
+                  size: 18,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildGreetingAndSearch() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        const Text(
+          'Find the right college for you',
+          style: TextStyle(
+            fontSize: 22,
+            fontWeight: FontWeight.bold,
+            color: Color(0xFF121E1C),
+            letterSpacing: -0.3,
+          ),
+        ),
+        const SizedBox(height: 4),
+        const Text(
+          'Explore colleges that match your goals.',
+          style: TextStyle(
+            fontSize: 14,
+            color: Color(0xFF3E4946),
+          ),
+        ),
+        const SizedBox(height: 12),
+        Container(
+          height: 52,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(14),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withAlpha(12),
+                blurRadius: 6,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: Row(
+            children: [
+              const SizedBox(width: 14),
+              const Icon(
+                Icons.search,
+                size: 20,
+                color: Color(0xFF6E7A75),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: TextField(
+                  controller: _searchController,
+                  style: const TextStyle(
+                    fontSize: 14,
+                    color: Color(0xFF121E1C),
+                  ),
+                  decoration: const InputDecoration(
+                    hintText: 'Search colleges or locations',
+                    hintStyle: TextStyle(
+                      color: Color(0xFF6E7A75),
+                      fontSize: 14,
+                    ),
+                    border: InputBorder.none,
+                  ),
+                ),
+              ),
+              if (_searchController.text.isNotEmpty)
+                IconButton(
+                  icon: const Icon(Icons.close, size: 18, color: Color(0xFF6E7A75)),
+                  onPressed: () {
+                    _searchController.clear();
+                    _onSearchChanged();
+                  },
+                ),
+              Container(
+                margin: const EdgeInsets.only(right: 8),
+                width: 38,
+                height: 38,
+                decoration: BoxDecoration(
+                  color: const Color(0xFFE9F7F3),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: IconButton(
+                  icon: const Icon(
+                    Icons.tune,
+                    size: 18,
+                    color: NaaguruTheme.primary,
+                  ),
+                  onPressed: _showFeeFilterSheet,
+                  padding: EdgeInsets.zero,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildStreamSelector() {
+    final streams = [
+      {'code': 'MPC', 'sub': 'Maths • Phy', 'icon': Icons.calculate_outlined},
+      {'code': 'BIPC', 'sub': 'Bio • Chem', 'icon': Icons.biotech_outlined},
+      {'code': 'MEC', 'sub': 'Commerce', 'icon': Icons.insights_outlined},
+      {'code': 'CEC', 'sub': 'Civics • Eco', 'icon': Icons.balance_outlined},
+    ];
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: const [
+            Text(
+              'Choose your stream',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Color(0xFF121E1C),
+              ),
+            ),
+            Text(
+              'After 10th',
+              style: TextStyle(
+                fontSize: 11,
+                fontWeight: FontWeight.w600,
+                color: NaaguruTheme.primary,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 10),
+        Row(
+          children: streams.map((s) {
+            final code = s['code'] as String;
+            final sub = s['sub'] as String;
+            final icon = s['icon'] as IconData;
+            final isSelected = _selectedStreamCode?.toUpperCase() == code.toUpperCase();
+
+            return Expanded(
+              child: GestureDetector(
+                onTap: () => _toggleStream(code),
+                child: Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 3),
+                  padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+                  decoration: BoxDecoration(
+                    color: isSelected ? const Color(0xFFE9F7F3) : Colors.white,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: isSelected ? NaaguruTheme.primary : Colors.transparent,
+                      width: 1.5,
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withAlpha(8),
+                        blurRadius: 4,
+                        offset: const Offset(0, 1),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        width: 32,
+                        height: 32,
+                        decoration: BoxDecoration(
+                          color: isSelected ? const Color(0xFF95F4DD) : const Color(0xFFE3F1ED),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          icon,
+                          size: 18,
+                          color: isSelected ? const Color(0xFF00201A) : const Color(0xFF3E4946),
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        code,
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.bold,
+                          color: isSelected ? NaaguruTheme.primary : const Color(0xFF121E1C),
+                        ),
+                      ),
+                      Text(
+                        sub,
+                        style: TextStyle(
+                          fontSize: 9,
+                          color: isSelected ? NaaguruTheme.primary.withAlpha(200) : const Color(0xFF6E7A75),
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          }).toList(),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildFilterChips() {
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Row(
+        children: [
+          // Location Filter
+          GestureDetector(
+            onTap: _pickLocation,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+              decoration: BoxDecoration(
+                color: const Color(0xFFE9F7F3),
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(color: NaaguruTheme.primary.withAlpha(80)),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(Icons.location_on, size: 15, color: NaaguruTheme.primary),
+                  const SizedBox(width: 4),
+                  Text(
+                    _selectedLocationName?.split(',').first ?? 'Visakhapatnam',
+                    style: const TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      color: NaaguruTheme.primary,
+                    ),
+                  ),
+                  const SizedBox(width: 2),
+                  const Icon(Icons.expand_more, size: 14, color: NaaguruTheme.primary),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(width: 8),
+
+          // Fees Filter
+          GestureDetector(
+            onTap: _showFeeFilterSheet,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+              decoration: BoxDecoration(
+                color: _maxFee != null ? const Color(0xFFE9F7F3) : Colors.white,
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(
+                  color: _maxFee != null ? NaaguruTheme.primary : const Color(0xFFBDC9C4),
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withAlpha(6),
+                    blurRadius: 3,
+                    offset: const Offset(0, 1),
+                  ),
+                ],
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    _maxFee != null ? 'Fees < ₹${(_maxFee! / 1000).toInt()}k' : 'Fees < ₹1L',
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: _maxFee != null ? FontWeight.w600 : FontWeight.w500,
+                      color: _maxFee != null ? NaaguruTheme.primary : const Color(0xFF3E4946),
+                    ),
+                  ),
+                  const SizedBox(width: 2),
+                  const Icon(Icons.expand_more, size: 14, color: Color(0xFF6E7A75)),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(width: 8),
+
+          // Hostel Filter
+          GestureDetector(
+            onTap: _toggleHostel,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+              decoration: BoxDecoration(
+                color: _requiresHostel ? const Color(0xFFE9F7F3) : Colors.white,
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(
+                  color: _requiresHostel ? NaaguruTheme.primary : const Color(0xFFBDC9C4),
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withAlpha(6),
+                    blurRadius: 3,
+                    offset: const Offset(0, 1),
+                  ),
+                ],
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.bed_outlined,
+                    size: 15,
+                    color: _requiresHostel ? NaaguruTheme.primary : const Color(0xFF3E4946),
+                  ),
+                  const SizedBox(width: 4),
+                  Text(
+                    'Hostel: Available',
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: _requiresHostel ? FontWeight.w600 : FontWeight.w500,
+                      color: _requiresHostel ? NaaguruTheme.primary : const Color(0xFF3E4946),
+                    ),
+                  ),
+                  if (_requiresHostel) ...[
+                    const SizedBox(width: 4),
+                    const Icon(Icons.check, size: 14, color: NaaguruTheme.primary),
+                  ],
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(width: 8),
+
+          // More Filters
+          GestureDetector(
+            onTap: _showFeeFilterSheet,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(color: const Color(0xFFBDC9C4)),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withAlpha(6),
+                    blurRadius: 3,
+                    offset: const Offset(0, 1),
+                  ),
+                ],
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: const [
+                  Icon(Icons.tune, size: 15, color: Color(0xFF6E7A75)),
+                  SizedBox(width: 4),
+                  Text(
+                    'More Filters',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Color(0xFF3E4946),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCollegesHeader() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      crossAxisAlignment: CrossAxisAlignment.baseline,
+      textBaseline: TextBaseline.alphabetic,
+      children: [
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Colleges for you',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Color(0xFF121E1C),
+              ),
+            ),
+            Text(
+              'Offering preferred stream (${_selectedStreamCode ?? 'All'})',
+              style: const TextStyle(
+                fontSize: 12,
+                color: Color(0xFF3E4946),
+              ),
+            ),
+          ],
+        ),
+        Text(
+          '${_filteredColleges.length} found',
+          style: const TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.bold,
+            color: NaaguruTheme.primary,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildCollegeListContent() {
+    if (_isLoading) {
+      return const Padding(
+        padding: EdgeInsets.symmetric(vertical: 40),
+        child: Center(
+          child: CircularProgressIndicator(color: NaaguruTheme.primary),
+        ),
+      );
+    }
+
+    if (_errorMessage != null) {
+      return Container(
+        padding: const EdgeInsets.all(24),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Column(
+          children: [
+            const Icon(Icons.error_outline, size: 40, color: NaaguruTheme.error),
+            const SizedBox(height: 12),
+            Text(
+              _errorMessage!,
+              textAlign: TextAlign.center,
+              style: const TextStyle(color: NaaguruTheme.text),
+            ),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: _fetchColleges,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: NaaguruTheme.primary,
+                foregroundColor: Colors.white,
+              ),
+              child: const Text('Try Again'),
+            ),
+          ],
+        ),
+      );
+    }
+
+    if (_filteredColleges.isEmpty) {
+      return Container(
+        padding: const EdgeInsets.all(24),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Column(
+          children: [
+            const Icon(Icons.search_off, size: 48, color: NaaguruTheme.muted),
+            const SizedBox(height: 12),
+            const Text(
+              'No colleges found nearby',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: NaaguruTheme.text,
+              ),
+            ),
+            const SizedBox(height: 6),
+            const Text(
+              'Try changing your stream, location, or fee preferences.',
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 13, color: NaaguruTheme.muted),
+            ),
+            const SizedBox(height: 16),
+            OutlinedButton(
+              onPressed: _pickLocation,
+              child: const Text('Change location'),
+            ),
+          ],
+        ),
+      );
+    }
+
+    return ListView.separated(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: _filteredColleges.length,
+      separatorBuilder: (context, index) => const SizedBox(height: 16),
+      itemBuilder: (context, index) {
+        final college = _filteredColleges[index];
+        return _buildCollegeCard(college);
+      },
+    );
+  }
+
+  Widget _buildCollegeCard(Map<String, dynamic> college) {
+    final collegeId = college['id'] as String? ?? '';
+    final name = college['name'] as String? ?? 'College';
+    final branches = (college['branches'] as List<dynamic>?) ?? [];
+    final matchedBranchId = college['matchedBranchId'] as String?;
+
+    // Find matched branch or fallback to first
+    Map<String, dynamic>? branch;
+    if (matchedBranchId != null) {
+      branch = branches.cast<Map<String, dynamic>>().firstWhere(
+        (b) => b['id'] == matchedBranchId,
+        orElse: () => branches.isNotEmpty ? branches.first as Map<String, dynamic> : {},
+      );
+    } else if (branches.isNotEmpty) {
+      branch = branches.first as Map<String, dynamic>;
+    }
+
+    final locationName = branch?['locationName'] as String? ?? 'Visakhapatnam, AP';
+    final offerings = (branch?['offerings'] as List<dynamic>?) ?? [];
+    final hostel = branch?['hostel'] as Map<String, dynamic>?;
+    final hasBoys = hostel?['hasBoysHostel'] == true;
+    final hasGirls = hostel?['hasGirlsHostel'] == true;
+
+    // Calculate fee display
+    String feeDisplay = '₹65,000 / yr';
+    if (offerings.isNotEmpty) {
+      final firstOff = offerings.first as Map<String, dynamic>;
+      final minFee = firstOff['minFee'] ?? firstOff['tuitionFee'];
+      if (minFee != null && minFee is num) {
+        feeDisplay = '₹${minFee.toInt()} / yr';
+      }
+    }
+
+    final isBookmarked = _bookmarkedCollegeIds.contains(collegeId);
+
+    // Cover image URL if provided
+    final mediaList = (college['media'] as List<dynamic>?) ?? [];
+    String? imageUrl;
+    if (mediaList.isNotEmpty) {
+      final cover = mediaList.cast<Map<String, dynamic>>().firstWhere(
+        (m) => m['isCover'] == true,
+        orElse: () => mediaList.first as Map<String, dynamic>,
+      );
+      imageUrl = cover['url'] as String?;
+    }
+
+    return GestureDetector(
+      onTap: () => _navigateToDetail(collegeId, college),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withAlpha(10),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        clipBehavior: Clip.antiAlias,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // Card Image & Overlay
+            AspectRatio(
+              aspectRatio: 16 / 9,
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  if (imageUrl != null && imageUrl.isNotEmpty)
+                    Image.network(
+                      imageUrl,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) => _buildPlaceholderImage(),
+                    )
+                  else
+                    _buildPlaceholderImage(),
+
+                  // Subtle gradient scrim
+                  Container(
+                    decoration: const BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          Colors.black26,
+                          Colors.transparent,
+                          Colors.black45,
                         ],
                       ),
                     ),
                   ),
-                  _buildContentSliver(),
-                  SliverToBoxAdapter(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: NaaguruTheme.spacing20,
+
+                  // Verified by Naaguru Badge
+                  Positioned(
+                    top: 10,
+                    left: 10,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withAlpha(240),
+                        borderRadius: BorderRadius.circular(16),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withAlpha(15),
+                            blurRadius: 4,
+                          ),
+                        ],
                       ),
-                      child: Column(
-                        children: [
-                          const SizedBox(height: NaaguruTheme.spacing16),
-                          _buildInfoFooter(),
-                          const SizedBox(height: NaaguruTheme.spacing32),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: const [
+                          Icon(Icons.verified, size: 14, color: NaaguruTheme.primary),
+                          SizedBox(width: 4),
+                          Text(
+                            'Verified by Naaguru',
+                            style: TextStyle(
+                              fontSize: 11,
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFF121E1C),
+                            ),
+                          ),
                         ],
                       ),
                     ),
+                  ),
+
+                  // Bookmark Button
+                  Positioned(
+                    top: 10,
+                    right: 10,
+                    child: GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          if (isBookmarked) {
+                            _bookmarkedCollegeIds.remove(collegeId);
+                          } else {
+                            _bookmarkedCollegeIds.add(collegeId);
+                          }
+                        });
+                      },
+                      child: Container(
+                        width: 32,
+                        height: 32,
+                        decoration: BoxDecoration(
+                          color: Colors.white.withAlpha(230),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          isBookmarked ? Icons.bookmark : Icons.bookmark_border,
+                          size: 18,
+                          color: isBookmarked ? NaaguruTheme.primary : const Color(0xFF3E4946),
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  // Rating overlay
+                  Positioned(
+                    bottom: 10,
+                    left: 10,
+                    child: Row(
+                      children: const [
+                        Icon(Icons.star, size: 14, color: Color(0xFFFEC24A)),
+                        SizedBox(width: 4),
+                        Text(
+                          '4.6',
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                        SizedBox(width: 4),
+                        Text(
+                          '(320+ reviews)',
+                          style: TextStyle(
+                            fontSize: 11,
+                            color: Colors.white70,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            // Card Body
+            Padding(
+              padding: const EdgeInsets.all(14.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Text(
+                    name,
+                    style: const TextStyle(
+                      fontSize: 17,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF121E1C),
+                    ),
+                  ),
+                  const SizedBox(height: 3),
+                  Row(
+                    children: [
+                      const Icon(Icons.pin_drop, size: 14, color: NaaguruTheme.primary),
+                      const SizedBox(width: 4),
+                      Expanded(
+                        child: Text(
+                          locationName,
+                          style: const TextStyle(
+                            fontSize: 12,
+                            color: Color(0xFF3E4946),
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+
+                  // Streams Row
+                  Wrap(
+                    spacing: 6,
+                    children: [
+                      _buildStreamTag('MPC', isPrimary: true),
+                      _buildStreamTag('BiPC'),
+                      _buildStreamTag('MEC'),
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+
+                  // Quick Info Grid
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFE9F7F3).withAlpha(150),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Row(
+                            children: [
+                              const Icon(Icons.payments_outlined, size: 18, color: NaaguruTheme.primary),
+                              const SizedBox(width: 6),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Text(
+                                    'Tuition Fee',
+                                    style: TextStyle(fontSize: 10, color: Color(0xFF6E7A75)),
+                                  ),
+                                  Text(
+                                    feeDisplay,
+                                    style: const TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold,
+                                      color: Color(0xFF121E1C),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFE9F7F3).withAlpha(150),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Row(
+                            children: [
+                              const Icon(Icons.apartment, size: 18, color: NaaguruTheme.primary),
+                              const SizedBox(width: 6),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Text(
+                                    'Campus Type',
+                                    style: TextStyle(fontSize: 10, color: Color(0xFF6E7A75)),
+                                  ),
+                                  Text(
+                                    (hasBoys || hasGirls) ? 'Day & Resi' : 'Day Scholar',
+                                    style: const TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold,
+                                      color: Color(0xFF121E1C),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+
+                  // Hostel Note
+                  if (hasBoys || hasGirls)
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFE3F1ED),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Row(
+                        children: [
+                          const Icon(Icons.meeting_room, size: 14, color: NaaguruTheme.primary),
+                          const SizedBox(width: 6),
+                          Text(
+                            (hasBoys && hasGirls)
+                                ? 'Hostel Available for Boys & Girls'
+                                : hasGirls
+                                    ? 'Hostel Available for Girls'
+                                    : 'Hostel Available for Boys',
+                            style: const TextStyle(
+                              fontSize: 11,
+                              color: Color(0xFF3E4946),
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  const SizedBox(height: 8),
+
+                  // Action Row
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        children: const [
+                          Icon(Icons.school_outlined, size: 15, color: NaaguruTheme.primary),
+                          SizedBox(width: 4),
+                          Text(
+                            'BIEAP Board',
+                            style: TextStyle(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w500,
+                              color: NaaguruTheme.primary,
+                            ),
+                          ),
+                        ],
+                      ),
+                      ElevatedButton(
+                        onPressed: () => _navigateToDetail(collegeId, college),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFFE9F7F3),
+                          foregroundColor: NaaguruTheme.primary,
+                          elevation: 0,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: const [
+                            Text(
+                              'View details',
+                              style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                            ),
+                            SizedBox(width: 4),
+                            Icon(Icons.arrow_forward, size: 14),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -161,922 +1266,75 @@ class _CollegeListScreenState extends State<CollegeListScreen> {
           ],
         ),
       ),
-      bottomNavigationBar: _buildBottomNav(),
     );
   }
 
-  Widget _buildAppBar() {
-    return Padding(
-      padding: const EdgeInsets.only(
-        left: NaaguruTheme.spacing16,
-        right: NaaguruTheme.spacing20,
-        top: NaaguruTheme.spacing16,
-        bottom: NaaguruTheme.spacing8,
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Row(
-            children: [
-              IconButton(
-                icon: const Icon(
-                  Icons.arrow_back,
-                  color: NaaguruTheme.primaryDark,
-                  size: 24,
-                ),
-                onPressed: () => Navigator.pop(context),
-                padding: EdgeInsets.zero,
-                constraints: const BoxConstraints(),
-              ),
-              const SizedBox(width: 16),
-              Text(
-                _isTelugu ? 'కాలేజీలను పరిశీలించండి' : 'Explore Colleges',
-                style: const TextStyle(
-                  fontFamily: 'Inter',
-                  fontSize: 20,
-                  fontWeight: FontWeight.w600,
-                  color: NaaguruTheme.text,
-                ),
-              ),
-            ],
-          ),
-          // Language Switcher Pill matching Stitch exactly
-          Container(
-            padding: const EdgeInsets.all(2),
-            decoration: BoxDecoration(
-              color: Colors.grey.shade200,
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Row(
-              children: [
-                _buildLangButton('EN', false),
-                _buildLangButton('తెలుగు', true),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildLangButton(String text, bool isTeluguValue) {
-    final isActive = _isTelugu == isTeluguValue;
-    return GestureDetector(
-      onTap: () => setState(() => _isTelugu = isTeluguValue),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-        decoration: BoxDecoration(
-          color: isActive ? Colors.white : Colors.transparent,
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: isActive
-              ? [
-                  BoxShadow(
-                    color: Colors.black.withAlpha(15),
-                    blurRadius: 4,
-                    offset: const Offset(0, 1),
-                  ),
-                ]
-              : [],
-        ),
-        child: Text(
-          text,
-          style: TextStyle(
-            fontSize: 10,
-            fontWeight: isActive ? FontWeight.w600 : FontWeight.w500,
-            color: isActive ? NaaguruTheme.primaryDark : NaaguruTheme.muted,
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildContextSubheader() {
-    final streamStr = widget.streamCode ?? 'Colleges';
+  Widget _buildStreamTag(String stream, {bool isPrimary = false}) {
     return Container(
-      padding: const EdgeInsets.all(NaaguruTheme.spacing16),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withAlpha(8),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                decoration: BoxDecoration(
-                  color: NaaguruTheme.primaryLight.withAlpha(128),
-                  borderRadius: BorderRadius.circular(6),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Icon(
-                      Icons.campaign,
-                      size: 14,
-                      color: NaaguruTheme.primaryDark,
-                    ),
-                    const SizedBox(width: 4),
-                    Text(
-                      _isTelugu
-                          ? '$streamStr పరిశీలిస్తున్నారు'
-                          : 'Exploring $streamStr',
-                      style: const TextStyle(
-                        fontSize: 11,
-                        fontWeight: FontWeight.w600,
-                        color: NaaguruTheme.primaryDark,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(width: 8),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                decoration: BoxDecoration(
-                  color: NaaguruTheme.accent.withAlpha(51),
-                  borderRadius: BorderRadius.circular(6),
-                ),
-                child: Text(
-                  _isTelugu ? 'క్లాస్ 10 & 11' : widget.pathway,
-                  style: TextStyle(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.orange.shade800,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          Text(
-            _isTelugu
-                ? 'ఈ స్ట్రీమ్ అందించే మీకు దగ్గరలోని కాలేజీలను చూడండి.'
-                : 'Find colleges offering this stream near you.',
-            style: const TextStyle(
-              fontSize: 14,
-              color: NaaguruTheme.muted,
-              height: 1.4,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildLocationSelector() {
-    final locName =
-        widget.locationName ??
-        (_isTelugu ? 'అన్ని ప్రదేశాలు' : 'All Locations');
-    return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: NaaguruTheme.spacing16,
-        vertical: NaaguruTheme.spacing12,
-      ),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withAlpha(8),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(8),
-            child: const Icon(
-              Icons.location_on_outlined,
-              color: NaaguruTheme.muted,
-              size: 24,
-            ),
-          ),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  _isTelugu ? 'లొకేషన్' : 'Location',
-                  style: const TextStyle(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w500,
-                    color: NaaguruTheme.muted,
-                  ),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  locName,
-                  style: const TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w600,
-                    color: NaaguruTheme.text,
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ],
-            ),
-          ),
-          InkWell(
-            onTap: () => Navigator.pop(context),
-            borderRadius: BorderRadius.circular(4),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 8.0,
-                vertical: 4.0,
-              ),
-              child: Text(
-                _isTelugu ? 'మార్చండి' : 'Change',
-                style: const TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
-                  color: NaaguruTheme.muted,
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSearchInput() {
-    return Container(
-      height: 48,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withAlpha(5),
-            blurRadius: 4,
-            offset: const Offset(0, 1),
-          ),
-        ],
-      ),
-      child: TextField(
-        controller: _searchController,
-        style: const TextStyle(fontSize: 14, color: NaaguruTheme.text),
-        decoration: InputDecoration(
-          hintText: _isTelugu ? 'కాలేజీల కోసం వెతకండి' : 'Search colleges',
-          hintStyle: const TextStyle(color: NaaguruTheme.muted, fontSize: 14),
-          prefixIcon: const Icon(
-            Icons.search,
-            color: NaaguruTheme.muted,
-            size: 20,
-          ),
-          suffixIcon: _searchController.text.isNotEmpty
-              ? IconButton(
-                  icon: const Icon(
-                    Icons.close,
-                    size: 16,
-                    color: NaaguruTheme.muted,
-                  ),
-                  onPressed: _clearSearch,
-                )
-              : null,
-          border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(vertical: 14),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildFiltersHorizontalScroll() {
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: Row(
-        children: [
-          _buildFilterChip(
-            Icons.near_me_outlined,
-            _isTelugu ? 'దగ్గరలో' : 'Nearby',
-            isActive: widget.locationId != null,
-          ),
-          _buildFilterChip(
-            Icons.hotel_outlined,
-            _isTelugu ? 'హాస్టల్' : 'Hostel',
-            isActive: widget.requiresHostel,
-          ),
-          _buildFilterChip(
-            Icons.payments_outlined,
-            _isTelugu ? 'ఫీజు' : 'Fees',
-            isActive: widget.maxFee != null,
-          ),
-          _buildFilterChip(
-            Icons.tune_outlined,
-            _isTelugu ? 'స్ట్రీమ్లు' : 'Streams',
-            isActive: widget.streamCode != null,
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildFilterChip(
-    IconData icon,
-    String label, {
-    bool isActive = false,
-  }) {
-    return Container(
-      margin: const EdgeInsets.only(right: 8),
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-      decoration: BoxDecoration(
-        color: isActive ? NaaguruTheme.primaryLight : Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: isActive ? Colors.transparent : Colors.grey.shade200,
-        ),
-      ),
-      child: Row(
-        children: [
-          Icon(
-            icon,
-            size: 16,
-            color: isActive ? NaaguruTheme.primaryDark : NaaguruTheme.muted,
-          ),
-          const SizedBox(width: 6),
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w500,
-              color: isActive ? NaaguruTheme.primaryDark : NaaguruTheme.muted,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildResultSummary() {
-    final count = _filteredColleges.length;
-    final countStr = _isTelugu ? '$count కాలేజీలు' : '$count colleges';
-
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      crossAxisAlignment: CrossAxisAlignment.end,
-      children: [
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.baseline,
-          textBaseline: TextBaseline.alphabetic,
-          children: [
-            Text(
-              _isTelugu ? 'మీ దగ్గరలోని కాలేజీలు' : 'Colleges near you',
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w700,
-                color: NaaguruTheme.text,
-              ),
-            ),
-            const SizedBox(width: 8),
-            Text(
-              countStr,
-              style: const TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w500,
-                color: NaaguruTheme.muted,
-              ),
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-
-  Widget _buildContentSliver() {
-    if (_isLoading) {
-      return const SliverToBoxAdapter(
-        child: Padding(
-          padding: EdgeInsets.all(40.0),
-          child: Center(
-            child: CircularProgressIndicator(color: NaaguruTheme.primaryDark),
-          ),
-        ),
-      );
-    }
-
-    if (_errorMessage != null) {
-      return SliverToBoxAdapter(
-        child: Padding(
-          padding: const EdgeInsets.all(32.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(
-                Icons.error_outline,
-                size: 48,
-                color: NaaguruTheme.error,
-              ),
-              const SizedBox(height: 12),
-              Text(
-                _errorMessage!,
-                style: const TextStyle(color: NaaguruTheme.text),
-              ),
-              const SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: _fetchColleges,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: NaaguruTheme.primaryDark,
-                ),
-                child: const Text('Retry'),
-              ),
-            ],
-          ),
-        ),
-      );
-    }
-
-    if (_filteredColleges.isEmpty) {
-      return SliverToBoxAdapter(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: NaaguruTheme.spacing20,
-            vertical: NaaguruTheme.spacing24,
-          ),
-          child: Container(
-            padding: const EdgeInsets.all(NaaguruTheme.spacing24),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(16),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withAlpha(8),
-                  blurRadius: 8,
-                  offset: const Offset(0, 2),
-                ),
-              ],
-            ),
-            child: Column(
-              children: [
-                Container(
-                  width: 56,
-                  height: 56,
-                  decoration: BoxDecoration(
-                    color: NaaguruTheme.primaryLight,
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Icon(
-                    Icons.explore_off,
-                    size: 28,
-                    color: NaaguruTheme.primaryDark,
-                  ),
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  _isTelugu
-                      ? 'దగ్గరలో కాలేజీలు కనిపించలేదు'
-                      : 'No colleges found nearby',
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600,
-                    color: NaaguruTheme.text,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  _isTelugu
-                      ? 'మీ సెర్చ్ పరిధిని పెంచండి లేదా వేరే లొకేషన్ను ఎంచుకోండి.'
-                      : 'Try expanding your search area or exploring another location.',
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    color: NaaguruTheme.muted,
-                  ),
-                ),
-                const SizedBox(height: 24),
-                ElevatedButton.icon(
-                  onPressed: () {
-                    if (_searchController.text.isNotEmpty) {
-                      _clearSearch();
-                    } else {
-                      Navigator.pop(context);
-                    }
-                  },
-                  icon: const Icon(Icons.near_me, size: 18),
-                  label: Text(
-                    _isTelugu ? 'లొకేషన్ను మార్చండి' : 'Change location',
-                  ),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: NaaguruTheme.primaryDark,
-                    foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 20,
-                      vertical: 12,
-                    ),
-                    elevation: 0,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      );
-    }
-
-    return SliverPadding(
-      padding: const EdgeInsets.symmetric(horizontal: NaaguruTheme.spacing20),
-      sliver: SliverList(
-        delegate: SliverChildBuilderDelegate((context, index) {
-          final college = _filteredColleges[index];
-          return _buildCollegeCard(college);
-        }, childCount: _filteredColleges.length),
-      ),
-    );
-  }
-
-  Widget _buildCollegeCard(Map<String, dynamic> college) {
-    final collegeId = college['id'] as String? ?? '';
-    final name = college['name'] as String? ?? 'Junior College';
-    final ownershipType = college['ownershipType'] as String? ?? 'PRIVATE';
-
-    final matchedBranchId = college['matchedBranchId'] as String?;
-    final branches = (college['branches'] as List<dynamic>?) ?? [];
-
-    Map<String, dynamic>? matchedBranch;
-    if (matchedBranchId != null) {
-      try {
-        matchedBranch = branches.firstWhere((b) => b['id'] == matchedBranchId);
-      } catch (_) {
-        matchedBranch = null;
-      }
-    }
-
-    if (matchedBranch == null && branches.isNotEmpty) {
-      matchedBranch = branches.first;
-    }
-
-    final displayLocation =
-        matchedBranch?['locationName'] as String? ?? 'Unknown Location';
-    final hasBoysHostel = matchedBranch?['hostel']?['hasBoysHostel'] == true;
-    final hasGirlsHostel = matchedBranch?['hostel']?['hasGirlsHostel'] == true;
-    final offerings = matchedBranch?['offerings'] as List<dynamic>? ?? [];
-
-    // Get lowest and highest fee
-    int minFee = 9999999;
-    int maxFeeAmount = 0;
-    String streamDisplay =
-        widget.streamCode ??
-        (offerings.isNotEmpty ? offerings.first['streamCode'] : 'MPC');
-
-    for (var o in offerings) {
-      final fee = o['tuitionFee'] as int? ?? 0;
-      if (fee > 0 && fee < minFee) minFee = fee;
-      if (fee > maxFeeAmount) maxFeeAmount = fee;
-    }
-
-    String feeStr = 'Contact for details';
-    if (minFee != 9999999 && maxFeeAmount > 0) {
-      if (minFee == maxFeeAmount) {
-        // Format thousands properly (e.g. 55000 -> 55,000)
-        feeStr = '₹${_formatCurrency(minFee)} / year';
-      } else {
-        feeStr =
-            '₹${_formatCurrency(minFee)}–₹${_formatCurrency(maxFeeAmount)} / year';
-      }
-    }
-
-    final isGovt = ownershipType == 'GOVERNMENT';
-
-    return Container(
-      margin: const EdgeInsets.only(bottom: NaaguruTheme.spacing16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withAlpha(8),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (_) => CollegeDetailScreen(
-                  collegeId: collegeId,
-                  initialData: college,
-                  collegeApiClient: widget.collegeApiClient,
-                  studentApiClient: widget.studentApiClient,
-                ),
-              ),
-            );
-          },
-          borderRadius: BorderRadius.circular(16),
-          child: Padding(
-            padding: const EdgeInsets.all(NaaguruTheme.spacing16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Top section (badges & image)
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 6,
-                                  vertical: 2,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: isGovt
-                                      ? NaaguruTheme.accent.withAlpha(51)
-                                      : const Color(0xFFE0F5EB),
-                                  borderRadius: BorderRadius.circular(4),
-                                ),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Icon(
-                                      isGovt
-                                          ? Icons.account_balance
-                                          : Icons.verified,
-                                      size: 12,
-                                      color: isGovt
-                                          ? Colors.orange.shade800
-                                          : const Color(0xFF0F8C64),
-                                    ),
-                                    const SizedBox(width: 4),
-                                    Text(
-                                      isGovt
-                                          ? (_isTelugu
-                                                ? 'వెరిఫైడ్ ప్రభుత్వ సంస్థ'
-                                                : 'Verified Govt Institution')
-                                          : (_isTelugu
-                                                ? 'వెరిఫైడ్'
-                                                : 'Verified'),
-                                      style: TextStyle(
-                                        fontSize: 10,
-                                        fontWeight: FontWeight.w600,
-                                        color: isGovt
-                                            ? Colors.orange.shade800
-                                            : const Color(0xFF0F8C64),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              if (!isGovt) ...[
-                                const SizedBox(width: 8),
-                                Text(
-                                  'Private',
-                                  style: const TextStyle(
-                                    fontSize: 11,
-                                    color: NaaguruTheme.muted,
-                                  ),
-                                ),
-                              ],
-                            ],
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            name,
-                            style: const TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                              color: NaaguruTheme.text,
-                              height: 1.2,
-                            ),
-                          ),
-                          const SizedBox(height: 6),
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              const Icon(
-                                Icons.location_on_outlined,
-                                size: 14,
-                                color: NaaguruTheme.muted,
-                              ),
-                              const SizedBox(width: 4),
-                              Expanded(
-                                child: Text(
-                                  displayLocation,
-                                  style: const TextStyle(
-                                    fontSize: 12,
-                                    color: NaaguruTheme.muted,
-                                  ),
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    // Image placeholder (matching Stitch small rounded square)
-                    Container(
-                      width: 60,
-                      height: 60,
-                      decoration: BoxDecoration(
-                        color: Colors.grey.shade100,
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: const Center(
-                        child: Icon(
-                          Icons.school,
-                          color: NaaguruTheme.muted,
-                          size: 24,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-
-                const SizedBox(height: 16),
-
-                // Stream Label
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    const Icon(
-                      Icons.school_outlined,
-                      size: 16,
-                      color: NaaguruTheme.muted,
-                    ),
-                    const SizedBox(width: 6),
-                    Text(
-                      streamDisplay,
-                      style: const TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w700,
-                        color: NaaguruTheme.text,
-                      ),
-                    ),
-                    const SizedBox(width: 4),
-                    const Text(
-                      '(Maths, Physics, Chemistry)',
-                      style: TextStyle(fontSize: 12, color: NaaguruTheme.muted),
-                    ),
-                  ],
-                ),
-
-                const SizedBox(height: 8),
-
-                // Highlight tags
-                Wrap(
-                  spacing: 6,
-                  runSpacing: 6,
-                  children: [
-                    if (hasBoysHostel || hasGirlsHostel)
-                      _buildTag(
-                        Icons.bed_outlined,
-                        _isTelugu ? 'హాస్టల్ అందుబాటులో ఉంది' : 'Hostel',
-                      ),
-                    if (isGovt)
-                      _buildTag(
-                        Icons.savings_outlined,
-                        _isTelugu ? 'తక్కువ ఫీజు' : 'Affordable fee',
-                      )
-                    else
-                      _buildTag(Icons.science_outlined, 'Lab'),
-                  ],
-                ),
-
-                const SizedBox(height: 20),
-
-                // Bottom row: Fee & CTA
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          _isTelugu ? 'సుమారు ఫీజు' : 'Approx. Fee',
-                          style: const TextStyle(
-                            fontSize: 10,
-                            color: NaaguruTheme.muted,
-                          ),
-                        ),
-                        const SizedBox(height: 2),
-                        Text(
-                          feeStr,
-                          style: const TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                            color: NaaguruTheme.text,
-                          ),
-                        ),
-                      ],
-                    ),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 10,
-                      ),
-                      decoration: BoxDecoration(
-                        color: NaaguruTheme.primaryLight,
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            _isTelugu ? 'కాలేజీని చూడండి' : 'View College',
-                            style: const TextStyle(
-                              fontSize: 13,
-                              fontWeight: FontWeight.w600,
-                              color: NaaguruTheme.primaryDark,
-                            ),
-                          ),
-                          const SizedBox(width: 4),
-                          const Icon(
-                            Icons.arrow_forward,
-                            size: 14,
-                            color: NaaguruTheme.primaryDark,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildTag(IconData icon, String label) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      decoration: BoxDecoration(
-        color: Colors.grey.shade100,
+        color: isPrimary ? const Color(0xFFE9F7F3) : const Color(0xFFE3F1ED),
         borderRadius: BorderRadius.circular(6),
       ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, size: 12, color: NaaguruTheme.muted),
-          const SizedBox(width: 4),
-          Text(
-            label,
-            style: const TextStyle(
-              fontSize: 11,
-              fontWeight: FontWeight.w500,
-              color: NaaguruTheme.muted,
-            ),
-          ),
-        ],
+      child: Text(
+        stream,
+        style: TextStyle(
+          fontSize: 11,
+          fontWeight: isPrimary ? FontWeight.bold : FontWeight.w500,
+          color: isPrimary ? NaaguruTheme.primary : const Color(0xFF3E4946),
+        ),
       ),
     );
   }
 
-  Widget _buildInfoFooter() {
+  Widget _buildPlaceholderImage() {
     return Container(
-      padding: const EdgeInsets.all(NaaguruTheme.spacing16),
+      color: const Color(0xFFD8E5E2),
+      child: const Center(
+        child: Icon(Icons.apartment, size: 48, color: Color(0xFF6E7A75)),
+      ),
+    );
+  }
+
+  Widget _buildCounselorPrompt() {
+    return Container(
+      padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: Colors.transparent,
-        borderRadius: BorderRadius.circular(12),
+        color: const Color(0xFFDDEBE7).withAlpha(160),
+        borderRadius: BorderRadius.circular(14),
       ),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Icon(
-            Icons.favorite_border,
-            size: 16,
-            color: NaaguruTheme.muted,
+          Container(
+            width: 38,
+            height: 38,
+            decoration: const BoxDecoration(
+              color: NaaguruTheme.primary,
+              shape: BoxShape.circle,
+            ),
+            child: const Icon(Icons.support_agent, color: Colors.white, size: 20),
           ),
           const SizedBox(width: 12),
           Expanded(
-            child: Text(
-              _isTelugu
-                  ? 'స్పాన్సర్ చేసిన ప్లేస్‌మెంట్‌లు లేదా ఆందోళన కలిగించే ర్యాంకింగ్‌లు లేకుండా ధృవీకరించబడిన స్ట్రీమ్‌లను నాగురు హైలైట్ చేస్తుంది. మీ అభ్యాస ప్రయాణానికి సరిపోయేదాన్ని ఎంచుకోండి.'
-                  : 'Naaguru highlights verified streams without sponsored placements or anxiety inducing competitive rankings. Choose what fits your learning journey.',
-              style: const TextStyle(
-                fontSize: 12,
-                color: NaaguruTheme.muted,
-                height: 1.5,
-              ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: const [
+                Text(
+                  'Need help choosing a stream?',
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF121E1C),
+                  ),
+                ),
+                Text(
+                  "Take Naaguru's 5-minute career clarity quiz",
+                  style: TextStyle(
+                    fontSize: 11,
+                    color: Color(0xFF3E4946),
+                  ),
+                ),
+              ],
             ),
           ),
         ],
@@ -1085,98 +1343,58 @@ class _CollegeListScreenState extends State<CollegeListScreen> {
   }
 
   Widget _buildBottomNav() {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withAlpha(10),
-            blurRadius: 10,
-            offset: const Offset(0, -2),
-          ),
-        ],
-      ),
-      child: BottomNavigationBar(
-        currentIndex: _currentIndex,
-        onTap: (index) {
+    return BottomNavigationBar(
+      currentIndex: _currentIndex,
+      onTap: (index) {
+        if (index == 0) {
+          Navigator.pushNamedAndRemoveUntil(context, '/home', (r) => false);
+        } else if (index == 3) {
+          Navigator.pushNamed(context, '/profile');
+        } else {
           setState(() => _currentIndex = index);
-          // In a real app, this would route to actual pages.
-          // For this specific screen task, we just update the UI state.
-        },
-        type: BottomNavigationBarType.fixed,
-        backgroundColor: Colors.white,
-        selectedItemColor: NaaguruTheme.primary,
-        unselectedItemColor: NaaguruTheme.muted,
-        selectedFontSize: 11,
-        unselectedFontSize: 11,
-        elevation: 0,
-        items: [
-          BottomNavigationBarItem(
-            icon: const Padding(
-              padding: EdgeInsets.only(bottom: 4.0),
-              child: Icon(Icons.home_outlined),
-            ),
-            activeIcon: const Padding(
-              padding: EdgeInsets.only(bottom: 4.0),
-              child: Icon(Icons.home),
-            ),
-            label: _isTelugu ? 'హోమ్' : 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: const Padding(
-              padding: EdgeInsets.only(bottom: 4.0),
-              child: Icon(Icons.explore_outlined),
-            ),
-            activeIcon: const Padding(
-              padding: EdgeInsets.only(bottom: 4.0),
-              child: Icon(Icons.explore),
-            ),
-            label: _isTelugu ? 'అన్వేషించండి' : 'Explore',
-          ),
-          BottomNavigationBarItem(
-            icon: const Padding(
-              padding: EdgeInsets.only(bottom: 4.0),
-              child: Icon(Icons.alt_route),
-            ),
-            activeIcon: const Padding(
-              padding: EdgeInsets.only(bottom: 4.0),
-              child: Icon(Icons.alt_route),
-            ),
-            label: _isTelugu ? 'ప్రయాణం' : 'Journey',
-          ),
-          BottomNavigationBarItem(
-            icon: const Padding(
-              padding: EdgeInsets.only(bottom: 4.0),
-              child: Icon(Icons.person_outline),
-            ),
-            activeIcon: const Padding(
-              padding: EdgeInsets.only(bottom: 4.0),
-              child: Icon(Icons.person),
-            ),
-            label: _isTelugu ? 'మీరు' : 'You',
-          ),
-        ],
-      ),
+        }
+      },
+      selectedItemColor: NaaguruTheme.primary,
+      unselectedItemColor: const Color(0xFF6E7A75),
+      showUnselectedLabels: true,
+      type: BottomNavigationBarType.fixed,
+      backgroundColor: Colors.white,
+      items: const [
+        BottomNavigationBarItem(
+          icon: Icon(Icons.home_outlined),
+          activeIcon: Icon(Icons.home),
+          label: 'Home',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.explore_outlined),
+          activeIcon: Icon(Icons.explore),
+          label: 'Discover',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.bookmark_outline),
+          activeIcon: Icon(Icons.bookmark),
+          label: 'Saved',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.account_circle_outlined),
+          activeIcon: Icon(Icons.account_circle),
+          label: 'Profile',
+        ),
+      ],
     );
   }
 
-  String _formatCurrency(int amount) {
-    // Basic formatter for Indian Rupees (e.g. 55000 -> 55,000)
-    final str = amount.toString();
-    if (str.length <= 3) return str;
-
-    String result = str.substring(str.length - 3);
-    String remaining = str.substring(0, str.length - 3);
-
-    while (remaining.length > 2) {
-      result = '${remaining.substring(remaining.length - 2)},$result';
-      remaining = remaining.substring(0, remaining.length - 2);
-    }
-
-    if (remaining.isNotEmpty) {
-      result = '$remaining,$result';
-    }
-
-    return result;
+  void _navigateToDetail(String collegeId, Map<String, dynamic> college) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => CollegeDetailScreen(
+          collegeId: collegeId,
+          initialData: college,
+          collegeApiClient: widget.collegeApiClient,
+          studentApiClient: widget.studentApiClient,
+        ),
+      ),
+    );
   }
 }

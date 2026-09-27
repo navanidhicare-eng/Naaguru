@@ -1,5 +1,4 @@
 import { OwnershipType, CollegeStatus, VerificationStatus } from '@/modules/college/domain/models';
-import { StreamCode } from '@/shared/domain/StreamCode';
 
 export interface CollegeStreamOfferingDto {
   streamCode: string;
@@ -57,9 +56,77 @@ export interface PublicCollegeDto {
   media: CollegeMediaDto[];
 }
 
+export interface CollegeAchievementDto {
+  id: string;
+  studentName: string;
+  exam: string;
+  achievement: string;
+  year: number;
+  description: string | null;
+  imageUrl: string | null;
+  displayOrder: number;
+}
+
+export interface PublicCollegeDetailDto extends PublicCollegeDto {
+  achievements: CollegeAchievementDto[];
+  testimonials: CollegeTestimonialDto[];
+  accreditations: CollegeAccreditationDto[];
+}
+
+export interface CollegeAccreditationDto {
+  id: string;
+  name: string;
+  issuingBody: string;
+  year: number | null;
+  validUntilYear: number | null;
+  description: string | null;
+  certificateUrl: string | null;
+  verificationUrl: string | null;
+  displayOrder: number;
+}
+
+export interface CollegeTestimonialDto {
+  id: string;
+  personName: string;
+  personType: 'STUDENT' | 'PARENT' | 'ALUMNI' | 'OTHER';
+  testimonialText: string;
+  imageUrl: string | null;
+  displayOrder: number;
+}
+
+export interface StaffCollegeAchievementDto extends CollegeAchievementDto {
+  status: 'ACTIVE' | 'INACTIVE';
+}
+
+export interface StaffCollegeTestimonialDto {
+  id: string;
+  personName: string;
+  personType: 'STUDENT' | 'PARENT' | 'ALUMNI' | 'OTHER';
+  testimonialText: string;
+  imageStorageKey: string | null;
+  displayOrder: number;
+  status: 'ACTIVE' | 'INACTIVE';
+}
+
+export interface StaffCollegeAccreditationDto {
+  id: string;
+  name: string;
+  issuingBody: string;
+  year: number | null;
+  validUntilYear: number | null;
+  description: string | null;
+  certificateStorageKey: string | null;
+  verificationUrl: string | null;
+  displayOrder: number;
+  status: 'ACTIVE' | 'INACTIVE';
+}
+
 export interface StaffCollegeProfileDto extends PublicCollegeDto {
   status: CollegeStatus;
   verificationStatus: VerificationStatus;
+  achievements: StaffCollegeAchievementDto[];
+  testimonials?: StaffCollegeTestimonialDto[];
+  accreditations?: StaffCollegeAccreditationDto[];
 }
 
 export interface UpdateCollegeProfileDto {
@@ -89,4 +156,35 @@ export interface CollegeAchievementInputDto {
 
 export interface SyncAchievementsDto {
   achievements: CollegeAchievementInputDto[];
+}
+
+export interface CollegeTestimonialInputDto {
+  id?: string;
+  personName: string;
+  personType: 'STUDENT' | 'PARENT' | 'ALUMNI' | 'OTHER';
+  testimonialText: string;
+  imageStorageKey?: string | null;
+  displayOrder: number;
+  status: 'ACTIVE' | 'INACTIVE';
+}
+
+export interface SyncTestimonialsDto {
+  testimonials: CollegeTestimonialInputDto[];
+}
+
+export interface CollegeAccreditationInputDto {
+  id?: string;
+  name: string;
+  issuingBody: string;
+  year?: number | null;
+  validUntilYear?: number | null;
+  description?: string | null;
+  certificateStorageKey?: string | null;
+  verificationUrl?: string | null;
+  displayOrder: number;
+  status: 'ACTIVE' | 'INACTIVE';
+}
+
+export interface SyncAccreditationsDto {
+  accreditations: CollegeAccreditationInputDto[];
 }

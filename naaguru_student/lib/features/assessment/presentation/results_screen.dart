@@ -102,8 +102,10 @@ class _ResultsScreenState extends State<ResultsScreen> {
       return Scaffold(
         backgroundColor: NaaguruTheme.background,
         appBar: AppBar(
-          title: Text(_isTelugu ? "మీ ఫలితాలు" : "Your Results",
-              style: const TextStyle(color: NaaguruTheme.text)),
+          title: Text(
+            _isTelugu ? "మీ ఫలితాలు" : "Your Results",
+            style: const TextStyle(color: NaaguruTheme.text),
+          ),
           backgroundColor: NaaguruTheme.background,
           elevation: 0,
         ),
@@ -113,8 +115,11 @@ class _ResultsScreenState extends State<ResultsScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Icon(Icons.info_outline,
-                    size: 64, color: NaaguruTheme.muted),
+                const Icon(
+                  Icons.info_outline,
+                  size: 64,
+                  color: NaaguruTheme.muted,
+                ),
                 const SizedBox(height: 16),
                 Text(
                   _isTelugu
@@ -122,7 +127,9 @@ class _ResultsScreenState extends State<ResultsScreen> {
                       : "No completed assessment results found.",
                   textAlign: TextAlign.center,
                   style: const TextStyle(
-                      fontSize: 16, color: NaaguruTheme.text),
+                    fontSize: 16,
+                    color: NaaguruTheme.text,
+                  ),
                 ),
                 const SizedBox(height: 24),
                 ElevatedButton(
@@ -136,8 +143,7 @@ class _ResultsScreenState extends State<ResultsScreen> {
       );
     }
 
-    final scores =
-        _result?['dimensionScores'] as Map<String, dynamic>? ?? {};
+    final scores = _result?['dimensionScores'] as Map<String, dynamic>? ?? {};
     final rankedResults =
         (_recommendation?['rankedResults'] as List<dynamic>?) ?? [];
 
@@ -169,8 +175,11 @@ class _ResultsScreenState extends State<ResultsScreen> {
         backgroundColor: Colors.white,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios,
-              color: NaaguruTheme.text, size: 18),
+          icon: const Icon(
+            Icons.arrow_back_ios,
+            color: NaaguruTheme.text,
+            size: 18,
+          ),
           onPressed: () => Navigator.of(context).pop(),
         ),
         actions: [
@@ -180,7 +189,7 @@ class _ResultsScreenState extends State<ResultsScreen> {
               isTelugu: _isTelugu,
               onToggle: (val) => setState(() => _isTelugu = val),
             ),
-          )
+          ),
         ],
       ),
       body: SafeArea(
@@ -208,7 +217,9 @@ class _ResultsScreenState extends State<ResultsScreen> {
                   children: [
                     Container(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 10, vertical: 4),
+                        horizontal: 10,
+                        vertical: 4,
+                      ),
                       decoration: BoxDecoration(
                         color: NaaguruTheme.primaryLight,
                         borderRadius: BorderRadius.circular(12),
@@ -322,7 +333,9 @@ class _ResultsScreenState extends State<ResultsScreen> {
                   children: [
                     Container(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 10, vertical: 4),
+                        horizontal: 10,
+                        vertical: 4,
+                      ),
                       decoration: BoxDecoration(
                         color: NaaguruTheme.accent.withAlpha(25),
                         borderRadius: BorderRadius.circular(12),
@@ -347,7 +360,8 @@ class _ResultsScreenState extends State<ResultsScreen> {
                           height: 80,
                           decoration: BoxDecoration(
                             border: Border.all(
-                                color: NaaguruTheme.muted.withAlpha(25)),
+                              color: NaaguruTheme.muted.withAlpha(25),
+                            ),
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Center(
@@ -533,8 +547,9 @@ class _ResultsScreenState extends State<ResultsScreen> {
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(12),
-                      border:
-                          Border.all(color: NaaguruTheme.muted.withAlpha(38)),
+                      border: Border.all(
+                        color: NaaguruTheme.muted.withAlpha(38),
+                      ),
                     ),
                     padding: const EdgeInsets.all(16),
                     child: Column(
@@ -557,23 +572,31 @@ class _ResultsScreenState extends State<ResultsScreen> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(title,
-                                      style: const TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 14)),
+                                  Text(
+                                    title,
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 14,
+                                    ),
+                                  ),
                                   const SizedBox(height: 6),
                                   Container(
                                     padding: const EdgeInsets.symmetric(
-                                        horizontal: 8, vertical: 2),
+                                      horizontal: 8,
+                                      vertical: 2,
+                                    ),
                                     decoration: BoxDecoration(
                                       color: badgeBg,
                                       borderRadius: BorderRadius.circular(12),
                                     ),
-                                    child: Text(badgeText,
-                                        style: TextStyle(
-                                            color: badgeTextCol,
-                                            fontSize: 10,
-                                            fontWeight: FontWeight.bold)),
+                                    child: Text(
+                                      badgeText,
+                                      style: TextStyle(
+                                        color: badgeTextCol,
+                                        fontSize: 10,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
                                   ),
                                 ],
                               ),
@@ -581,9 +604,13 @@ class _ResultsScreenState extends State<ResultsScreen> {
                           ],
                         ),
                         const SizedBox(height: 12),
-                        Text(desc,
-                            style: const TextStyle(
-                                fontSize: 13, color: NaaguruTheme.muted)),
+                        Text(
+                          desc,
+                          style: const TextStyle(
+                            fontSize: 13,
+                            color: NaaguruTheme.muted,
+                          ),
+                        ),
                         const SizedBox(height: 16),
                         Row(
                           children: [
@@ -593,19 +620,24 @@ class _ResultsScreenState extends State<ResultsScreen> {
                                 child: LinearProgressIndicator(
                                   value: val / 100.0,
                                   minHeight: 6,
-                                  backgroundColor:
-                                      NaaguruTheme.muted.withAlpha(25),
+                                  backgroundColor: NaaguruTheme.muted.withAlpha(
+                                    25,
+                                  ),
                                   valueColor: AlwaysStoppedAnimation<Color>(
-                                      affinityColor),
+                                    affinityColor,
+                                  ),
                                 ),
                               ),
                             ),
                             const SizedBox(width: 12),
-                            Text(affinityLabel,
-                                style: TextStyle(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.bold,
-                                    color: affinityColor)),
+                            Text(
+                              affinityLabel,
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                                color: affinityColor,
+                              ),
+                            ),
                           ],
                         ),
                       ],
@@ -631,9 +663,10 @@ class _ResultsScreenState extends State<ResultsScreen> {
                           ? "ఇతర మార్గాలను అన్వేషించండి"
                           : "Explore other paths",
                       style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: NaaguruTheme.primaryDark),
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: NaaguruTheme.primaryDark,
+                      ),
                     ),
                     const SizedBox(height: 8),
                     Text(
@@ -641,19 +674,26 @@ class _ResultsScreenState extends State<ResultsScreen> {
                           ? "10వ తరగతి తర్వాత మరిన్ని ఎంపికలు అందుబాటులో ఉన్నాయి."
                           : "There are more options available after 10th.",
                       style: const TextStyle(
-                          fontSize: 13, color: NaaguruTheme.muted),
+                        fontSize: 13,
+                        color: NaaguruTheme.muted,
+                      ),
                     ),
                     const SizedBox(height: 16),
                     Material(
                       color: Colors.transparent,
                       child: ListTile(
                         contentPadding: EdgeInsets.zero,
-                        leading: const Text("🔧", style: TextStyle(fontSize: 24)),
-                        title: Text(_isTelugu ? "పాలిటెక్నిక్" : "Polytechnic",
-                            style: const TextStyle(fontWeight: FontWeight.bold)),
-                        subtitle: Text(_isTelugu
-                            ? "డిప్లొమా మార్గాలు"
-                            : "Diploma pathways"),
+                        leading: const Text(
+                          "🔧",
+                          style: TextStyle(fontSize: 24),
+                        ),
+                        title: Text(
+                          _isTelugu ? "పాలిటెక్నిక్" : "Polytechnic",
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        subtitle: Text(
+                          _isTelugu ? "డిప్లొమా మార్గాలు" : "Diploma pathways",
+                        ),
                         onTap: () {
                           Navigator.push(
                             context,
@@ -672,12 +712,19 @@ class _ResultsScreenState extends State<ResultsScreen> {
                       color: Colors.transparent,
                       child: ListTile(
                         contentPadding: EdgeInsets.zero,
-                        leading: const Text("🛠", style: TextStyle(fontSize: 24)),
-                        title: Text(_isTelugu ? "ఐటిఐ (ITI)" : "ITI",
-                            style: const TextStyle(fontWeight: FontWeight.bold)),
-                        subtitle: Text(_isTelugu
-                            ? "నైపుణ్యం & వాణిజ్య మార్గాలు"
-                            : "Skill & trade pathways"),
+                        leading: const Text(
+                          "🛠",
+                          style: TextStyle(fontSize: 24),
+                        ),
+                        title: Text(
+                          _isTelugu ? "ఐటిఐ (ITI)" : "ITI",
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        subtitle: Text(
+                          _isTelugu
+                              ? "నైపుణ్యం & వాణిజ్య మార్గాలు"
+                              : "Skill & trade pathways",
+                        ),
                         onTap: () {
                           Navigator.push(
                             context,
@@ -696,12 +743,19 @@ class _ResultsScreenState extends State<ResultsScreen> {
                       color: Colors.transparent,
                       child: ListTile(
                         contentPadding: EdgeInsets.zero,
-                        leading: const Text("🛡", style: TextStyle(fontSize: 24)),
-                        title: Text(_isTelugu ? "డిఫెన్స్" : "Defence",
-                            style: const TextStyle(fontWeight: FontWeight.bold)),
-                        subtitle: Text(_isTelugu
-                            ? "రక్షణ & సేవా మార్గాలు"
-                            : "Defence & service pathways"),
+                        leading: const Text(
+                          "🛡",
+                          style: TextStyle(fontSize: 24),
+                        ),
+                        title: Text(
+                          _isTelugu ? "డిఫెన్స్" : "Defence",
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        subtitle: Text(
+                          _isTelugu
+                              ? "రక్షణ & సేవా మార్గాలు"
+                              : "Defence & service pathways",
+                        ),
                         onTap: () {
                           Navigator.push(
                             context,

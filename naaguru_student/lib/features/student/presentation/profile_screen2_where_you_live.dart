@@ -44,8 +44,7 @@ class ProfileScreen2WhereYouLive extends StatefulWidget {
   });
 
   @override
-  State<ProfileScreen2WhereYouLive> createState() =>
-      _ProfileScreen2State();
+  State<ProfileScreen2WhereYouLive> createState() => _ProfileScreen2State();
 }
 
 class _ProfileScreen2State extends State<ProfileScreen2WhereYouLive> {
@@ -63,10 +62,8 @@ class _ProfileScreen2State extends State<ProfileScreen2WhereYouLive> {
   @override
   void initState() {
     super.initState();
-    _pincodeController =
-        TextEditingController(text: _wizard.pincode);
-    _landmarkController =
-        TextEditingController(text: _wizard.landmark);
+    _pincodeController = TextEditingController(text: _wizard.pincode);
+    _landmarkController = TextEditingController(text: _wizard.landmark);
 
     _pincodeController.addListener(() {
       _wizard.updatePincode(_pincodeController.text);
@@ -92,14 +89,16 @@ class _ProfileScreen2State extends State<ProfileScreen2WhereYouLive> {
 
   void _handleContinue() {
     if (!_canContinue) return;
-    Navigator.of(context).push(MaterialPageRoute(
-      builder: (_) => ProfileScreen3Review(
-        authService: widget.authService,
-        studentApiClient: widget.studentApiClient,
-        catalogApiClient: widget.catalogApiClient,
-        wizardState: _wizard,
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => ProfileScreen3Review(
+          authService: widget.authService,
+          studentApiClient: widget.studentApiClient,
+          catalogApiClient: widget.catalogApiClient,
+          wizardState: _wizard,
+        ),
       ),
-    ));
+    );
   }
 
   // ── Location picker helpers ───────────────────────────────────────────────
@@ -218,12 +217,7 @@ class _ProfileScreen2State extends State<ProfileScreen2WhereYouLive> {
               ],
             ),
           ),
-          Positioned(
-            left: 0,
-            right: 0,
-            bottom: 0,
-            child: _buildBottomCta(),
-          ),
+          Positioned(left: 0, right: 0, bottom: 0, child: _buildBottomCta()),
         ],
       ),
     );
@@ -246,8 +240,11 @@ class _ProfileScreen2State extends State<ProfileScreen2WhereYouLive> {
                   color: _C.surfaceContainer,
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: const Icon(Icons.school_rounded,
-                    color: NaaguruTheme.primary, size: 18),
+                child: const Icon(
+                  Icons.school_rounded,
+                  color: NaaguruTheme.primary,
+                  size: 18,
+                ),
               ),
               const SizedBox(width: 8),
               const Text(
@@ -277,10 +274,16 @@ class _ProfileScreen2State extends State<ProfileScreen2WhereYouLive> {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          _langPill('English', !_isTelugu,
-              () => setState(() => _isTelugu = false)),
-          _langPill('తెలుగు', _isTelugu,
-              () => setState(() => _isTelugu = true)),
+          _langPill(
+            'English',
+            !_isTelugu,
+            () => setState(() => _isTelugu = false),
+          ),
+          _langPill(
+            'తెలుగు',
+            _isTelugu,
+            () => setState(() => _isTelugu = true),
+          ),
         ],
       ),
     );
@@ -334,8 +337,10 @@ class _ProfileScreen2State extends State<ProfileScreen2WhereYouLive> {
                   ),
                   const SizedBox(width: 6),
                   Text(
-                    _s('Step 2 of 3: Where You Live',
-                        'దశ 2/3: మీరు ఎక్కడ నివసిస్తున్నారు'),
+                    _s(
+                      'Step 2 of 3: Where You Live',
+                      'దశ 2/3: మీరు ఎక్కడ నివసిస్తున్నారు',
+                    ),
                     style: const TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
@@ -361,8 +366,9 @@ class _ProfileScreen2State extends State<ProfileScreen2WhereYouLive> {
               value: 2 / 3,
               minHeight: 6,
               backgroundColor: _C.surfaceContainerHigh,
-              valueColor:
-                  const AlwaysStoppedAnimation<Color>(NaaguruTheme.primary),
+              valueColor: const AlwaysStoppedAnimation<Color>(
+                NaaguruTheme.primary,
+              ),
             ),
           ),
           const SizedBox(height: 8),
@@ -389,8 +395,10 @@ class _ProfileScreen2State extends State<ProfileScreen2WhereYouLive> {
         ),
         const SizedBox(height: 4),
         Text(
-          _s('Tell us where you currently live.',
-              'మీ ప్రస్తుత నివాస ప్రాంతాన్ని తెలియజేయండి.'),
+          _s(
+            'Tell us where you currently live.',
+            'మీ ప్రస్తుత నివాస ప్రాంతాన్ని తెలియజేయండి.',
+          ),
           style: const TextStyle(
             fontSize: 14,
             color: NaaguruTheme.muted,
@@ -411,9 +419,10 @@ class _ProfileScreen2State extends State<ProfileScreen2WhereYouLive> {
         borderRadius: BorderRadius.circular(14),
         boxShadow: [
           BoxShadow(
-              color: Colors.black.withAlpha(8),
-              blurRadius: 6,
-              offset: const Offset(0, 2))
+            color: Colors.black.withAlpha(8),
+            blurRadius: 6,
+            offset: const Offset(0, 2),
+          ),
         ],
       ),
       child: Row(
@@ -426,12 +435,14 @@ class _ProfileScreen2State extends State<ProfileScreen2WhereYouLive> {
               color: NaaguruTheme.surface,
               borderRadius: BorderRadius.circular(10),
               boxShadow: [
-                BoxShadow(
-                    color: Colors.black.withAlpha(10), blurRadius: 4)
+                BoxShadow(color: Colors.black.withAlpha(10), blurRadius: 4),
               ],
             ),
-            child: const Icon(Icons.location_on_rounded,
-                color: NaaguruTheme.primary, size: 20),
+            child: const Icon(
+              Icons.location_on_rounded,
+              color: NaaguruTheme.primary,
+              size: 20,
+            ),
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -510,9 +521,10 @@ class _ProfileScreen2State extends State<ProfileScreen2WhereYouLive> {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-              color: Colors.black.withAlpha(10),
-              blurRadius: 8,
-              offset: const Offset(0, 2))
+            color: Colors.black.withAlpha(10),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
         ],
       ),
       child: Column(
@@ -578,7 +590,9 @@ class _ProfileScreen2State extends State<ProfileScreen2WhereYouLive> {
                         fontSize: 10,
                         fontWeight: FontWeight.w600,
                         letterSpacing: 0.8,
-                        color: enabled ? _C.onSurfaceVariant : NaaguruTheme.muted.withAlpha(100),
+                        color: enabled
+                            ? _C.onSurfaceVariant
+                            : NaaguruTheme.muted.withAlpha(100),
                       ),
                     ),
                     const SizedBox(height: 3),
@@ -586,7 +600,9 @@ class _ProfileScreen2State extends State<ProfileScreen2WhereYouLive> {
                       hasValue ? value : placeholder,
                       style: TextStyle(
                         fontSize: 15,
-                        fontWeight: hasValue ? FontWeight.w600 : FontWeight.w400,
+                        fontWeight: hasValue
+                            ? FontWeight.w600
+                            : FontWeight.w400,
                         color: hasValue
                             ? NaaguruTheme.text
                             : NaaguruTheme.muted.withAlpha(enabled ? 200 : 100),
@@ -605,7 +621,9 @@ class _ProfileScreen2State extends State<ProfileScreen2WhereYouLive> {
                 child: Icon(
                   Icons.chevron_right_rounded,
                   size: 20,
-                  color: enabled ? _C.onSurfaceVariant : NaaguruTheme.muted.withAlpha(80),
+                  color: enabled
+                      ? _C.onSurfaceVariant
+                      : NaaguruTheme.muted.withAlpha(80),
                 ),
               ),
             ],
@@ -664,8 +682,11 @@ class _ProfileScreen2State extends State<ProfileScreen2WhereYouLive> {
                     color: NaaguruTheme.primary,
                     shape: BoxShape.circle,
                   ),
-                  child: const Icon(Icons.check_rounded,
-                      color: Colors.white, size: 16),
+                  child: const Icon(
+                    Icons.check_rounded,
+                    color: Colors.white,
+                    size: 16,
+                  ),
                 ),
             ],
           ),
@@ -682,17 +703,21 @@ class _ProfileScreen2State extends State<ProfileScreen2WhereYouLive> {
               child: Row(
                 children: [
                   const SizedBox(width: 12),
-                  Icon(Icons.search_rounded,
-                      color: enabled
-                          ? _C.onSurfaceVariant
-                          : NaaguruTheme.muted.withAlpha(80),
-                      size: 20),
+                  Icon(
+                    Icons.search_rounded,
+                    color: enabled
+                        ? _C.onSurfaceVariant
+                        : NaaguruTheme.muted.withAlpha(80),
+                    size: 20,
+                  ),
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
                       enabled
-                          ? _s('Search village, ward, or locality...',
-                              'గ్రామం, వార్డు లేదా ప్రాంతాన్ని శోధించండి...')
+                          ? _s(
+                              'Search village, ward, or locality...',
+                              'గ్రామం, వార్డు లేదా ప్రాంతాన్ని శోధించండి...',
+                            )
                           : _s('Select mandal first', 'ముందు మండలం ఎంచుకోండి'),
                       style: TextStyle(
                         fontSize: 14,
@@ -713,10 +738,7 @@ class _ProfileScreen2State extends State<ProfileScreen2WhereYouLive> {
                 'Localities in ${mandal.displayName(false)} mandal',
                 '${mandal.displayName(true)} మండలంలోని లొకేషన్లు',
               ),
-              style: const TextStyle(
-                fontSize: 11,
-                color: NaaguruTheme.muted,
-              ),
+              style: const TextStyle(fontSize: 11, color: NaaguruTheme.muted),
             ),
           ],
         ],
@@ -724,8 +746,7 @@ class _ProfileScreen2State extends State<ProfileScreen2WhereYouLive> {
     );
   }
 
-  Widget _divider() =>
-      Container(height: 1, color: _C.surfaceContainerHigh);
+  Widget _divider() => Container(height: 1, color: _C.surfaceContainerHigh);
 
   // ── Pincode field ─────────────────────────────────────────────────────────
 
@@ -756,15 +777,16 @@ class _ProfileScreen2State extends State<ProfileScreen2WhereYouLive> {
               color: hasError
                   ? NaaguruTheme.error
                   : showSuccess
-                      ? NaaguruTheme.primary.withAlpha(100)
-                      : Colors.transparent,
+                  ? NaaguruTheme.primary.withAlpha(100)
+                  : Colors.transparent,
               width: 1.5,
             ),
             boxShadow: [
               BoxShadow(
-                  color: Colors.black.withAlpha(10),
-                  blurRadius: 6,
-                  offset: const Offset(0, 2))
+                color: Colors.black.withAlpha(10),
+                blurRadius: 6,
+                offset: const Offset(0, 2),
+              ),
             ],
           ),
           child: Row(
@@ -798,12 +820,18 @@ class _ProfileScreen2State extends State<ProfileScreen2WhereYouLive> {
                 ),
               ),
               if (showSuccess) ...[
-                const Icon(Icons.check_circle_rounded,
-                    color: NaaguruTheme.primary, size: 20),
+                const Icon(
+                  Icons.check_circle_rounded,
+                  color: NaaguruTheme.primary,
+                  size: 20,
+                ),
                 const SizedBox(width: 14),
               ] else if (hasError) ...[
-                const Icon(Icons.error_outline_rounded,
-                    color: NaaguruTheme.error, size: 20),
+                const Icon(
+                  Icons.error_outline_rounded,
+                  color: NaaguruTheme.error,
+                  size: 20,
+                ),
                 const SizedBox(width: 14),
               ] else
                 const SizedBox(width: 14),
@@ -814,23 +842,29 @@ class _ProfileScreen2State extends State<ProfileScreen2WhereYouLive> {
           const SizedBox(height: 4),
           Row(
             children: [
-              const Icon(Icons.verified_rounded,
-                  color: NaaguruTheme.primary, size: 14),
+              const Icon(
+                Icons.verified_rounded,
+                color: NaaguruTheme.primary,
+                size: 14,
+              ),
               const SizedBox(width: 4),
               Text(
                 _s('Valid 6-digit pincode', 'సరైన 6 అంకెల పిన్‌కోడ్'),
                 style: const TextStyle(
-                    fontSize: 11,
-                    color: NaaguruTheme.primary,
-                    fontWeight: FontWeight.w500),
+                  fontSize: 11,
+                  color: NaaguruTheme.primary,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
             ],
           ),
         ] else if (hasError) ...[
           const SizedBox(height: 4),
           Text(
-            _s('Please enter a valid 6-digit pincode.',
-                'దయచేసి సరైన 6 అంకెల పిన్‌కోడ్ నమోదు చేయండి.'),
+            _s(
+              'Please enter a valid 6-digit pincode.',
+              'దయచేసి సరైన 6 అంకెల పిన్‌కోడ్ నమోదు చేయండి.',
+            ),
             style: const TextStyle(fontSize: 11, color: NaaguruTheme.error),
           ),
         ],
@@ -879,9 +913,10 @@ class _ProfileScreen2State extends State<ProfileScreen2WhereYouLive> {
             borderRadius: BorderRadius.circular(14),
             boxShadow: [
               BoxShadow(
-                  color: Colors.black.withAlpha(10),
-                  blurRadius: 6,
-                  offset: const Offset(0, 2))
+                color: Colors.black.withAlpha(10),
+                blurRadius: 6,
+                offset: const Offset(0, 2),
+              ),
             ],
           ),
           child: TextField(
@@ -892,14 +927,18 @@ class _ProfileScreen2State extends State<ProfileScreen2WhereYouLive> {
             decoration: InputDecoration(
               border: InputBorder.none,
               contentPadding: const EdgeInsets.symmetric(
-                  horizontal: 16, vertical: 14),
+                horizontal: 16,
+                vertical: 14,
+              ),
               counterText: '',
               hintText: _s(
                 'e.g. Near Main Bus Stop or Church',
                 'ఉదా. మెయిన్ బస్ స్టాప్ లేదా చర్చ్ వద్ద',
               ),
               hintStyle: TextStyle(
-                  fontSize: 14, color: NaaguruTheme.muted.withAlpha(180)),
+                fontSize: 14,
+                color: NaaguruTheme.muted.withAlpha(180),
+              ),
             ),
           ),
         ),
@@ -928,9 +967,10 @@ class _ProfileScreen2State extends State<ProfileScreen2WhereYouLive> {
         color: NaaguruTheme.surface.withAlpha(242),
         boxShadow: [
           BoxShadow(
-              color: Colors.black.withAlpha(18),
-              blurRadius: 16,
-              offset: const Offset(0, -4))
+            color: Colors.black.withAlpha(18),
+            blurRadius: 16,
+            offset: const Offset(0, -4),
+          ),
         ],
       ),
       child: Column(
@@ -947,10 +987,13 @@ class _ProfileScreen2State extends State<ProfileScreen2WhereYouLive> {
                 foregroundColor: Colors.white,
                 disabledForegroundColor: NaaguruTheme.muted,
                 shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(14)),
+                  borderRadius: BorderRadius.circular(14),
+                ),
                 elevation: _canContinue ? 2 : 0,
                 textStyle: const TextStyle(
-                    fontSize: 15, fontWeight: FontWeight.w600),
+                  fontSize: 15,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -966,14 +1009,18 @@ class _ProfileScreen2State extends State<ProfileScreen2WhereYouLive> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(Icons.lock_outline_rounded,
-                  size: 12, color: NaaguruTheme.muted),
+              const Icon(
+                Icons.lock_outline_rounded,
+                size: 12,
+                color: NaaguruTheme.muted,
+              ),
               const SizedBox(width: 4),
               Text(
-                _s('Step 2 of 3 • You can edit anytime later',
-                    'దశ 2/3 • తర్వాత ఎప్పుడైనా సవరించుకోవచ్చు'),
-                style: const TextStyle(
-                    fontSize: 11, color: NaaguruTheme.muted),
+                _s(
+                  'Step 2 of 3 • You can edit anytime later',
+                  'దశ 2/3 • తర్వాత ఎప్పుడైనా సవరించుకోవచ్చు',
+                ),
+                style: const TextStyle(fontSize: 11, color: NaaguruTheme.muted),
               ),
             ],
           ),

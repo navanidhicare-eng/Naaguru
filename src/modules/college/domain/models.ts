@@ -2,7 +2,9 @@ import { StreamCode } from '@/shared/domain/StreamCode';
 import { CollegeMedia } from './CollegeMedia';
 import { WeeklyMenu } from './WeeklyMenu';
 import { CollegeAchievement, AchievementStatus } from './CollegeAchievement';
-export { CollegeMedia, WeeklyMenu, CollegeAchievement, type AchievementStatus };
+import { CollegeTestimonial, PersonType, TestimonialStatus } from './CollegeTestimonial';
+import { CollegeAccreditation, AccreditationStatus } from './CollegeAccreditation';
+export { CollegeMedia, WeeklyMenu, CollegeAchievement, type AchievementStatus, CollegeTestimonial, type PersonType, type TestimonialStatus, CollegeAccreditation, type AccreditationStatus };
 
 export type CollegeStatus = 'DRAFT' | 'ACTIVE' | 'INACTIVE';
 export type VerificationStatus = 'UNVERIFIED' | 'VERIFIED';
@@ -130,16 +132,22 @@ export interface CollegeProps {
   media: CollegeMedia[];
   weeklyMenu: WeeklyMenu | null;
   achievements: CollegeAchievement[];
+  testimonials?: CollegeTestimonial[];
+  accreditations?: CollegeAccreditation[];
 
   createdAt: string;
   updatedAt: string;
 }
 
 export class College {
-  private constructor(public readonly props: CollegeProps) {}
+  private constructor(public readonly props: CollegeProps & { testimonials: CollegeTestimonial[]; accreditations: CollegeAccreditation[] }) {}
 
   static create(props: CollegeProps): College {
-    return new College(props);
+    return new College({
+      ...props,
+      testimonials: props.testimonials || [],
+      accreditations: props.accreditations || [],
+    });
   }
 
   get id() { return this.props.id; }
@@ -157,6 +165,8 @@ export class College {
   get media() { return this.props.media; }
   get weeklyMenu() { return this.props.weeklyMenu; }
   get achievements() { return this.props.achievements; }
+  get testimonials(): CollegeTestimonial[] { return this.props.testimonials; }
+  get accreditations(): CollegeAccreditation[] { return this.props.accreditations; }
   get createdAt() { return this.props.createdAt; }
   get updatedAt() { return this.props.updatedAt; }
 
@@ -214,6 +224,44 @@ export class College {
     }
 
     this.props.achievements = achievements;
+    this.props.updatedAt = new Date().toISOString();
+  }
+
+  /**
+   * Replaces the institution's testimonials.
+   * Enforces the hard business invariant of maximum 10 testimonials per institution.
+   */
+  replaceTestimonials(testimonials: CollegeTestimonial[]): void {
+    if (testimonials.length > 10) {
+      throw new Error('A college can have a maximum of 10 testimonials.');
+    }
+    
+    // Ensure all testimonials belong to this college
+    const invalidCollegeId = testimonials.find(t => t.collegeId !== this.id);
+    if (invalidCollegeId) {
+      throw new Error(`Testimonial ${invalidCollegeId.id} does not belong to college ${this.id}`);
+    }
+
+    this.props.testimonials = testimonials;
+    this.props.updatedAt = new Date().toISOString();
+  }
+
+  /**
+   * Replaces the institution's accreditations.
+   * Enforces the hard business invariant of maximum 15 accreditations per institution.
+   */
+  replaceAccreditations(accreditations: CollegeAccreditation[]): void {
+    if (accreditations.length > 15) {
+      throw new Error('A college can have a maximum of 15 accreditations.');
+    }
+    
+    // Ensure all accreditations belong to this college
+    const invalidCollegeId = accreditations.find(a => a.collegeId !== this.id);
+    if (invalidCollegeId) {
+      throw new Error(`Accreditation ${invalidCollegeId.id} does not belong to college ${this.id}`);
+    }
+
+    this.props.accreditations = accreditations;
     this.props.updatedAt = new Date().toISOString();
   }
 }

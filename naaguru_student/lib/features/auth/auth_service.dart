@@ -36,7 +36,8 @@ class AuthService {
   final ApiClient _apiClient;
   final FlutterSecureStorage _storage;
 
-  static const _accessTokenKey = 'naaguru_access_token'; // Legacy key, cleared on cleanup
+  static const _accessTokenKey =
+      'naaguru_access_token'; // Legacy key, cleared on cleanup
   static const _refreshTokenKey = 'naaguru_refresh_token';
 
   /// Reactive notifier for authentication state changes (login, logout, expiry).
@@ -50,8 +51,8 @@ class AuthService {
       ValueNotifier<ProfileState>(ProfileState.unknown);
 
   AuthService({required ApiClient apiClient, FlutterSecureStorage? storage})
-      : _apiClient = apiClient,
-        _storage = storage ?? const FlutterSecureStorage() {
+    : _apiClient = apiClient,
+      _storage = storage ?? const FlutterSecureStorage() {
     _bindApiClientCallbacks();
   }
 
@@ -188,20 +189,20 @@ class AuthService {
 
   /// Step 1: Request an OTP for the given phone number.
   Future<void> requestOtp(String phoneNumber) async {
-    await _apiClient.post('/auth/request-otp', body: {
-      'phoneNumber': phoneNumber,
-    });
+    await _apiClient.post(
+      '/auth/request-otp',
+      body: {'phoneNumber': phoneNumber},
+    );
   }
 
   /// Step 2: Verify the OTP code.
   /// On success, keeps access token in memory, persists refresh token securely,
   /// fetches profile state, and then updates authentication state.
   Future<void> verifyOtp(String phoneNumber, String code) async {
-    final response = await _apiClient.post('/auth/verify-otp', body: {
-      'phoneNumber': phoneNumber,
-      'code': code,
-      'clientType': 'mobile',
-    });
+    final response = await _apiClient.post(
+      '/auth/verify-otp',
+      body: {'phoneNumber': phoneNumber, 'code': code, 'clientType': 'mobile'},
+    );
 
     final accessToken = response['accessToken'] as String;
     final refreshToken = response['refreshToken'] as String;
@@ -244,10 +245,10 @@ class AuthService {
     // Revoke session on backend if a refresh token is known
     if (refreshToken != null && refreshToken.isNotEmpty) {
       try {
-        await _apiClient.post('/auth/logout', body: {
-          'refreshToken': refreshToken,
-          'clientType': 'mobile',
-        });
+        await _apiClient.post(
+          '/auth/logout',
+          body: {'refreshToken': refreshToken, 'clientType': 'mobile'},
+        );
       } catch (_) {
         // Deliberately continue: local session must be cleared even if offline or 401
       }

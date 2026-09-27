@@ -10,7 +10,6 @@ import 'package:naaguru_student/features/college/presentation/college_discovery_
 import 'package:naaguru_student/features/college/presentation/college_list_screen.dart';
 import 'package:naaguru_student/features/college/presentation/college_preferences_screen.dart';
 import 'package:naaguru_student/features/college/presentation/college_review_and_confirm_screen.dart';
-import 'package:naaguru_student/features/explore/presentation/college_discovery_intro_screen.dart';
 import 'package:naaguru_student/features/student/data/catalog_api_client.dart';
 import 'package:naaguru_student/features/student/data/student_api_client.dart';
 
@@ -87,7 +86,8 @@ class _HomeScreenState extends State<HomeScreen> {
           try {
             final rec = await widget.assessmentApiClient!.getRecommendation();
             _completedRecommendation = rec;
-            final rankedResults = (rec['rankedResults'] as List<dynamic>?) ?? [];
+            final rankedResults =
+                (rec['rankedResults'] as List<dynamic>?) ?? [];
             if (rankedResults.isNotEmpty) {
               final top = rankedResults.first as Map<String, dynamic>;
               _recommendedStream = top['streamCode'] as String?;
@@ -99,7 +99,8 @@ class _HomeScreenState extends State<HomeScreen> {
       } catch (_) {
         // Not completed, check if in progress
         try {
-          final attempt = await widget.assessmentApiClient!.startOrResumeAttempt();
+          final attempt = await widget.assessmentApiClient!
+              .startOrResumeAttempt();
           final answers = (attempt['answers'] as List<dynamic>?) ?? [];
           if (answers.isNotEmpty && attempt['state'] == 'IN_PROGRESS') {
             _hasInProgressAssessment = true;
@@ -124,7 +125,9 @@ class _HomeScreenState extends State<HomeScreen> {
       setState(() {
         _savedCollegeIntent = intent;
       });
-      if (intent != null && intent['preferredLocationId'] != null && widget.catalogApiClient != null) {
+      if (intent != null &&
+          intent['preferredLocationId'] != null &&
+          widget.catalogApiClient != null) {
         try {
           final locId = intent['preferredLocationId'] as String;
           final locations = await widget.catalogApiClient!.getLocations();
@@ -134,13 +137,20 @@ class _HomeScreenState extends State<HomeScreen> {
             if (loc.type == 'DISTRICT') {
               if (mounted) setState(() => _savedDistrictLocation = loc);
             } else if (loc.parentId != null) {
-              final parent = locations.where((l) => l.id == loc.parentId).toList();
+              final parent = locations
+                  .where((l) => l.id == loc.parentId)
+                  .toList();
               if (parent.isNotEmpty && parent.first.type == 'DISTRICT') {
-                if (mounted) setState(() => _savedDistrictLocation = parent.first);
+                if (mounted)
+                  setState(() => _savedDistrictLocation = parent.first);
               } else if (parent.isNotEmpty && parent.first.parentId != null) {
-                final grandParent = locations.where((l) => l.id == parent.first.parentId).toList();
-                if (grandParent.isNotEmpty && grandParent.first.type == 'DISTRICT') {
-                  if (mounted) setState(() => _savedDistrictLocation = grandParent.first);
+                final grandParent = locations
+                    .where((l) => l.id == parent.first.parentId)
+                    .toList();
+                if (grandParent.isNotEmpty &&
+                    grandParent.first.type == 'DISTRICT') {
+                  if (mounted)
+                    setState(() => _savedDistrictLocation = grandParent.first);
                 }
               }
             }
@@ -180,12 +190,14 @@ class _HomeScreenState extends State<HomeScreen> {
                 index: _currentIndex,
                 children: [
                   _buildHomeView(context),
-                  CollegeDiscoveryIntroScreen(
+                  CollegeListScreen(
+                    showBottomNav: false,
                     collegeApiClient: widget.collegeApiClient,
                     catalogApiClient: widget.catalogApiClient,
                     studentApiClient: widget.studentApiClient,
-                    isTelugu: _isTelugu,
-                    onLanguageChanged: (val) => setState(() => _isTelugu = val),
+                    streamCode: _recommendedStream ?? 'MPC',
+                    locationId: _savedDistrictLocation?.id,
+                    locationName: _savedDistrictLocation?.displayName(_isTelugu) ?? 'Visakhapatnam, AP',
                   ),
                   const Center(
                     child: Text(
@@ -306,7 +318,10 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               const SizedBox(height: 16),
               ListTile(
-                leading: const Icon(Icons.person_outline, color: NaaguruTheme.primary),
+                leading: const Icon(
+                  Icons.person_outline,
+                  color: NaaguruTheme.primary,
+                ),
                 title: Text(_isTelugu ? 'నా ప్రొఫైల్' : 'My Profile'),
                 onTap: () {
                   Navigator.pop(ctx);
@@ -323,7 +338,11 @@ class _HomeScreenState extends State<HomeScreen> {
                   Navigator.pop(ctx);
                   await widget.authService?.logout();
                   if (mounted) {
-                    Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
+                    Navigator.pushNamedAndRemoveUntil(
+                      context,
+                      '/',
+                      (route) => false,
+                    );
                   }
                 },
               ),
@@ -347,12 +366,20 @@ class _HomeScreenState extends State<HomeScreen> {
               color: NaaguruTheme.primaryLight,
               shape: BoxShape.circle,
             ),
-            child: const Icon(Icons.person, size: 44, color: NaaguruTheme.primaryDark),
+            child: const Icon(
+              Icons.person,
+              size: 44,
+              color: NaaguruTheme.primaryDark,
+            ),
           ),
           const SizedBox(height: 14),
           Text(
             _studentName != null ? 'Hello, $_studentName' : 'Student Account',
-            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: NaaguruTheme.text),
+            style: const TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: NaaguruTheme.text,
+            ),
           ),
           const SizedBox(height: 20),
 
@@ -365,10 +392,14 @@ class _HomeScreenState extends State<HomeScreen> {
             width: double.infinity,
             child: OutlinedButton.icon(
               icon: const Icon(Icons.edit_outlined),
-              label: Text(_isTelugu ? 'ప్రొఫైల్ వివరాలు సవరించండి' : 'Edit Profile'),
+              label: Text(
+                _isTelugu ? 'ప్రొఫైల్ వివరాలు సవరించండి' : 'Edit Profile',
+              ),
               style: OutlinedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(vertical: 12),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
               ),
               onPressed: () => Navigator.pushNamed(context, '/profile'),
             ),
@@ -380,16 +411,26 @@ class _HomeScreenState extends State<HomeScreen> {
             width: double.infinity,
             child: OutlinedButton.icon(
               icon: const Icon(Icons.logout, color: NaaguruTheme.error),
-              label: Text(_isTelugu ? 'లాగ్ అవుట్' : 'Log Out', style: const TextStyle(color: NaaguruTheme.error)),
+              label: Text(
+                _isTelugu ? 'లాగ్ అవుట్' : 'Log Out',
+                style: const TextStyle(color: NaaguruTheme.error),
+              ),
               style: OutlinedButton.styleFrom(
                 foregroundColor: NaaguruTheme.error,
                 side: const BorderSide(color: Color(0xFFFCA5A5)),
                 padding: const EdgeInsets.symmetric(vertical: 12),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
               ),
               onPressed: () async {
                 await widget.authService?.logout();
-                if (mounted) Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
+                if (mounted)
+                  Navigator.pushNamedAndRemoveUntil(
+                    context,
+                    '/',
+                    (route) => false,
+                  );
               },
             ),
           ),
@@ -408,7 +449,11 @@ class _HomeScreenState extends State<HomeScreen> {
         Expanded(
           child: Text(
             text,
-            style: const TextStyle(fontSize: 13, color: NaaguruTheme.text, height: 1.3),
+            style: const TextStyle(
+              fontSize: 13,
+              color: NaaguruTheme.text,
+              height: 1.3,
+            ),
           ),
         ),
       ],
@@ -431,11 +476,19 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
             Row(
               children: [
-                const Icon(Icons.school_outlined, size: 20, color: NaaguruTheme.primaryDark),
+                const Icon(
+                  Icons.school_outlined,
+                  size: 20,
+                  color: NaaguruTheme.primaryDark,
+                ),
                 const SizedBox(width: 8),
                 Text(
                   _isTelugu ? 'కళాశాల ప్రాధాన్యతలు' : 'College Preferences',
-                  style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: NaaguruTheme.primaryDark),
+                  style: const TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.bold,
+                    color: NaaguruTheme.primaryDark,
+                  ),
                 ),
               ],
             ),
@@ -452,9 +505,13 @@ class _HomeScreenState extends State<HomeScreen> {
               style: ElevatedButton.styleFrom(
                 backgroundColor: NaaguruTheme.primaryDark,
                 foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
               ),
-              child: Text(_isTelugu ? 'ప్రాధాన్యతలను ఎంచుకోండి →' : 'Set Preferences →'),
+              child: Text(
+                _isTelugu ? 'ప్రాధాన్యతలను ఎంచుకోండి →' : 'Set Preferences →',
+              ),
             ),
           ],
         ),
@@ -479,20 +536,30 @@ class _HomeScreenState extends State<HomeScreen> {
     final maxFee = intent['maxAnnualFee'] as int?;
     String budgetSummary;
     if (maxFee == null) {
-      budgetSummary = _isTelugu ? 'బడ్జెట్: ఇంకా నిర్ణయించలేదు' : 'Budget: Not sure yet';
+      budgetSummary = _isTelugu
+          ? 'బడ్జెట్: ఇంకా నిర్ణయించలేదు'
+          : 'Budget: Not sure yet';
     } else if (maxFee <= 50000) {
-      budgetSummary = _isTelugu ? 'బడ్జెట్: < ₹50,000 / సం.' : 'Budget: < ₹50,000 / year';
+      budgetSummary = _isTelugu
+          ? 'బడ్జెట్: < ₹50,000 / సం.'
+          : 'Budget: < ₹50,000 / year';
     } else if (maxFee <= 100000) {
-      budgetSummary = _isTelugu ? 'బడ్జెట్: ₹1,00,000 వరకు / సం.' : 'Budget: Up to ₹1,00,000 / year';
+      budgetSummary = _isTelugu
+          ? 'బడ్జెట్: ₹1,00,000 వరకు / సం.'
+          : 'Budget: Up to ₹1,00,000 / year';
     } else {
-      budgetSummary = _isTelugu ? 'బడ్జెట్: ₹1,00,000+ / సం.' : 'Budget: ₹1,00,000+ / year';
+      budgetSummary = _isTelugu
+          ? 'బడ్జెట్: ₹1,00,000+ / సం.'
+          : 'Budget: ₹1,00,000+ / year';
     }
 
     String locationSummary;
     if (_savedDistrictLocation != null) {
       locationSummary = _savedDistrictLocation!.displayName(_isTelugu);
     } else {
-      locationSummary = _isTelugu ? 'ప్రాధాన్యతా ప్రాంతం ఎంచుకోబడింది' : 'Preferred location saved';
+      locationSummary = _isTelugu
+          ? 'ప్రాధాన్యతా ప్రాంతం ఎంచుకోబడింది'
+          : 'Preferred location saved';
     }
 
     return Container(
@@ -502,7 +569,9 @@ class _HomeScreenState extends State<HomeScreen> {
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: isLocked ? const Color(0xFFE2E8F0) : NaaguruTheme.primary.withAlpha(80),
+          color: isLocked
+              ? const Color(0xFFE2E8F0)
+              : NaaguruTheme.primary.withAlpha(80),
           width: 1.5,
         ),
         boxShadow: [
@@ -521,7 +590,11 @@ class _HomeScreenState extends State<HomeScreen> {
             children: [
               Row(
                 children: [
-                  const Icon(Icons.tune_rounded, size: 18, color: NaaguruTheme.primaryDark),
+                  const Icon(
+                    Icons.tune_rounded,
+                    size: 18,
+                    color: NaaguruTheme.primaryDark,
+                  ),
                   const SizedBox(width: 8),
                   Text(
                     _isTelugu ? 'కళాశాల ప్రాధాన్యతలు' : 'College Preferences',
@@ -536,14 +609,20 @@ class _HomeScreenState extends State<HomeScreen> {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                 decoration: BoxDecoration(
-                  color: isLocked ? const Color(0xFFF1F5F9) : NaaguruTheme.primaryLight,
+                  color: isLocked
+                      ? const Color(0xFFF1F5F9)
+                      : NaaguruTheme.primaryLight,
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     if (isLocked) ...[
-                      const Icon(Icons.lock_rounded, size: 12, color: NaaguruTheme.muted),
+                      const Icon(
+                        Icons.lock_rounded,
+                        size: 12,
+                        color: NaaguruTheme.muted,
+                      ),
                       const SizedBox(width: 4),
                       Text(
                         _isTelugu ? 'స్థిరమైనవి 🔒' : 'Final 🔒',
@@ -554,7 +633,11 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       ),
                     ] else ...[
-                      const Icon(Icons.edit_outlined, size: 12, color: NaaguruTheme.primary),
+                      const Icon(
+                        Icons.edit_outlined,
+                        size: 12,
+                        color: NaaguruTheme.primary,
+                      ),
                       const SizedBox(width: 4),
                       Text(
                         _isTelugu ? '1 సవరణ మిగిలింది' : '1 edit left',
@@ -571,21 +654,38 @@ class _HomeScreenState extends State<HomeScreen> {
             ],
           ),
           const SizedBox(height: 12),
-          _buildPreferenceSummaryRow(Icons.school_outlined, pathwayStreamSummary),
+          _buildPreferenceSummaryRow(
+            Icons.school_outlined,
+            pathwayStreamSummary,
+          ),
           const SizedBox(height: 6),
-          _buildPreferenceSummaryRow(Icons.location_on_outlined, locationSummary),
+          _buildPreferenceSummaryRow(
+            Icons.location_on_outlined,
+            locationSummary,
+          ),
           const SizedBox(height: 6),
           _buildPreferenceSummaryRow(Icons.bed_outlined, hostelSummary),
           const SizedBox(height: 6),
-          _buildPreferenceSummaryRow(Icons.account_balance_wallet_outlined, budgetSummary),
+          _buildPreferenceSummaryRow(
+            Icons.account_balance_wallet_outlined,
+            budgetSummary,
+          ),
           const SizedBox(height: 16),
           ElevatedButton(
             onPressed: () => _navigateToReviewAndConfirm(intent),
             style: ElevatedButton.styleFrom(
-              backgroundColor: isLocked ? NaaguruTheme.surface : NaaguruTheme.primaryDark,
-              foregroundColor: isLocked ? NaaguruTheme.primaryDark : Colors.white,
-              side: isLocked ? const BorderSide(color: NaaguruTheme.primaryDark) : BorderSide.none,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              backgroundColor: isLocked
+                  ? NaaguruTheme.surface
+                  : NaaguruTheme.primaryDark,
+              foregroundColor: isLocked
+                  ? NaaguruTheme.primaryDark
+                  : Colors.white,
+              side: isLocked
+                  ? const BorderSide(color: NaaguruTheme.primaryDark)
+                  : BorderSide.none,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
               minimumSize: const Size(double.infinity, 44),
             ),
             child: Row(
@@ -593,9 +693,16 @@ class _HomeScreenState extends State<HomeScreen> {
               children: [
                 Text(
                   isLocked
-                      ? (_isTelugu ? 'ప్రాధాన్యతలను చూడండి →' : 'View Preferences →')
-                      : (_isTelugu ? 'ప్రాధాన్యతలను చూడండి / మార్చండి →' : 'View / Change Preferences →'),
-                  style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                      ? (_isTelugu
+                            ? 'ప్రాధాన్యతలను చూడండి →'
+                            : 'View Preferences →')
+                      : (_isTelugu
+                            ? 'ప్రాధాన్యతలను చూడండి / మార్చండి →'
+                            : 'View / Change Preferences →'),
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ],
             ),
@@ -641,7 +748,10 @@ class _HomeScreenState extends State<HomeScreen> {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: NaaguruTheme.primary.withAlpha(51), width: 1.5),
+          border: Border.all(
+            color: NaaguruTheme.primary.withAlpha(51),
+            width: 1.5,
+          ),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withAlpha(8),
@@ -657,7 +767,10 @@ class _HomeScreenState extends State<HomeScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
                     color: NaaguruTheme.primaryLight,
                     borderRadius: BorderRadius.circular(12),
@@ -683,7 +796,9 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             const SizedBox(height: 12),
             Text(
-              _isTelugu ? "మీ బలమైన విద్యా-విభాగ మ్యాచ్" : "Your Strongest Academic Stream",
+              _isTelugu
+                  ? "మీ బలమైన విద్యా-విభాగ మ్యాచ్"
+                  : "Your Strongest Academic Stream",
               style: const TextStyle(
                 fontSize: 13,
                 color: NaaguruTheme.muted,
@@ -707,7 +822,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 Expanded(
                   child: Text(
                     _getStreamDescription(stream),
-                    style: const TextStyle(fontSize: 12, color: NaaguruTheme.muted),
+                    style: const TextStyle(
+                      fontSize: 12,
+                      color: NaaguruTheme.muted,
+                    ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -757,7 +875,10 @@ class _HomeScreenState extends State<HomeScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
                     color: Colors.orange.withAlpha(25),
                     borderRadius: BorderRadius.circular(12),
@@ -776,7 +897,9 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             const SizedBox(height: 12),
             Text(
-              _isTelugu ? "మీ అసెస్‌మెంట్‌ను కొనసాగించండి" : "Continue Your Assessment",
+              _isTelugu
+                  ? "మీ అసెస్‌మెంట్‌ను కొనసాగించండి"
+                  : "Continue Your Assessment",
               style: const TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.w700,
@@ -788,7 +911,11 @@ class _HomeScreenState extends State<HomeScreen> {
               _isTelugu
                   ? "మీరు ఆపిన చోట నుండే ప్రారంభించండి. 40 చిన్న ప్రశ్నలు, ఎటువంటి మార్కులు లేదా ఒత్తిడి లేదు."
                   : "Pick up right where you left off. 40 quick interest questions with zero pressure.",
-              style: const TextStyle(fontSize: 13, color: NaaguruTheme.muted, height: 1.4),
+              style: const TextStyle(
+                fontSize: 13,
+                color: NaaguruTheme.muted,
+                height: 1.4,
+              ),
             ),
             const SizedBox(height: 16),
             PrimaryButton(
@@ -837,7 +964,9 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           const SizedBox(height: 12),
           Text(
-            _isTelugu ? "10వ తరగతి తర్వాత మీ మార్గం తెలుసుకోండి" : "Discover What Comes After 10th",
+            _isTelugu
+                ? "10వ తరగతి తర్వాత మీ మార్గం తెలుసుకోండి"
+                : "Discover What Comes After 10th",
             style: const TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w700,
@@ -849,11 +978,17 @@ class _HomeScreenState extends State<HomeScreen> {
             _isTelugu
                 ? "మీ నిజమైన ఆసక్తులను అర్థం చేసుకుని, మీకు సరిపోయే ఇంటర్మీడియట్ స్ట్రీమ్‌ను కనుగొనండి."
                 : "Understand your interests and discover which academic stream fits you best.",
-            style: const TextStyle(fontSize: 13, color: NaaguruTheme.muted, height: 1.4),
+            style: const TextStyle(
+              fontSize: 13,
+              color: NaaguruTheme.muted,
+              height: 1.4,
+            ),
           ),
           const SizedBox(height: 16),
           PrimaryButton(
-            text: _isTelugu ? 'అసెస్‌మెంట్ ప్రారంభించండి →' : 'Take Assessment →',
+            text: _isTelugu
+                ? 'అసెస్‌మెంట్ ప్రారంభించండి →'
+                : 'Take Assessment →',
             onPressed: () {
               Navigator.pushNamed(context, '/assessment-intro');
             },
@@ -911,7 +1046,11 @@ class _HomeScreenState extends State<HomeScreen> {
             _isTelugu
                 ? "మీకు ఏ స్ట్రీమ్ లేదా లొకేషన్ కావాలో ఇప్పటికే తెలుసా? మీ ప్రాధాన్యతలకు సరిపోయే కళాశాలలను చూడండి."
                 : "Already know what you want? Find junior colleges that match your stream, location, and hostel preferences.",
-            style: const TextStyle(fontSize: 13, color: NaaguruTheme.muted, height: 1.4),
+            style: const TextStyle(
+              fontSize: 13,
+              color: NaaguruTheme.muted,
+              height: 1.4,
+            ),
           ),
           const SizedBox(height: 16),
           ElevatedButton(
@@ -920,7 +1059,9 @@ class _HomeScreenState extends State<HomeScreen> {
               backgroundColor: const Color(0xFF1E3A5F),
               foregroundColor: Colors.white,
               padding: const EdgeInsets.symmetric(vertical: 14),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
               minimumSize: const Size(double.infinity, 48),
             ),
             child: Row(
@@ -930,13 +1071,19 @@ class _HomeScreenState extends State<HomeScreen> {
                   const SizedBox(
                     width: 16,
                     height: 16,
-                    child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: Colors.white,
+                    ),
                   ),
                   const SizedBox(width: 8),
                 ],
                 Text(
                   _isTelugu ? 'కళాశాలలను చూడండి →' : 'Explore Colleges →',
-                  style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ],
             ),
@@ -1037,7 +1184,8 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _navigateToReviewAndConfirm(Map<String, dynamic> intent) {
-    if (widget.collegeApiClient == null || widget.studentApiClient == null) return;
+    if (widget.collegeApiClient == null || widget.studentApiClient == null)
+      return;
 
     final wizard = CollegeDiscoveryWizardState();
     wizard.versionNumber = intent['versionNumber'] as int?;
@@ -1103,7 +1251,11 @@ class _HomeScreenState extends State<HomeScreen> {
               color: Colors.white,
               borderRadius: BorderRadius.circular(12),
             ),
-            child: const Icon(Icons.explore, color: NaaguruTheme.primaryDark, size: 24),
+            child: const Icon(
+              Icons.explore,
+              color: NaaguruTheme.primaryDark,
+              size: 24,
+            ),
           ),
           const SizedBox(width: 14),
           Expanded(
@@ -1111,22 +1263,36 @@ class _HomeScreenState extends State<HomeScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  _isTelugu ? 'అన్ని మార్గాలను అన్వేషించండి' : 'Explore All Major Paths',
-                  style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: NaaguruTheme.primaryDark),
+                  _isTelugu
+                      ? 'అన్ని మార్గాలను అన్వేషించండి'
+                      : 'Explore All Major Paths',
+                  style: const TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.bold,
+                    color: NaaguruTheme.primaryDark,
+                  ),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   _isTelugu
                       ? 'ఇంటర్మీడియట్, పాలిటెక్నిక్, ఐటిఐ మరియు డిఫెన్స్ అవకాశాలను చూడండి.'
                       : 'Discover Intermediate, Polytechnic, ITI, and Defence pathways after 10th.',
-                  style: const TextStyle(fontSize: 12, color: NaaguruTheme.muted),
+                  style: const TextStyle(
+                    fontSize: 12,
+                    color: NaaguruTheme.muted,
+                  ),
                 ),
               ],
             ),
           ),
           IconButton(
-            icon: const Icon(Icons.arrow_forward_ios, size: 16, color: NaaguruTheme.primaryDark),
-            onPressed: () => setState(() => _currentIndex = 1), // Switch to Explore tab
+            icon: const Icon(
+              Icons.arrow_forward_ios,
+              size: 16,
+              color: NaaguruTheme.primaryDark,
+            ),
+            onPressed: () =>
+                setState(() => _currentIndex = 1), // Switch to Explore tab
           ),
         ],
       ),
@@ -1135,7 +1301,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildHomeView(BuildContext context) {
     if (_isLoadingState) {
-      return const Center(child: CircularProgressIndicator(color: NaaguruTheme.primary));
+      return const Center(
+        child: CircularProgressIndicator(color: NaaguruTheme.primary),
+      );
     }
 
     return SingleChildScrollView(
@@ -1165,14 +1333,21 @@ class _HomeScreenState extends State<HomeScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(Icons.verified_user_outlined, size: 16, color: NaaguruTheme.primary),
+              const Icon(
+                Icons.verified_user_outlined,
+                size: 16,
+                color: NaaguruTheme.primary,
+              ),
               const SizedBox(width: 6),
               Expanded(
                 child: Text(
                   _isTelugu
                       ? "నాగురు మీ నిర్ణయాలలో విశ్వసనీయ మార్గదర్శి."
                       : "Naaguru is your trusted guide for life after 10th grade.",
-                  style: const TextStyle(fontSize: 12, color: NaaguruTheme.muted),
+                  style: const TextStyle(
+                    fontSize: 12,
+                    color: NaaguruTheme.muted,
+                  ),
                   textAlign: TextAlign.center,
                 ),
               ),

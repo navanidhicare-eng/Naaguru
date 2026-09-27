@@ -260,12 +260,14 @@ class _ProfileScreen1State extends State<ProfileScreen1AboutYou> {
 
   void _openRequestSheet() {
     if (_wizard.schoolDistrict != null) {
-      _requestDistrictController.text =
-          _wizard.schoolDistrict!.displayName(_isTelugu);
+      _requestDistrictController.text = _wizard.schoolDistrict!.displayName(
+        _isTelugu,
+      );
     }
     if (_wizard.schoolMandal != null) {
-      _requestMandalController.text =
-          _wizard.schoolMandal!.displayName(_isTelugu);
+      _requestMandalController.text = _wizard.schoolMandal!.displayName(
+        _isTelugu,
+      );
     }
     setState(() => _showRequestSheet = true);
   }
@@ -274,14 +276,16 @@ class _ProfileScreen1State extends State<ProfileScreen1AboutYou> {
 
   void _handleContinue() {
     if (!_canContinue) return;
-    Navigator.of(context).push(MaterialPageRoute(
-      builder: (_) => ProfileScreen2WhereYouLive(
-        authService: widget.authService,
-        studentApiClient: widget.studentApiClient,
-        catalogApiClient: widget.catalogApiClient,
-        wizardState: _wizard,
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => ProfileScreen2WhereYouLive(
+          authService: widget.authService,
+          studentApiClient: widget.studentApiClient,
+          catalogApiClient: widget.catalogApiClient,
+          wizardState: _wizard,
+        ),
       ),
-    ));
+    );
   }
 
   // ── Strings ───────────────────────────────────────────────────────────────
@@ -333,12 +337,7 @@ class _ProfileScreen1State extends State<ProfileScreen1AboutYou> {
             ),
           ),
           // Sticky bottom CTA.
-          Positioned(
-            left: 0,
-            right: 0,
-            bottom: 0,
-            child: _buildBottomCta(),
-          ),
+          Positioned(left: 0, right: 0, bottom: 0, child: _buildBottomCta()),
           // School-request bottom sheet overlay.
           if (_showRequestSheet) _buildSchoolRequestSheet(),
         ],
@@ -420,12 +419,7 @@ class _ProfileScreen1State extends State<ProfileScreen1AboutYou> {
           color: active ? _C.surfaceContainerLow : Colors.transparent,
           borderRadius: BorderRadius.circular(100),
           boxShadow: active
-              ? [
-                  BoxShadow(
-                    color: Colors.black.withAlpha(10),
-                    blurRadius: 4,
-                  ),
-                ]
+              ? [BoxShadow(color: Colors.black.withAlpha(10), blurRadius: 4)]
               : null,
         ),
         child: Text(
@@ -556,8 +550,11 @@ class _ProfileScreen1State extends State<ProfileScreen1AboutYou> {
                 BoxShadow(color: Colors.black.withAlpha(10), blurRadius: 4),
               ],
             ),
-            child: const Icon(Icons.shield_outlined,
-                color: NaaguruTheme.primary, size: 20),
+            child: const Icon(
+              Icons.shield_outlined,
+              color: NaaguruTheme.primary,
+              size: 20,
+            ),
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -688,12 +685,16 @@ class _ProfileScreen1State extends State<ProfileScreen1AboutYou> {
               Expanded(
                 child: TextField(
                   controller: _nameController,
-                  style:
-                      const TextStyle(fontSize: 15, color: NaaguruTheme.text),
+                  style: const TextStyle(
+                    fontSize: 15,
+                    color: NaaguruTheme.text,
+                  ),
                   decoration: InputDecoration(
                     border: InputBorder.none,
-                    hintText: _s('Enter your name as in school records',
-                        'పాఠశాల రికార్డులలో ఉన్నట్లు పేరు నమోదు చేయండి'),
+                    hintText: _s(
+                      'Enter your name as in school records',
+                      'పాఠశాల రికార్డులలో ఉన్నట్లు పేరు నమోదు చేయండి',
+                    ),
                     hintStyle: TextStyle(
                       fontSize: 15,
                       color: NaaguruTheme.muted.withAlpha(180),
@@ -705,8 +706,11 @@ class _ProfileScreen1State extends State<ProfileScreen1AboutYou> {
                 ),
               ),
               if (hasValue) ...[
-                const Icon(Icons.check_circle_rounded,
-                    color: NaaguruTheme.primary, size: 20),
+                const Icon(
+                  Icons.check_circle_rounded,
+                  color: NaaguruTheme.primary,
+                  size: 20,
+                ),
                 const SizedBox(width: 14),
               ] else
                 const SizedBox(width: 14),
@@ -716,12 +720,11 @@ class _ProfileScreen1State extends State<ProfileScreen1AboutYou> {
         if (hasError) ...[
           const SizedBox(height: 4),
           Text(
-            _s('Please enter your full name.',
-                'దయచేసి పూర్తి పేరు నమోదు చేయండి.'),
-            style: const TextStyle(
-              fontSize: 11,
-              color: NaaguruTheme.error,
+            _s(
+              'Please enter your full name.',
+              'దయచేసి పూర్తి పేరు నమోదు చేయండి.',
             ),
+            style: const TextStyle(fontSize: 11, color: NaaguruTheme.error),
           ),
         ],
       ],
@@ -759,12 +762,18 @@ class _ProfileScreen1State extends State<ProfileScreen1AboutYou> {
           children: [
             Expanded(
               child: _buildGenderOption(
-                  'MALE', _s('Male', 'పురుషుడు'), Icons.male_rounded),
+                'MALE',
+                _s('Male', 'పురుషుడు'),
+                Icons.male_rounded,
+              ),
             ),
             const SizedBox(width: 12),
             Expanded(
               child: _buildGenderOption(
-                  'FEMALE', _s('Female', 'స్త్రీ'), Icons.female_rounded),
+                'FEMALE',
+                _s('Female', 'స్త్రీ'),
+                Icons.female_rounded,
+              ),
             ),
           ],
         ),
@@ -797,9 +806,11 @@ class _ProfileScreen1State extends State<ProfileScreen1AboutYou> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon,
-                size: 20,
-                color: isSelected ? NaaguruTheme.primary : NaaguruTheme.muted),
+            Icon(
+              icon,
+              size: 20,
+              color: isSelected ? NaaguruTheme.primary : NaaguruTheme.muted,
+            ),
             const SizedBox(width: 8),
             Text(
               label,
@@ -824,8 +835,10 @@ class _ProfileScreen1State extends State<ProfileScreen1AboutYou> {
         Row(
           children: [
             Text(
-              _s('Which school do you study at?',
-                  'మీరు ఏ పాఠశాలలో చదువుతున్నారు?'),
+              _s(
+                'Which school do you study at?',
+                'మీరు ఏ పాఠశాలలో చదువుతున్నారు?',
+              ),
               style: const TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
@@ -878,8 +891,10 @@ class _ProfileScreen1State extends State<ProfileScreen1AboutYou> {
           _locationRow(
             sublabel: _s('SCHOOL STATE', 'పాఠశాల రాష్ట్రం'),
             value: _wizard.schoolState?.displayName(_isTelugu),
-            placeholder:
-                _s('Select school state', 'పాఠశాల రాష్ట్రాన్ని ఎంచుకోండి'),
+            placeholder: _s(
+              'Select school state',
+              'పాఠశాల రాష్ట్రాన్ని ఎంచుకోండి',
+            ),
             enabled: true,
             onTap: _pickSchoolState,
           ),
@@ -905,12 +920,16 @@ class _ProfileScreen1State extends State<ProfileScreen1AboutYou> {
           ),
           _divider(),
           _locationRow(
-            sublabel: _s('SCHOOL VILLAGE / CITY / WARD',
-                'పాఠశాల గ్రామం / నగరం / వార్డు'),
+            sublabel: _s(
+              'SCHOOL VILLAGE / CITY / WARD',
+              'పాఠశాల గ్రామం / నగరం / వార్డు',
+            ),
             value: _wizard.schoolLocality?.displayName(_isTelugu),
             placeholder: _wizard.schoolMandal != null
-                ? _s('Select school village or city',
-                    'గ్రామం లేదా నగరాన్ని ఎంచుకోండి')
+                ? _s(
+                    'Select school village or city',
+                    'గ్రామం లేదా నగరాన్ని ఎంచుకోండి',
+                  )
                 : _s('Select mandal first', 'ముందు మండలం ఎంచుకోండి'),
             enabled: _wizard.schoolMandal != null,
             onTap: _pickSchoolLocality,
@@ -957,8 +976,9 @@ class _ProfileScreen1State extends State<ProfileScreen1AboutYou> {
                       hasValue ? value : placeholder,
                       style: TextStyle(
                         fontSize: 15,
-                        fontWeight:
-                            hasValue ? FontWeight.w600 : FontWeight.w400,
+                        fontWeight: hasValue
+                            ? FontWeight.w600
+                            : FontWeight.w400,
                         color: hasValue
                             ? NaaguruTheme.text
                             : NaaguruTheme.muted.withAlpha(enabled ? 200 : 100),
@@ -1011,8 +1031,11 @@ class _ProfileScreen1State extends State<ProfileScreen1AboutYou> {
         ),
         child: Row(
           children: [
-            const Icon(Icons.info_outline_rounded,
-                color: NaaguruTheme.primary, size: 20),
+            const Icon(
+              Icons.info_outline_rounded,
+              color: NaaguruTheme.primary,
+              size: 20,
+            ),
             const SizedBox(width: 10),
             Expanded(
               child: Text(
@@ -1059,13 +1082,18 @@ class _ProfileScreen1State extends State<ProfileScreen1AboutYou> {
                 Expanded(
                   child: Row(
                     children: [
-                      const Icon(Icons.location_on_rounded,
-                          size: 16, color: NaaguruTheme.primary),
+                      const Icon(
+                        Icons.location_on_rounded,
+                        size: 16,
+                        color: NaaguruTheme.primary,
+                      ),
                       const SizedBox(width: 6),
                       Expanded(
                         child: Text(
-                          _s('Schools in $localityName',
-                              '$localityName లోని పాఠశాలలు'),
+                          _s(
+                            'Schools in $localityName',
+                            '$localityName లోని పాఠశాలలు',
+                          ),
                           style: const TextStyle(
                             fontSize: 13,
                             fontWeight: FontWeight.w600,
@@ -1079,8 +1107,10 @@ class _ProfileScreen1State extends State<ProfileScreen1AboutYou> {
                 ),
                 if (_initialFetchDone && !_schoolsLoading)
                   Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 7,
+                      vertical: 2,
+                    ),
                     decoration: BoxDecoration(
                       color: _C.surfaceContainerLow,
                       borderRadius: BorderRadius.circular(6),
@@ -1118,10 +1148,7 @@ class _ProfileScreen1State extends State<ProfileScreen1AboutYou> {
                     SizedBox(width: 10),
                     Text(
                       'Finding schools...',
-                      style: TextStyle(
-                        fontSize: 13,
-                        color: NaaguruTheme.muted,
-                      ),
+                      style: TextStyle(fontSize: 13, color: NaaguruTheme.muted),
                     ),
                   ],
                 ),
@@ -1132,14 +1159,19 @@ class _ProfileScreen1State extends State<ProfileScreen1AboutYou> {
               padding: const EdgeInsets.all(16),
               child: Row(
                 children: [
-                  const Icon(Icons.cloud_off_outlined,
-                      color: NaaguruTheme.muted, size: 20),
+                  const Icon(
+                    Icons.cloud_off_outlined,
+                    color: NaaguruTheme.muted,
+                    size: 20,
+                  ),
                   const SizedBox(width: 10),
                   Expanded(
                     child: Text(
                       _s('Could not load schools.', 'పాఠశాలలు లోడ్ కాలేదు.'),
                       style: const TextStyle(
-                          fontSize: 13, color: NaaguruTheme.muted),
+                        fontSize: 13,
+                        color: NaaguruTheme.muted,
+                      ),
                     ),
                   ),
                   TextButton(
@@ -1154,12 +1186,17 @@ class _ProfileScreen1State extends State<ProfileScreen1AboutYou> {
               padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
               child: Column(
                 children: [
-                  const Icon(Icons.school_outlined,
-                      color: NaaguruTheme.muted, size: 32),
+                  const Icon(
+                    Icons.school_outlined,
+                    color: NaaguruTheme.muted,
+                    size: 32,
+                  ),
                   const SizedBox(height: 8),
                   Text(
-                    _s('No schools available in this area.',
-                        'ఈ ప్రాంతంలో పాఠశాలలు అందుబాటులో లేవు.'),
+                    _s(
+                      'No schools available in this area.',
+                      'ఈ ప్రాంతంలో పాఠశాలలు అందుబాటులో లేవు.',
+                    ),
                     style: const TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.w500,
@@ -1173,12 +1210,17 @@ class _ProfileScreen1State extends State<ProfileScreen1AboutYou> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Icon(Icons.add_circle_outline_rounded,
-                            color: NaaguruTheme.primary, size: 18),
+                        const Icon(
+                          Icons.add_circle_outline_rounded,
+                          color: NaaguruTheme.primary,
+                          size: 18,
+                        ),
                         const SizedBox(width: 6),
                         Text(
-                          _s("Request your school",
-                              'మీ పాఠశాలను అభ్యర్థించండి'),
+                          _s(
+                            "Request your school",
+                            'మీ పాఠశాలను అభ్యర్థించండి',
+                          ),
                           style: const TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.w600,
@@ -1202,8 +1244,7 @@ class _ProfileScreen1State extends State<ProfileScreen1AboutYou> {
                       school: _schools[i],
                       localityInfo:
                           '${_wizard.schoolLocality?.displayName(_isTelugu) ?? ''}, ${_wizard.schoolMandal?.displayName(_isTelugu) ?? ''}',
-                      isSelected:
-                          _wizard.selectedSchool?.id == _schools[i].id,
+                      isSelected: _wizard.selectedSchool?.id == _schools[i].id,
                       isTelugu: _isTelugu,
                       onTap: () => _selectSchool(_schools[i]),
                     ),
@@ -1237,8 +1278,11 @@ class _ProfileScreen1State extends State<ProfileScreen1AboutYou> {
             onTap: _openRequestSheet,
             child: Row(
               children: [
-                const Icon(Icons.add_circle_outline_rounded,
-                    color: NaaguruTheme.primary, size: 16),
+                const Icon(
+                  Icons.add_circle_outline_rounded,
+                  color: NaaguruTheme.primary,
+                  size: 16,
+                ),
                 const SizedBox(width: 4),
                 Text(
                   _s("Can't find your school?", 'మీ పాఠశాల కనిపించలేదా?'),
@@ -1260,8 +1304,11 @@ class _ProfileScreen1State extends State<ProfileScreen1AboutYou> {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Icon(Icons.verified_user_outlined,
-            color: NaaguruTheme.primary, size: 16),
+        const Icon(
+          Icons.verified_user_outlined,
+          color: NaaguruTheme.primary,
+          size: 16,
+        ),
         const SizedBox(width: 6),
         Expanded(
           child: Text(
@@ -1270,7 +1317,10 @@ class _ProfileScreen1State extends State<ProfileScreen1AboutYou> {
               'నాగురులో అందుబాటులో ఉన్న భాగస్వామ్య పాఠశాలల నుండి మీ పాఠశాలను ఎంచుకోండి.',
             ),
             style: const TextStyle(
-                fontSize: 12, color: NaaguruTheme.muted, height: 1.4),
+              fontSize: 12,
+              color: NaaguruTheme.muted,
+              height: 1.4,
+            ),
           ),
         ),
       ],
@@ -1310,7 +1360,8 @@ class _ProfileScreen1State extends State<ProfileScreen1AboutYou> {
                 foregroundColor: Colors.white,
                 disabledForegroundColor: NaaguruTheme.muted,
                 shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(14)),
+                  borderRadius: BorderRadius.circular(14),
+                ),
                 elevation: _canContinue ? 2 : 0,
                 textStyle: const TextStyle(
                   fontSize: 15,
@@ -1331,16 +1382,18 @@ class _ProfileScreen1State extends State<ProfileScreen1AboutYou> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(Icons.lock_outline_rounded,
-                  size: 12, color: NaaguruTheme.muted),
+              const Icon(
+                Icons.lock_outline_rounded,
+                size: 12,
+                color: NaaguruTheme.muted,
+              ),
               const SizedBox(width: 4),
               Text(
-                _s('Step 1 of 3 • You can edit anytime later',
-                    'దశ 1/3 • తర్వాత ఎప్పుడైనా సవరించుకోవచ్చు'),
-                style: const TextStyle(
-                  fontSize: 11,
-                  color: NaaguruTheme.muted,
+                _s(
+                  'Step 1 of 3 • You can edit anytime later',
+                  'దశ 1/3 • తర్వాత ఎప్పుడైనా సవరించుకోవచ్చు',
                 ),
+                style: const TextStyle(fontSize: 11, color: NaaguruTheme.muted),
               ),
             ],
           ),
@@ -1387,8 +1440,11 @@ class _ProfileScreen1State extends State<ProfileScreen1AboutYou> {
                               color: _C.surfaceContainer,
                               borderRadius: BorderRadius.circular(8),
                             ),
-                            child: const Icon(Icons.assignment_add,
-                                color: NaaguruTheme.primary, size: 18),
+                            child: const Icon(
+                              Icons.assignment_add,
+                              color: NaaguruTheme.primary,
+                              size: 18,
+                            ),
                           ),
                           const SizedBox(width: 10),
                           Text(
@@ -1402,8 +1458,10 @@ class _ProfileScreen1State extends State<ProfileScreen1AboutYou> {
                         ],
                       ),
                       IconButton(
-                        icon: const Icon(Icons.close_rounded,
-                            color: NaaguruTheme.muted),
+                        icon: const Icon(
+                          Icons.close_rounded,
+                          color: NaaguruTheme.muted,
+                        ),
                         onPressed: () =>
                             setState(() => _showRequestSheet = false),
                       ),
@@ -1419,8 +1477,11 @@ class _ProfileScreen1State extends State<ProfileScreen1AboutYou> {
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Icon(Icons.info_outline_rounded,
-                            color: NaaguruTheme.primary, size: 18),
+                        const Icon(
+                          Icons.info_outline_rounded,
+                          color: NaaguruTheme.primary,
+                          size: 18,
+                        ),
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text(
@@ -1429,9 +1490,10 @@ class _ProfileScreen1State extends State<ProfileScreen1AboutYou> {
                               'మా బృందం మీ పాఠశాల అభ్యర్థనను సమీక్షించి జోడిస్తుంది.',
                             ),
                             style: const TextStyle(
-                                fontSize: 12,
-                                color: NaaguruTheme.text,
-                                height: 1.5),
+                              fontSize: 12,
+                              color: NaaguruTheme.text,
+                              height: 1.5,
+                            ),
                           ),
                         ),
                       ],
@@ -1440,8 +1502,10 @@ class _ProfileScreen1State extends State<ProfileScreen1AboutYou> {
                   const SizedBox(height: 16),
                   _sheetField(
                     label: _s('Official School Name', 'పాఠశాల అధికారిక పేరు'),
-                    hint: _s('e.g. Govt High School, Bheemunipatnam',
-                        'ఉదా: ప్రభుత్వ హై స్కూల్'),
+                    hint: _s(
+                      'e.g. Govt High School, Bheemunipatnam',
+                      'ఉదా: ప్రభుత్వ హై స్కూల్',
+                    ),
                     controller: _requestNameController,
                   ),
                   const SizedBox(height: 10),
@@ -1473,15 +1537,20 @@ class _ProfileScreen1State extends State<ProfileScreen1AboutYou> {
                               setState(() => _showRequestSheet = false),
                           style: OutlinedButton.styleFrom(
                             side: BorderSide(
-                                color: NaaguruTheme.muted.withAlpha(100)),
+                              color: NaaguruTheme.muted.withAlpha(100),
+                            ),
                             shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12)),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
                             minimumSize: const Size.fromHeight(46),
                           ),
-                          child: Text(_s('Cancel', 'రద్దు'),
-                              style: const TextStyle(
-                                  color: NaaguruTheme.muted,
-                                  fontWeight: FontWeight.w600)),
+                          child: Text(
+                            _s('Cancel', 'రద్దు'),
+                            style: const TextStyle(
+                              color: NaaguruTheme.muted,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
                         ),
                       ),
                       const SizedBox(width: 12),
@@ -1491,10 +1560,12 @@ class _ProfileScreen1State extends State<ProfileScreen1AboutYou> {
                             setState(() => _showRequestSheet = false);
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
-                                content: Text(_s(
-                                  'School request submitted for review.',
-                                  'పాఠశాల అభ్యర్థన సమీక్షకు పంపబడింది.',
-                                )),
+                                content: Text(
+                                  _s(
+                                    'School request submitted for review.',
+                                    'పాఠశాల అభ్యర్థన సమీక్షకు పంపబడింది.',
+                                  ),
+                                ),
                               ),
                             );
                           },
@@ -1502,12 +1573,14 @@ class _ProfileScreen1State extends State<ProfileScreen1AboutYou> {
                             backgroundColor: NaaguruTheme.primary,
                             foregroundColor: Colors.white,
                             shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12)),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
                             minimumSize: const Size.fromHeight(46),
                           ),
-                          child: Text(_s('Submit', 'సమర్పించండి'),
-                              style:
-                                  const TextStyle(fontWeight: FontWeight.w600)),
+                          child: Text(
+                            _s('Submit', 'సమర్పించండి'),
+                            style: const TextStyle(fontWeight: FontWeight.w600),
+                          ),
                         ),
                       ),
                     ],
@@ -1529,11 +1602,14 @@ class _ProfileScreen1State extends State<ProfileScreen1AboutYou> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label,
-            style: const TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
-                color: NaaguruTheme.text)),
+        Text(
+          label,
+          style: const TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.w600,
+            color: NaaguruTheme.text,
+          ),
+        ),
         const SizedBox(height: 4),
         TextField(
           controller: controller,
@@ -1542,8 +1618,10 @@ class _ProfileScreen1State extends State<ProfileScreen1AboutYou> {
             hintStyle: TextStyle(fontSize: 13, color: NaaguruTheme.muted),
             filled: true,
             fillColor: _C.surfaceContainer,
-            contentPadding:
-                const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 14,
+              vertical: 12,
+            ),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
               borderSide: BorderSide.none,
@@ -1578,8 +1656,8 @@ class _SchoolRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final displayName =
         (isTelugu && school.nameTe != null && school.nameTe!.isNotEmpty)
-            ? school.nameTe!
-            : school.nameEn;
+        ? school.nameTe!
+        : school.nameEn;
 
     return GestureDetector(
       onTap: onTap,
@@ -1621,9 +1699,7 @@ class _SchoolRow extends StatelessWidget {
               child: Icon(
                 Icons.school_rounded,
                 size: 18,
-                color: isSelected
-                    ? NaaguruTheme.primary
-                    : _C.onSurfaceVariant,
+                color: isSelected ? NaaguruTheme.primary : _C.onSurfaceVariant,
               ),
             ),
             const SizedBox(width: 10),
@@ -1645,7 +1721,9 @@ class _SchoolRow extends StatelessWidget {
                     children: [
                       Container(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 7, vertical: 2),
+                          horizontal: 7,
+                          vertical: 2,
+                        ),
                         decoration: BoxDecoration(
                           color: isSelected
                               ? _C.secondaryContainer
@@ -1685,10 +1763,16 @@ class _SchoolRow extends StatelessWidget {
             const SizedBox(width: 8),
             // Selection indicator.
             isSelected
-                ? const Icon(Icons.check_circle_rounded,
-                    color: NaaguruTheme.primary, size: 22)
-                : Icon(Icons.radio_button_unchecked_rounded,
-                    color: _C.surfaceContainerHighest, size: 22),
+                ? const Icon(
+                    Icons.check_circle_rounded,
+                    color: NaaguruTheme.primary,
+                    size: 22,
+                  )
+                : Icon(
+                    Icons.radio_button_unchecked_rounded,
+                    color: _C.surfaceContainerHighest,
+                    size: 22,
+                  ),
           ],
         ),
       ),

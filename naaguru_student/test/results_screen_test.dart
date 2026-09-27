@@ -6,91 +6,94 @@ import 'package:naaguru_student/core/api_client.dart';
 
 class MockApiClient extends ApiClient {
   final Map<String, dynamic> Function(String path) onGet;
-  final Map<String, dynamic> Function(String path, {Map<String, dynamic>? body})? onPost;
+  final Map<String, dynamic> Function(
+    String path, {
+    Map<String, dynamic>? body,
+  })?
+  onPost;
 
-  MockApiClient({
-    required this.onGet,
-    this.onPost,
-  });
+  MockApiClient({required this.onGet, this.onPost});
 
   @override
   Future<Map<String, dynamic>> get(String path) async => onGet(path);
 
   @override
-  Future<Map<String, dynamic>> post(String path, {Map<String, dynamic>? body}) async {
+  Future<Map<String, dynamic>> post(
+    String path, {
+    Map<String, dynamic>? body,
+  }) async {
     if (onPost != null) return onPost!(path, body: body);
     return {};
   }
 }
 
 void main() {
-  testWidgets('ResultsScreen renders primary academic stream and interest areas', (WidgetTester tester) async {
-    final mockApi = MockApiClient(
-      onGet: (path) {
-        if (path == '/assessments/results/current') {
-          return {
-            'dimensionScores': {
-              'Math': 92,
-              'Science': 85,
-              'Engineering': 78,
-            }
-          };
-        }
-        throw Exception('Not found');
-      },
-      onPost: (path, {body}) {
-        if (path == '/career/recommendations/generate') {
-          return {
-            'rankedResults': [
-              {'streamCode': 'MPC', 'matchScore': 92},
-              {'streamCode': 'MEC', 'matchScore': 75},
-            ]
-          };
-        }
-        return {};
-      },
-    );
+  testWidgets(
+    'ResultsScreen renders primary academic stream and interest areas',
+    (WidgetTester tester) async {
+      final mockApi = MockApiClient(
+        onGet: (path) {
+          if (path == '/assessments/results/current') {
+            return {
+              'dimensionScores': {'Math': 92, 'Science': 85, 'Engineering': 78},
+            };
+          }
+          throw Exception('Not found');
+        },
+        onPost: (path, {body}) {
+          if (path == '/career/recommendations/generate') {
+            return {
+              'rankedResults': [
+                {'streamCode': 'MPC', 'matchScore': 92},
+                {'streamCode': 'MEC', 'matchScore': 75},
+              ],
+            };
+          }
+          return {};
+        },
+      );
 
-    final apiClient = AssessmentApiClient(apiClient: mockApi);
+      final apiClient = AssessmentApiClient(apiClient: mockApi);
 
-    await tester.pumpWidget(MaterialApp(
-      home: ResultsScreen(assessmentApiClient: apiClient),
-    ));
-    await tester.pumpAndSettle();
+      await tester.pumpWidget(
+        MaterialApp(home: ResultsScreen(assessmentApiClient: apiClient)),
+      );
+      await tester.pumpAndSettle();
 
-    // Verify Primary Section
-    expect(find.text("• YOUR ASSESSMENT RESULT"), findsOneWidget);
-    expect(find.text("Your strongest academic-stream match"), findsOneWidget);
-    expect(find.text("MPC"), findsOneWidget);
-    expect(find.text("Mathematics • Physics • Chemistry"), findsOneWidget);
+      // Verify Primary Section
+      expect(find.text("• YOUR ASSESSMENT RESULT"), findsOneWidget);
+      expect(find.text("Your strongest academic-stream match"), findsOneWidget);
+      expect(find.text("MPC"), findsOneWidget);
+      expect(find.text("Mathematics • Physics • Chemistry"), findsOneWidget);
 
-    // Verify Interest Areas Section
-    expect(find.text("YOUR TOP INTEREST AREAS"), findsOneWidget);
-    expect(find.text("Strong affinity"), findsWidgets);
+      // Verify Interest Areas Section
+      expect(find.text("YOUR TOP INTEREST AREAS"), findsOneWidget);
+      expect(find.text("Strong affinity"), findsWidgets);
 
-    // Verify CTA
-    expect(find.text("Explore MPC"), findsOneWidget);
-    expect(find.byIcon(Icons.arrow_forward), findsWidgets);
-  });
+      // Verify CTA
+      expect(find.text("Explore MPC"), findsOneWidget);
+      expect(find.byIcon(Icons.arrow_forward), findsWidgets);
+    },
+  );
 
   testWidgets('ResultsScreen toggles to Telugu', (WidgetTester tester) async {
     final initialResult = {
-      'dimensionScores': {
-        'Math': 90,
-      }
+      'dimensionScores': {'Math': 90},
     };
     final initialRec = {
       'rankedResults': [
-        {'streamCode': 'CEC', 'matchScore': 90}
-      ]
+        {'streamCode': 'CEC', 'matchScore': 90},
+      ],
     };
 
-    await tester.pumpWidget(MaterialApp(
-      home: ResultsScreen(
-        initialResult: initialResult,
-        initialRecommendation: initialRec,
+    await tester.pumpWidget(
+      MaterialApp(
+        home: ResultsScreen(
+          initialResult: initialResult,
+          initialRecommendation: initialRec,
+        ),
       ),
-    ));
+    );
     await tester.pumpAndSettle();
 
     expect(find.text("• YOUR ASSESSMENT RESULT"), findsOneWidget);

@@ -4,10 +4,33 @@ import 'package:naaguru_student/features/college/presentation/college_discovery_
 
 void main() {
   group('CollegeDiscoveryWizardState Unit Tests', () {
-    final locState = CatalogLocation(id: 'state-ap', type: 'STATE', nameEn: 'Andhra Pradesh', nameTe: 'ఆంధ్రప్రదేశ్');
-    final locDistrict = CatalogLocation(id: 'dist-gnt', type: 'DISTRICT', nameEn: 'Guntur', nameTe: 'గుంటూరు', parentId: 'state-ap');
-    final locMandal = CatalogLocation(id: 'mnd-ten', type: 'MANDAL', nameEn: 'Tenali', nameTe: 'తెనాలి', parentId: 'dist-gnt');
-    final locLocality = CatalogLocation(id: 'loc-mor', type: 'LOCALITY', nameEn: 'Morrispet', nameTe: 'మోరిస్‌పేట్', parentId: 'mnd-ten');
+    final locState = CatalogLocation(
+      id: 'state-ap',
+      type: 'STATE',
+      nameEn: 'Andhra Pradesh',
+      nameTe: 'ఆంధ్రప్రదేశ్',
+    );
+    final locDistrict = CatalogLocation(
+      id: 'dist-gnt',
+      type: 'DISTRICT',
+      nameEn: 'Guntur',
+      nameTe: 'గుంటూరు',
+      parentId: 'state-ap',
+    );
+    final locMandal = CatalogLocation(
+      id: 'mnd-ten',
+      type: 'MANDAL',
+      nameEn: 'Tenali',
+      nameTe: 'తెనాలి',
+      parentId: 'dist-gnt',
+    );
+    final locLocality = CatalogLocation(
+      id: 'loc-mor',
+      type: 'LOCALITY',
+      nameEn: 'Morrispet',
+      nameTe: 'మోరిస్‌పేట్',
+      parentId: 'mnd-ten',
+    );
 
     test('Initial state is unconfigured and invalid', () {
       final state = CollegeDiscoveryWizardState();
@@ -50,7 +73,12 @@ void main() {
       expect(state.preferredState?.nameEn, 'Andhra Pradesh');
 
       // Change mandal -> locality should reset
-      final locMandal2 = CatalogLocation(id: 'mnd-bpt', type: 'MANDAL', nameEn: 'Bapatla', parentId: 'dist-gnt');
+      final locMandal2 = CatalogLocation(
+        id: 'mnd-bpt',
+        type: 'MANDAL',
+        nameEn: 'Bapatla',
+        parentId: 'dist-gnt',
+      );
       state.selectPreferredMandal(locMandal2);
       expect(state.preferredMandal?.nameEn, 'Bapatla');
       expect(state.preferredLocality, isNull);
@@ -58,7 +86,12 @@ void main() {
 
       // Restore locality, then change district -> mandal and locality must reset
       state.selectPreferredLocality(locLocality);
-      final locDistrict2 = CatalogLocation(id: 'dist-kri', type: 'DISTRICT', nameEn: 'Krishna', parentId: 'state-ap');
+      final locDistrict2 = CatalogLocation(
+        id: 'dist-kri',
+        type: 'DISTRICT',
+        nameEn: 'Krishna',
+        parentId: 'state-ap',
+      );
       state.selectPreferredDistrict(locDistrict2);
       expect(state.preferredDistrict?.nameEn, 'Krishna');
       expect(state.preferredMandal, isNull);
@@ -69,7 +102,11 @@ void main() {
       state.selectPreferredDistrict(locDistrict);
       state.selectPreferredMandal(locMandal);
       state.selectPreferredLocality(locLocality);
-      final locState2 = CatalogLocation(id: 'state-ts', type: 'STATE', nameEn: 'Telangana');
+      final locState2 = CatalogLocation(
+        id: 'state-ts',
+        type: 'STATE',
+        nameEn: 'Telangana',
+      );
       state.selectPreferredState(locState2);
       expect(state.preferredState?.nameEn, 'Telangana');
       expect(state.preferredDistrict, isNull);

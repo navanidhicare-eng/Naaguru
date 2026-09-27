@@ -120,4 +120,8 @@ export class CatalogUseCases {
       status: s.props.status,
     }));
   }
+
+  async getDescendantLocationIds(locationId: string): Promise<string[]> {
+    return this.catalogRepository.getDescendantLocationIds(locationId);
+  }
 }

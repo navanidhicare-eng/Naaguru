@@ -21,22 +21,27 @@ void main() {
     });
     apiClient = ApiClient(httpClient: mockHttp);
     studentApiClient = StudentApiClient(apiClient: apiClient);
-    authService = AuthService(apiClient: apiClient, storage: const FlutterSecureStorage());
+    authService = AuthService(
+      apiClient: apiClient,
+      storage: const FlutterSecureStorage(),
+    );
   });
 
   Widget buildTestWidget() {
     return MaterialApp(
       routes: {
         '/': (_) => StudentProfileScreen(
-              studentApiClient: studentApiClient,
-              authService: authService,
-            ),
+          studentApiClient: studentApiClient,
+          authService: authService,
+        ),
         '/assessment-intro': (_) => const AssessmentIntroScreen(),
       },
     );
   }
 
-  testWidgets('renders Create Your Profile without Step 1 of 2 indicator', (WidgetTester tester) async {
+  testWidgets('renders Create Your Profile without Step 1 of 2 indicator', (
+    WidgetTester tester,
+  ) async {
     await tester.pumpWidget(buildTestWidget());
     await tester.pumpAndSettle();
 
@@ -46,54 +51,57 @@ void main() {
     expect(find.text("11th (Inter 1st)"), findsNothing);
   });
 
-  testWidgets('Continue button is disabled until all required fields are valid', (WidgetTester tester) async {
-    await tester.pumpWidget(buildTestWidget());
-    await tester.pumpAndSettle();
+  testWidgets(
+    'Continue button is disabled until all required fields are valid',
+    (WidgetTester tester) async {
+      await tester.pumpWidget(buildTestWidget());
+      await tester.pumpAndSettle();
 
-    // Verify Continue button is initially disabled (onPressed is null)
-    final buttonFinder = find.widgetWithText(ElevatedButton, "Continue →");
-    expect(buttonFinder, findsOneWidget);
-    ElevatedButton button = tester.widget(buttonFinder);
-    expect(button.onPressed, isNull);
+      // Verify Continue button is initially disabled (onPressed is null)
+      final buttonFinder = find.widgetWithText(ElevatedButton, "Continue →");
+      expect(buttonFinder, findsOneWidget);
+      ElevatedButton button = tester.widget(buttonFinder);
+      expect(button.onPressed, isNull);
 
-    final textFields = find.byType(TextFormField);
+      final textFields = find.byType(TextFormField);
 
-    // Fill Student Name (0th field)
-    await tester.enterText(textFields.at(0), "Ramu");
-    await tester.pumpAndSettle();
+      // Fill Student Name (0th field)
+      await tester.enterText(textFields.at(0), "Ramu");
+      await tester.pumpAndSettle();
 
-    // Select Gender
-    await tester.ensureVisible(find.text("Select gender"));
-    await tester.tap(find.text("Select gender"), warnIfMissed: false);
-    await tester.pumpAndSettle();
-    await tester.ensureVisible(find.text("Male").last);
-    await tester.tap(find.text("Male").last);
-    await tester.pumpAndSettle();
+      // Select Gender
+      await tester.ensureVisible(find.text("Select gender"));
+      await tester.tap(find.text("Select gender"), warnIfMissed: false);
+      await tester.pumpAndSettle();
+      await tester.ensureVisible(find.text("Male").last);
+      await tester.tap(find.text("Male").last);
+      await tester.pumpAndSettle();
 
-    // Select District
-    await tester.ensureVisible(find.text("Select your district"));
-    await tester.tap(find.text("Select your district"), warnIfMissed: false);
-    await tester.pumpAndSettle();
-    await tester.ensureVisible(find.text("Visakhapatnam").last);
-    await tester.tap(find.text("Visakhapatnam").last);
-    await tester.pumpAndSettle();
+      // Select District
+      await tester.ensureVisible(find.text("Select your district"));
+      await tester.tap(find.text("Select your district"), warnIfMissed: false);
+      await tester.pumpAndSettle();
+      await tester.ensureVisible(find.text("Visakhapatnam").last);
+      await tester.tap(find.text("Visakhapatnam").last);
+      await tester.pumpAndSettle();
 
-    // Fill Guardian Name (1st field)
-    await tester.enterText(textFields.at(1), "Srinivas");
-    await tester.pumpAndSettle();
+      // Fill Guardian Name (1st field)
+      await tester.enterText(textFields.at(1), "Srinivas");
+      await tester.pumpAndSettle();
 
-    // Fill Guardian Mobile (2nd field - invalid 5 digits)
-    await tester.enterText(textFields.at(2), "98765");
-    await tester.pumpAndSettle();
+      // Fill Guardian Mobile (2nd field - invalid 5 digits)
+      await tester.enterText(textFields.at(2), "98765");
+      await tester.pumpAndSettle();
 
-    button = tester.widget(buttonFinder);
-    expect(button.onPressed, isNull);
+      button = tester.widget(buttonFinder);
+      expect(button.onPressed, isNull);
 
-    // Fill Guardian Mobile (2nd field - valid 10 digits)
-    await tester.enterText(textFields.at(2), "9876543210");
-    await tester.pumpAndSettle();
+      // Fill Guardian Mobile (2nd field - valid 10 digits)
+      await tester.enterText(textFields.at(2), "9876543210");
+      await tester.pumpAndSettle();
 
-    button = tester.widget(buttonFinder);
-    expect(button.onPressed, isNotNull);
-  });
+      button = tester.widget(buttonFinder);
+      expect(button.onPressed, isNotNull);
+    },
+  );
 }

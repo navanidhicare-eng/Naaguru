@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:naaguru_student/core/api_client.dart';
+import 'package:naaguru_student/core/errors/app_error.dart';
 import 'package:naaguru_student/core/theme.dart';
 import 'package:naaguru_student/features/college/data/college_api_client.dart';
 import 'package:naaguru_student/features/college/presentation/college_discovery_wizard_state.dart';
@@ -149,15 +150,18 @@ class _CollegeReviewAndConfirmScreenState
   Future<void> _editStream() async {
     if (!_canEditPreferences || _isNavigatingEdit) return;
     if (widget.isDirectEntry) {
-      List<Map<String, dynamic>> programs = widget.wizardState.availablePrograms;
+      List<Map<String, dynamic>> programs =
+          widget.wizardState.availablePrograms;
       if (programs.isEmpty) {
         try {
           final pathways = await widget.collegeApiClient.getCatalogPathways();
           final pathway = pathways.firstWhere(
-            (p) => p['code'] == (widget.wizardState.pathwayCode ?? 'INTERMEDIATE'),
+            (p) =>
+                p['code'] == (widget.wizardState.pathwayCode ?? 'INTERMEDIATE'),
             orElse: () => <String, dynamic>{},
           );
-          programs = (pathway['programs'] as List? ?? []).cast<Map<String, dynamic>>();
+          programs = (pathway['programs'] as List? ?? [])
+              .cast<Map<String, dynamic>>();
         } catch (_) {}
       }
 
@@ -270,10 +274,12 @@ class _CollegeReviewAndConfirmScreenState
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(_s(
-            'College preferences saved successfully.',
-            'కళాశాల ప్రాధాన్యతలు విజయవంతంగా సేవ్ చేయబడ్డాయి.',
-          )),
+          content: Text(
+            _s(
+              'College preferences saved successfully.',
+              'కళాశాల ప్రాధాన్యతలు విజయవంతంగా సేవ్ చేయబడ్డాయి.',
+            ),
+          ),
           duration: const Duration(seconds: 2),
         ),
       );
@@ -294,20 +300,14 @@ class _CollegeReviewAndConfirmScreenState
       } else {
         setState(() {
           _isSubmitting = false;
-          _errorMessage = e.message.isNotEmpty
-              ? e.message
-              : _s('Could not save your preferences. Please try again.',
-                  'మీ ప్రాధాన్యతలను సేవ్ చేయడం సాధ్యం కాలేదు. దయచేసి మళ్లీ ప్రయత్నించండి.');
+          _errorMessage = e.userMessage(_isTelugu);
         });
       }
     } catch (e) {
       if (!mounted) return;
       setState(() {
         _isSubmitting = false;
-        _errorMessage = _s(
-          'Could not save your preferences. Please try again.',
-          'మీ ప్రాధాన్యతలను సేవ్ చేయడం సాధ్యం కాలేదు. దయచేసి మళ్లీ ప్రయత్నించండి.',
-        );
+        _errorMessage = ErrorMapper.userMessage(e, isTelugu: _isTelugu);
       });
     }
   }
@@ -321,7 +321,9 @@ class _CollegeReviewAndConfirmScreenState
           pathway: widget.wizardState.pathwayCode!,
           streamCode: widget.wizardState.programCode,
           locationId: widget.wizardState.preferredLocationId,
-          locationName: widget.wizardState.preferredDistrict?.displayName(_isTelugu),
+          locationName: widget.wizardState.preferredDistrict?.displayName(
+            _isTelugu,
+          ),
           requiresHostel: widget.wizardState.requiresHostel,
           maxFee: widget.wizardState.maxAnnualFee,
         ),
@@ -358,7 +360,8 @@ class _CollegeReviewAndConfirmScreenState
                         if (_loadIntentError != null) ...[
                           _buildLoadErrorBanner(),
                           const SizedBox(height: 12),
-                        ] else if (!_canEditPreferences && !_isLoadingIntent) ...[
+                        ] else if (!_canEditPreferences &&
+                            !_isLoadingIntent) ...[
                           _buildLockedPreferencesBanner(),
                           const SizedBox(height: 12),
                         ],
@@ -384,12 +387,7 @@ class _CollegeReviewAndConfirmScreenState
               ],
             ),
           ),
-          Positioned(
-            left: 0,
-            right: 0,
-            bottom: 0,
-            child: _buildBottomCta(),
-          ),
+          Positioned(left: 0, right: 0, bottom: 0, child: _buildBottomCta()),
         ],
       ),
     );
@@ -406,8 +404,10 @@ class _CollegeReviewAndConfirmScreenState
           Row(
             children: [
               IconButton(
-                icon: const Icon(Icons.arrow_back_rounded,
-                    color: NaaguruTheme.text),
+                icon: const Icon(
+                  Icons.arrow_back_rounded,
+                  color: NaaguruTheme.text,
+                ),
                 onPressed: _handleGoBack,
                 padding: EdgeInsets.zero,
                 constraints: const BoxConstraints(),
@@ -478,8 +478,10 @@ class _CollegeReviewAndConfirmScreenState
                   ),
                   const SizedBox(width: 8),
                   Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 6,
+                      vertical: 2,
+                    ),
                     decoration: BoxDecoration(
                       color: const Color(0xFFFEF3C7),
                       borderRadius: BorderRadius.circular(4),
@@ -527,8 +529,10 @@ class _CollegeReviewAndConfirmScreenState
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          _s("Let's make sure this looks right",
-              'వివరాలు సరిగ్గా ఉన్నాయో చూసుకోండి'),
+          _s(
+            "Let's make sure this looks right",
+            'వివరాలు సరిగ్గా ఉన్నాయో చూసుకోండి',
+          ),
           style: const TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.w700,
@@ -565,7 +569,11 @@ class _CollegeReviewAndConfirmScreenState
         children: [
           const Padding(
             padding: EdgeInsets.only(top: 2),
-            child: Icon(Icons.lock_rounded, size: 16, color: NaaguruTheme.muted),
+            child: Icon(
+              Icons.lock_rounded,
+              size: 16,
+              color: NaaguruTheme.muted,
+            ),
           ),
           const SizedBox(width: 10),
           Expanded(
@@ -611,8 +619,11 @@ class _CollegeReviewAndConfirmScreenState
       ),
       child: Row(
         children: [
-          const Icon(Icons.warning_amber_rounded,
-              size: 18, color: NaaguruTheme.error),
+          const Icon(
+            Icons.warning_amber_rounded,
+            size: 18,
+            color: NaaguruTheme.error,
+          ),
           const SizedBox(width: 8),
           Expanded(
             child: Text(
@@ -732,8 +743,10 @@ class _CollegeReviewAndConfirmScreenState
               ? GestureDetector(
                   onTap: onEdit,
                   child: Padding(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 4,
+                      vertical: 2,
+                    ),
                     child: Row(
                       children: [
                         Text(
@@ -745,15 +758,20 @@ class _CollegeReviewAndConfirmScreenState
                           ),
                         ),
                         const SizedBox(width: 2),
-                        const Icon(Icons.edit_outlined,
-                            size: 14, color: NaaguruTheme.primary),
+                        const Icon(
+                          Icons.edit_outlined,
+                          size: 14,
+                          color: NaaguruTheme.primary,
+                        ),
                       ],
                     ),
                   ),
                 )
               : Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
                     color: const Color(0xFFF1F5F9),
                     borderRadius: BorderRadius.circular(6),
@@ -761,8 +779,11 @@ class _CollegeReviewAndConfirmScreenState
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Icon(Icons.lock_outline_rounded,
-                          size: 12, color: NaaguruTheme.muted),
+                      const Icon(
+                        Icons.lock_outline_rounded,
+                        size: 12,
+                        color: NaaguruTheme.muted,
+                      ),
                       const SizedBox(width: 4),
                       Text(
                         _s('Final', 'స్థిరమైనది'),
@@ -804,21 +825,34 @@ class _CollegeReviewAndConfirmScreenState
     String scope = '';
 
     if (wiz.programCode == 'MPC') {
-      subjects = _s('Mathematics • Physics • Chemistry',
-          'గణితం • భౌతికశాస్త్రం • రసాయనశాస్త్రం');
-      scope = _s('Engineering & Pure Science scope',
-          'ఇంజనీరింగ్ మరియు సైన్స్ అవకాశాలు');
+      subjects = _s(
+        'Mathematics • Physics • Chemistry',
+        'గణితం • భౌతికశాస్త్రం • రసాయనశాస్త్రం',
+      );
+      scope = _s(
+        'Engineering & Pure Science scope',
+        'ఇంజనీరింగ్ మరియు సైన్స్ అవకాశాలు',
+      );
     } else if (wiz.programCode == 'BIPC') {
-      subjects = _s('Biology • Physics • Chemistry',
-          'జీవశాస్త్రం • భౌతికశాస్త్రం • రసాయనశాస్త్రం');
-      scope = _s('Medicine & Life Sciences scope', 'వైద్యం మరియు లైఫ్ సైన్సెస్');
+      subjects = _s(
+        'Biology • Physics • Chemistry',
+        'జీవశాస్త్రం • భౌతికశాస్త్రం • రసాయనశాస్త్రం',
+      );
+      scope = _s(
+        'Medicine & Life Sciences scope',
+        'వైద్యం మరియు లైఫ్ సైన్సెస్',
+      );
     } else if (wiz.programCode == 'MEC') {
-      subjects = _s('Mathematics • Economics • Commerce',
-          'గణితం • అర్థశాస్త్రం • వాణిజ్యశాస్త్రం');
+      subjects = _s(
+        'Mathematics • Economics • Commerce',
+        'గణితం • అర్థశాస్త్రం • వాణిజ్యశాస్త్రం',
+      );
       scope = _s('Finance & Business scope', 'ఫైనాన్స్ మరియు బిజినెస్');
     } else if (wiz.programCode == 'CEC') {
-      subjects = _s('Civics • Economics • Commerce',
-          'పౌరశాస్త్రం • అర్థశాస్త్రం • వాణిజ్యశాస్త్రం');
+      subjects = _s(
+        'Civics • Economics • Commerce',
+        'పౌరశాస్త్రం • అర్థశాస్త్రం • వాణిజ్యశాస్త్రం',
+      );
       scope = _s('Commerce & Management scope', 'కామర్స్ మరియు మేనేజ్‌మెంట్');
     }
 
@@ -839,13 +873,19 @@ class _CollegeReviewAndConfirmScreenState
     final district = wiz.preferredDistrict?.displayName(_isTelugu) ?? '';
     final state = wiz.preferredState?.displayName(_isTelugu) ?? '';
 
-    final hierarchy = [state, district, mandal, locality]
-        .where((s) => s.isNotEmpty)
-        .join(' → ');
+    final hierarchy = [
+      state,
+      district,
+      mandal,
+      locality,
+    ].where((s) => s.isNotEmpty).join(' → ');
 
     return _buildReviewCard(
       icon: Icons.location_on_outlined,
-      sectionLabel: _s('Preferred Study Location', 'ప్రాధాన్యతా అధ్యయన ప్రాంతం'),
+      sectionLabel: _s(
+        'Preferred Study Location',
+        'ప్రాధాన్యతా అధ్యయన ప్రాంతం',
+      ),
       title: locality.isNotEmpty ? '$locality, $district' : district,
       subtitle: hierarchy,
       onEdit: _editStep3,
@@ -859,14 +899,19 @@ class _CollegeReviewAndConfirmScreenState
 
     if (wiz.hostel == 'YES') {
       label = _s('Yes, required', 'అవును, కావాలి');
-      subtitle = _s('Prioritize on-campus safe boarding',
-          'క్యాంపస్ హాస్టల్ సౌకర్యానికి ప్రాధాన్యత');
+      subtitle = _s(
+        'Prioritize on-campus safe boarding',
+        'క్యాంపస్ హాస్టల్ సౌకర్యానికి ప్రాధాన్యత',
+      );
     } else if (wiz.hostel == 'NO') {
       label = _s('No', 'వద్దు');
       subtitle = _s('Day scholar accommodation', 'డే స్కాలర్');
     } else {
       label = _s('Either is fine', 'ఏదైనా పర్వాలేదు');
-      subtitle = _s('Flexible with boarding options', 'హాస్టల్ సౌలభ్యమైన ఎంపిక');
+      subtitle = _s(
+        'Flexible with boarding options',
+        'హాస్టల్ సౌలభ్యమైన ఎంపిక',
+      );
     }
 
     return _buildReviewCard(
@@ -888,8 +933,10 @@ class _CollegeReviewAndConfirmScreenState
       subtitle = _s('Affordable fee bracket', 'సరసమైన ఫీజు పరిధి');
     } else if (wiz.budget == 'UP_TO_1L') {
       label = 'Up to ₹1,00,000 / ${_s('year', 'సంవత్సరం')}';
-      subtitle = _s('Merit scholarship eligible bracket',
-          'మెరిట్ స్కాలర్‌షిప్ పరిధి');
+      subtitle = _s(
+        'Merit scholarship eligible bracket',
+        'మెరిట్ స్కాలర్‌షిప్ పరిధి',
+      );
     } else if (wiz.budget == 'OVER_1L') {
       label = '₹1,00,000+ / ${_s('year', 'సంవత్సరం')}';
       subtitle = _s('Premium institution bracket', 'ప్రీమియం సంస్థల పరిధి');
@@ -917,8 +964,11 @@ class _CollegeReviewAndConfirmScreenState
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Icon(Icons.info_outline_rounded,
-              color: NaaguruTheme.primary, size: 20),
+          const Icon(
+            Icons.info_outline_rounded,
+            color: NaaguruTheme.primary,
+            size: 20,
+          ),
           const SizedBox(width: 10),
           Expanded(
             child: Column(
@@ -966,8 +1016,11 @@ class _CollegeReviewAndConfirmScreenState
       ),
       child: Row(
         children: [
-          const Icon(Icons.error_outline_rounded,
-              color: NaaguruTheme.error, size: 20),
+          const Icon(
+            Icons.error_outline_rounded,
+            color: NaaguruTheme.error,
+            size: 20,
+          ),
           const SizedBox(width: 10),
           Expanded(
             child: Text(
@@ -1042,8 +1095,12 @@ class _CollegeReviewAndConfirmScreenState
                   : Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text(_s('Confirm & View Colleges',
-                            'ధృవీకరించి కళాశాలలను చూడండి')),
+                        Text(
+                          _s(
+                            'Confirm & View Colleges',
+                            'ధృవీకరించి కళాశాలలను చూడండి',
+                          ),
+                        ),
                         const SizedBox(width: 6),
                         const Icon(Icons.arrow_forward_rounded, size: 18),
                       ],
@@ -1058,8 +1115,11 @@ class _CollegeReviewAndConfirmScreenState
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(Icons.arrow_back_rounded,
-                      size: 14, color: NaaguruTheme.muted),
+                  const Icon(
+                    Icons.arrow_back_rounded,
+                    size: 14,
+                    color: NaaguruTheme.muted,
+                  ),
                   const SizedBox(width: 4),
                   Text(
                     _s('Go Back', 'వెనకకు వెళ్ళండి'),

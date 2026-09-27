@@ -38,7 +38,11 @@ class CollegeDiscoveryIntroScreen extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    const Icon(Icons.school_outlined, color: NaaguruTheme.primaryDark, size: 22),
+                    const Icon(
+                      Icons.school_outlined,
+                      color: NaaguruTheme.primaryDark,
+                      size: 22,
+                    ),
                     const SizedBox(width: 8),
                     Text(
                       isTelugu ? 'మీ కాలేజీని వెతకండి' : 'Find Your College',
@@ -53,7 +57,7 @@ class CollegeDiscoveryIntroScreen extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 24),
-            
+
             // Hero Illustration
             Container(
               decoration: BoxDecoration(
@@ -76,7 +80,10 @@ class CollegeDiscoveryIntroScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 16),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 6,
+                    ),
                     decoration: BoxDecoration(
                       color: Colors.white.withAlpha(220),
                       borderRadius: BorderRadius.circular(16),
@@ -94,7 +101,9 @@ class CollegeDiscoveryIntroScreen extends StatelessWidget {
                         ),
                         const SizedBox(width: 8),
                         Text(
-                          isTelugu ? 'AP & TG క్యాంపస్ గైడ్' : 'AP & TG Campus Guide',
+                          isTelugu
+                              ? 'AP & TG క్యాంపస్ గైడ్'
+                              : 'AP & TG Campus Guide',
                           style: const TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.bold,
@@ -108,10 +117,12 @@ class CollegeDiscoveryIntroScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 32),
-            
+
             // Title & Description
             Text(
-              isTelugu ? 'సరిపోయే కాలేజీలను కనుగొనండి' : 'Find colleges that fit you',
+              isTelugu
+                  ? 'సరిపోయే కాలేజీలను కనుగొనండి'
+                  : 'Find colleges that fit you',
               style: const TextStyle(
                 fontSize: 26,
                 fontWeight: FontWeight.w800,
@@ -120,7 +131,7 @@ class CollegeDiscoveryIntroScreen extends StatelessWidget {
             ),
             const SizedBox(height: 12),
             Text(
-              isTelugu 
+              isTelugu
                   ? "మీరు ఏమి చదవాలనుకుంటున్నారో, ఎక్కడ చదవాలనుకుంటున్నారో మరియు మీ అవసరాలను చెప్పండి. సరిపోయే కాలేజీలను చూపిస్తాం."
                   : "Tell us what you want to study, where you want to study, and what you need. We'll show colleges that match.",
               style: const TextStyle(
@@ -130,21 +141,36 @@ class CollegeDiscoveryIntroScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 24),
-            
+
             // Chips
-            _buildFeatureChip(Icons.search, isTelugu ? 'ప్రత్యక్ష కళాశాలల శోధన' : 'Direct College Search'),
+            _buildFeatureChip(
+              Icons.search,
+              isTelugu ? 'ప్రత్యక్ష కళాశాలల శోధన' : 'Direct College Search',
+            ),
             const SizedBox(height: 10),
-            _buildFeatureChip(Icons.shield_outlined, isTelugu ? 'అసెస్‌మెంట్ తప్పనిసరి కాదు' : 'No Mandatory Assessment'),
+            _buildFeatureChip(
+              Icons.shield_outlined,
+              isTelugu
+                  ? 'అసెస్‌మెంట్ తప్పనిసరి కాదు'
+                  : 'No Mandatory Assessment',
+            ),
             const SizedBox(height: 10),
-            _buildFeatureChip(Icons.domain_verification_outlined, isTelugu ? 'AP & TG అంతటా ధృవీకరించబడిన సంస్థలు' : 'Verified Institutions across AP & TG'),
+            _buildFeatureChip(
+              Icons.domain_verification_outlined,
+              isTelugu
+                  ? 'AP & TG అంతటా ధృవీకరించబడిన సంస్థలు'
+                  : 'Verified Institutions across AP & TG',
+            ),
             const SizedBox(height: 32),
-            
+
             // Primary CTA
             ElevatedButton(
               onPressed: () async {
                 if (collegeApiClient == null) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('College discovery is initializing...')),
+                    const SnackBar(
+                      content: Text('College discovery is initializing...'),
+                    ),
                   );
                   return;
                 }
@@ -165,7 +191,8 @@ class CollegeDiscoveryIntroScreen extends StatelessWidget {
                       builder: (_) => CollegeListScreen(
                         studentApiClient: studentApiClient!,
                         collegeApiClient: collegeApiClient!,
-                        pathway: intent!['pathwayCode'] as String? ?? 'INTERMEDIATE',
+                        pathway:
+                            intent!['pathwayCode'] as String? ?? 'INTERMEDIATE',
                         streamCode: intent['programCode'] as String?,
                         requiresHostel: intent['requiresHostel'] == true,
                         maxFee: intent['maxAnnualFee'] as int?,
@@ -207,7 +234,10 @@ class CollegeDiscoveryIntroScreen extends StatelessWidget {
                         children: [
                           Text(
                             isTelugu ? 'కాలేజీని వెతకండి' : 'Find a College',
-                            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                           const SizedBox(width: 4),
                           const Icon(Icons.arrow_forward, size: 18),
@@ -229,7 +259,7 @@ class CollegeDiscoveryIntroScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 16),
-            
+
             // Secondary CTA
             OutlinedButton(
               onPressed: () {
@@ -242,7 +272,10 @@ class CollegeDiscoveryIntroScreen extends StatelessWidget {
                 backgroundColor: NaaguruTheme.background,
                 foregroundColor: NaaguruTheme.primaryDark,
                 padding: const EdgeInsets.symmetric(vertical: 14),
-                side: const BorderSide(color: NaaguruTheme.primaryLight, width: 2),
+                side: const BorderSide(
+                  color: NaaguruTheme.primaryLight,
+                  width: 2,
+                ),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
@@ -254,13 +287,16 @@ class CollegeDiscoveryIntroScreen extends StatelessWidget {
                   const SizedBox(width: 8),
                   Text(
                     isTelugu ? 'కోర్సు మార్గాలను చూడండి' : 'Explore Paths',
-                    style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                    style: const TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ],
               ),
             ),
             const SizedBox(height: 32),
-            
+
             // Reassurance text
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -268,8 +304,13 @@ class CollegeDiscoveryIntroScreen extends StatelessWidget {
                 const Icon(Icons.schedule, size: 14, color: NaaguruTheme.muted),
                 const SizedBox(width: 6),
                 Text(
-                  isTelugu ? 'అన్వేషించడానికి ఉచితం • 3-నిమిషాల మార్గదర్శకత్వం' : 'Free to explore • 3-minute guided discovery',
-                  style: const TextStyle(fontSize: 12, color: NaaguruTheme.muted),
+                  isTelugu
+                      ? 'అన్వేషించడానికి ఉచితం • 3-నిమిషాల మార్గదర్శకత్వం'
+                      : 'Free to explore • 3-minute guided discovery',
+                  style: const TextStyle(
+                    fontSize: 12,
+                    color: NaaguruTheme.muted,
+                  ),
                 ),
               ],
             ),

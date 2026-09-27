@@ -35,7 +35,8 @@ class CollegeDiscoveryWizardState extends ChangeNotifier {
   String? _preferredLocationIdOverride;
 
   /// Canonical location ID persisted to the backend college intent.
-  String? get preferredLocationId => preferredLocality?.id ?? _preferredLocationIdOverride;
+  String? get preferredLocationId =>
+      preferredLocality?.id ?? _preferredLocationIdOverride;
   set preferredLocationId(String? val) {
     _preferredLocationIdOverride = val;
   }
@@ -78,11 +79,7 @@ class CollegeDiscoveryWizardState extends ChangeNotifier {
     notifyListeners();
   }
 
-  void selectProgram({
-    required String code,
-    String? nameEn,
-    String? nameTe,
-  }) {
+  void selectProgram({required String code, String? nameEn, String? nameTe}) {
     programCode = code;
     programNameEn = nameEn;
     programNameTe = nameTe;
@@ -163,11 +160,8 @@ class CollegeDiscoveryWizardState extends ChangeNotifier {
       preferredMandal != null &&
       preferredLocality != null;
 
-  bool get isStep3Valid =>
-      isLocationValid && hostel != null && budget != null;
+  bool get isStep3Valid => isLocationValid && hostel != null && budget != null;
 
   bool get isAllValid =>
-      pathwayCode != null &&
-      programCode != null &&
-      isStep3Valid;
+      pathwayCode != null && programCode != null && isStep3Valid;
 }

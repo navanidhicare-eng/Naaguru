@@ -9,6 +9,9 @@ export const branchTypeEnum = pgEnum('branch_type', ['MAIN_CAMPUS', 'OFF_CAMPUS'
 export const mediaTypeEnum = pgEnum('media_type', ['IMAGE', 'VIDEO', 'VIRTUAL_TOUR']);
 export const mediaStatusEnum = pgEnum('media_status', ['ACTIVE', 'INACTIVE']);
 export const achievementStatusEnum = pgEnum('achievement_status', ['ACTIVE', 'INACTIVE']);
+export const personTypeEnum = pgEnum('person_type', ['STUDENT', 'PARENT', 'ALUMNI', 'OTHER']);
+export const testimonialStatusEnum = pgEnum('testimonial_status', ['ACTIVE', 'INACTIVE']);
+export const accreditationStatusEnum = pgEnum('accreditation_status', ['ACTIVE', 'INACTIVE']);
 
 export const collegesTable = pgTable('colleges', {
   id: uuid('id').primaryKey().defaultRandom(),
@@ -91,6 +94,39 @@ export const collegeAchievementsTable = pgTable('college_achievements', {
   updatedAt: timestamp('updated_at', { withTimezone: true, mode: 'string' }).defaultNow().notNull(),
 }, (table) => ({
   collegeIdx: index('idx_college_achievements_college_id').on(table.collegeId),
+}));
+
+export const collegeTestimonialsTable = pgTable('college_testimonials', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  collegeId: uuid('college_id').notNull().references(() => collegesTable.id, { onDelete: 'restrict' }),
+  personName: varchar('person_name', { length: 255 }).notNull(),
+  personType: personTypeEnum('person_type').notNull(),
+  testimonialText: text('testimonial_text').notNull(),
+  imageStorageKey: varchar('image_storage_key', { length: 1024 }),
+  displayOrder: integer('display_order').default(0).notNull(),
+  status: testimonialStatusEnum('status').default('ACTIVE').notNull(),
+  createdAt: timestamp('created_at', { withTimezone: true, mode: 'string' }).defaultNow().notNull(),
+  updatedAt: timestamp('updated_at', { withTimezone: true, mode: 'string' }).defaultNow().notNull(),
+}, (table) => ({
+  collegeIdx: index('idx_college_testimonials_college_id').on(table.collegeId),
+}));
+
+export const collegeAccreditationsTable = pgTable('college_accreditations', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  collegeId: uuid('college_id').notNull().references(() => collegesTable.id, { onDelete: 'restrict' }),
+  name: varchar('name', { length: 255 }).notNull(),
+  issuingBody: varchar('issuing_body', { length: 255 }).notNull(),
+  year: integer('year'),
+  validUntilYear: integer('valid_until_year'),
+  description: text('description'),
+  certificateStorageKey: varchar('certificate_storage_key', { length: 1024 }),
+  verificationUrl: varchar('verification_url', { length: 2048 }),
+  displayOrder: integer('display_order').default(0).notNull(),
+  status: accreditationStatusEnum('status').default('ACTIVE').notNull(),
+  createdAt: timestamp('created_at', { withTimezone: true, mode: 'string' }).defaultNow().notNull(),
+  updatedAt: timestamp('updated_at', { withTimezone: true, mode: 'string' }).defaultNow().notNull(),
+}, (table) => ({
+  collegeIdx: index('idx_college_accreditations_college_id').on(table.collegeId),
 }));
 
 export const collegeStreamOfferingsTable = pgTable('college_stream_offerings', {

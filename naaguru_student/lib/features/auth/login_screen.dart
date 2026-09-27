@@ -1,7 +1,10 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:naaguru_student/core/api_client.dart';
+import 'package:naaguru_student/core/errors/app_error.dart';
 import 'package:naaguru_student/core/theme.dart';
+import 'package:naaguru_student/core/utils/validators.dart';
 import 'package:naaguru_student/features/auth/auth_service.dart';
 import 'package:naaguru_student/features/student/data/student_api_client.dart';
 import 'package:naaguru_student/core/ui/language_toggle.dart';
@@ -27,6 +30,8 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _otpSent = false;
   bool _loading = false;
   String? _errorMessage;
+  String? _phoneError;
+  bool _hasSubmittedPhone = false;
   bool _isTelugu = false; // For the language toggle state
 
   Timer? _resendTimer;
@@ -54,64 +59,84 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<void> _requestOtp() async {
+    if (_loading) return;
+    _hasSubmittedPhone = true;
     final phone = _phoneController.text.trim();
-    if (phone.isEmpty) {
-      setState(() => _errorMessage = 'Enter a valid 10-digit mobile number.');
+    final validationError = PhoneValidator.validate(phone, isTelugu: _isTelugu);
+    if (validationError != null) {
+      setState(() {
+        _phoneError = validationError;
+        _errorMessage = validationError;
+      });
       return;
     }
 
     setState(() {
       _loading = true;
       _errorMessage = null;
+      _phoneError = null;
     });
 
     try {
-      await widget.authService.requestOtp(phone);
-      setState(() => _otpSent = true);
-      _startResendTimer();
+      final cleaned = PhoneValidator.clean(phone);
+      await widget.authService.requestOtp(cleaned);
+      if (mounted) {
+        setState(() {
+          _otpSent = true;
+          _errorMessage = null;
+        });
+        _startResendTimer();
+      }
     } on ApiException catch (e) {
-      setState(() => _errorMessage = e.message);
+      if (mounted) {
+        setState(() {
+          _errorMessage = e.userMessage(_isTelugu);
+          if (e.appError?.field == 'phoneNumber' || e.appError?.field == 'phone') {
+            _phoneError = _errorMessage;
+          }
+        });
+      }
     } catch (e) {
-      setState(() => _errorMessage = 'Could not connect to server.');
-    } finally {
-      setState(() => _loading = false);
-    }
-  }
-
-  Future<void> _verifyOtp() async {
-    final phone = _phoneController.text.trim();
-    final code = _otpController.text.trim();
-
-    if (code.length != 6) {
-      setState(() => _errorMessage = 'OTP must be 6 digits.');
-      return;
-    }
-
-    setState(() {
-      _loading = true;
-      _errorMessage = null;
-    });
-
-    try {
-      // verifyOtp() internally:
-      //   1. exchanges OTP for tokens
-      //   2. fetches the student profile once
-      //   3. resolves profileStateNotifier (INCOMPLETE / COMPLETE / ERROR)
-      //   4. sets authStateNotifier = true
-      //
-      // AuthGate then rebuilds and renders ProfileGate, which routes to
-      // Home or ProfileScreen based on the resolved state.
-      // LoginScreen makes no routing decisions.
-      await widget.authService.verifyOtp(phone, code);
-    } on ApiException catch (e) {
-      setState(() => _errorMessage = e.message);
-    } catch (e) {
-      setState(() => _errorMessage = 'Could not verify OTP.');
+      if (mounted) {
+        final appError = ErrorMapper.fromException(e);
+        setState(() => _errorMessage = appError.message(_isTelugu));
+      }
     } finally {
       if (mounted) setState(() => _loading = false);
     }
   }
 
+  Future<void> _verifyOtp() async {
+    if (_loading) return;
+    final phone = PhoneValidator.clean(_phoneController.text);
+    final code = _otpController.text.trim();
+
+    final validationError = OtpValidator.validate(code, isTelugu: _isTelugu);
+    if (validationError != null) {
+      setState(() => _errorMessage = validationError);
+      return;
+    }
+
+    setState(() {
+      _loading = true;
+      _errorMessage = null;
+    });
+
+    try {
+      await widget.authService.verifyOtp(phone, code);
+    } on ApiException catch (e) {
+      if (mounted) {
+        setState(() => _errorMessage = e.userMessage(_isTelugu));
+      }
+    } catch (e) {
+      if (mounted) {
+        final appError = ErrorMapper.fromException(e);
+        setState(() => _errorMessage = appError.message(_isTelugu));
+      }
+    } finally {
+      if (mounted) setState(() => _loading = false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -191,7 +216,11 @@ class _LoginScreenState extends State<LoginScreen> {
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(12),
                     child: const Center(
-                      child: Icon(Icons.explore, size: 64, color: NaaguruTheme.primaryDark),
+                      child: Icon(
+                        Icons.explore,
+                        size: 64,
+                        color: NaaguruTheme.primaryDark,
+                      ),
                     ),
                   ),
                 ),
@@ -218,7 +247,11 @@ class _LoginScreenState extends State<LoginScreen> {
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Icon(Icons.bolt, size: 14, color: NaaguruTheme.text),
+                        const Icon(
+                          Icons.bolt,
+                          size: 14,
+                          color: NaaguruTheme.text,
+                        ),
                         const SizedBox(width: 2),
                         Text(
                           _isTelugu ? 'వేగవంతమైన OTP' : 'Quick OTP',
@@ -291,17 +324,22 @@ class _LoginScreenState extends State<LoginScreen> {
                 decoration: BoxDecoration(
                   color: NaaguruTheme.primaryLight.withAlpha(77),
                   borderRadius: BorderRadius.circular(12),
+                  border: (_phoneError != null || _errorMessage != null)
+                      ? Border.all(color: NaaguruTheme.error, width: 1.5)
+                      : null,
                 ),
                 child: Row(
                   children: [
                     Padding(
-                      padding: const EdgeInsets.only(left: 12, right: 8, top: 12, bottom: 12),
+                      padding: const EdgeInsets.only(
+                        left: 12,
+                        right: 8,
+                        top: 12,
+                        bottom: 12,
+                      ),
                       child: Row(
                         children: [
-                          const Text(
-                            '🇮🇳',
-                            style: TextStyle(fontSize: 18),
-                          ),
+                          const Text('🇮🇳', style: TextStyle(fontSize: 18)),
                           const SizedBox(width: 6),
                           const Text(
                             '+91',
@@ -324,6 +362,23 @@ class _LoginScreenState extends State<LoginScreen> {
                       child: TextField(
                         controller: _phoneController,
                         keyboardType: TextInputType.phone,
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly,
+                          LengthLimitingTextInputFormatter(10),
+                        ],
+                        onChanged: (val) {
+                          if (_hasSubmittedPhone) {
+                            setState(() {
+                              _phoneError = PhoneValidator.validate(val, isTelugu: _isTelugu);
+                              _errorMessage = _phoneError;
+                            });
+                          } else if (_errorMessage != null || _phoneError != null) {
+                            setState(() {
+                              _errorMessage = null;
+                              _phoneError = null;
+                            });
+                          }
+                        },
                         style: const TextStyle(
                           fontSize: 18,
                           color: NaaguruTheme.text,
@@ -332,8 +387,12 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                         decoration: InputDecoration(
                           border: InputBorder.none,
-                          contentPadding: const EdgeInsets.symmetric(horizontal: 8),
-                          hintText: _isTelugu ? '10 అంకెల నంబర్' : 'Enter 10-digit number',
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                          ),
+                          hintText: _isTelugu
+                              ? '10 అంకెల నంబర్'
+                              : 'Enter 10-digit number',
                           hintStyle: const TextStyle(
                             color: NaaguruTheme.muted,
                             fontSize: 14,
@@ -347,13 +406,17 @@ class _LoginScreenState extends State<LoginScreen> {
                       child: Container(
                         padding: const EdgeInsets.all(4),
                         decoration: BoxDecoration(
-                          color: NaaguruTheme.primaryLight,
+                          color: _phoneController.text.length == 10
+                              ? NaaguruTheme.primaryDark
+                              : NaaguruTheme.primaryLight,
                           shape: BoxShape.circle,
                         ),
-                        child: const Icon(
+                        child: Icon(
                           Icons.check,
                           size: 16,
-                          color: NaaguruTheme.primaryDark,
+                          color: _phoneController.text.length == 10
+                              ? Colors.white
+                              : NaaguruTheme.primaryDark,
                         ),
                       ),
                     ),
@@ -363,12 +426,26 @@ class _LoginScreenState extends State<LoginScreen> {
               if (_errorMessage != null) ...[
                 const SizedBox(height: 8),
                 Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Icon(Icons.error_outline, size: 14, color: NaaguruTheme.error),
-                    const SizedBox(width: 4),
-                    Text(
-                      _errorMessage!,
-                      style: const TextStyle(color: NaaguruTheme.error, fontSize: 12),
+                    const Padding(
+                      padding: EdgeInsets.only(top: 2),
+                      child: Icon(
+                        Icons.error_outline,
+                        size: 14,
+                        color: NaaguruTheme.error,
+                      ),
+                    ),
+                    const SizedBox(width: 6),
+                    Expanded(
+                      child: Text(
+                        _errorMessage!,
+                        style: const TextStyle(
+                          color: NaaguruTheme.error,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
                     ),
                   ],
                 ),
@@ -395,7 +472,11 @@ class _LoginScreenState extends State<LoginScreen> {
                   color: NaaguruTheme.primaryDark,
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: const Icon(Icons.chat_bubble_rounded, color: NaaguruTheme.surface, size: 20),
+                child: const Icon(
+                  Icons.chat_bubble_rounded,
+                  color: NaaguruTheme.surface,
+                  size: 20,
+                ),
               ),
               const SizedBox(width: 12),
               Expanded(
@@ -449,17 +530,18 @@ class _LoginScreenState extends State<LoginScreen> {
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.verified_user, size: 16, color: NaaguruTheme.primaryDark),
+            const Icon(
+              Icons.verified_user,
+              size: 16,
+              color: NaaguruTheme.primaryDark,
+            ),
             const SizedBox(width: 6),
             Expanded(
               child: Text(
                 _isTelugu
                     ? "Naaguruలో మిమ్మల్ని సురక్షితంగా సైన్ ఇన్ చేయడానికి మీ నంబర్ను ఉపయోగిస్తాము."
                     : "We'll use your number to securely sign you in to Naaguru.",
-                style: const TextStyle(
-                  fontSize: 12,
-                  color: NaaguruTheme.muted,
-                ),
+                style: const TextStyle(fontSize: 12, color: NaaguruTheme.muted),
                 textAlign: TextAlign.center,
               ),
             ),
@@ -513,7 +595,7 @@ class _LoginScreenState extends State<LoginScreen> {
   // Preserved OTP state from original implementation
   Widget _buildOtpState() {
     final String phone = _phoneController.text.trim();
-    final String maskedPhone = phone.length >= 10 
+    final String maskedPhone = phone.length >= 10
         ? "+91 ••••• ••${phone.substring(phone.length - 4)}"
         : "+91 $phone";
 
@@ -573,7 +655,11 @@ class _LoginScreenState extends State<LoginScreen> {
                 Center(
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(20),
-                    child: const Icon(Icons.phonelink_lock, size: 64, color: NaaguruTheme.primaryDark),
+                    child: const Icon(
+                      Icons.phonelink_lock,
+                      size: 64,
+                      color: NaaguruTheme.primaryDark,
+                    ),
                   ),
                 ),
                 Positioned(
@@ -599,7 +685,11 @@ class _LoginScreenState extends State<LoginScreen> {
                         color: Color(0xFF25D366), // WhatsApp Green
                         shape: BoxShape.circle,
                       ),
-                      child: const Icon(Icons.chat_bubble, size: 16, color: Colors.white),
+                      child: const Icon(
+                        Icons.chat_bubble,
+                        size: 16,
+                        color: Colors.white,
+                      ),
                     ),
                   ),
                 ),
@@ -622,18 +712,27 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
         const SizedBox(height: 8),
         Text(
-          _isTelugu 
-            ? "మీ WhatsAppకు 6 అంకెల వెరిఫికేషన్ కోడ్ పంపించాము." 
-            : "We sent a 6-digit verification code to",
+          _isTelugu
+              ? "మీ WhatsAppకు 6 అంకెల వెరిఫికేషన్ కోడ్ పంపించాము."
+              : "We sent a 6-digit verification code to",
           textAlign: TextAlign.center,
-          style: const TextStyle(fontSize: 12, color: NaaguruTheme.muted, height: 1.5),
+          style: const TextStyle(
+            fontSize: 12,
+            color: NaaguruTheme.muted,
+            height: 1.5,
+          ),
         ),
         const SizedBox(height: 12),
 
         // Phone Number Pill
         Center(
           child: Container(
-            padding: const EdgeInsets.only(left: 12, right: 16, top: 6, bottom: 6),
+            padding: const EdgeInsets.only(
+              left: 12,
+              right: 16,
+              top: 6,
+              bottom: 6,
+            ),
             decoration: BoxDecoration(
               color: NaaguruTheme.surface,
               borderRadius: BorderRadius.circular(100),
@@ -693,7 +792,9 @@ class _LoginScreenState extends State<LoginScreen> {
         const SizedBox(height: 20),
 
         Text(
-          _isTelugu ? "కొనసాగడానికి ఆ కోడ్‌ను నమోదు చేయండి." : "Enter the code to continue.",
+          _isTelugu
+              ? "కొనసాగడానికి ఆ కోడ్‌ను నమోదు చేయండి."
+              : "Enter the code to continue.",
           textAlign: TextAlign.center,
           style: const TextStyle(fontSize: 11, color: NaaguruTheme.muted),
         ),
@@ -701,7 +802,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
         // OTP Input Boxes
         _buildOtpBoxes(),
-        
+
         // Error Message
         if (_errorMessage != null) ...[
           const SizedBox(height: 16),
@@ -715,12 +816,20 @@ class _LoginScreenState extends State<LoginScreen> {
               mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Icon(Icons.error_outline, size: 14, color: NaaguruTheme.error),
+                const Icon(
+                  Icons.error_outline,
+                  size: 14,
+                  color: NaaguruTheme.error,
+                ),
                 const SizedBox(width: 6),
                 Flexible(
                   child: Text(
                     _errorMessage!,
-                    style: const TextStyle(color: NaaguruTheme.error, fontSize: 12, fontWeight: FontWeight.w500),
+                    style: const TextStyle(
+                      color: NaaguruTheme.error,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                    ),
                     textAlign: TextAlign.center,
                   ),
                 ),
@@ -741,24 +850,36 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
             if (_resendSeconds > 0)
               Text(
-                _isTelugu ? "$_resendSeconds సెకన్లలో మళ్లీ పంపవచ్చు" : "Resend in ${_resendSeconds}s",
-                style: const TextStyle(fontSize: 12, color: NaaguruTheme.primaryDark, fontWeight: FontWeight.w600),
+                _isTelugu
+                    ? "$_resendSeconds సెకన్లలో మళ్లీ పంపవచ్చు"
+                    : "Resend in ${_resendSeconds}s",
+                style: const TextStyle(
+                  fontSize: 12,
+                  color: NaaguruTheme.primaryDark,
+                  fontWeight: FontWeight.w600,
+                ),
               )
             else
               GestureDetector(
-                onTap: _loading ? null : () {
-                  _requestOtp();
-                  _startResendTimer();
-                },
+                onTap: _loading
+                    ? null
+                    : () {
+                        _requestOtp();
+                        _startResendTimer();
+                      },
                 child: Text(
                   _isTelugu ? "కోడ్‌ను మళ్లీ పంపండి" : "Resend code",
-                  style: const TextStyle(fontSize: 12, color: NaaguruTheme.primaryDark, fontWeight: FontWeight.w700),
+                  style: const TextStyle(
+                    fontSize: 12,
+                    color: NaaguruTheme.primaryDark,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
               ),
           ],
         ),
         const SizedBox(height: 16),
-        
+
         // Change Number Text
         Center(
           child: TextButton(
@@ -781,14 +902,16 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
           ),
         ),
-        
+
         const SizedBox(height: 32),
 
         // Primary Action Button
         SizedBox(
           height: 48,
           child: ElevatedButton(
-            onPressed: (_otpController.text.length == 6 && !_loading) ? _verifyOtp : null,
+            onPressed: (_otpController.text.length == 6 && !_loading)
+                ? _verifyOtp
+                : null,
             style: ElevatedButton.styleFrom(
               backgroundColor: NaaguruTheme.primaryDark,
               foregroundColor: NaaguruTheme.surface,
@@ -812,8 +935,13 @@ class _LoginScreenState extends State<LoginScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        _isTelugu ? "ధృవీకరించి కొనసాగండి" : "Verify & Continue",
-                        style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+                        _isTelugu
+                            ? "ధృవీకరించి కొనసాగండి"
+                            : "Verify & Continue",
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                       const SizedBox(width: 8),
                       const Icon(Icons.arrow_forward, size: 16),
@@ -822,17 +950,21 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
         ),
         const SizedBox(height: 16),
-        
+
         // Trust Note
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.verified_user_outlined, size: 14, color: NaaguruTheme.primary),
+            const Icon(
+              Icons.verified_user_outlined,
+              size: 14,
+              color: NaaguruTheme.primary,
+            ),
             const SizedBox(width: 4),
             Text(
-              _isTelugu 
-                ? "సులభమైన వెరిఫికేషన్ • Naaguru మీ గోప్యతను కాపాడుతుంది"
-                : "Quick 1-step verification • Naaguru protects your privacy",
+              _isTelugu
+                  ? "సులభమైన వెరిఫికేషన్ • Naaguru మీ గోప్యతను కాపాడుతుంది"
+                  : "Quick 1-step verification • Naaguru protects your privacy",
               style: const TextStyle(fontSize: 11, color: NaaguruTheme.muted),
             ),
           ],
@@ -846,7 +978,7 @@ class _LoginScreenState extends State<LoginScreen> {
       builder: (context, constraints) {
         final boxWidth = (constraints.maxWidth - (5 * 8)) / 6;
         final clampedWidth = boxWidth.clamp(40.0, 54.0); // max width 54, min 40
-        
+
         return Center(
           child: SizedBox(
             width: (clampedWidth * 6) + (5 * 8),
@@ -860,10 +992,10 @@ class _LoginScreenState extends State<LoginScreen> {
                     final char = index < text.length ? text[index] : '';
                     final isFocused = index == text.length;
                     final isError = _errorMessage != null;
-                    
+
                     Color borderColor = NaaguruTheme.muted.withAlpha(77);
                     Color bgColor = NaaguruTheme.surface;
-                    
+
                     if (isError) {
                       borderColor = NaaguruTheme.error;
                       bgColor = NaaguruTheme.error.withAlpha(13);
@@ -880,7 +1012,10 @@ class _LoginScreenState extends State<LoginScreen> {
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
                         color: bgColor,
-                        border: Border.all(color: borderColor, width: isFocused ? 2 : 1.5),
+                        border: Border.all(
+                          color: borderColor,
+                          width: isFocused ? 2 : 1.5,
+                        ),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Text(
@@ -888,7 +1023,9 @@ class _LoginScreenState extends State<LoginScreen> {
                         style: TextStyle(
                           fontSize: 22,
                           fontWeight: FontWeight.w700,
-                          color: isError ? NaaguruTheme.error : NaaguruTheme.text,
+                          color: isError
+                              ? NaaguruTheme.error
+                              : NaaguruTheme.text,
                         ),
                       ),
                     );
@@ -902,7 +1039,10 @@ class _LoginScreenState extends State<LoginScreen> {
                     autofocus: true,
                     showCursor: false,
                     cursorColor: Colors.transparent,
-                    style: const TextStyle(color: Colors.transparent, fontSize: 24),
+                    style: const TextStyle(
+                      color: Colors.transparent,
+                      fontSize: 24,
+                    ),
                     decoration: const InputDecoration(
                       counterText: '',
                       border: InputBorder.none,
@@ -926,9 +1066,7 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
           ),
         );
-      }
+      },
     );
   }
 }
-
-

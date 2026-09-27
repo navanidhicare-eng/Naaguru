@@ -7,16 +7,20 @@ import 'package:naaguru_student/features/student/data/catalog_api_client.dart';
 import 'package:naaguru_student/features/student/data/student_api_client.dart';
 
 void main() {
-  testWidgets('App launches successfully smoke test', (WidgetTester tester) async {
+  testWidgets('App launches successfully smoke test', (
+    WidgetTester tester,
+  ) async {
     final apiClient = ApiClient();
     final authService = AuthService(apiClient: apiClient);
     final studentApiClient = StudentApiClient(apiClient: apiClient);
 
-    await tester.pumpWidget(NaaguruStudentApp(
-      authService: authService,
-      studentApiClient: studentApiClient,
-      catalogApiClient: CatalogApiClient(apiClient: apiClient),
-    ));
+    await tester.pumpWidget(
+      NaaguruStudentApp(
+        authService: authService,
+        studentApiClient: studentApiClient,
+        catalogApiClient: CatalogApiClient(apiClient: apiClient),
+      ),
+    );
 
     // Verify app launches successfully
     expect(find.byType(NaaguruStudentApp), findsOneWidget);
