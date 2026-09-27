@@ -7,8 +7,9 @@ import 'package:naaguru_student/features/student/data/student_api_client.dart';
 
 class MockDetailApiClient extends ApiClient {
   final Map<String, dynamic> responseData;
+  bool failPost;
 
-  MockDetailApiClient({required this.responseData});
+  MockDetailApiClient({required this.responseData, this.failPost = false});
 
   @override
   Future<Map<String, dynamic>> get(String path) async {
@@ -20,6 +21,9 @@ class MockDetailApiClient extends ApiClient {
     String path, {
     Map<String, dynamic>? body,
   }) async {
+    if (failPost) {
+      throw ApiException('You already have an active lead for this branch', 409);
+    }
     return {
       'id': 'lead-123',
       'collegeId': body?['collegeId'] ?? 'college-uuid-1',
@@ -214,7 +218,7 @@ void main() {
   });
 
   testWidgets(
-    'CollegeDetailScreen opens Request Counselling sheet and submits enquiry',
+    'CollegeDetailScreen opens Request Counselling sheet and submits enquiry with View My Leads action',
     (WidgetTester tester) async {
       final mockApi = MockDetailApiClient(responseData: fullCollegeData);
       final collegeClient = CollegeApiClient(apiClient: mockApi);
@@ -228,6 +232,9 @@ void main() {
             collegeApiClient: collegeClient,
             studentApiClient: studentClient,
           ),
+          routes: {
+            '/my-leads': (context) => const Scaffold(body: Center(child: Text('My Leads Screen Loaded'))),
+          },
         ),
       );
       await tester.pumpAndSettle();
@@ -244,6 +251,49 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('Your enquiry has been successfully sent to the college!'), findsOneWidget);
+      expect(find.text('View My Leads'), findsOneWidget);
+
+      // Tap 'View My Leads'
+      await tester.tap(find.text('View My Leads'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('My Leads Screen Loaded'), findsOneWidget);
+    },
+  );
+
+  testWidgets(
+    'CollegeDetailScreen failed / duplicate enquiry does not show View My Leads action',
+    (WidgetTester tester) async {
+      final mockApi = MockDetailApiClient(responseData: fullCollegeData, failPost: true);
+      final collegeClient = CollegeApiClient(apiClient: mockApi);
+      final studentClient = StudentApiClient(apiClient: mockApi);
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: CollegeDetailScreen(
+            collegeId: 'college-uuid-1',
+            initialData: fullCollegeData,
+            collegeApiClient: collegeClient,
+            studentApiClient: studentClient,
+          ),
+          routes: {
+            '/my-leads': (context) => const Scaffold(body: Center(child: Text('My Leads Screen Loaded'))),
+          },
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      // Tap 'Request Counselling →'
+      await tester.tap(find.text('Request Counselling →'));
+      await tester.pumpAndSettle();
+
+      // Confirm enquiry
+      await tester.tap(find.text('Confirm Counselling Request'));
+      await tester.pumpAndSettle();
+
+      // View My Leads must NOT be shown
+      expect(find.text('View My Leads'), findsNothing);
+      expect(find.text('My Leads Screen Loaded'), findsNothing);
     },
   );
 

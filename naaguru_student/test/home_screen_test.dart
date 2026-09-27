@@ -116,6 +116,8 @@ void main() {
         authService: authService,
         studentApiClient: studentApiClient,
       ),
+      '/profile': (context) => const Scaffold(body: Center(child: Text('Profile Screen Loaded'))),
+      '/my-leads': (context) => const Scaffold(body: Center(child: Text('My Leads Screen Loaded'))),
     },
   );
 
@@ -375,6 +377,47 @@ void main() {
         // Only one intent check initiated for the rapid tap sequence
         expect(studentApiClient.getIntentCallCount - initialCalls, 1);
         expect(find.byType(CollegeListScreen), findsOneWidget);
+      },
+    );
+
+    testWidgets(
+      '13. Avatar bottom sheet renders My Applications & Leads and navigates to /my-leads',
+      (tester) async {
+        await tester.pumpWidget(buildHomeScreen());
+        await tester.pumpAndSettle();
+
+        // Tap person avatar icon in header
+        await tester.tap(find.byIcon(Icons.person).first);
+        await tester.pumpAndSettle();
+
+        expect(find.text('My Account'), findsOneWidget);
+        expect(find.text('My Applications & Leads'), findsOneWidget);
+
+        // Tap My Applications & Leads
+        await tester.tap(find.text('My Applications & Leads'));
+        await tester.pumpAndSettle();
+
+        expect(find.text('My Leads Screen Loaded'), findsOneWidget);
+      },
+    );
+
+    testWidgets(
+      '14. Profile tab ("You") renders My Applications & Leads and navigates to /my-leads',
+      (tester) async {
+        await tester.pumpWidget(buildHomeScreen());
+        await tester.pumpAndSettle();
+
+        // Switch to "You" tab
+        await tester.tap(find.text('You'));
+        await tester.pumpAndSettle();
+
+        expect(find.text('My Applications & Leads'), findsOneWidget);
+
+        // Tap My Applications & Leads button
+        await tester.tap(find.text('My Applications & Leads'));
+        await tester.pumpAndSettle();
+
+        expect(find.text('My Leads Screen Loaded'), findsOneWidget);
       },
     );
   });

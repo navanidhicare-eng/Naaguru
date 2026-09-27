@@ -330,6 +330,19 @@ class _HomeScreenState extends State<HomeScreen> {
                 },
               ),
               ListTile(
+                leading: const Icon(
+                  Icons.assignment_outlined,
+                  color: NaaguruTheme.primary,
+                ),
+                title: Text(
+                  _isTelugu ? 'నా అభ్యర్థనలు & లీడ్స్' : 'My Applications & Leads',
+                ),
+                onTap: () {
+                  Navigator.pop(ctx);
+                  Navigator.pushNamed(context, '/my-leads');
+                },
+              ),
+              ListTile(
                 leading: const Icon(Icons.logout, color: NaaguruTheme.error),
                 title: Text(
                   _isTelugu ? 'లాగ్ అవుట్' : 'Log Out',
@@ -387,6 +400,30 @@ class _HomeScreenState extends State<HomeScreen> {
           // College Preferences Persistent Section
           _buildCollegePreferencesCard(),
           const SizedBox(height: 16),
+
+          // My Applications & Leads
+          SizedBox(
+            width: double.infinity,
+            child: OutlinedButton.icon(
+              icon: const Icon(
+                Icons.assignment_outlined,
+                color: NaaguruTheme.primaryDark,
+              ),
+              label: Text(
+                _isTelugu ? 'నా అభ్యర్థనలు & లీడ్స్' : 'My Applications & Leads',
+                style: const TextStyle(color: NaaguruTheme.primaryDark),
+              ),
+              style: OutlinedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                side: const BorderSide(color: Color(0xFFCCE3DC)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              onPressed: () => Navigator.pushNamed(context, '/my-leads'),
+            ),
+          ),
+          const SizedBox(height: 12),
 
           // Edit Personal Profile
           SizedBox(

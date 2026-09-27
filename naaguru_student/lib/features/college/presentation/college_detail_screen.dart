@@ -357,6 +357,8 @@ class _CollegeDetailScreenState extends State<CollegeDetailScreen> {
             ? 'మీ కౌన్సెలింగ్ అభ్యర్థన నమోదు చేయబడింది!'
             : 'Counselling request submitted successfully!',
         variant: NaaguruNotificationVariant.success,
+        actionLabel: _isTelugu ? 'లీడ్స్ చూడండి' : 'View My Leads',
+        onAction: () => Navigator.pushNamed(context, '/my-leads'),
       );
       return;
     }
@@ -373,7 +375,9 @@ class _CollegeDetailScreenState extends State<CollegeDetailScreen> {
           message: _isTelugu
               ? 'మీ కౌన్సెలింగ్ అభ్యర్థన విజయవంతంగా పంపబడింది!'
               : 'Your enquiry has been successfully sent to the college!',
-          isError: false,
+          variant: NaaguruNotificationVariant.success,
+          actionLabel: _isTelugu ? 'లీడ్స్ చూడండి' : 'View My Leads',
+          onAction: () => Navigator.pushNamed(context, '/my-leads'),
         );
       }
     } catch (e) {

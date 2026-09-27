@@ -106,7 +106,10 @@ class NaaguruStudentApp extends StatelessWidget {
         '/results': (_) =>
             gated(ResultsScreen(assessmentApiClient: assessmentApiClient!)),
         '/my-leads': (_) =>
-            gated(MyLeadsScreen(studentApiClient: studentApiClient)),
+            gated(MyLeadsScreen(
+              studentApiClient: studentApiClient,
+              collegeApiClient: collegeApiClient,
+            )),
       },
     );
   }
