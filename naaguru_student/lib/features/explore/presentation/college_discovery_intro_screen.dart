@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:naaguru_student/core/theme.dart';
+import 'package:naaguru_student/core/ui/feedback.dart';
 import 'package:naaguru_student/features/college/data/college_api_client.dart';
 import 'package:naaguru_student/features/college/presentation/college_list_screen.dart';
 import 'package:naaguru_student/features/college/presentation/college_preferences_screen.dart';
@@ -167,10 +168,10 @@ class CollegeDiscoveryIntroScreen extends StatelessWidget {
             ElevatedButton(
               onPressed: () async {
                 if (collegeApiClient == null) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('College discovery is initializing...'),
-                    ),
+                  showNaaguruSnackbar(
+                    context,
+                    message: 'College discovery is initializing...',
+                    variant: NaaguruNotificationVariant.info,
                   );
                   return;
                 }

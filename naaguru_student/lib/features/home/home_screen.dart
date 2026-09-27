@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:naaguru_student/core/theme.dart';
 import 'package:naaguru_student/core/ui/buttons.dart';
+import 'package:naaguru_student/core/ui/feedback.dart';
 import 'package:naaguru_student/core/ui/language_toggle.dart';
 import 'package:naaguru_student/features/assessment/data/assessment_api_client.dart';
 import 'package:naaguru_student/features/assessment/presentation/results_screen.dart';
@@ -1129,8 +1130,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void _navigateToCollegeList(Map<String, dynamic> intent) {
     if (widget.collegeApiClient == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('College search is initializing...')),
+      showNaaguruSnackbar(
+        context,
+        message: 'College search is initializing...',
+        variant: NaaguruNotificationVariant.info,
       );
       return;
     }
@@ -1161,8 +1164,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void _navigateToCollegeDiscovery() {
     if (widget.collegeApiClient == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('College search is initializing...')),
+      showNaaguruSnackbar(
+        context,
+        message: 'College search is initializing...',
+        variant: NaaguruNotificationVariant.info,
       );
       return;
     }

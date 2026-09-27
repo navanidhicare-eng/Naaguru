@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:naaguru_student/core/api_client.dart';
 import 'package:naaguru_student/core/errors/app_error.dart';
 import 'package:naaguru_student/core/theme.dart';
+import 'package:naaguru_student/core/ui/feedback.dart';
 import 'package:naaguru_student/features/college/data/college_api_client.dart';
 import 'package:naaguru_student/features/college/presentation/college_discovery_wizard_state.dart';
 import 'package:naaguru_student/features/college/presentation/college_list_screen.dart';
@@ -272,16 +273,13 @@ class _CollegeReviewAndConfirmScreenState
       _currentVersionNumber = newVersion;
       _canEditPreferences = newVersion == null || newVersion < 2;
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            _s(
-              'College preferences saved successfully.',
-              'కళాశాల ప్రాధాన్యతలు విజయవంతంగా సేవ్ చేయబడ్డాయి.',
-            ),
-          ),
-          duration: const Duration(seconds: 2),
+      showNaaguruSnackbar(
+        context,
+        message: _s(
+          'College preferences saved successfully.',
+          'కళాశాల ప్రాధాన్యతలు విజయవంతంగా సేవ్ చేయబడ్డాయి.',
         ),
+        variant: NaaguruNotificationVariant.success,
       );
 
       _navigateToCollegeList();

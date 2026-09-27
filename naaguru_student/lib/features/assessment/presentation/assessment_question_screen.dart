@@ -3,6 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:lottie/lottie.dart';
 import 'package:naaguru_student/core/api_client.dart';
 import 'package:naaguru_student/core/theme.dart';
+import 'package:naaguru_student/core/ui/feedback.dart';
 import 'package:naaguru_student/core/ui/language_toggle.dart';
 import 'package:naaguru_student/features/assessment/data/assessment_api_client.dart';
 import 'package:naaguru_student/features/assessment/presentation/results_screen.dart';
@@ -232,18 +233,14 @@ class _AssessmentQuestionScreenState extends State<AssessmentQuestionScreen> {
         _persistedQuestionIds.add(questionId);
       } catch (e) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                _isTelugu
-                    ? "సమాధానం సేవ్ చేయడంలో విఫలమైంది. దయచేసి మళ్లీ ప్రయత్నించండి."
-                    : "Could not save answer. Please check your connection.",
-              ),
-              action: SnackBarAction(
-                label: _isTelugu ? "మళ్లీ ప్రయత్నించండి" : "Retry",
-                onPressed: () => _selectOption(questionId, optionId),
-              ),
-            ),
+          showNaaguruSnackbar(
+            context,
+            message: _isTelugu
+                ? "సమాధానం సేవ్ చేయడంలో విఫలమైంది. దయచేసి మళ్లీ ప్రయత్నించండి."
+                : "Could not save answer. Please check your connection.",
+            variant: NaaguruNotificationVariant.error,
+            actionLabel: _isTelugu ? "మళ్లీ ప్రయత్నించండి" : "Retry",
+            onAction: () => _selectOption(questionId, optionId),
           );
         }
         setState(() => _isSavingAnswer = false);
@@ -288,14 +285,12 @@ class _AssessmentQuestionScreenState extends State<AssessmentQuestionScreen> {
             _currentIndex = i;
             _isSavingAnswer = false;
           });
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                _isTelugu
-                    ? "దయచేసి అన్ని ప్రశ్నలకు సమాధానం ఇవ్వండి."
-                    : "Please answer all questions before submitting.",
-              ),
-            ),
+          showNaaguruSnackbar(
+            context,
+            message: _isTelugu
+                ? "దయచేసి అన్ని ప్రశ్నలకు సమాధానం ఇవ్వండి."
+                : "Please answer all questions before submitting.",
+            variant: NaaguruNotificationVariant.warning,
           );
         }
         return;
@@ -316,18 +311,14 @@ class _AssessmentQuestionScreenState extends State<AssessmentQuestionScreen> {
         }
       } catch (e) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                _isTelugu
-                    ? "సమర్పించడంలో విఫలమైంది. దయచేసి మళ్లీ ప్రయత్నించండి."
-                    : "Failed to submit assessment. Please try again.",
-              ),
-              action: SnackBarAction(
-                label: _isTelugu ? "మళ్లీ ప్రయత్నించండి" : "Retry",
-                onPressed: _attemptSubmit,
-              ),
-            ),
+          showNaaguruSnackbar(
+            context,
+            message: _isTelugu
+                ? "సమర్పించడంలో విఫలమైంది. దయచేసి మళ్లీ ప్రయత్నించండి."
+                : "Failed to submit assessment. Please try again.",
+            variant: NaaguruNotificationVariant.error,
+            actionLabel: _isTelugu ? "మళ్లీ ప్రయత్నించండి" : "Retry",
+            onAction: _attemptSubmit,
           );
         }
       }

@@ -149,14 +149,12 @@ class _StudentProfileScreenState extends State<StudentProfileScreen> {
     if (!_isFormValid) return;
 
     if (_selectedDistrict == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            _isTelugu
-                ? "దయచేసి మీ జిల్లాను ఎంచుకోండి."
-                : "Please select your district.",
-          ),
-        ),
+      showNaaguruSnackbar(
+        context,
+        message: _isTelugu
+            ? "దయచేసి మీ జిల్లాను ఎంచుకోండి."
+            : "Please select your district.",
+        variant: NaaguruNotificationVariant.warning,
       );
       return;
     }

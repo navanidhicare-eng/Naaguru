@@ -103,8 +103,10 @@ class _CollegeDetailScreenState extends State<CollegeDetailScreen> {
       await launchUrl(uri);
     } else {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Could not dial $rawPhone')),
+        showNaaguruSnackbar(
+          context,
+          message: 'Could not dial $rawPhone',
+          variant: NaaguruNotificationVariant.warning,
         );
       }
     }
@@ -349,15 +351,12 @@ class _CollegeDetailScreenState extends State<CollegeDetailScreen> {
 
   Future<void> _submitCounsellingLead(String branchId, String streamCode) async {
     if (widget.studentApiClient == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            _isTelugu
-                ? 'మీ కౌన్సెలింగ్ అభ్యర్థన నమోదు చేయబడింది!'
-                : 'Counselling request submitted successfully!',
-          ),
-          backgroundColor: NaaguruTheme.primary,
-        ),
+      showNaaguruSnackbar(
+        context,
+        message: _isTelugu
+            ? 'మీ కౌన్సెలింగ్ అభ్యర్థన నమోదు చేయబడింది!'
+            : 'Counselling request submitted successfully!',
+        variant: NaaguruNotificationVariant.success,
       );
       return;
     }

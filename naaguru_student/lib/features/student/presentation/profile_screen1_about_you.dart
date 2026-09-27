@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:naaguru_student/core/theme.dart';
+import 'package:naaguru_student/core/ui/feedback.dart';
 import 'package:naaguru_student/features/auth/auth_service.dart';
 import 'package:naaguru_student/features/student/data/catalog_api_client.dart';
 import 'package:naaguru_student/features/student/data/student_api_client.dart';
@@ -1558,15 +1559,13 @@ class _ProfileScreen1State extends State<ProfileScreen1AboutYou> {
                         child: ElevatedButton(
                           onPressed: () {
                             setState(() => _showRequestSheet = false);
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(
-                                  _s(
-                                    'School request submitted for review.',
-                                    'పాఠశాల అభ్యర్థన సమీక్షకు పంపబడింది.',
-                                  ),
-                                ),
+                            showNaaguruSnackbar(
+                              context,
+                              message: _s(
+                                'School request submitted for review.',
+                                'పాఠశాల అభ్యర్థన సమీక్షకు పంపబడింది.',
                               ),
+                              variant: NaaguruNotificationVariant.success,
                             );
                           },
                           style: ElevatedButton.styleFrom(
